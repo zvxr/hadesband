@@ -866,6 +866,15 @@ static void sense_surroundings(struct chunk *c) {
 	}
 }
 
+static void apply_per_100_energy_player_effects(void)
+{
+	/* Fast magical healing */
+	if (player->timed[TMD_ACCEL_HEALING]) {
+		bool ident = false;
+		effect_simple(EF_HEAL_HP, source_player(), "100", 0, 0, 0, 0, 0, &ident);
+	}
+}
+
 /**
  * Housekeeping after the processing of a player command
  */
@@ -878,8 +887,15 @@ static void process_player_cleanup(void)
 		/* Use some energy */
 		player->energy -= player->upkeep->energy_use;
 
+		int old_tick = player->total_energy / 100;
+
 		/* Increment the total energy counter */
 		player->total_energy += player->upkeep->energy_use;
+
+		if (player->total_energy / 100 > old_tick) {
+			apply_per_100_energy_player_effects();
+			decrease_timeouts_measured_in_player_turns();
+		}
 
 		/*
 		 * Since the player used energy, the command wasn't
@@ -1206,11 +1222,6 @@ void run_game_loop(void)
 
 			/* Give the player some energy */
 			player->energy += turn_energy(player->state.speed);
-
-			if (old_energy < z_info->move_energy &&
-			    player->energy >= z_info->move_energy) {
-				decrease_timeouts_measured_in_player_turns();
-			}
 
 			/* Count game turns */
 			turn++;

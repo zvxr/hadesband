@@ -579,3 +579,9 @@ name:SENSE_SURROUNDINGS
 desc:sense
 grade:u:10000:Mapping:You become attuned to the earth.
 on-end:You feel less attuned to the earth.
+
+name:ACCEL_HEALING
+desc:magical healing
+grade:B:10000:Heal:Healing energies course through you!
+on-end:The healing energies subside.
+flags:DURATION_IN_PLAYER_TURNS

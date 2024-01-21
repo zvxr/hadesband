@@ -3174,8 +3174,8 @@ cost:800
 alloc:75:30 to 100
 pile:50:1d3
 power:12
-effect:HEAL_HP
-dice:300+m35
+effect:TIMED_INC:ACCEL_HEALING
+dice:3
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
@@ -3194,8 +3194,8 @@ pile:33:1d3
 attack:1d1:0:0
 armor:0:0
 power:18
-effect:HEAL_HP
-dice:1200
+effect:TIMED_INC:ACCEL_HEALING
+dice:10
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
@@ -3225,8 +3225,8 @@ effect:RESTORE_STAT:INT
 effect:RESTORE_STAT:WIS
 effect:RESTORE_STAT:DEX
 effect:RESTORE_STAT:CON
-effect:HEAL_HP
-dice:5000
+effect:TIMED_INC:ACCEL_HEALING
+dice:20
 
 name:Neutralize Poison
 type:potion
@@ -4334,8 +4334,8 @@ attack:1d2:0:0
 armor:0:0
 charges:1+d2
 power:12
-effect:HEAL_HP
-dice:300+m35
+effect:TIMED_INC:ACCEL_HEALING
+dice:3
 effect:CURE:BLIND
 effect:CURE:CUT
 effect:CURE:POISONED
@@ -4758,8 +4758,8 @@ attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
 power:14
-effect:HEAL_HP
-dice:500
+effect:TIMED_INC:ACCEL_HEALING
+dice:5
 effect:CURE:CUT
 effect:CURE:STUN
 time:250

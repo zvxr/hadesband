@@ -92,19 +92,19 @@ desc:heals 60 hitpoints, cut damage, and cures stunning and poisoning
 name:CURE_FULL
 aim:0
 power:12
-effect:HEAL_HP
-dice:300+m35
+effect:TIMED_INC:ACCEL_HEALING
+dice:3
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
 effect:CURE:AMNESIA
-desc:heals 35% of max HP (minimum 300HP), cut damage, and cures stunning and poisoning
+desc:heals 300HP, cut damage, and cures stunning and poisoning
 
 name:CURE_FULL2
 aim:0
 power:18
-effect:HEAL_HP
-dice:1200
+effect:TIMED_INC:ACCEL_HEALING
+dice:12
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
@@ -128,9 +128,9 @@ effect:RESTORE_STAT:INT
 effect:RESTORE_STAT:WIS
 effect:RESTORE_STAT:DEX
 effect:RESTORE_STAT:CON
-effect:HEAL_HP
-dice:5000
-desc:heals 5000 hit points, restores experience and stats, heals cut damage, and cures stunning, poison, blindness, and confusion
+effect:TIMED_INC:ACCEL_HEALING
+dice:20
+desc:heals 2000 hit points, restores experience and stats, heals cut damage, and cures stunning, poison, blindness, and confusion
 
 name:CURE_TEMP
 aim:0
@@ -144,8 +144,8 @@ name:HEAL1
 aim:0
 power:13
 msg:You feel a warm tingling inside...
-effect:HEAL_HP
-dice:500
+effect:TIMED_INC:ACCEL_HEALING
+dice:5
 effect:CURE:CUT
 desc:heals 500 hit points
 
@@ -153,16 +153,16 @@ name:HEAL2
 aim:0
 power:16
 msg:{name} glows a bright white...
-effect:HEAL_HP
-dice:1000
+effect:TIMED_INC:ACCEL_HEALING
+dice:10
 effect:CURE:CUT
 desc:heals 1000 hit points
 
 name:HEAL3
 aim:0
 power:14
-effect:HEAL_HP
-dice:500
+effect:TIMED_INC:ACCEL_HEALING
+dice:5
 effect:CURE:CUT
 effect:CURE:STUN
 desc:heals 500 hit points, heals cut damage, and cures stunning

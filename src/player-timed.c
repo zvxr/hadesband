@@ -1052,13 +1052,6 @@ bool player_inc_timed(struct player *p, int idx, int v, bool notify,
 	assert(idx >= 0);
 	assert(idx < TMD_MAX);
 
-	/* Timed effects with TMD_FLAG_DURATION_IN_PLAYER_TURNS are decremented
-	 * *before* the player makes their turn (has energy enough), so they
-	 * need to be 'duration'+1 to match 'duration' player turns */
-	if (timed_effects[idx].flags & TMD_FLAG_DURATION_IN_PLAYER_TURNS) {
-		v += 1;
-	}
-
 	if (check == false || player_inc_check(p, idx, false) == true) {
 		if ((timed_effects[idx].flags & TMD_FLAG_NONSTACKING)
 				&& p->timed[idx] > 0) {
