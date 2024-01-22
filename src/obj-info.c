@@ -555,7 +555,7 @@ static void calculate_melee_crits(struct player_state *state, int weight,
  * \param obj is the melee weapon of interest.
  * \param dice is dereferenced and set to 100 * crit chance * average number
  * of dice added.
- * \param frac_dice is dereferenced and set to the fractional part truncted
+ * \param frac_dice is dereferenced and set to the fractional part truncated
  * from *dice when converted to an integer.
  */
 static void o_calculate_melee_crits(struct player_state *state,
@@ -717,7 +717,7 @@ static void calculate_missile_crits(struct player_state *state, int weight,
  * \param launcher is the launcher of interest or NULL for a thrown missile.
  * \param dice is dereferenced and set to 100 * crit chance * average number
  * of dice added.
- * \param frac_dice is dereferenced and set to the fractional part truncted
+ * \param frac_dice is dereferenced and set to the fractional part truncated
  * from *dice when converted to an integer.
  */
 static void o_calculate_missile_crits(struct player_state *state,
@@ -759,8 +759,7 @@ static void o_calculate_missile_crits(struct player_state *state,
 			if (chance_num < chance_den) {
 				/*
 				 * Critical only happens some of the time.
-				 * Scale by the chance and 100.  Round to the
-				 * nearest integer.
+				 * Scale by the chance and 100.
 				 */
 				struct my_rational t = my_rational_construct(
 					chance_num, chance_den);
@@ -770,10 +769,7 @@ static void o_calculate_missile_crits(struct player_state *state,
 				*dice = my_rational_to_uint(&t, 100, &tr);
 				*frac_dice = my_rational_construct(tr, t.d);
 			} else {
-				/*
-				 * Critical always happens.  Scale by 100
-				 * and round to the nearest integer.
-				 */
+				/* Critical always happens.  Scale by 100. */
 				*dice = my_rational_to_uint(
 					&z_info->o_r_max_added, 100,
 					&tr);
@@ -1113,7 +1109,10 @@ bool obj_known_damage(const struct object *obj, int *normal_damage,
 	if (ammo && bow->known)
 		copy_slays(&total_slays, bow->known->slays);
 
-	/* Melee weapons may get slays and brands from other items */
+	/*
+	 * Melee weapons may get slays and brands from other items or from
+	 * temporary effects.
+	 */
 	*nonweap_slay = false;
 	if (weapon)	{
 		for (i = 2; i < player->body.count; i++) {
@@ -1130,17 +1129,25 @@ bool obj_known_damage(const struct object *obj, int *normal_damage,
 			copy_brands(&total_brands, slot_obj->known->brands);
 			copy_slays(&total_slays, slot_obj->known->slays);
 		}
+
+		for (i = 1; i < z_info->brand_max; i++) {
+			if (player_has_temporary_brand(player, i)
+					&& append_brand(&total_brands, i)) {
+				*nonweap_slay = true;
+			}
+		}
+
+		for (i = 1; i < z_info->slay_max; i++) {
+			if (player_has_temporary_slay(player, i)
+					&& append_slay(&total_slays, i)) {
+				*nonweap_slay = true;
+			}
+		}
 	}
 
-	/* Get damage for each brand on the objects */
+	/* Get damage for each brand that is active */
 	for (i = 1; i < z_info->brand_max; i++) {
-		/*
-		 * Must have the brand, possibly from a spell; temporary brands
-		 * only affect melee attacks.
-		 */
-		if (player_has_temporary_brand(player, i) && !ammo && !throw) {
-			*nonweap_slay = true;
-		} else if (!total_brands[i]) {
+		if (!total_brands[i]) {
 			continue;
 		}
 		has_brands_or_slays = true;
@@ -1169,15 +1176,9 @@ bool obj_known_damage(const struct object *obj, int *normal_damage,
 		brand_damage[i] = total_dam;
 	}
 
-	/* Get damage for each slay on the objects */
+	/* Get damage for each slay that is active */
 	for (i = 1; i < z_info->slay_max; i++) {
-		/*
-		 * Must have the slay, possibly from a spell; temporary slays
-		 * only affect melee attacks.
-		 */
-		if (player_has_temporary_slay(player, i) && !ammo && !throw) {
-			*nonweap_slay = true;
-		} else if (!total_slays[i]) {
+		if (!total_slays[i]) {
 			continue;
 		}
 		has_brands_or_slays = true;
@@ -1353,7 +1354,10 @@ bool o_obj_known_damage(const struct object *obj, int *normal_damage,
 	if (ammo && bow->known)
 		copy_slays(&total_slays, bow->known->slays);
 
-	/* Melee weapons may get slays and brands from other items */
+	/*
+	 * Melee weapons may get slays and brands from other items or from
+	 * temporary effects.
+	 */
 	*nonweap_slay = false;
 	if (weapon)	{
 		for (i = 2; i < player->body.count; i++) {
@@ -1370,19 +1374,27 @@ bool o_obj_known_damage(const struct object *obj, int *normal_damage,
 			copy_brands(&total_brands, slot_obj->known->brands);
 			copy_slays(&total_slays, slot_obj->known->slays);
 		}
+
+		for (i = 1; i < z_info->brand_max; i++) {
+			if (player_has_temporary_brand(player, i)
+					&& append_brand(&total_brands, i)) {
+				*nonweap_slay = true;
+			}
+		}
+
+		for (i = 1; i < z_info->slay_max; i++) {
+			if (player_has_temporary_slay(player, i)
+					&& append_slay(&total_slays, i)) {
+				*nonweap_slay = true;
+			}
+		}
 	}
 
-	/* Increase die average for each brand on the objects */
+	/* Increase die average for each active brand */
 	for (i = 1; i < z_info->brand_max; i++) {
 		int brand_average, add = brands[i].o_multiplier - 10;
 
-		/*
-		 * Must have the brand, possibly from a spell; temporary brands
-		 * only affect melee attacks.
-		 */
-		if (player_has_temporary_brand(player, i) && !ammo && !throw) {
-			*nonweap_slay = true;
-		} else if (!total_brands[i]) {
+		if (!total_brands[i]) {
 			continue;
 		}
 		has_brands_or_slays = true;
@@ -1426,17 +1438,11 @@ bool o_obj_known_damage(const struct object *obj, int *normal_damage,
 		brand_damage[i] = total_dam;
 	}
 
-	/* Get damage for each slay on the objects */
+	/* Get damage for each active slay */
 	for (i = 1; i < z_info->slay_max; i++) {
 		int slay_average, add = slays[i].o_multiplier - 10;
 
-		/*
-		 * Must have the slay, possibly from a spell; temporary slays
-		 * only affect melee attacks.
-		 */
-		if (player_has_temporary_slay(player, i) && !ammo && !throw) {
-			*nonweap_slay = true;
-		} else if (!total_slays[i]) {
+		if (!total_slays[i]) {
 			continue;
 		}
 		has_brands_or_slays = true;

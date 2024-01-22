@@ -1081,7 +1081,7 @@ static bool project_m_monster_attack(project_monster_handler_context_t *context,
 	struct monster *mon = context->mon;
 
 	/* "Unique" monsters can only be "killed" by the player */
-	if (rf_has(mon->race->flags, RF_UNIQUE)) {
+	if (monster_is_unique(mon)) {
 		/* Reduce monster hp to zero, but don't kill it. */
 		if (dam > mon->hp) dam = mon->hp;
 	}
@@ -1207,8 +1207,7 @@ static void project_m_apply_side_effects(project_monster_handler_context_t *cont
 		struct monster_race *new;
 
 		/* Uniques cannot be polymorphed; nor can an arena monster */
-		if (rf_has(mon->race->flags, RF_UNIQUE)
-				|| player->upkeep->arena_level) {
+		if (monster_is_unique(mon) || player->upkeep->arena_level) {
 			if (context->seen) add_monster_message(mon, hurt_msg, false);
 			return;
 		}
@@ -1226,7 +1225,7 @@ static void project_m_apply_side_effects(project_monster_handler_context_t *cont
 			return;
 		}
 
-		old = mon->race;
+		old = (mon->original_race) ? mon->original_race : mon->race;
 		new = poly_race(old, player->depth);
 
 		/* Handle polymorph */

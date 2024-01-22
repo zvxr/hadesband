@@ -22,6 +22,8 @@ OPTION(SUPPORT_STATS_FRONTEND "Support for statistics front end; requires sqlite
 OPTION(SUPPORT_TEST_FRONTEND "Support for test front end." OFF)
 OPTION(SUPPORT_WINDOWS_FRONTEND "Support for windows front end." OFF)
 OPTION(SUPPORT_STATS_BACKEND "Enable backend support for statistics and related debugging commands.  Implied by SUPPORT_STATS_FRONTEND." OFF)
+OPTION(SUPPORT_BORG "Support for Borg." ON)
+OPTION(SUPPORT_BORG_HIGH_SCORES "Borg characters allowed in high scores." OFF)
 
 # By default, generate a self-contained build left where the build was run.
 # If not using the Windows front end, the executable will have hardwired
@@ -295,24 +297,77 @@ ADD_LIBRARY(OurCoreLib OBJECT
         src/z-type.c
         src/z-util.c
         src/z-virt.c
-        src/borg/borg1.c
-        src/borg/borg2.c
-        src/borg/borg3.c
-        src/borg/borg4.c
-        src/borg/borg5.c
-        src/borg/borg6.c
-        src/borg/borg7.c
-        src/borg/borg8.c
-        src/borg/borg9.c
+        src/borg/borg-attack-munchkin.c
+        src/borg/borg-caution.c
+        src/borg/borg-cave-light.c
+        src/borg/borg-cave-util.c
+        src/borg/borg-cave-view.c
+        src/borg/borg-cave.c
+        src/borg/borg-danger.c
+        src/borg/borg-escape.c
+        src/borg/borg-fight-attack.c
+        src/borg/borg-fight-defend.c
+        src/borg/borg-fight-perm.c
+        src/borg/borg-flow-dark.c
+        src/borg/borg-flow-glyph.c
+        src/borg/borg-flow-kill.c
+        src/borg/borg-flow-misc.c
+        src/borg/borg-flow-stairs.c
+        src/borg/borg-flow-take.c
+        src/borg/borg-flow.c
+        src/borg/borg-home-notice.c
+        src/borg/borg-home-power.c
+        src/borg/borg-init.c
+        src/borg/borg-inventory.c
+        src/borg/borg-io.c
+        src/borg/borg-item-activation.c
+        src/borg/borg-item-analyze.c
+        src/borg/borg-item-decurse.c
+        src/borg/borg-item-enchant.c
+        src/borg/borg-item-id.c
+        src/borg/borg-item-use.c
+        src/borg/borg-item-val.c
+        src/borg/borg-item-wear.c
+        src/borg/borg-item.c
+        src/borg/borg-junk.c
+        src/borg/borg-light.c
+        src/borg/borg-log.c
+        src/borg/borg-magic-play.c
+        src/borg/borg-magic.c
+        src/borg/borg-messages-react.c
+        src/borg/borg-messages.c
+        src/borg/borg-power.c
+        src/borg/borg-prepared.c
+        src/borg/borg-projection.c
+        src/borg/borg-recover.c
+        src/borg/borg-reincarnate.c
+        src/borg/borg-store-buy.c
+        src/borg/borg-store-sell.c
+        src/borg/borg-store.c
+        src/borg/borg-think-dungeon-util.c
+        src/borg/borg-think-dungeon.c
+        src/borg/borg-think-store.c
+        src/borg/borg-think.c
+        src/borg/borg-trait-swap.c
+        src/borg/borg-trait.c
+        src/borg/borg-update.c
+        src/borg/borg-util.c
+        src/borg/borg.c
 )
 
 SET_TARGET_PROPERTIES(OurCoreLib PROPERTIES C_STANDARD 99)
 SET(ANGBAND_CORE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src")
 SET(ANGBAND_CORE_LINK_LIBRARIES "")
 
-TARGET_INCLUDE_DIRECTORIES(OurCoreLib PRIVATE
-    ${ANGBAND_CORE_INCLUDE_DIRS}
-)
+IF(SUPPORT_BORG)
+    TARGET_INCLUDE_DIRECTORIES(OurCoreLib PRIVATE
+        ${ANGBAND_CORE_INCLUDE_DIRS}
+    )
+    TARGET_COMPILE_DEFINITIONS(OurCoreLib PRIVATE -D ALLOW_BORG)
+    IF(SUPPORT_BORG_HIGH_SCORES)
+        TARGET_COMPILE_DEFINITIONS(OurCoreLib PRIVATE -D SCORE_BORGS)
+    ENDIF()
+ENDIF()
 
 IF(SUPPORT_SDL_SOUND OR SUPPORT_SDL2_SOUND)
     ADD_LIBRARY(OurSoundSupportLib OBJECT
@@ -330,6 +385,9 @@ ADD_EXECUTABLE(OurExecutable
         $<$<BOOL:${SUPPORT_GCU_FRONTEND}>:src/main-gcu.c>
         $<$<BOOL:${SUPPORT_SDL_FRONTEND}>:src/main-sdl.c>
         $<$<BOOL:${SUPPORT_SDL2_FRONTEND}>:src/main-sdl2.c>
+        $<$<BOOL:${SUPPORT_SDL2_FRONTEND}>:src/sdl2/pui-ctrl.c>
+        $<$<BOOL:${SUPPORT_SDL2_FRONTEND}>:src/sdl2/pui-dlg.c>
+        $<$<BOOL:${SUPPORT_SDL2_FRONTEND}>:src/sdl2/pui-misc.c>
         $<$<BOOL:${SUPPORT_WINDOWS_FRONTEND}>:${OUR_WINDOWS_RC}>
         $<$<BOOL:${SUPPORT_WINDOWS_FRONTEND}>:src/main-win.c>
         $<$<BOOL:${SUPPORT_WINDOWS_FRONTEND}>:src/win/readdib.c>
@@ -372,6 +430,9 @@ IF(SUPPORT_WINDOWS_FRONTEND)
     INCLUDE(src/cmake/macros/WINDOWS_Frontend.cmake)
     CONFIGURE_WINDOWS_FRONTEND(OurExecutable NO)
     CONFIGURE_WINDOWS_FRONTEND(OurCoreLib YES)
+    IF(SUPPORT_BORG)
+        TARGET_COMPILE_DEFINITIONS(OurExecutable PRIVATE -D ALLOW_BORG)
+    ENDIF()
 ENDIF()
 
 IF(SUPPORT_SDL_SOUND)

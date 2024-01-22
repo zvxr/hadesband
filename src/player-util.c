@@ -584,7 +584,7 @@ int32_t player_adjust_mana_precise(struct player *p, int32_t sp_gain)
 			assert(p->csp > INT16_MIN);
 			p->csp -= 1;
 		} else {
-			p->chp_frac = 0;
+			p->csp_frac = 0;
 		}
 	} else {
 		p->csp = (int16_t)(new_32 >> 16);   /* div 65536 */
@@ -1562,7 +1562,7 @@ void player_handle_post_move(struct player *p, bool eval_trap,
 		if (is_involuntary) {
 			cmdq_flush();
 		}
-		square_know_pile(cave, p->grid);
+		square_know_pile(cave, p->grid, NULL);
 	}
 
 	/* Discover invisible traps, set off visible ones */
