@@ -617,7 +617,7 @@ bool square_isarrivable(struct chunk *c, struct loc grid) {
 		//monster_desc(m_name, sizeof(m_name), cave_monster(c, square(c, grid)->mon), MDESC_SHOW);
 		//msg("Target has %s sitting on it... erasing it.", m_name);
 		// sorry, my friend. we are arriving
-		delete_monster_idx(square(c, grid)->mon);
+		delete_monster_idx(c, square(c, grid)->mon);
 	}
 	/*
 	msg("Debug square_isarrivable: %s %s %s %s %s.",
