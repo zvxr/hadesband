@@ -283,7 +283,14 @@ static void borg_update_map(void)
             ag->info |= BORG_OKAY;
 
             /* Notice "knowledge" */
-            if (g.f_idx != FEAT_NONE) {
+            /* if this square is not in view and the borg previously */
+            /* cast stone to mud here, ignore the map info so repeated */
+            /* stone to mud aren't cast */
+            if (g.f_idx != FEAT_NONE
+                && (g.in_view || !(ag->info & BORG_IGNORE_MAP))) {
+                if (g.in_view) {
+                    ag->info &= ~BORG_IGNORE_MAP;
+                }
                 ag->info |= BORG_MARK;
                 ag->feat = g.f_idx;
             }
@@ -415,7 +422,6 @@ static void borg_update_map(void)
             }
             /* lava */
             else if (g.f_idx == FEAT_LAVA) {
-                // !FIX !TODO !AJG need to do something about lava
             }
             /* Seams */
             else if (g.f_idx == FEAT_MAGMA || g.f_idx == FEAT_QUARTZ) {
@@ -501,6 +507,11 @@ static void borg_update_map(void)
                     track_more.num++;
                 }
             }
+
+            if (ag->feat == FEAT_FLOOR && square_iswebbed(cave, l)) {
+                ag->web = true;
+            } else
+                ag->web = false;          
 
             /* Now do non-feature stuff */
             if ((g.first_kind || g.m_idx) && !borg.trait[BI_ISIMAGE]) {
@@ -2351,6 +2362,9 @@ void borg_update(void)
                     x = o_w_x + dx;
                     y = o_w_y + dy;
 
+                    if (y >= AUTO_MAX_Y || x >= AUTO_MAX_X)
+                        continue;
+
                     /* Get the borg_grid */
                     ag = &borg_grids[y][x];
 
@@ -2581,7 +2595,9 @@ void borg_update(void)
             && observe_kill_move(
                 wank->y, wank->x, 0, wank->t_a, wank->t_c, false)) {
             /* Hack -- excise the entry */
-            borg_wanks[i] = borg_wanks[--borg_wank_num];
+            wank->is_kill = false;
+            if (!wank->is_take && !wank->is_kill)
+                borg_wanks[i] = borg_wanks[--borg_wank_num];
         }
     }
     /* Pass 2 -- stationary objects */
@@ -2592,7 +2608,9 @@ void borg_update(void)
         if (wank->is_take
             && observe_take_move(wank->y, wank->x, 0, wank->t_a, wank->t_c)) {
             /* Hack -- excise the entry */
-            borg_wanks[i] = borg_wanks[--borg_wank_num];
+            wank->is_take = false;
+            if (!wank->is_take && !wank->is_kill)
+                borg_wanks[i] = borg_wanks[--borg_wank_num];
         }
     }
     /* Pass 3a -- moving monsters (distance 1) */
@@ -2604,7 +2622,9 @@ void borg_update(void)
             && observe_kill_move(
                 wank->y, wank->x, 1, wank->t_a, wank->t_c, false)) {
             /* Hack -- excise the entry */
-            borg_wanks[i] = borg_wanks[--borg_wank_num];
+            wank->is_kill = false;
+            if (!wank->is_take && !wank->is_kill)
+                borg_wanks[i] = borg_wanks[--borg_wank_num];
         }
     }
     /* Pass 3b -- moving monsters (distance 2) */
@@ -2616,7 +2636,9 @@ void borg_update(void)
             && observe_kill_move(
                 wank->y, wank->x, 2, wank->t_a, wank->t_c, false)) {
             /* Hack -- excise the entry */
-            borg_wanks[i] = borg_wanks[--borg_wank_num];
+            wank->is_kill = false;
+            if (!wank->is_take && !wank->is_kill)
+                borg_wanks[i] = borg_wanks[--borg_wank_num];
         }
     }
     /* Pass 3c -- moving monsters (distance 3) */
@@ -2628,7 +2650,9 @@ void borg_update(void)
             && observe_kill_move(
                 wank->y, wank->x, 3, wank->t_a, wank->t_c, false)) {
             /* Hack -- excise the entry */
-            borg_wanks[i] = borg_wanks[--borg_wank_num];
+            wank->is_kill = false;
+            if (!wank->is_take && !wank->is_kill)
+                borg_wanks[i] = borg_wanks[--borg_wank_num];
         }
     }
     /* Pass 3d -- moving monsters (distance 7, allow changes) */
@@ -2640,7 +2664,9 @@ void borg_update(void)
             && observe_kill_move(
                 wank->y, wank->x, 7, wank->t_a, wank->t_c, true)) {
             /* Hack -- excise the entry */
-            borg_wanks[i] = borg_wanks[--borg_wank_num];
+            wank->is_kill = false;
+            if (!wank->is_take && !wank->is_kill)
+                borg_wanks[i] = borg_wanks[--borg_wank_num];
         }
     }
     /* Pass 4 -- new objects */
@@ -2650,8 +2676,10 @@ void borg_update(void)
         /* Track new objects */
         if (wank->is_take
             && observe_take_diff(wank->y, wank->x, wank->t_a, wank->t_c)) {
-            /* Hack -- excise the entry */
-            borg_wanks[i] = borg_wanks[--borg_wank_num];
+            /* Hack -- excise the entry (unless it is also a monster) */
+            wank->is_take = false;
+            if (!wank->is_take && !wank->is_kill)
+                borg_wanks[i] = borg_wanks[--borg_wank_num];
         }
     }
     /* Pass 5 -- new monsters */
@@ -2662,7 +2690,9 @@ void borg_update(void)
         if (wank->is_kill
             && observe_kill_diff(wank->y, wank->x, wank->t_a, wank->t_c)) {
             /* Hack -- excise the entry */
-            borg_wanks[i] = borg_wanks[--borg_wank_num];
+            wank->is_kill = false;
+            if (!wank->is_take && !wank->is_kill)
+                borg_wanks[i] = borg_wanks[--borg_wank_num];
         }
     }
 

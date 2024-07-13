@@ -157,8 +157,8 @@ static void borg_cheat_quiver(void)
                 /* Analyze the item (no price) */
                 borg_item_analyze(&borg_items[i], obj, buf, false);
 
-                /* Uninscribe items with ! inscriptions */
-                if (strstr(borg_items[i].desc, "!"))
+                /* Uninscribe items with ! or borg inscriptions */
+                if (strstr(borg_items[i].desc, "!") || strstr(borg_items[i].desc, "borg"))
                     borg_deinscribe(i);
             }
         }
@@ -197,8 +197,8 @@ void borg_cheat_equip(void)
                 /* Analyze the item (no price) */
                 borg_item_analyze(&borg_items[i], obj, buf, false);
 
-                /* Uninscribe items with ! inscriptions */
-                if (strstr(borg_items[i].desc, "!"))
+                /* Uninscribe items with ! or borg inscriptions */
+                if (strstr(borg_items[i].desc, "!") || strstr(borg_items[i].desc, "borg"))
                     borg_deinscribe(i);
             }
         }
@@ -240,10 +240,9 @@ void borg_cheat_inven(void)
         /* Note changed inventory */
         borg_do_crush_junk = true;
 
-        /* Uninscribe items with ! inscriptions */
-        if (strstr(borg_items[i].desc, "!")) {
+        /* Uninscribe items with ! or borg inscriptions */
+        if (strstr(borg_items[i].desc, "!") || strstr(borg_items[i].desc, "borg"))
             borg_deinscribe(i);
-        }
     }
 }
 
@@ -271,49 +270,15 @@ int borg_first_empty_inventory_slot(void)
  */
 bool borg_item_worth_id(const borg_item *item)
 {
-    /* Never ID average stuff */
+    int        slot;
+
     if (!borg_item_note_needs_id(item))
         return false;
 
-    /** Some stuff should always be ID'd... **/
-    switch (item->tval) {
-    case TV_BOW:
-    case TV_SHOT:
-    case TV_ARROW:
-    case TV_BOLT:
-    case TV_HAFTED:
-    case TV_POLEARM:
-    case TV_SWORD:
-    case TV_BOOTS:
-    case TV_GLOVES:
-    case TV_HELM:
-    case TV_CROWN:
-    case TV_SHIELD:
-    case TV_CLOAK:
-    case TV_SOFT_ARMOR:
-    case TV_HARD_ARMOR:
-    case TV_DRAG_ARMOR:
-
-        /* Don't bother IDing unidentified items until they are pseudo'd */
-        if (!item->ident)
-            return false;
-    }
-
-    /* Not worth IDing magical items if we have better ego/artifact stuff */
-    if (borg_item_note_needs_id(item)) {
-        int        slot;
-        borg_item *inven_item;
-
-        /* Obtain the slot of the suspect item */
-        slot = borg_wield_slot(item);
-        if (slot < 0)
-            return false;
-
-        /* Obtain my equipped item in the slot */
-        inven_item = &borg_items[slot];
-        if (inven_item->ego_idx || inven_item->art_idx)
-            return false;
-    }
+    /* Things that can't be wielded can't be ID'd (potions, scrolls etc) */
+    slot = borg_wield_slot(item);
+    if (slot < 0)
+        return false;
 
     return true;
 }

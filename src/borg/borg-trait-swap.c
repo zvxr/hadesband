@@ -194,12 +194,6 @@ void borg_notice_weapon_swap(void)
         if (borg.trait[BI_MAXDEPTH] < 50 && item->tval != TV_DIGGING)
             continue;
 
-        /* priest weapon penalty for non-blessed edged weapons */
-        if (player_has(player, PF_BLESS_WEAPON)
-            && (item->tval == TV_SWORD || item->tval == TV_POLEARM)
-            && !of_has(item->flags, OF_BLESSED))
-            continue;
-
         /* Clear all the swap weapon flags as I look at each one. */
         weapon_swap_digger       = 0;
         weapon_swap_slay_animal  = 0;
@@ -867,18 +861,16 @@ void borg_notice_armour_swap(void)
             armour_swap_slay_dragon = item->slays[RF_DRAGON];
             if (of_has(item->flags, OF_IMPACT))
                 armour_swap_impact = true;
-            if (item->brands) {
-                if (item->brands[ELEM_ACID])
-                    armour_swap_brand_acid = true;
-                if (item->brands[ELEM_ELEC])
-                    armour_swap_brand_elec = true;
-                if (item->brands[ELEM_FIRE])
-                    armour_swap_brand_fire = true;
-                if (item->brands[ELEM_COLD])
-                    armour_swap_brand_cold = true;
-                if (item->brands[ELEM_POIS])
-                    armour_swap_brand_pois = true;
-            }
+            if (item->brands[ELEM_ACID])
+                armour_swap_brand_acid = true;
+            if (item->brands[ELEM_ELEC])
+                armour_swap_brand_elec = true;
+            if (item->brands[ELEM_FIRE])
+                armour_swap_brand_fire = true;
+            if (item->brands[ELEM_COLD])
+                armour_swap_brand_cold = true;
+            if (item->brands[ELEM_POIS])
+                armour_swap_brand_pois = true;
 
             /* Affect infravision */
             armour_swap_see_infra += item->modifiers[OBJ_MOD_INFRA];
@@ -1122,7 +1114,7 @@ void borg_notice_armour_swap(void)
             b_i               = i;
             b_v               = v;
             armour_swap_value = v;
-            armour_swap       = i - 1;
+            armour_swap       = i + 1;
         }
     }
 

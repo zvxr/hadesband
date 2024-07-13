@@ -135,7 +135,7 @@ void map_info(struct loc grid, struct grid_data *g)
 
 	/* There is a known trap in this square */
 	if (square_trap(player->cave, grid) && square_isknown(cave, grid)) {
-		struct trap *trap = square(cave, grid)->trap;
+		struct trap *trap = square(player->cave, grid)->trap;
 
 		/* Scan the square trap list */
 		while (trap) {
@@ -151,7 +151,7 @@ void map_info(struct loc grid, struct grid_data *g)
 			}
 			trap = trap->next;
 		}
-    }
+	}
 
 	/* Objects */
 	for (obj = square_object(player->cave, grid); obj; obj = obj->next) {
@@ -238,7 +238,7 @@ void square_note_spot(struct chunk *c, struct loc grid)
 	}
 	square_memorize_traps(c, grid);
 
-	if (square_isknown(c, grid))
+	if (!square_ismemorybad(c, grid))
 		return;
 
 	/* Memorize this grid */
@@ -450,9 +450,14 @@ void wiz_light(struct chunk *c, struct player *p, bool full)
 				square_sense_pile(c, grid, NULL);
 			}
 
-			/* Forget unprocessed, unknown grids in the mapping area */
-			if (!square_ismark(c, grid) && square_isnotknown(c, grid))
+			/*
+			 * Forget grids that are both unprocessed and
+			 * misremembered in the mapping area.
+			 */
+			if (!square_ismark(c, grid)
+					&& square_ismemorybad(c, grid)) {
 				square_forget(c, grid);
+			}
 		}
 	}
 
@@ -516,9 +521,14 @@ void wiz_dark(struct chunk *c, struct player *p, bool full)
 				square_sense_pile(c, grid, NULL);
 			}
 
-			/* Forget unprocessed, unknown grids in the mapping area */
-			if (!square_ismark(c, grid) && square_isnotknown(c, grid))
+			/*
+			 * Forget grids that are both unprocessed and
+			 * misremembered in the mapping area.
+			 */
+			if (!square_ismark(c, grid)
+					&& square_ismemorybad(c, grid)) {
 				square_forget(c, grid);
+			}
 		}
 	}
 

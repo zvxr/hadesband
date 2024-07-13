@@ -55,7 +55,7 @@
  */
 static int borg_stuff_feeling[]
     = { 50000, /* 0 is no feeling yet given, stick around to get one */
-          8000, 8000, 6000, 4000, 2000, 1000, 800, 600, 400, 200, 0 };
+          8000, 8000, 8000, 8000, 5000, 5000, 100, 100, 100, 100, 0 };
 
 /*
  * money Scumming is a type of town scumming for money
@@ -452,7 +452,6 @@ bool borg_think_stair_scum(bool from_town)
             /* if standing on a stair */
             if (ag->feat == FEAT_MORE) {
                 /* Take the DownStair */
-                borg.on_upstairs = true;
                 borg_keypress('>');
 
                 return (true);
@@ -506,7 +505,6 @@ bool borg_think_stair_scum(bool from_town)
 
             if (tmp_ag->feat == FEAT_LESS) {
                 /* Take the Up Stair */
-                borg.on_dnstairs = true;
                 borg_keypress('<');
                 return (true);
             }
@@ -570,7 +568,7 @@ bool borg_leave_level(bool bored)
     bool need_restock       = false;
 
     /* Hack -- waiting for "recall" other than depth 1 */
-    if (borg.goal.recalling && borg.trait[BI_CDEPTH] > 1)
+    if (borg.goal.recalling && borg.trait[BI_CDEPTH] != 1)
         return (false);
 
     /* Not bored if I have seen Morgoth recently */
@@ -813,7 +811,7 @@ bool borg_leave_level(bool bored)
     }
 
     /* Return to town to drop off some scumming stuff */
-    if (borg.scumming_pots && !vault_on_level
+    if (!vault_on_level
         && (borg.trait[BI_AEZHEAL] >= 3 || borg.trait[BI_ALIFE] >= 1)) {
         borg_note("# Going to town (Dropping off Potions).");
         borg.goal.rising = true;
@@ -823,7 +821,7 @@ bool borg_leave_level(bool bored)
      * Check to see if depth 99, if Sauron is dead and Im not read to fight
      * the final battle
      */
-    if (borg.trait[BI_CDEPTH] == 99 && borg_race_death[borg_sauron_id] == 1
+    if (borg.trait[BI_CDEPTH] == 99 && borg.trait[BI_SAURON_DEAD]
         && borg.ready_morgoth != 1) {
         borg_note("# Returning to level 98 to scum for items.");
         g = -1;
@@ -962,9 +960,7 @@ bool borg_excavate_vault(int range)
                 continue;
 
             /* only deal with excavatable walls */
-            if (borg_grids[y][x].feat != FEAT_FLOOR
-                && borg_grids[y][x].feat != FEAT_LAVA
-                && borg_grids[y][x].feat != FEAT_GRANITE
+            if (borg_grids[y][x].feat != FEAT_GRANITE
                 && borg_grids[y][x].feat != FEAT_RUBBLE
                 && borg_grids[y][x].feat != FEAT_QUARTZ
                 && borg_grids[y][x].feat != FEAT_MAGMA
@@ -999,10 +995,6 @@ bool borg_excavate_vault(int range)
                     borg_temp_x[ii] = x;
                     borg_temp_y[ii] = y;
                     borg_temp_n++;
-
-                    /* do not overflow */
-                    if (borg_temp_n > AUTO_TEMP_MAX)
-                        borg_temp_n = AUTO_TEMP_MAX;
                 }
             }
         }
@@ -1028,9 +1020,9 @@ bool borg_excavate_vault(int range)
             borg_note("# Excavation of vault");
             borg_keypress('5');
 
-            /* turn that wall into a floor grid.  If the spell failed, it will
-             * still look like a wall and the borg_update routine will redefine
-             * it as a wall
+            /* turn that wall into a floor grid.  If the spell failed and the
+             * grid is visible, it will still look like a wall and the
+             * borg_update routine will redefine it as a wall
              */
             borg_do_update_view = true;
             borg_do_update_lite = true;
@@ -1041,6 +1033,14 @@ bool borg_excavate_vault(int range)
             borg_grids[borg_temp_y[i]][borg_temp_x[i]].info |= BORG_GLOW;
             /* Feat Floor */
             borg_grids[borg_temp_y[i]][borg_temp_x[i]].feat = FEAT_FLOOR;
+            /*
+             * If the grid is not seen, prefer what the borg remembers over
+             * what map_info() returns (i.e. optimistically assume that the
+             * excavation was successful.
+             */
+            borg_grids[borg_temp_y[i]][borg_temp_x[i]].info |= BORG_IGNORE_MAP;
+            /* Forget number of mineral veins to force rebuild of vein list */
+            track_vein.num = 0;
 
             return (true);
         }

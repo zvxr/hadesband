@@ -91,7 +91,7 @@ int breakage_chance(const struct object *obj, bool hit_target) {
 int chance_of_melee_hit_base(const struct player *p,
 		const struct object *weapon)
 {
-	int bonus = p->state.to_h + (weapon ? weapon->to_h : 0);
+	int bonus = p->state.to_h + (weapon ? object_to_hit(weapon) : 0);
 	return p->state.skills[SKILL_TO_HIT_MELEE] + bonus * BTH_PLUS_ADJ;
 }
 
@@ -129,7 +129,7 @@ int chance_of_missile_hit_base(const struct player *p,
 								 const struct object *missile,
 								 const struct object *launcher)
 {
-	int bonus = missile->to_h;
+	int bonus = object_to_hit(missile);
 	int chance;
 
 	if (!launcher) {
@@ -144,7 +144,7 @@ int chance_of_missile_hit_base(const struct player *p,
 				+ bonus * BTH_PLUS_ADJ;
 		}
 	} else {
-		bonus += p->state.to_h + launcher->to_h;
+		bonus += p->state.to_h + object_to_hit(launcher);
 		chance = p->state.skills[SKILL_TO_HIT_BOW] + bonus * BTH_PLUS_ADJ;
 	}
 
@@ -495,7 +495,7 @@ static int melee_damage(const struct monster *mon, struct object *obj, int b, in
 		dmg *= get_monster_brand_multiplier(mon, &brands[b], false);
 	}
 
-	if (obj) dmg += obj->to_d;
+	if (obj) dmg += object_to_dam(obj);
 
 	return dmg;
 }
@@ -510,7 +510,7 @@ static int o_melee_damage(struct player *p, const struct monster *mon,
 		struct object *obj, int tohit_chance, int b, int s, uint32_t *msg_type)
 {
 	int dice = (obj) ? obj->dd : 1;
-	int sides, dmg, add = 0;
+	int sides, deadliness, dmg, add = 0;
 	bool extra;
 
 	/* Get the average value of a single damage die. (x10) */
@@ -530,8 +530,8 @@ static int o_melee_damage(struct player *p, const struct monster *mon,
 	}
 
 	/* Apply deadliness to average. (100x inflation) */
-	apply_deadliness(&die_average,
-		MIN(((obj) ? obj->to_d : 0) + p->state.to_d, 150));
+	deadliness = p->state.to_d + ((obj) ? object_to_dam(obj) : 0);
+	apply_deadliness(&die_average, MIN(deadliness, 150));
 
 	/* Calculate the actual number of sides to each die. */
 	sides = (2 * die_average) - 10000;
@@ -575,14 +575,14 @@ static int ranged_damage(struct player *p, const struct monster *mon,
 
 	/* Apply damage: multiplier, slays, bonuses */
 	dmg = damroll(missile->dd, missile->ds);
-	dmg += missile->to_d;
+	dmg += object_to_dam(missile);
 	if (launcher) {
-		dmg += launcher->to_d;
+		dmg += object_to_dam(launcher);
 	} else if (of_has(missile->flags, OF_THROWING)) {
 		/* Adjust damage for throwing weapons.
 		 * This is not the prettiest equation, but it does at least try to
 		 * keep throwing weapons competitive. */
-		dmg *= 2 + missile->weight / 12;
+		dmg *= 2 + object_weight_one(missile) / 12;
 	}
 	dmg *= mult;
 
@@ -624,12 +624,11 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 	}
 
 	/* Apply deadliness to average. (100x inflation) */
+	deadliness = object_to_dam(missile);
 	if (launcher) {
-		deadliness = missile->to_d + launcher->to_d + p->state.to_d;
+		deadliness += object_to_dam(launcher) + p->state.to_d;
 	} else if (of_has(missile->flags, OF_THROWING)) {
-		deadliness = missile->to_d + p->state.to_d;
-	} else {
-		deadliness = missile->to_d;
+		deadliness += p->state.to_d;
 	}
 	apply_deadliness(&die_average, MIN(deadliness, 150));
 
@@ -648,7 +647,7 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 		/* Multiply the number of damage dice by the throwing weapon
 		 * multiplier.  This is not the prettiest equation,
 		 * but it does at least try to keep throwing weapons competitive. */
-		dice *= 2 + missile->weight / 12;
+		dice *= 2 + object_weight_one(missile) / 12;
 	}
 
 	/* Roll out the damage. */
@@ -815,7 +814,7 @@ bool py_attack_real(struct player *p, struct loc grid, int num_blows_x100, bool 
 
 	if (obj) {
 		/* Handle normal weapon */
-		weight = obj->weight;
+		weight = object_weight_one(obj);
 		my_strcpy(verb, "hit", sizeof(verb));
 	} else {
 		weight = 0;
@@ -965,7 +964,7 @@ static bool attempt_shield_bash(struct player *p, struct monster *mon, bool *fea
 
 	/* Calculate attack quality, a mix of momentum and accuracy. */
 	bash_quality = p->state.skills[SKILL_TO_HIT_MELEE] / 4 + p->wt / 8 +
-		p->upkeep->total_weight / 80 + shield->weight / 2;
+		p->upkeep->total_weight / 80 + object_weight_one(shield) / 2;
 
 	/* Calculate damage.  Big shields are deadly. */
 	bash_dam = damroll(shield->dd, shield->ds);
@@ -977,6 +976,7 @@ static bool attempt_shield_bash(struct player *p, struct monster *mon, bool *fea
 	bash_dam += adj_str_td[p->state.stat_ind[STAT_STR]];
 
 	/* Paranoia. */
+	if (bash_dam <= 0) return false;
 	bash_dam = MIN(bash_dam, 125);
 
 	if (OPT(p, show_damage)) {
@@ -1291,8 +1291,9 @@ struct attack_result make_ranged_shot(struct player *p,
 
 	if (!OPT(p, birth_percent_damage)) {
 		result.dmg = ranged_damage(p, mon, ammo, bow, b, s);
-		result.dmg = critical_shot(p, mon, ammo->weight, ammo->to_h,
-			result.dmg, true, &result.msg_type);
+		result.dmg = critical_shot(p, mon, object_weight_one(ammo),
+			object_to_hit(ammo), result.dmg, true,
+			&result.msg_type);
 	} else {
 		result.dmg = o_ranged_damage(p, mon, ammo, bow, b, s, &result.msg_type);
 	}
@@ -1330,8 +1331,9 @@ struct attack_result make_ranged_throw(struct player *p,
 
 	if (!OPT(p, birth_percent_damage)) {
 		result.dmg = ranged_damage(p, mon, obj, NULL, b, s);
-		result.dmg = critical_shot(p, mon, obj->weight, obj->to_h,
-			result.dmg, false, &result.msg_type);
+		result.dmg = critical_shot(p, mon, object_weight_one(obj),
+			object_to_hit(obj), result.dmg, false,
+			&result.msg_type);
 	} else {
 		result.dmg = o_ranged_damage(p, mon, obj, NULL, b, s, &result.msg_type);
 	}
@@ -1443,7 +1445,7 @@ void do_cmd_throw(struct command *cmd) {
 		inven_takeoff(obj);
 	}
 
-	weight = MAX(obj->weight, 10);
+	weight = MAX(object_weight_one(obj), 10);
 	range = MIN(((str + 20) * 10) / weight, 10);
 
 	ranged_helper(player, obj, dir, range, shots, attack, ranged_hit_types,

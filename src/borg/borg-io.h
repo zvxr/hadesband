@@ -48,6 +48,11 @@ extern errr borg_what_text(int x, int y, int n, uint8_t *a, char *s);
 extern void borg_note(const char *what);
 
 /*
+ * Memorize a warning, Log it, Search it, and Display it in pieces
+ */
+extern void borg_warning(const char *what);
+
+/*
  * Add a keypress to the "queue" (fake event)
  */
 extern errr borg_keypress(keycode_t k);
@@ -56,6 +61,16 @@ extern errr borg_keypress(keycode_t k);
  * Add a keypresses to the "queue" (fake event)
  */
 extern errr borg_keypresses(const char *str);
+
+/*
+ * Add a keypresses to history
+ */
+extern void save_keypress_history(struct keypress *k);
+
+/*
+ * Dump keypress history
+ */
+extern void borg_dump_recent_keys(int num);
 
 /*
  * Get the next Borg keypress
@@ -76,7 +91,7 @@ extern keycode_t borg_get_queued_direction(void);
 /*
  * Handle the é and á in some names
  */
-extern char *borg_massage_special_chars(char *name, char *memory);
+extern char *borg_massage_special_chars(char *name);
 
 extern void borg_init_io(void);
 extern void borg_free_io(void);

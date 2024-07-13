@@ -1245,34 +1245,14 @@ static void modifier_to_skill(int modind, int *skillind, int *skill2mod_num,
 
 static int get_timed_element_effect(const struct player *p, int ind)
 {
-	int result;
+	int i;
 
-	switch (ind) {
-	case ELEM_ACID:
-		result = p->timed[TMD_OPP_ACID] ? 1 : 0;
-		break;
-
-	case ELEM_ELEC:
-		result = p->timed[TMD_OPP_ELEC] ? 1 : 0;
-		break;
-
-	case ELEM_FIRE:
-		result = p->timed[TMD_OPP_FIRE] ? 1 : 0;
-		break;
-
-	case ELEM_COLD:
-		result = p->timed[TMD_OPP_COLD] ? 1 : 0;
-		break;
-
-	case ELEM_POIS:
-		result = p->timed[TMD_OPP_POIS] ? 1 : 0;
-		break;
-
-	default:
-		result = 0;
-		break;
+	for (i = 0; i < TMD_MAX; ++i) {
+		if (p->timed[i] && timed_effects[i].temp_resist == ind) {
+			return 1;
+		}
 	}
-	return result;
+	return 0;
 }
 
 
@@ -1821,8 +1801,8 @@ static enum parser_error parse_entry_name(struct parser *p)
 		if (streq(name, embryo->entry->name)) {
 			/*
 			 * Strange case since the last record is the same as
-			 * the this one.  Simply proceeed to modify the
-			 * previous record without a warning.
+			 * this one.  Simply proceeed to modify the previous
+			 * record without a warning.
 			 */
 			return PARSE_ERROR_NONE;
 		}

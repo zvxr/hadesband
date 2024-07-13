@@ -1114,8 +1114,7 @@ bool borg_caution(void)
         || borg.goal.fleeing_lunal || borg.goal.fleeing_munchkin
         || ((pos_danger > avoidance
                 || (borg.trait[BI_CLEVEL] < 5 && pos_danger > avoidance / 2))
-            && borg_grids[borg.c.y][borg.c.x].feat
-                   == FEAT_LESS)) /* danger and standing on stair */
+            && on_upstair)) /* danger and standing on stair */
     {
         if (borg.ready_morgoth == 0 && !borg.trait[BI_KING]) {
             borg.stair_less = true;
@@ -1142,14 +1141,16 @@ bool borg_caution(void)
         if ((char *)NULL == borg_prepared(borg.trait[BI_CDEPTH] + 1))
             borg.stair_more = true;
 
-        if (!track_less.num
+        /* don't go down if we can go up and are hungry */
+        if (track_less.num
             && (borg.trait[BI_CURLITE] == 0 || borg.trait[BI_ISHUNGRY]
                 || borg.trait[BI_ISWEAK] || borg.trait[BI_FOOD] < 2))
             borg.stair_more = false;
 
-        /* If I need to sell crap, then don't go down */
-        if (borg.trait[BI_CDEPTH] && borg.trait[BI_CLEVEL] < 25
-            && borg.trait[BI_GOLD] < 25000 && borg_count_sell() >= 13)
+        /* If I need to sell crap, then don't go down if I can go up */
+        if (track_less.num && borg.trait[BI_CDEPTH]
+            && borg.trait[BI_CLEVEL] < 25 && borg.trait[BI_GOLD] < 25000
+            && borg_count_sell() >= 13)
             borg.stair_more = false;
 
         /* Its ok to go one level deep if evading scary guy */
@@ -1167,12 +1168,11 @@ bool borg_caution(void)
         borg_grid *ag = &borg_grids[borg.c.y][borg.c.x];
 
         /* Usable stairs */
-        if (ag->feat == FEAT_LESS || borg.on_upstairs || on_upstair) {
+        if (ag->feat == FEAT_LESS || on_upstair) {
             /* Log it */
             borg_note(format("# Leaving via up stairs."));
 
             /* Take the stairs */
-            borg.on_dnstairs = true;
             borg_keypress('<');
 
             /* Success */
@@ -1186,7 +1186,7 @@ bool borg_caution(void)
         borg_grid *ag = &borg_grids[borg.c.y][borg.c.x];
 
         /* Usable stairs */
-        if (ag->feat == FEAT_MORE || borg.on_dnstairs || on_dnstair) {
+        if (ag->feat == FEAT_MORE || on_dnstair) {
             /* Do these if not lunal mode */
             if (!borg.goal.fleeing_lunal && !borg.goal.fleeing_munchkin) {
                 if (borg_prep_leave_level_spells())
@@ -1194,7 +1194,6 @@ bool borg_caution(void)
             }
 
             /* Take the stairs */
-            borg.on_upstairs = true;
             borg_keypress('>');
 
             /* Success */

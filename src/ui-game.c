@@ -216,6 +216,7 @@ struct cmd_info cmd_hidden[] =
 	{ "Steal from a monster", { 's' }, CMD_STEAL, NULL, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Walk", { ';' }, CMD_WALK, NULL, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Start running", { '.', ',' }, CMD_RUN, NULL, NULL, 0, NULL, NULL, NULL, 0 },
+	{ "Start exploring", { 'p' }, CMD_EXPLORE, NULL, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Stand still", { ',', '.' }, CMD_HOLD, NULL, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Center map", { KTRL('L'), '@' }, CMD_NULL, do_cmd_center_map, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Toggle wizard mode", { KTRL('W') }, CMD_NULL, do_cmd_wizard, NULL, 0, NULL, NULL, NULL, 0 },
@@ -787,9 +788,9 @@ static void select_savefile(bool retry, bool *new_game)
 		if (suffix(savefile, details->fnam)) {
 			/*
 			 * Matches what's in savefile; put it second in the
-			 * the list and mark it as the default entry.  If
-			 * not forcing the name, clear savefile and arg_name
-			 * so the new game option won't be set up to overwrite
+			 * list and mark it as the default entry.  If not
+			 * forcing the name, clear savefile and arg_name so
+			 * the new game option won't be set up to overwrite
 			 * an existing savefile.
 			 */
 			if (count != 1) {

@@ -211,7 +211,7 @@ static bool borg_think_dungeon_lunal(void)
         return (true);
 
     /* Crush junk if convenient */
-    if (safe_place && borg_crush_junk())
+    if (safe_place && borg_drop_junk())
         return (true);
 
     /** Track down some interesting gear **/
@@ -285,7 +285,6 @@ static bool borg_think_dungeon_lunal(void)
 
             if (tmp_ag->feat == FEAT_LESS) {
                 /* Take the Up Stair */
-                borg.on_dnstairs = true;
                 borg_keypress('<');
                 return (true);
             }
@@ -333,8 +332,7 @@ static bool borg_think_dungeon_lunal(void)
 
             /* if standing on a stair */
             if (ag->feat == FEAT_MORE) {
-                /* Take the DownStair */
-                borg.on_upstairs = true;
+                /* Take the downstairs */
                 borg_keypress('>');
 
                 return (true);
@@ -388,7 +386,6 @@ static bool borg_think_dungeon_lunal(void)
 
             if (tmp_ag->feat == FEAT_LESS) {
                 /* Take the Up Stair */
-                borg.on_dnstairs = true;
                 borg_keypress('<');
                 return (true);
             }
@@ -557,7 +554,7 @@ static bool borg_think_dungeon_munchkin(void)
         return (true);
 
     /* Crush junk if convenient */
-    if (safe_place && borg_crush_junk())
+    if (safe_place && borg_drop_junk())
         return (true);
 
     /* Learn learn and test useful spells */
@@ -648,7 +645,6 @@ static bool borg_think_dungeon_munchkin(void)
 
             if (tmp_ag->feat == FEAT_LESS) {
                 /* Take the Up Stair */
-                borg.on_dnstairs = true;
                 borg_keypress('<');
                 return (true);
             }
@@ -710,7 +706,6 @@ static bool borg_think_dungeon_munchkin(void)
 
             if (tmp_ag->feat == FEAT_LESS) {
                 /* Take the Up Stair */
-                borg.on_dnstairs = true;
                 borg_keypress('<');
                 return (true);
             }
@@ -764,7 +759,6 @@ static bool borg_think_dungeon_munchkin(void)
             /* if standing on a stair */
             if (ag->feat == FEAT_MORE) {
                 /* Take the DownStair */
-                borg.on_upstairs = true;
                 borg_keypress('>');
 
                 return (true);
@@ -820,7 +814,6 @@ static bool borg_think_dungeon_munchkin(void)
 
             if (tmp_ag->feat == FEAT_LESS) {
                 /* Take the Up Stair */
-                borg.on_dnstairs = true;
                 borg_keypress('<');
                 return (true);
             }
@@ -911,13 +904,11 @@ static bool borg_think_dungeon_munchkin(void)
             return (true);
         if (ag->feat == FEAT_LESS) {
             /* Take the Up Stair */
-            borg.on_dnstairs = true;
             borg_keypress('<');
             return (true);
         }
         if (ag->feat == FEAT_MORE) {
             /* Take the Stair */
-            borg.on_upstairs = true;
             borg_keypress('>');
             return (true);
         }
@@ -960,7 +951,6 @@ static bool borg_think_dungeon_brave(void)
     /* Usable stairs */
     if (borg_grids[borg.c.y][borg.c.x].feat == FEAT_MORE) {
         /* Take the stairs */
-        borg.on_upstairs = true;
         borg_note("# Fleeing via stairs.");
         borg_keypress('>');
 
@@ -1220,6 +1210,10 @@ bool borg_think_dungeon(void)
         return (true);
     }
 
+    /* if standing on something valueless, destroy it */
+    if (borg_destroy_floor())
+        return true;
+ 
     /* Hack -- prevent clock wrapping Step 2*/
     if (borg_t >= 30000) {
         /* Panic */
@@ -1569,7 +1563,7 @@ bool borg_think_dungeon(void)
             return (true);
 
         /* If full of items, we wont be able to buy stuff, crush stuff */
-        if (borg_items[PACK_SLOTS - 1].iqty && borg_crush_hole())
+        if (borg_items[PACK_SLOTS - 1].iqty && borg_drop_hole(false))
             return (true);
 
         if (borg_choose_shop()) {
@@ -1861,16 +1855,16 @@ bool borg_think_dungeon(void)
     if (borg_recharging())
         return (true);
 
-    /* Destroy junk */
-    if (borg_crush_junk())
+    /* Drop junk */
+    if (borg_drop_junk())
         return (true);
 
-    /* Destroy items to make space */
-    if (borg_crush_hole())
+    /* Drop items to make space */
+    if (borg_drop_hole(false))
         return (true);
 
-    /* Destroy items if we are slow */
-    if (borg_crush_slow())
+    /* Drop items if we are slow */
+    if (borg_drop_slow())
         return (true);
 
     /*** Flow towards objects ***/

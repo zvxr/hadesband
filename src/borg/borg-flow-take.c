@@ -29,6 +29,7 @@
 #include "borg-cave-view.h"
 #include "borg-cave.h"
 #include "borg-flow-kill.h"
+#include "borg-flow-misc.h"
 #include "borg-flow-stairs.h"
 #include "borg-io.h"
 #include "borg-item-val.h"
@@ -46,6 +47,23 @@ int16_t    borg_takes_cnt;
 int16_t    borg_takes_nxt;
 borg_take *borg_takes;
 
+struct object * borg_get_top_object(struct chunk *c, struct loc grid)
+{
+    /* Cheat the Actual item */
+    struct object *o_ptr;
+    o_ptr = square_object(cave, grid);
+    while (o_ptr) {
+        if ((o_ptr->known && o_ptr->known->notice & OBJ_NOTICE_IGNORE))
+            o_ptr = o_ptr->next;
+        else if (o_ptr->kind->ignore)
+            o_ptr = o_ptr->next;
+        else
+            break;
+    }
+
+    return o_ptr;
+}
+
 /*
  * Attempt to guess what kind of object is at the given location.
  *
@@ -59,8 +77,7 @@ static struct object_kind *borg_guess_kind(uint8_t a, wchar_t c, int y, int x)
      */
 
     /* Cheat the Actual item */
-    struct object *o_ptr;
-    o_ptr = square_object(cave, loc(x, y));
+    struct object *o_ptr = borg_get_top_object(cave, loc(x, y));
     if (!o_ptr)
         return NULL;
     return (o_ptr->kind);
@@ -181,7 +198,7 @@ static int borg_new_take(struct object_kind *kind, int y, int x)
 
     borg_grid *ag        = &borg_grids[y][x];
 
-    struct object *o_ptr = square_object(cave, loc(x, y));
+    struct object *o_ptr = borg_get_top_object(cave, loc(x, y));
 
     /* Look for a "dead" object */
     for (i = 1; (n < 0) && (i < borg_takes_nxt); i++) {
@@ -249,6 +266,9 @@ static int borg_new_take(struct object_kind *kind, int y, int x)
      */
     if (object_fully_known(o_ptr)
         && (o_ptr->to_a < 0 || o_ptr->to_d < 0 || o_ptr->to_h < 0))
+        take->value = -10;
+
+    if (o_ptr->note && prefix(quark_str(o_ptr->note), "borg ignore"))
         take->value = -10;
 
     /* Note */
@@ -408,7 +428,7 @@ bool borg_flow_take(bool viewable, int nearness)
 
     /* Missile carry limit */
     /* allow shooters to two quiver slots full */
-    if (player_has(player, PF_FAST_SHOT))
+    if (borg.trait[BI_FAST_SHOTS])
         full_quiver = (z_info->quiver_slot_size - 1) * 2;
     else
         full_quiver = z_info->quiver_slot_size - 1;
@@ -519,9 +539,10 @@ bool borg_flow_take(bool viewable, int nearness)
         /* Clear the flow codes */
         borg_flow_clear();
 
+
         /* Check the distance to stair for this proposed grid and leash*/
-        if (nearness > 5 && borg_flow_cost_stair(y, x, b_stair) > leash
-            && borg.trait[BI_CLEVEL] < 20)
+        if (nearness > 5 && borg.trait[BI_CLEVEL] < 20
+            && borg_flow_cost_stair(y, x, b_stair) > leash)
             continue;
 
         /* Careful -- Remember it */
@@ -628,12 +649,8 @@ bool borg_flow_take_scum(bool viewable, int nearness)
         if (viewable && !(ag->info & BORG_VIEW))
             continue;
 
-        /* Clear the flow codes */
-        borg_flow_clear();
-
-        /* Check the distance to stair for this proposed grid with leash */
-        if (borg_flow_cost_stair(y, x, b_stair) > borg.trait[BI_CLEVEL] * 3 + 9
-            && borg.trait[BI_CLEVEL] < 20)
+        /* don't go too far from the stairs */
+        if (borg_flow_far_from_stairs(x, y, b_stair))
             continue;
 
         /* Careful -- Remember it */
@@ -825,12 +842,8 @@ bool borg_flow_take_lunal(bool viewable, int nearness)
         if (viewable && !(ag->info & BORG_VIEW))
             continue;
 
-        /* Clear the flow codes */
-        borg_flow_clear();
-
-        /* Check the distance to stair for this proposed grid */
-        if (borg_flow_cost_stair(y, x, b_stair) > borg.trait[BI_CLEVEL] * 3 + 9
-            && borg.trait[BI_CLEVEL] < 20)
+        /* don't go too far from the stairs */
+        if (borg_flow_far_from_stairs(x, y, b_stair))
             continue;
 
         /* Careful -- Remember it */

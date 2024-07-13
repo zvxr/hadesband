@@ -108,6 +108,12 @@
     <ClCompile Include="src\borg\borg-flow.c">
         <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\borg\borg-formulas.c">
+        <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\borg\borg-formulas-calc.c">
+        <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\borg\borg-home-notice.c">
         <Filter>Source Files</Filter>
     </ClCompile>
@@ -744,6 +750,12 @@
         <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\borg\borg-flow.h">
+        <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\borg\borg-formulas.h">
+        <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\borg\borg-formulas-calc.h">
         <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\borg\borg-home-notice.h">
@@ -2340,7 +2352,7 @@
     <Media Include="lib\sounds\sto_man_whoohaha.mp3">
       <Filter>Resource Files\sounds</Filter>
     </Media>
-    <Media Include="lib\sounds\sum_angel_song.mp3">
+    <Media Include="lib\sounds\sum_ainu_song.mp3">
       <Filter>Resource Files\sounds</Filter>
     </Media>
     <Media Include="lib\sounds\sum_bell_crystal.mp3">

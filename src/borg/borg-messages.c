@@ -395,7 +395,7 @@ static void borg_parse_aux(char *msg, int len)
         return;
     }
     if (prefix(msg, "You bite ")) {
-        tmp = strlen("You hit ");
+        tmp = strlen("You bite ");
         strnfmt(who, 1 + len - (tmp + 1), "%s", msg + tmp);
         strnfmt(buf, 256, "HIT:%s", who);
         borg_react(msg, buf);
@@ -876,15 +876,14 @@ static void borg_parse_aux(char *msg, int len)
     }
 
     /* Check for the missing staircase */
-    if (suffix(msg, " staircase here.")) {
+    if (prefix(msg, "No known path to ") || 
+        prefix(msg, "Something is here.")) {
         /* make sure the aligned dungeon is on */
 
         /* make sure the borg does not think he's on one */
         /* Remove all stairs from the array. */
         track_less.num                      = 0;
         track_more.num                      = 0;
-        borg.on_dnstairs                    = false;
-        borg.on_upstairs                    = false;
         borg_grids[borg.c.y][borg.c.x].feat = FEAT_BROKEN;
 
         return;
@@ -1621,6 +1620,7 @@ void borg_free_messages(void)
     if (suffix_pain) {
         for (i = 0; suffix_pain[i]; ++i) {
             mem_free(suffix_pain[i]);
+            suffix_pain[i] = NULL;
         }
         mem_free(suffix_pain);
         suffix_pain = NULL;

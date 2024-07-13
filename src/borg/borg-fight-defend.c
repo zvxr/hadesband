@@ -1302,8 +1302,11 @@ static int borg_defend_aux_hero(int p1)
         return (0);
 
     /* if we are in some danger but not much, go for a quick bless */
-    if ((p1 > avoidance * 1 / 10 && p1 < avoidance * 5 / 10)
-        || (borg_fighting_unique && p1 < avoidance * 7 / 10)) {
+    /* "some danger" defined as "10% of x and not more than 50% of x */
+    /* (not more than 70% when fighting a unique) */
+    /* where x is the danger we are avoiding, usually current hp */
+    if (p1 > avoidance / 10 && 
+        p1 < (avoidance * (borg_fighting_unique ? 7 : 5)) / 10) {
         /* Simulation */
         /* hero is a low priority */
         if (borg_simulate)
@@ -1346,9 +1349,12 @@ static int borg_defend_aux_regen(int p1)
     if (!borg_spell_okay_fail(RAPID_REGENERATION, fail_allowed))
         return (0);
 
-    /* if we are in some danger but not much, go for a quick bless */
-    if ((p1 > avoidance * 1 / 10 && p1 < avoidance * 5 / 10)
-        || (borg_fighting_unique && p1 < avoidance * 7 / 10)) {
+    /* if we are in some danger but not much, go for a quick regen */
+    /* "some danger" defined as "10% of x and not more than 50% of x */
+    /* (not more than 70% when fighting a unique) */
+    /* where x is the danger we are avoiding, usually current hp */
+    if (p1 > avoidance / 10 &&
+        p1 < (avoidance * (borg_fighting_unique ? 7 : 5)) / 10) {
         /* Simulation */
         /* regen is a low priority */
         if (borg_simulate)
@@ -1389,8 +1395,11 @@ static int borg_defend_aux_berserk(int p1)
         return (0);
 
     /* if we are in some danger but not much, go for a quick bless */
-    if ((p1 > avoidance * 1 / 10 && p1 < avoidance * 5 / 10)
-        || (borg_fighting_unique && p1 < avoidance * 7 / 10)) {
+    /* "some danger" defined as "10% of x and not more than 50% of x */
+    /* (not more than 70% when fighting a unique) */
+    /* where x is the danger we are avoiding, usually current hp */
+    if (p1 > avoidance / 10 &&
+        p1 < (avoidance * (borg_fighting_unique ? 7 : 5)) / 10) {
         /* Simulation */
         /* berserk is a low priority */
         if (borg_simulate)
@@ -1405,6 +1414,47 @@ static int borg_defend_aux_berserk(int p1)
     }
 
     return (0);
+}
+
+/* 
+ * See if the borg is near something evil 
+ */
+static bool near_evil(void)
+{
+    int        i;
+    borg_grid *ag;
+    borg_kill *kill;
+
+    /* Find "nearby" monsters */
+    for (i = 1; i < borg_kills_nxt; i++) {
+        /* Monster */
+        kill = &borg_kills[i];
+
+        /* Skip dead monsters */
+        if (!kill->r_idx)
+            continue;
+
+        /* Require current knowledge */
+        if (kill->when < borg_t - 2)
+            continue;
+
+        /* Get grid */
+        ag = &borg_grids[kill->pos.y][kill->pos.x];
+
+        /* don't count off-screen */
+        if (!(ag->info & BORG_OKAY))
+            continue;
+
+        /* Check the distance XXX XXX XXX */
+        if (distance(borg.c, kill->pos) > 3)
+            continue;
+
+        /* Monster race is evil */
+        if (rf_has((r_info[kill->r_idx].flags), RF_EVIL))
+            return true;
+    }
+
+    return false;
 }
 
 /*
@@ -1426,12 +1476,17 @@ static int borg_defend_aux_smite_evil(int p1)
     if (!borg_spell_okay_fail(SMITE_EVIL, fail_allowed))
         return (0);
 
-    // !FIX !TODO !AJG we should probably figure out if we are about to fight
-    // something evil.
+    // if the borg is not about to fight something evil.
+    if (!near_evil())
+        return 0;
 
-    /* if we are in some danger but not much, go for a quick bless */
-    if ((p1 > avoidance * 1 / 10 && p1 < avoidance * 5 / 10)
-        || (borg_fighting_unique && p1 < avoidance * 7 / 10)) {
+    /* if we are in some danger but not much, go for a quick smite */
+    /* "some danger" defined as "10% of x and not more than 50% of x */
+    /* (not more than 70% when fighting a unique) */
+    /* where x is the danger we are avoiding, usually current hp */
+    if (p1 > avoidance / 10 &&
+        p1 < (avoidance * (borg_fighting_unique ? 7 : 5)) / 10) {
+
         /* Simulation */
         /* smite evil is a low priority */
         if (borg_simulate)
@@ -1771,23 +1826,37 @@ static int borg_defend_aux_mass_genocide(int p1)
  */
 static int borg_defend_aux_genocide(int p1)
 {
-    int i, p, u, b_i = 0;
-    int p2     = 0;
-    int threat = 0;
-    int max    = 1;
+    int i;
 
-    int b_p[256];
-    int b_num[256];
-    int b_threat[256];
-    int b_threat_num[256];
+    /* current power of kill */
+    int p = 0;
+    /* power of kill to level */
+    int p_threat = 0;
+    /* power of danger without this kill */
+    int p_without_kill = 0;
+    int max_threat;
+
+    /* character of the kill */
+    unsigned char kill_char;
+
+    /* arrays based on kill's char */
+    int b_kill_count[UCHAR_MAX];
+    /* current danger to the borg */
+    int b_danger[UCHAR_MAX];
+    /* danger in general */
+    int b_threat[UCHAR_MAX];
+
+    borg_kill           *kill;
+    struct monster_race *r_ptr;
 
     int total_danger_to_me            = 0;
 
     char          tmp_genocide_target = (char)0;
-    unsigned char b_threat_id         = (char)0;
+    unsigned char biggest_threat;
+    unsigned char biggest_danger;
 
-    bool genocide_spell               = false;
-    int  fail_allowed                 = 25;
+    bool genocide_spell = false;
+    int  fail_allowed   = 25;
 
     /* if very scary, do not allow for much chance of fail */
     if (p1 > avoidance)
@@ -1831,33 +1900,29 @@ static int borg_defend_aux_genocide(int p1)
         return (0);
 
     /* two methods to calculate the threat:
-     *1. cycle each character of monsters on screen
-     *   collect collective threat of each char
-     *2  select race of most dangerous guy, and choose him.
-     * Method 2 is cheaper and faster.
-     *
-     * The borg uses method #1
+     * 1. cycle each character of monsters on the level
+     *    sum collective threat of each char to the player
+     * 2. cycle each character of monsters on the level
+     *    sum collective threat of each char in general
      */
 
     /* Clear previous dangers */
-    for (i = 0; i < 256; i++) {
-        b_p[i]          = 0;
-        b_num[i]        = 0;
+    biggest_danger = (char)0;
+    biggest_threat = (char)0;
+    for (i = 0; i < UCHAR_MAX; i++) {
+        b_danger[i]     = 0;
+        b_kill_count[i] = 0;
         b_threat[i]     = 0;
-        b_threat_num[i] = 0;
     }
+
+    /* start with a danger of 1 so non-dangerous (0) will not be saved */
+    max_threat = 1;
 
     /* Find a monster and calculate its danger */
     for (i = 1; i < borg_kills_nxt; i++) {
-        borg_kill           *kill;
-        struct monster_race *r_ptr;
-
         /* Monster */
         kill  = &borg_kills[i];
         r_ptr = &r_info[kill->r_idx];
-
-        /* Our char of the monster */
-        u = r_ptr->d_char;
 
         /* Skip dead monsters */
         if (!kill->r_idx)
@@ -1872,175 +1937,189 @@ static int borg_defend_aux_genocide(int p1)
         p = borg_danger_one_kill(borg.c.y, borg.c.x, 1, i, true, true);
 
         /* Danger of this monster to his own grid */
-        threat
+        p_threat
             = borg_danger_one_kill(kill->pos.y, kill->pos.x, 1, i, true, true);
 
-        /* store the danger for this type of monster */
-        b_p[u] = b_p[u] + p; /* Danger to me */
-        total_danger_to_me += p;
-        b_threat[u] = b_threat[u] + threat; /* Danger to monsters grid */
+        /* Our char of the monster.  This is used because genocide uses a */
+        /* single char designation for selecting the kill */
+        kill_char = (unsigned char)r_ptr->d_char;
 
-        /* Store the number of this type of monster */
-        b_num[u]++;
-        b_threat_num[u]++;
+        /* total danger to me */
+        total_danger_to_me += p;
+
+        /* store the danger for this type of monster */
+        /* Danger to me */
+        b_danger[kill_char] = b_danger[kill_char] + p;
+        /* Danger added to level */
+        b_threat[kill_char] = b_threat[kill_char] + p_threat;
+
+        /* Store the count of this type of monster */
+        b_kill_count[kill_char]++;
     }
 
     /* Now, see which race contributes the most danger
      * both to me and danger on the level
      */
+    for (i = 0; i < UCHAR_MAX; i++) {
 
-    for (i = 0; i < 256; i++) {
-
-        /* skip the empty ones */
-        if (b_num[i] == 0 && b_threat_num[i] == 0)
+        /* skip the ones not found on this level */
+        if (b_kill_count[i] == 0)
             continue;
 
         /* for the race threatening me right now */
-        if (b_p[i] > max) {
+        if (b_danger[i] > max_threat) {
             /* track the race */
-            max = b_p[i];
-            b_i = i;
+            max_threat     = b_danger[i];
+            biggest_danger = i;
 
             /* note the danger with this race gone.  Note that the borg does max
-             * his danger at 2000 points.  It could be much, much higher at
-             * depth 99 or so. What the borg should do is recalculate the danger
-             * without considering this monster instead of this hack which does
-             * not yeild the true danger.
+             * his danger from a single monster at 2000 points.  It could be
+             * much, much higher at depth 99 or so. What the borg should do is
+             * recalculate the danger without considering this monster instead
+             * of this hack which does not yield the true danger.
              */
-            p2 = total_danger_to_me - b_p[b_i];
+            p_without_kill = total_danger_to_me - b_danger[biggest_danger];
         }
 
         /* for this race on the whole level */
-        if (b_threat[i] > max) {
+        if (b_threat[i] > max_threat) {
             /* track the race */
-            max         = b_threat[i];
-            b_threat_id = i;
+            max_threat     = b_threat[i];
+            biggest_threat = i;
         }
 
         /* Leave an interesting note for debugging */
         if (!borg_simulate)
             borg_note(format("# Race '%c' is a threat with total danger %d "
                              "from %d individuals.",
-                i, b_threat[i], b_threat_num[i]));
+                i, b_threat[i], b_kill_count[i]));
     }
 
     /* This will track and decide if it is worth genociding this dangerous race
      * for the level */
-    if (b_threat_id) {
+    if (biggest_threat) {
         /* Not if I am weak (should have 400 HP really in case of a Pit) */
         if (borg.trait[BI_CURHP] < 375)
-            b_threat_id = 0;
+            biggest_threat = 0;
 
         /* The threat must be real */
-        if (b_threat[b_threat_id] < borg.trait[BI_MAXHP] * 3)
-            b_threat_id = 0;
+        if (b_threat[biggest_threat] < borg.trait[BI_MAXHP] * 3)
+            biggest_threat = 0;
 
         /* Too painful to cast it (padded to be safe incase of unknown monsters)
          */
-        if ((b_num[b_threat_id] * 4) * 12 / 10 >= borg.trait[BI_CURHP])
-            b_threat_id = 0;
+        if ((b_kill_count[biggest_threat] * 4) * 12 / 10
+            >= borg.trait[BI_CURHP])
+            biggest_threat = 0;
 
         /* Loads of monsters might be a pit, in which case, try not to nuke them
          */
-        if (b_num[b_threat_id] >= 75)
-            b_threat_id = 0;
+        if (b_kill_count[biggest_threat] >= 75)
+            biggest_threat = 0;
 
         /* Do not perform in Danger */
         if (p1 > avoidance / 5)
-            b_threat_id = 0;
+            biggest_threat = 0;
 
         /* report the danger and most dangerous race */
-        if (b_threat_id) {
+        if (biggest_threat) {
             borg_note(format("# Race '%c' is a real threat with total danger "
                              "%d from %d individuals.",
-                b_threat_id, b_threat[b_threat_id], b_threat_num[b_threat_id]));
+                biggest_threat, b_threat[biggest_threat],
+                b_kill_count[biggest_threat]));
         }
 
         /* Genociding this race would reduce the danger of the level */
-        tmp_genocide_target = b_threat_id;
+        tmp_genocide_target = biggest_threat;
     }
 
     /* Consider the immediate threat genocide */
-    if (b_i) {
+    if (biggest_danger) {
         /* Too painful to cast it (padded to be safe incase of unknown monsters)
          */
-        if ((b_num[b_i] * 4) * 12 / 10 >= borg.trait[BI_CURHP])
-            b_i = 0;
+        if ((b_kill_count[biggest_danger] * 4) * 12 / 10
+            >= borg.trait[BI_CURHP])
+            biggest_danger = 0;
 
         /* See if he is in real danger, generally,
          * or deeper in the dungeon, conservatively,
          */
         if (p1 < avoidance * 7 / 10
             || (borg.trait[BI_CDEPTH] > 75 && p1 < avoidance * 6 / 10))
-            b_i = 0;
+            biggest_danger = 0;
 
         /* Did this help improve my situation? */
-        if (p2 <= (avoidance / 2))
-            b_i = 0;
+        if (p_without_kill <= (avoidance / 2))
+            biggest_danger = 0;
 
         /* Genociding this race would help me immediately */
-        tmp_genocide_target = b_i;
+        if (biggest_danger)
+            tmp_genocide_target = biggest_danger;
     }
 
     /* Complete the genocide routine */
     if (tmp_genocide_target) {
         if (borg_simulate) {
-            /* Simulation for immediate threat */
-            if (b_i)
-                return (p1 - p2);
+            /* Simulation for immediate danger */
+            if (biggest_danger)
+                return (p1 - p_without_kill);
 
-            /* Simulation for immediate threat */
-            if (b_threat_id)
-                return (b_threat[b_threat_id]);
+            /* Simulation for threat to level */
+            if (biggest_threat)
+                return (b_threat[biggest_threat]);
         }
 
-        if (b_i)
+        if (biggest_danger)
             borg_note(
                 format("# Banishing race '%c' (qty:%d).  Danger after spell:%d",
-                    tmp_genocide_target, b_num[b_i], p2));
-        if (b_threat_id)
+                    tmp_genocide_target, b_kill_count[biggest_danger],
+                    p_without_kill));
+        if (biggest_threat)
             borg_note(
                 format("# Banishing race '%c' (qty:%d).  Danger from them:%d",
-                    tmp_genocide_target, b_threat_num[b_threat_id],
-                    b_threat[b_threat_id]));
+                    tmp_genocide_target, b_kill_count[biggest_threat],
+                    b_threat[biggest_threat]));
 
         /* do it! ---use scrolls first since they clutter inventory */
         if (borg_read_scroll(sv_scroll_banishment) || borg_spell(BANISHMENT)
             || borg_activate_item(act_banishment)
             || borg_use_staff(sv_staff_banishment)) {
             /* and the winner is.....*/
-            borg_keypress((tmp_genocide_target));
+            borg_keypress(tmp_genocide_target);
+
+            /* Remove this race from the borg_kill */
+            for (i = 1; i < borg_kills_nxt; i++) {
+                /* Monster */
+                kill  = &borg_kills[i];
+                r_ptr = &r_info[kill->r_idx];
+
+                /* Our char of the monster */
+                if (r_ptr->d_char != tmp_genocide_target)
+                    continue;
+
+                /* we do not genocide uniques */
+                if (rf_has(r_ptr->flags, RF_UNIQUE))
+                    continue;
+
+                /* remove this monster */
+                borg_delete_kill(i);
+            }
         }
 
-        /* Remove this race from the borg_kill */
-        for (i = 1; i < borg_kills_nxt; i++) {
-            borg_kill           *kill;
-            struct monster_race *r_ptr;
+        /* immediate danger to borg */
+        if (biggest_danger)
+            return (p1 - p_without_kill);
 
-            /* Monster */
-            kill  = &borg_kills[i];
-            r_ptr = &r_info[kill->r_idx];
-
-            /* Our char of the monster */
-            if (r_ptr->d_char != tmp_genocide_target)
-                continue;
-
-            /* we do not genocide uniques */
-            if (rf_has(r_ptr->flags, RF_UNIQUE))
-                continue;
-
-            /* remove this monster */
-            borg_delete_kill(i);
-        }
-
-        return (p1 - p2);
+        /* threat to level */
+        if (biggest_threat)
+            return (b_threat[biggest_threat]);
     }
     /* default to can't do it. */
     return (0);
 }
 
 /* This will cast the genocide spell on Hounds and other
- * really nasty guys like Angels, Demons, Dragons and Liches
+ * really nasty guys like Ainur, Demons, Dragons and Liches
  * at the beginning of each level or when they get too numerous.
  * The acceptable numbers are defined in borg_nasties_limit[]
  * The definition for the list is in borg-fight-attack.h
@@ -2142,15 +2221,22 @@ static int borg_defend_aux_earthquake(int p1)
     borg_kill *kill;
 
     /* Cast the spell */
-    if (!borg_simulate
-        && (borg_spell(TREMOR) || borg_spell(QUAKE) || borg_spell(GRONDS_BLOW)
-            || borg_activate_item(act_earthquakes))) {
+    if (!borg_simulate) {
         /* Must make a new Sea too */
         borg_needs_new_sea = true;
-        return (p2);
+
+        /* for now aim Tremor around the borg */
+        if (borg_spell(TREMOR)) {
+            borg_keypress('*');
+            borg_keypress('5');
+        } else
+            /* other spells don't need aim */
+            if (borg_spell(QUAKE) || borg_spell(GRONDS_BLOW)
+                || borg_activate_item(act_earthquakes))
+                return (p2);
     }
 
-    /* Cant when screwed */
+    /* Can't when screwed */
     if (borg.trait[BI_ISBLIND] || borg.trait[BI_ISCONFUSED]
         || borg.trait[BI_ISFORGET])
         return (0);
@@ -2619,7 +2705,7 @@ static int borg_defend_aux_inviso(int p1)
  * Used only if I am hit by an unseen guy.
  * Lights up a hallway.
  */
-static int borg_defend_aux_lbeam(void)
+static int borg_defend_aux_lbeam(int p1)
 {
     bool hallway = false;
     int  x       = borg.c.x;
@@ -2631,7 +2717,7 @@ static int borg_defend_aux_lbeam(void)
         return (0);
 
     /* Light Beam section to spot non seen guys */
-    /* not recent, dont bother */
+    /* not recent, don't bother */
     if (borg_t > (borg.need_see_invis + 2))
         return (0);
 
@@ -2677,10 +2763,7 @@ static int borg_defend_aux_lbeam(void)
         return (0);
 
     /* Make sure I am not in too much danger */
-    /* XXX '(' replaces previous use of global variable that was always
-     * '('.  This is a BUG.  I however have no idea how to fix it bceause
-     * I don't know the code well enough. -AS */
-    if (borg_simulate && '(' > avoidance * 3 / 4)
+    if (borg_simulate && p1 > (avoidance * 3) / 4)
         return (0);
 
     /* test the beam function */
@@ -3312,7 +3395,7 @@ static int borg_defend_aux_light_morgoth(void)
  * Simulate/Apply the optimal result of using the given "type" of defense
  * p1 is the current danger level (passed in for effiency)
  */
-static int borg_defend_aux(int what, int p1)
+static int borg_calculate_defense_effectiveness(int what, int p1)
 {
     /* Analyze */
     switch (what) {
@@ -3395,7 +3478,7 @@ static int borg_defend_aux(int what, int p1)
         return (borg_defend_aux_inviso(p1));
     }
     case BD_LIGHT_BEAM: {
-        return (borg_defend_aux_lbeam());
+        return (borg_defend_aux_lbeam(p1));
     }
     case BD_SHIFT_PANEL: {
         return (borg_defend_aux_panel_shift());
@@ -3455,7 +3538,7 @@ bool borg_defend(int p1)
     /* Analyze the possible setup moves */
     for (g = 0; g < BD_MAX; g++) {
         /* Simulate */
-        n = borg_defend_aux(g, p1);
+        n = borg_calculate_defense_effectiveness(g, p1);
 
         /* Track "best" attack */
         if (n <= b_n)
@@ -3478,7 +3561,7 @@ bool borg_defend(int p1)
     borg_simulate = false;
 
     /* Instantiate */
-    (void)borg_defend_aux(b_g, p1);
+    (void)borg_calculate_defense_effectiveness(b_g, p1);
 
     /* Success */
     return (true);

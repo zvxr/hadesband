@@ -381,15 +381,21 @@ void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunneling,
                 && !twitchy)
                 continue;
 
-            /* Avoid Monsters if Desperate, lunal */
-            if ((ag->kill)
-                && (borg_desperate || borg.lunal_mode || borg.munchkin_mode))
-                continue;
+            /* flowing into monsters */
+            if ((ag->kill)) {
+                /* Avoid if Desperate, lunal */
+                if (borg_desperate || borg.lunal_mode || borg.munchkin_mode)
+                    continue;
 
-            /* Avoid Monsters if low level, unless twitchy */
-            if ((ag->kill) && !twitchy && borg.trait[BI_FOOD] >= 2
-                && borg.trait[BI_MAXCLEVEL] < 5)
-                continue;
+                /* Avoid if afraid */
+                if (borg.trait[BI_ISAFRAID])
+                    continue;
+
+                /* Avoid if low level, unless twitchy */
+                if (!twitchy && borg.trait[BI_FOOD] >= 2
+                    && borg.trait[BI_MAXCLEVEL] < 5)
+                    continue;
+            }
 
             /* Avoid shop entry points if I am not heading to that shop */
             if (borg.goal.shop >= 0 && feat_is_shop(ag->feat)
@@ -696,10 +702,8 @@ static bool borg_play_step(int y2, int x2)
         /* Up stairs. Cheat the game grid info in.
          * (cave_feat[borg.c.y][borg.c.x] == FEAT_LESS) */
         if (ag->feat == FEAT_LESS) {
-            /* Stand on stairs */
-            borg.on_dnstairs = true;
-            borg.goal.less   = false;
 
+            borg.goal.less   = false;
             borg_keypress('<');
 
             /* Success */
@@ -767,7 +771,7 @@ static bool borg_play_step(int y2, int x2)
 
         if (strstr(take->kind->name, "chest")
             && !strstr(take->kind->name, "Ruined")) {
-            struct object *o_ptr = square_object(cave, loc(x2, y2));
+            struct object *o_ptr = borg_get_top_object(cave, loc(x2, y2));
 
             /* this should only happen when something picks up the chest */
             /* outside the borgs view.  */

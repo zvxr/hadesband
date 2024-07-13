@@ -137,10 +137,11 @@ errr borg_what_text(int x, int y, int n, uint8_t *a, char *s)
  */
 static void borg_info(const char *what) { }
 
+
 /*
  * Memorize a message, Log it, Search it, and Display it in pieces
  */
-void borg_note(const char *what)
+static void borg_note_internal(bool warning, const char *what)
 {
     int j, n, i, k;
 
@@ -149,7 +150,11 @@ void borg_note(const char *what)
     term *old = Term;
 
     /* Memorize it */
-    message_add(what, MSG_GENERIC);
+    if (warning) {
+        msg("%s", what);
+    } else {
+        message_add(what, MSG_GENERIC);
+    }
 
     /* Log the message */
     borg_info(what);
@@ -263,12 +268,31 @@ void borg_note(const char *what)
     }
 }
 
+void borg_warning(const char *what)
+{
+    borg_note_internal(true, what);
+}
+
+/*
+ * Memorize a message, Log it, Search it, and Display it in pieces
+ */
+void borg_note(const char *what)
+{
+    borg_note_internal(false, what);
+}
+
 /*
  * A Queue of keypresses to be sent
  */
 static keycode_t *borg_key_queue;
 static int16_t    borg_key_head;
 static int16_t    borg_key_tail;
+
+/*
+ * A history of keypresses to be sent
+ */
+static struct keypress  *borg_key_history;
+static int16_t    borg_key_history_head;
 
 /*
  * since the code now only asks for a direction if
@@ -290,15 +314,6 @@ errr borg_keypress(keycode_t k)
         return (-1);
     }
 
-    /* Hack -- note the keypress */
-    if (borg_cfg[BORG_VERBOSE]) {
-        if (k >= 32 && k <= 126) {
-            borg_note(format("& Key <%c> (0x%02X)", k, k));
-        } else {
-            borg_note(format("& Key <0x%02X>", k));
-        }
-    }
-
     /* Store the char, advance the queue */
     borg_key_queue[borg_key_head++] = k;
 
@@ -317,6 +332,43 @@ errr borg_keypress(keycode_t k)
     /* Success */
     return (0);
 }
+
+/*
+ * Add a keypress to the history of what has been passed back to the game
+ */
+void save_keypress_history(struct keypress *kp)
+{
+    /* Note the keypress */
+    if (borg_cfg[BORG_VERBOSE]) {
+        if (kp->type == EVT_KBRD) {
+            keycode_t k = kp->code;
+            if (k >= 32 && k <= 126) {
+                borg_note(format("& Key <%c> (0x%02X)", k, k));
+            } else {
+                if (k == KC_ENTER)
+                    borg_note(format("& Key <Enter> (0x%02X)", k));
+                else if (k == ESCAPE)
+                    borg_note(format("& Key <Esc> (0x%02X)", k));
+                else
+                    borg_note(format("& Key <0x%02X>", k));
+            }
+        } else {
+            borg_note(format("& non-Keyboard <0x%02X>", kp->type));
+        }
+
+    }
+
+    /* Store the char, advance the queue */
+    borg_key_history[borg_key_history_head].code = kp->code;
+    borg_key_history[borg_key_history_head++].type = kp->type;
+
+    /* on full array, keep the last 100 */
+    if (borg_key_history_head == KEY_SIZE) {
+        memcpy(borg_key_history, &borg_key_history[KEY_SIZE - 101], sizeof(struct keypress) * 100);
+        borg_key_history_head = 100;
+    }
+}
+
 
 /*
  * Add a keypresses to the "queue" (fake event)
@@ -391,18 +443,15 @@ keycode_t borg_get_queued_direction(void)
 }
 
 /*
- * AJG *HACK* this handles the é and á in some monster names but, gods it is
+ * *HACK* this handles the é and á in some monster names but, gods it is
  * ugly convert to wide and back to match the processing of special characters
- * memory can be passed in, if it isn't this routine will allocate any memory it
- * needs and it is up to the caller to detect that memory was allocated and free
- * it.
+ * this routine will allocate any memory it needs and it is up to the caller 
+ * to detect that memory was allocated and free it.
  */
-char *borg_massage_special_chars(char *name, char *memory)
+char *borg_massage_special_chars(char *name)
 {
     wchar_t wide_name[1024];
-
-    if (memory == NULL)
-        memory = mem_zalloc((strlen(name) + 1) * sizeof(char));
+    char *  memory = mem_zalloc((strlen(name) + 1) * sizeof(char));
 
     text_mbstowcs(wide_name, name, strlen(name) + 1);
     wcstombs(memory, wide_name, strlen(name) + 1);
@@ -410,14 +459,68 @@ char *borg_massage_special_chars(char *name, char *memory)
     return memory;
 }
 
+/*
+ * print the recent keypresses to the message history
+ */
+void borg_dump_recent_keys(int num)
+{
+    int end = borg_key_history_head;
+    int start = borg_key_history_head < num ? 0 : borg_key_history_head - num;
+    for (; start < end; start++) {
+        struct keypress *kp = &borg_key_history[start];
+        if (kp->type == EVT_KBRD) {
+            keycode_t k = kp->code;
+            if (k >= 32 && k <= 126) {
+                borg_note(format("& Key history <%c> (0x%02X)", k, k));
+            } else {
+                if (k == KC_ENTER)
+                    borg_note(format("& Key history <Enter> (0x%02X)", k));
+                else if (k == ESCAPE)
+                    borg_note(format("& Key history <Esc> (0x%02X)", k));
+                else
+                    borg_note(format("& Key history <0x%02X>", k));
+            }
+        }
+        else {
+            borg_note(format("& non-Keyboard <0x%02X>", kp->type));
+        }
+    }
+}
+
+/*
+ * The bell should never sound when the borg is running.  If it does,
+ * log ... something.
+ */
+static void borg_bell(game_event_type unused, game_event_data *data, void *user)
+{
+    borg_note("** BELL SOUNDED Dumping keypress history ***");
+
+    borg_dump_recent_keys(20);
+
+    if (borg_cfg[BORG_STOP_ON_BELL])
+        borg_oops("** BELL SOUNDED***");
+}
+
+
 void borg_init_io(void)
 {
     /* Allocate the "keypress queue" */
     borg_key_queue = mem_zalloc(KEY_SIZE * sizeof(keycode_t));
+
+    /* Allocate the keypress history */
+    borg_key_history = mem_zalloc(KEY_SIZE * sizeof(struct keypress));
+
+    /* When the bell goes off, log an error */
+    event_add_handler(EVENT_BELL, borg_bell, NULL);
 }
 
 void borg_free_io(void)
 {
+    event_remove_handler(EVENT_BELL, borg_bell, NULL);
+ 
+    mem_free(borg_key_history);
+    borg_key_history = NULL;
+
     mem_free(borg_key_queue);
     borg_key_queue = NULL;
 }

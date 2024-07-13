@@ -217,7 +217,7 @@ bool effect_handler_HEAL_HP(effect_handler_context_t *context)
 	if (num < minh) num = minh;
 	if (num <= 0) {
 		/*
-		 * There's no healing: either because not damaged enough for the
+		 * There's no healing: either because not damaged enough for
 		 * the bonus amount to matter or the effect was misconfigured.
 		 */
 		return true;
@@ -528,6 +528,10 @@ bool effect_handler_DAMAGE(effect_handler_context_t *context)
 	}
 
 	/* Hit the player */
+	dam = player_apply_damage_reduction(player, dam);
+	if (dam && OPT(player, show_damage)) {
+		msg("You take %d damage.", dam);
+	}
 	take_hit(player, dam, killer);
 
 	return true;
@@ -1363,7 +1367,7 @@ bool effect_handler_DESTRUCTION_old(effect_handler_context_t *context)
 			if (loc_eq(grid, player->grid)) continue;
 
 			/* Delete the monster (if any) */
-			delete_monster(grid);
+			delete_monster(cave, grid);
 
 			/* Don't remove stairs */
 			if (square_isstairs(cave, grid)) continue;
@@ -1452,6 +1456,8 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 	int safe_grids = 0;
 	int damage = 0;
 	bool hurt = false;
+	bool display_dam = context->origin.what == SRC_PLAYER
+		&& OPT(player, show_damage);
 	bool map[32][32];
 
 	struct loc centre = origin_get_loc(context->origin);
@@ -1526,6 +1532,8 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 
 	/* First, determine the effects on the player (if necessary) */
 	if (hurt) {
+		char dam_text[32] = "";
+
 		/* Check around the player */
 		for (i = 0; i < 8; i++) {
 			/* Get the location */
@@ -1568,31 +1576,44 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 		/* Hurt the player a lot */
 		if (!safe_grids) {
 			/* Message and damage */
-			msg("You are severely crushed!");
-			damage = 300;
+			damage = player_apply_damage_reduction(player, 300);
+			if (damage > 0 && OPT(player, show_damage)) {
+				strnfmt(dam_text, sizeof(dam_text), " (%d)",
+					damage);
+			}
+			msg("You are severely crushed!%s", dam_text);
 		} else {
 			/* Destroy the grid, and push the player to (relative) safety */
+			const char *hurt_msg = "";
+
 			switch (randint1(3)) {
 				case 1: {
-					msg("You nimbly dodge the blast!");
+					hurt_msg = "You nimbly dodge the blast!";
 					damage = 0;
 					break;
 				}
 				case 2: {
-					msg("You are bashed by rubble!");
+					hurt_msg = "You are bashed by rubble!";
 					damage = damroll(10, 4);
 					(void)player_inc_timed(player, TMD_STUN,
 						randint1(50), true, true, true);
 					break;
 				}
 				case 3: {
-					msg("You are crushed between the floor and ceiling!");
+					hurt_msg = "You are crushed between the floor and ceiling!";
 					damage = damroll(10, 4);
 					(void)player_inc_timed(player, TMD_STUN,
 						randint1(50), true, true, true);
 					break;
 				}
 			}
+
+			damage = player_apply_damage_reduction(player, damage);
+			if (damage > 0 && OPT(player, show_damage)) {
+				strnfmt(dam_text, sizeof(dam_text), " (%d)",
+					damage);
+			}
+			msg("%s%s", hurt_msg, dam_text);
 
 			/* Move player */
 			monster_swap(pgrid, safe_grid);
@@ -1617,7 +1638,6 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 				/* Most monsters cannot co-exist with rock */
 				if (!flags_test(mon->race->flags, RF_SIZE, RF_KILL_WALL,
 								RF_PASS_WALL, FLAG_END)) {
-					char m_name[80];
 					int m_dam;
 
 					/* Assume not safe */
@@ -1650,49 +1670,63 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 						}
 					}
 
-					/* Describe the monster */
-					monster_desc(m_name, sizeof(m_name), mon, MDESC_STANDARD);
-
-					/* Scream in pain */
-					msg("%s wails out in pain!", m_name);
-
 					/* Take damage from the quake */
 					m_dam = (safe_grids ? damroll(4, 8) : (mon->hp + 1));
 
 					/* Monster is certainly awake, not thinking about player */
 					monster_wake(mon, false, 0);
 
-					/* If the quake finished the monster off, show message */
-					if (mon->hp < m_dam && mon->hp >= 0)
-						msg("%s is embedded in the rock!", m_name);
-
 					/* Apply damage directly */
 					mon->hp -= m_dam;
 
-					/* Delete (not kill) "dead" monsters */
 					if (mon->hp < 0) {
-						/* Delete the monster */
-						delete_monster(grid);
+						if (display_dam) {
+							add_monster_message_show_damage(
+								mon,
+								MON_MSG_QUAKE_DEATH,
+								false,
+								m_dam);
+						} else {
+							add_monster_message(mon,
+								MON_MSG_QUAKE_DEATH,
+								false);
+						}
 
-						/* No longer safe */
-						safe_grids = 0;
+						/*
+						 * Delete (not kill) "dead"
+						 * monsters.
+						 */
+						delete_monster(cave, grid);
+					} else {
+						if (display_dam) {
+							add_monster_message_show_damage(
+								mon,
+								MON_MSG_QUAKE_HURT,
+								false,
+								m_dam);
+						} else {
+							add_monster_message(mon,
+								MON_MSG_QUAKE_HURT,
+								false);
+						}
+
+						/* Escape from the rock */
+						if (safe_grids) {
+							/* Move the monster */
+							monster_swap(grid,
+								safe_grid);
+						}
 					}
-
-					/* Escape from the rock */
-					if (safe_grids)
-						/* Move the monster */
-						monster_swap(grid, safe_grid);
 				}
 			}
 		}
 	}
 
-	/* Player may have moved */
-	pgrid = player->grid;
-
 	/* Important -- no wall on player */
-	map[16 + pgrid.y - centre.y][16 + pgrid.x - centre.x] = false;
-
+	if (ABS(player->grid.x - centre.x) <= 15
+			&& ABS(player->grid.y - centre.y) <= 15) {
+		map[16 + player->grid.y - centre.y][16 + player->grid.x - centre.x] = false;
+	}
 
 	/* Examine the quaked region and damage marked grids if possible */
 	for (offset.y = -r; offset.y <= r; offset.y++) {
@@ -1719,7 +1753,7 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 	 * Apply damage to player; done here so messages are ordered properly
 	 * if the player dies.
 	 */
-	if (damage) take_hit(player, damage, "an earthquake");
+	take_hit(player, damage, "an earthquake");
 
 	/* Fully update the visuals */
 	player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
@@ -1756,9 +1790,13 @@ bool effect_handler_TAP_UNLIFE(effect_handler_context_t *context)
 	mon = target_get_monster();
 
 	/* Hurt the monster */
-	monster_desc(m_name, sizeof(m_name), mon, MDESC_TARG);
-	msg("You draw power from the %s.", m_name);
 	drain = MIN(mon->hp, amount) / 4;
+	monster_desc(m_name, sizeof(m_name), mon, MDESC_TARG);
+	if (OPT(player, show_damage)) {
+		msg("You draw power from the %s. (%d)", m_name, amount);
+	} else {
+		msg("You draw power from the %s.", m_name);
+	}
 	dead = mon_take_hit(mon, player, amount, &fear, " is destroyed!");
 
 	/* Gain mana */
@@ -1788,6 +1826,9 @@ bool effect_handler_CURSE(effect_handler_context_t *context)
 	struct monster *mon = target_get_monster();
 	bool fear = false;
 	bool dead = false;
+	bool display_dam = OPT(player, show_damage);
+	char note[32];
+	const char *passed_note;
 
 	context->ident = true;
 
@@ -1798,11 +1839,21 @@ bool effect_handler_CURSE(effect_handler_context_t *context)
 	}
 
 	/* Hit it */
-	dead = mon_take_hit(mon, player, dam, &fear, " dies!");
+	if (display_dam) {
+		strnfmt(note, sizeof(note), " dies! (%d)", dam);
+		passed_note = note;
+	} else {
+		passed_note = " dies!";
+	}
+	dead = mon_take_hit(mon, player, dam, &fear, passed_note);
 
 	/* Handle fear for surviving monsters */
 	if (!dead && monster_is_visible(mon)) {
-		message_pain(mon, dam);
+		if (display_dam) {
+			message_pain_show_damage(mon, dam);
+		} else {
+			message_pain(mon, dam);
+		}
 		if (fear) {
 			add_monster_message(mon, MON_MSG_FLEE_IN_TERROR, true);
 		}
@@ -1990,11 +2041,11 @@ bool effect_handler_SINGLE_COMBAT(effect_handler_context_t *context)
 			/* Do nothing */
 			;
 		} else if (cave_monster(cave, 1)->race) {
-			monster_index_move(old_idx, cave_monster_max(cave));
-			monster_index_move(1, old_idx);
-			monster_index_move(cave_monster_max(cave), 1);
+			monster_index_move(cave, old_idx, cave_monster_max(cave));
+			monster_index_move(cave, 1, old_idx);
+			monster_index_move(cave, cave_monster_max(cave), 1);
 		} else {
-			monster_index_move(old_idx, 1);
+			monster_index_move(cave, old_idx, 1);
 		}
 		target_set_monster(cave_monster(cave, 1));
 		player->upkeep->health_who = cave_monster(cave, 1);

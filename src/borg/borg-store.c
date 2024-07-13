@@ -27,6 +27,7 @@
 #include "../obj-tval.h"
 #include "../store.h"
 
+#include "borg-init.h"
 #include "borg-item-analyze.h"
 #include "borg-item-val.h"
 #include "borg-store-sell.h"
@@ -161,7 +162,7 @@ void borg_cheat_store(void)
 
             /* Analyze the item */
             borg_item_analyze(
-                b_item, o_ptr, buf, store_num == 7 ? false : true);
+                b_item, o_ptr, buf, store_num == BORG_HOME ? false : true);
 
             /* Check if the general store has certain items */
             if (store_num == 0) {
@@ -185,15 +186,28 @@ void borg_cheat_store(void)
         }
     }
     mem_free(list);
+    list = NULL;
 }
 
 void borg_init_store(void)
 {
+    if (f_info[FEAT_HOME].shopnum - 1 != BORG_HOME) {
+        msg(format("borg thinks home is %d, game thinks home is %d.  aborting. ", 
+            f_info[FEAT_HOME].shopnum - 1, BORG_HOME));
+        borg_init_failure = true;
+    }
+
+
     /* Make the stores in the town */
-    borg_shops = mem_zalloc(9 * sizeof(borg_shop));
+    borg_shops = mem_zalloc(z_info->store_max * sizeof(borg_shop));
 
     /* Make the "safe" stores in the town */
-    safe_shops = mem_zalloc(8 * sizeof(borg_shop));
+    safe_shops = mem_zalloc(z_info->store_max * sizeof(borg_shop));
+
+    for (int i = 0; i < z_info->store_max; i++) {
+        borg_shops[i].ware = mem_zalloc(z_info->store_inven_max * sizeof(borg_item));
+        safe_shops[i].ware = mem_zalloc(z_info->store_inven_max * sizeof(borg_item));
+    }
 
     borg_init_store_sell();
 }
@@ -201,6 +215,13 @@ void borg_init_store(void)
 void borg_free_store(void)
 {
     borg_free_store_sell();
+
+    for (int i = 0; i < z_info->store_max; i++) {
+        mem_free(borg_shops[i].ware);
+        borg_shops[i].ware = NULL;
+        mem_free(safe_shops[i].ware);
+        safe_shops[i].ware = NULL;
+    }
 
     mem_free(safe_shops);
     safe_shops = NULL;

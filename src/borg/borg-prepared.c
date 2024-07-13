@@ -22,6 +22,7 @@
 #ifdef ALLOW_BORG
 
 #include "borg-flow-kill.h"
+#include "borg-formulas.h"
 #include "borg-home-notice.h"
 #include "borg-item-val.h"
 #include "borg-magic.h"
@@ -196,7 +197,7 @@ static const char *borg_prepared_aux(int depth)
     /* Potions of Cure Serious/Critical Wounds */
     if ((borg.trait[BI_MAXCLEVEL] < 30)
         && borg.trait[BI_ACLW] + borg.trait[BI_ACSW] + borg.trait[BI_ACCW] < 2)
-        return ("2 cures");
+        return ("2 cures (clw + csw + ccw)");
 
     /* Scrolls of Word of Recall */
     if (borg.trait[BI_RECALL] < 1)
@@ -210,11 +211,11 @@ static const char *borg_prepared_aux(int depth)
 
     /* Require light (radius 2) */
     if (borg.trait[BI_CURLITE] < 2)
-        return "2 Light";
+        return "2 light radius";
 
     /* Escape or Teleport */
     if (borg.trait[BI_ATELEPORT] + borg.trait[BI_AESCAPE] < 2)
-        return ("2 tele&esc");
+        return ("2 tele + teleport staffs");
 
     if (!borg_cfg[BORG_PLAYS_RISKY]) {
         /* class specific requirement */
@@ -252,7 +253,7 @@ static const char *borg_prepared_aux(int depth)
 
     /* Potions of Cure Critical Wounds */
     if ((borg.trait[BI_MAXCLEVEL] < 30) && borg.trait[BI_ACCW] < 3)
-        return ("cure crit3");
+        return ("ccw < 3");
 
     /* See invisible */
     /* or telepathy */
@@ -267,7 +268,7 @@ static const char *borg_prepared_aux(int depth)
 
     /* Free action */
     if (!borg.trait[BI_FRACT])
-        return ("FA");
+        return ("free action");
 
     /* ready for level 20 */
     if (depth <= 20)
@@ -277,13 +278,13 @@ static const char *borg_prepared_aux(int depth)
 
     /* must have fire + 2 other basic resists */
     if (!borg.trait[BI_SRFIRE])
-        return ("RF");
+        return ("resist fire");
     {
         int basics = borg.trait[BI_RACID] + borg.trait[BI_RCOLD]
                      + borg.trait[BI_RELEC];
 
         if (basics < 2)
-            return ("basic resist2");
+            return ("2 basic resists");
     }
     /* have some minimal stats */
     if (borg.stat_cur[STAT_STR] < 7)
@@ -351,20 +352,20 @@ static const char *borg_prepared_aux(int depth)
 
     /* All Basic resistance*/
     if (!borg.trait[BI_SRCOLD])
-        return ("RC");
+        return ("resist cold");
     if (!borg.trait[BI_SRELEC])
-        return ("RE");
+        return ("resist elec");
     if (!borg.trait[BI_SRACID])
-        return ("RA");
+        return ("resist acid");
 
     /* Escape and Teleport */
     if (borg.trait[BI_ATELEPORT] + borg.trait[BI_AESCAPE] < 6)
-        return ("tell&esc6");
+        return ("6 tell + telep staffs");
 
     /* Cure Critical Wounds */
     if ((borg.trait[BI_MAXCLEVEL] < 30)
         && (borg.trait[BI_ACCW] + borg.trait[BI_ACSW]) < 10)
-        return ("cure10");
+        return ("10 ccw + csw");
 
     /* Ready for level 33 */
     if (depth <= 33)
@@ -382,21 +383,21 @@ static const char *borg_prepared_aux(int depth)
 
     /* Resist */
     if (!borg.trait[BI_SRPOIS])
-        return ("RPois");
+        return ("resist pois");
     if (!borg.trait[BI_SRCONF])
-        return ("RConf");
+        return ("resist conf");
 
     if (borg.stat_cur[STAT_STR] < 16)
-        return ("low STR");
+        return ("STR < 16");
 
     if (spell_stat != -1) {
         if (borg.stat_cur[spell_stat] < 16)
-            return ("low spell stat");
+            return ("spell stat < 16");
     }
     if (borg.stat_cur[STAT_DEX] < 16)
-        return ("low DEX");
+        return ("dex < 16");
     if (borg.stat_cur[STAT_CON] < 16)
-        return ("low CON");
+        return ("con < 16");
 
     /* Ok to continue */
     if (depth <= 45)
@@ -410,7 +411,7 @@ static const char *borg_prepared_aux(int depth)
 
     /* Potions of heal */
     if (borg.trait[BI_AHEAL] < 1 && (borg.trait[BI_AEZHEAL] < 1))
-        return ("1heal");
+        return ("1 heal");
 
     if (!borg_cfg[BORG_PLAYS_RISKY]) {
         /* Minimal hitpoints */
@@ -420,21 +421,19 @@ static const char *borg_prepared_aux(int depth)
 
     /* High stats XXX XXX XXX */
     if (borg.stat_cur[STAT_STR] < 18 + 40)
-        return ("low STR");
+        return ("str < 18(40)");
 
     if (spell_stat != -1) {
         if (borg.stat_cur[spell_stat] < 18 + 100)
-            return ("low spell stat");
+            return ("spell stat needs to be max");
     }
     if (borg.stat_cur[STAT_DEX] < 18 + 60)
-        return ("low DEX");
+        return ("dex < 18 (60)");
     if (borg.stat_cur[STAT_CON] < 18 + 60)
-        return ("low CON");
+        return ("con < 18 (60)");
 
     /* Hold Life */
-    if ((!borg.trait[BI_HLIFE] && !weapon_swap_hold_life
-            && !armour_swap_hold_life)
-        && (borg.trait[BI_MAXCLEVEL] < 50))
+    if (!borg.trait[BI_SHLIFE] && (borg.trait[BI_MAXCLEVEL] < 50))
         return ("hold life");
 
     /* Usually ready for level 46 to 55 */
@@ -445,15 +444,15 @@ static const char *borg_prepared_aux(int depth)
 
     /* Potions of heal */
     if (borg.trait[BI_AHEAL] < 2 && borg.trait[BI_AEZHEAL] < 1)
-        return ("2heal");
+        return ("2 heal + *heal*");
 
     /* Resists */
     if (!borg.trait[BI_SRBLIND])
-        return ("RBlind");
+        return ("resist blind");
 
     /* Must have resist nether */
     /*    if (!borg_settings[BORG_PLAYS_RISKY] && !borg.trait[BI_SRNTHR]) return
-     * ("RNeth"); */
+     * ("resist nether"); */
 
     /* Telepathy, better have it by now */
     if (!borg.trait[BI_ESP])
@@ -471,9 +470,9 @@ static const char *borg_prepared_aux(int depth)
 
     /* Resists */
     if (!borg.trait[BI_SRKAOS])
-        return ("RChaos");
+        return ("resist chaos");
     if (!borg.trait[BI_SRDIS])
-        return ("RDisen");
+        return ("resist disenchant");
 
     /* Usually ready for level 61 to 80 */
     if (depth <= 80)
@@ -500,19 +499,19 @@ static const char *borg_prepared_aux(int depth)
     if (!borg.trait[BI_KING]) {
         if ((borg.trait[BI_MAXSP] > 100)
             && (borg.has[kv_potion_restore_mana] < 15))
-            return ("10ResMana");
+            return ("10 restore mana");
 
         /* must have lots of heal */
         if (borg.has[kv_potion_healing] < 5)
-            return ("5Heal");
+            return ("5 Heal");
 
         /* must have lots of ez-heal */
         if (borg.trait[BI_AEZHEAL] < 15)
-            return ("15EZHeal");
+            return ("15 *heal*");
 
         /* must have lots of speed */
         if (borg.trait[BI_ASPEED] < 10)
-            return ("10Speed");
+            return ("10 speed potions");
     }
 
     /* Its good to be the king */
@@ -543,25 +542,36 @@ const char *borg_prepared(int depth)
     if (depth == 1)
         return ((char *)NULL);
 
-    /* Not prepared if I need to restock */
-    if ((reason = borg_restock(depth)))
-        return (reason);
+    if (borg_cfg[BORG_USES_DYNAMIC_CALCS]) {
 
-    /*** Require his Clevel to be greater than or equal to Depth */
-    if (borg.trait[BI_MAXCLEVEL] < depth && borg.trait[BI_MAXCLEVEL] < 50)
-        return ("Clevel < depth");
+        /* use the base restock so special checks can be done */
+        if ((reason = borg_restock(depth)))
+            return reason;
 
-    /* Must meet minimal requirements */
-    if (depth <= 99) {
-        if ((reason = borg_prepared_aux(depth)))
+        if ((reason = borg_prepared_dynamic(depth)))
+            return reason;
+
+    } else {
+        /* Not prepared if I need to restock */
+        if ((reason = borg_restock(depth)))
             return (reason);
-    }
 
-    /* Not if No_Deeper is set */
-    if (depth >= borg_cfg[BORG_NO_DEEPER]) {
-        strnfmt(borg_prepared_buffer, MAX_REASON, "No deeper %d.",
-            borg_cfg[BORG_NO_DEEPER]);
-        return (borg_prepared_buffer);
+        /*** Require his Clevel to be greater than or equal to Depth */
+        if (borg.trait[BI_MAXCLEVEL] < depth && borg.trait[BI_MAXCLEVEL] < 50)
+            return ("Clevel < depth");
+
+        /* Must meet minimal requirements */
+        if (depth <= 99) {
+            if ((reason = borg_prepared_aux(depth)))
+                return (reason);
+        }
+
+        /* Not if No_Deeper is set */
+        if (depth >= borg_cfg[BORG_NO_DEEPER]) {
+            strnfmt(borg_prepared_buffer, MAX_REASON, "No deeper %d.",
+                borg_cfg[BORG_NO_DEEPER]);
+            return (borg_prepared_buffer);
+        }
     }
 
     /* Once Morgoth is dead */
@@ -693,19 +703,18 @@ const char *borg_restock(int depth)
     if (borg_t - borg_began < 100 && borg.trait[BI_CDEPTH] != 100)
         return ((char *)NULL);
 
+    if (borg_cfg[BORG_USES_DYNAMIC_CALCS]) 
+        return borg_restock_dynamic(depth);
+
     /*** Level 1 ***/
 
     /* Must have some lite */
     if (borg.trait[BI_CURLITE] < 1)
-        return ("rs my_CURLITE");
+        return ("restock light radius < 1");
 
     /* Must have "fuel" */
     if (borg.trait[BI_AFUEL] < 1 && !borg.trait[BI_LIGHT])
-        return ("rs amt_fuel");
-
-    /* Must have "food" */
-    if (borg.trait[BI_FOOD] < 1)
-        return ("rs amt_food");
+        return ("restock fuel");
 
     /* Assume happy at level 1 */
     if (depth <= 1)
@@ -715,14 +724,14 @@ const char *borg_restock(int depth)
 
     /* Must have "fuel" */
     if (borg.trait[BI_AFUEL] < 2 && !borg.trait[BI_LIGHT])
-        return ("rs fuel+2");
+        return ("restock fuel < 2");
 
     /* Must have "food" */
     if (borg.trait[BI_FOOD] < 3)
-        return ("rs food+2");
+        return ("restock food < 3");
 
     /* Must have "recall" */
-    /* if (borg.trait[BI_RECALL] < 2) return ("rs recall"); */
+    /* if (borg.trait[BI_RECALL] < 2) return ("restock recall"); */
 
     /* Assume happy at level 3 */
     if (depth <= 3)
@@ -737,12 +746,12 @@ const char *borg_restock(int depth)
 
     /* Must have "phase" */
     if (borg.trait[BI_APHASE] < 1)
-        return ("rs phase");
+        return ("restock phase door");
 
     /* Potions of Cure Wounds */
     if ((borg.trait[BI_MAXCLEVEL] < 30)
         && borg.trait[BI_ACLW] + borg.trait[BI_ACSW] + borg.trait[BI_ACCW] < 1)
-        return ("rs clw/csw");
+        return ("restock clw+csw+ccw");
 
     /* Assume happy at level 9 */
     if (depth <= 9)
@@ -752,16 +761,16 @@ const char *borg_restock(int depth)
 
     /* Must have good light */
     if (borg.trait[BI_CURLITE] < 2)
-        return "2 Light";
+        return "2 light radius";
 
     /* Must have "cure" */
     if ((borg.trait[BI_MAXCLEVEL] < 30)
         && borg.trait[BI_ACLW] + borg.trait[BI_ACSW] + borg.trait[BI_ACCW] < 2)
-        return ("rs cure");
+        return ("restock clw + csw + ccw ");
 
     /* Must have "teleport" */
     if (borg.trait[BI_ATELEPORT] + borg.trait[BI_AESCAPE] < 2)
-        return ("rs tele&esc(1)");
+        return ("restock tele + tele staff < 2");
 
     /* Assume happy at level 19 */
     if (depth <= 19)
@@ -772,11 +781,11 @@ const char *borg_restock(int depth)
     /* Must have "cure" */
     if ((borg.trait[BI_MAXCLEVEL] < 30)
         && borg.trait[BI_ACSW] + borg.trait[BI_ACCW] < 4)
-        return ("rs cure");
+        return ("restock csw + ccw < 4");
 
     /* Must have "teleport" or Staff */
     if (borg.trait[BI_ATELEPORT] + borg.trait[BI_AESCAPE] < 4)
-        return ("rs tele&esc(4)");
+        return ("restock 4 > teleport + teleport staff ");
 
     /* Assume happy at level 44 */
     if (depth <= 35)
@@ -786,7 +795,7 @@ const char *borg_restock(int depth)
 
     /* Must have Scroll of Teleport (or good 2nd choice) */
     if (borg.trait[BI_ATELEPORT] + borg.trait[BI_ATELEPORTLVL] < 2)
-        return ("rs teleport(1)");
+        return ("restock teleport + teleport level");
 
     /* Assume happy at level 44 */
     if (depth <= 45)
@@ -803,7 +812,7 @@ const char *borg_restock(int depth)
     /* Must have "Heal" */
     if (borg.trait[BI_AHEAL] + borg.has[kv_rod_healing] + borg.trait[BI_AEZHEAL]
         < 1)
-        return ("rs heal");
+        return ("restock heal");
 
     /* Assume happy at level 99 */
     if (depth <= 99)
@@ -814,7 +823,7 @@ const char *borg_restock(int depth)
     /* Must have "Heal" */
     /* If I just got to dlevel 100 and low on heals, get out now. */
     if (borg_t - borg_began < 10 && borg.trait[BI_AEZHEAL] < 15)
-        return ("rs *heal*");
+        return ("restock *heal*");
 
     /* Assume happy */
     return ((char *)NULL);

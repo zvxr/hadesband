@@ -31,6 +31,7 @@
 #include "borg-flow-kill.h"
 #include "borg-flow-take.h"
 #include "borg-flow.h"
+#include "borg-formulas.h"
 #include "borg-io.h"
 #include "borg-item-activation.h"
 #include "borg-item-val.h"
@@ -47,6 +48,47 @@ bool game_closed; /* Has the game been closed since the borg was
                       initialized */
 
 bool borg_init_failure = false;
+
+/*
+ * Borg settings information.
+ * NOTE: Must match enum in borg.h
+ */
+struct borg_setting borg_settings[] = {
+    { "borg_verbose", 'b', false },
+    { "borg_munchkin_start", 'b', false },
+    { "borg_munchkin_level", 'i', 12 }, 
+    { "borg_munchkin_depth", 'i', 16 },
+    { "borg_worships_damage", 'b', false },
+    { "borg_worships_speed", 'b', false },
+    { "borg_worships_hp", 'b', false },
+    { "borg_worships_mana", 'b', false },
+    { "borg_worships_ac", 'b', false },
+    { "borg_worships_gold", 'b', false },
+    { "borg_plays_risky", 'b', false },
+    { "borg_kills_uniques", 'b', false }, 
+    { "borg_uses_swaps", 'b', true },
+    { "borg_uses_dynamic_calcs", 'b', false },
+    { "borg_slow_optimizehome", 'b', false },
+    { "borg_stop_dlevel", 'i', 128 }, 
+    { "borg_stop_clevel", 'i', 51 },
+    { "borg_no_deeper", 'i', 127 }, 
+    { "borg_stop_king", 'b', true },
+    { "borg_cheat_death", 'b', false },
+    { "borg_respawn_winners", 'b', false },
+    { "borg_respawn_class", 'i', -1 }, 
+    { "borg_respawn_race", 'i', -1 },
+    { "borg_chest_fail_tolerance", 'i', 7 },
+    { "borg_delay_factor", 'i', 0 }, 
+    { "borg_money_scum_amount", 'i', 0 },
+    { "borg_self_scum", 'b', true }, 
+    { "borg_lunal_mode", 'b', false },
+    { "borg_self_lunal", 'b', false }, 
+    { "borg_enchant_limit", 'i', 12 },
+    { "borg_dump_level", 'i', 1 }, 
+    { "borg_save_death", 'i', 1 },
+    { "borg_stop_on_bell", 'b', false },
+    { 0, 0, 0 }};
+
 
 /*
  * read a line from the config file and parse the setting value, if there is
@@ -105,46 +147,32 @@ static bool borg_proc_setting(
 }
 
 /*
+ * Release resources allocated by borg_init_txt_file().
+ */
+static void borg_free_txt_file(void)
+{
+    borg_trait_free();
+    borg_free_formulas();
+
+    mem_free(borg_cfg);
+    borg_cfg = NULL;
+}
+
+/*
  * Initialize borg.txt
  */
-void borg_init_txt_file(void)
+bool borg_init_txt_file(void)
 {
-    struct borg_setting {
-        const char *setting_string;
-        const char  setting_type; /* b (bool) or i (int) */
-        int         default_value;
-    };
-
-    /*
-     * Borg settings information, ScreenSaver or continual play mode;
-     */
-    struct borg_setting borg_settings[] = { { "borg_verbose", 'b', false },
-        { "borg_munchkin_start", 'b', false },
-        { "borg_munchkin_level", 'i', 12 }, { "borg_munchkin_depth", 'i', 16 },
-        { "borg_worships_damage", 'b', false },
-        { "borg_worships_speed", 'b', false },
-        { "borg_worships_hp", 'b', false },
-        { "borg_worships_mana", 'b', false },
-        { "borg_worships_ac", 'b', false },
-        { "borg_worships_gold", 'b', false },
-        { "borg_plays_risky", 'b', false },
-        { "borg_kills_uniques", 'b', false }, { "borg_uses_swaps", 'b', true },
-        { "borg_uses_dynamic_calcs", 'b', false },
-        { "borg_slow_optimizehome", 'b', false },
-        { "borg_stop_dlevel", 'i', 128 }, { "borg_stop_clevel", 'i', 51 },
-        { "borg_no_deeper", 'i', 127 }, { "borg_stop_king", 'b', true },
-        { "borg_respawn_winners", 'b', false },
-        { "borg_respawn_class", 'i', -1 }, { "borg_respawn_race", 'i', -1 },
-        { "borg_chest_fail_tolerance", 'i', 7 },
-        { "borg_delay_factor", 'i', 0 }, { "borg_money_scum_amount", 'i', 0 },
-        { "borg_self_scum", 'b', true }, { "borg.lunal_mode", 'b', false },
-        { "borg_self_lunal", 'b', false }, { "borg_enchant_limit", 'i', 12 },
-        { "borg_dump_level", 'i', 1 }, { "borg_save_death", 'i', 1 },
-        { 0, 0, 0 } };
-
     ang_file *fp;
 
+    bool formulas_found = false;
+    bool old_formulas_found = false;
     int i;
+    bool warning = false;
+
+
+    if (borg_active)
+        borg_free_txt_file();
 
     borg_trait_init();
 
@@ -174,8 +202,8 @@ void borg_init_txt_file(void)
 
         fp = file_open(buf, MODE_WRITE, FTYPE_TEXT);
         if (!fp) {
-            msg("*****WARNING***** unable to write default BORG.TXT file!");
-            return;
+            borg_warning("*****WARNING***** unable to write default BORG.TXT file!");
+            return true;
         }
         file_putf(fp, "# BORG.txt default settings \n");
         file_putf(
@@ -216,36 +244,30 @@ void borg_init_txt_file(void)
                     borg_settings[i].setting_type, buf))
                 break;
         }
+        if (i != BORG_MAX_SETTINGS)
+            continue;
 
         /* other settings */
         if (prefix_i(buf, "REQ")) {
-#if false
-            if (!borg_load_requirement(buf + strlen("REQ")))
-                borg_note(buf);
-#endif
+            old_formulas_found = true;
             continue;
         }
         if (prefix_i(buf, "FORMULA")) {
-#if false
-            // For now ignore the dynamic formulas in borg.txt ... they are waaaay out of date !FIX !TODO !AJG
-            if (!borg_load_formula(buf + strlen("FORMULA")))
-                borg_note(buf);
-#endif
+            old_formulas_found = true;
             continue;
         }
         if (prefix_i(buf, "CND")) {
-#if false
-            if (!borg_load_formula(buf + strlen("CND")))
-                borg_note(buf);
-#endif
+            old_formulas_found = true;
             continue;
         }
         if (prefix_i(buf, "POWER")) {
-#if false
-            if (!borg_load_power(buf + strlen("POWER")))
-                borg_note(buf);
-#endif
+            old_formulas_found = true;
             continue;
+        }
+
+        if (prefix_i(buf, "[BEGIN FORMULA SECTION]")) {
+            formulas_found = true;
+            borg_load_formulas(fp);
         }
     }
 
@@ -253,9 +275,27 @@ void borg_init_txt_file(void)
     file_close(fp);
 
     if (borg_cfg[BORG_USES_DYNAMIC_CALCS]) {
-        msg("Dynamic calcs (borg_uses_dynamic-calcs) is configured on but "
-            "currently ignored.");
-        borg_cfg[BORG_USES_DYNAMIC_CALCS] = false;
+        warning = true;
+        if (old_formulas_found) {
+            borg_warning(
+                "** Borg's dynamic calculations enabled but old formulas "
+                "found in borg.txt.");
+            borg_warning("** formulas disabled ** ");
+            borg_cfg[BORG_USES_DYNAMIC_CALCS] = false;
+        } else if (!formulas_found) {
+            borg_warning(
+                "** Borg's dynamic calculations enabled but no formulas "
+                "found in borg.txt.");
+            borg_warning("** formulas disabled ** ");
+            borg_cfg[BORG_USES_DYNAMIC_CALCS] = false;
+        } else {
+            borg_warning(
+                "Borg's dynamic calculations enabled.  You may see some "
+                "performance loss (~20 percent).");
+        }
+
+        /* Hack -- flush it */
+        Term_fresh();
     }
 
     /* lunal mode is a default rather than a setting */
@@ -290,18 +330,7 @@ void borg_init_txt_file(void)
         borg_cfg[BORG_STOP_KING] = false;
 
     /* Success */
-    return;
-}
-
-/*
- * Release resources allocated by borg_init_txt_file().
- */
-static void borg_free_txt_file(void)
-{
-    borg_trait_free();
-
-    mem_free(borg_cfg);
-    borg_cfg = NULL;
+    return warning;
 }
 
 /*
@@ -373,11 +402,14 @@ void borg_prepare_race_class_info(void)
 void borg_init(void)
 {
     uint8_t *memory_test;
+    bool    warning_given;
 
     /*** Hack -- verify system ***/
+    /* Redraw everything */
+    do_cmd_redraw();
 
     /* Message */
-    prt("Initializing the Borg... (memory)", 0, 0);
+    borg_note("Initializing the Borg... (memory)");
     borg_init_failure = false;
 
     /* Hack -- flush it */
@@ -386,6 +418,7 @@ void borg_init(void)
     /* Mega-Hack -- verify memory */
     memory_test = mem_zalloc(400 * 1024L * sizeof(uint8_t));
     mem_free(memory_test);
+    memory_test = NULL;
 
     /* Prapare a local random number seed */
     if (!borg_rand_local)
@@ -396,19 +429,19 @@ void borg_init(void)
     /*** Hack -- initialize borg.ini options ***/
 
     /* Message */
-    prt("Initializing the Borg... (borg.txt)", 0, 0);
-    borg_init_txt_file();
+    borg_note("Initializing the Borg... (borg.txt)");
+    warning_given = borg_init_txt_file();
 
     /*** Hack -- initialize game options ***/
 
     /* Message */
-    prt("Initializing the Borg... (options)", 0, 0);
+    borg_note("Initializing the Borg... (options)");
 
     /* Hack -- flush it */
     Term_fresh();
 
     /* Make sure it rolls up a new guy at death */
-    if (screensaver) {
+    if (screensaver || borg_cfg[BORG_CHEAT_DEATH]) {
         /* We need the borg to keep playing after he dies */
         option_set("cheat_live", true);
     }
@@ -453,12 +486,10 @@ void borg_init(void)
     /* Redraw map */
     player->upkeep->redraw |= (PR_MAP);
 
-    /* Redraw everything */
-    do_cmd_redraw();
     /*** Various ***/
 
     /* Message */
-    prt("Initializing the Borg... (various)", 0, 0);
+    borg_note("Initializing the Borg... (various)");
 
     /* Hack -- flush it */
     Term_fresh();
@@ -509,10 +540,7 @@ void borg_init(void)
     /*** All done ***/
 
     /* Done initialization */
-    prt("Initializing the Borg... done.", 0, 0);
-
-    /* Clear line */
-    prt("", 0, 0);
+    borg_note("Initializing the Borg... done.");
 
     /* Reset the clock */
     borg_t = 10;
@@ -533,7 +561,7 @@ void borg_init(void)
     }
 
     /* Official message */
-    if (!borg_init_failure)
+    if (!borg_init_failure && !warning_given)
         borg_note("# Ready...");
 
     /* Now it is ready */

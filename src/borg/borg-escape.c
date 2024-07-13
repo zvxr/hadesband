@@ -348,6 +348,10 @@ bool borg_caution_phase(int emergency, int turns)
             if (ag->kill)
                 continue;
 
+            /* Skip webs */
+            if (ag->web)
+                continue;
+
             /* Stop looking */
             break;
         }
@@ -448,6 +452,10 @@ bool borg_caution_teleport(int emergency, int turns)
             if (ag->kill)
                 continue;
 
+            /* Skip webs */
+            if (ag->web)
+                continue;
+
             /* Stop looking */
             break;
         }
@@ -498,7 +506,6 @@ static bool borg_escape_stair(void)
     /* Usable stairs */
     if (ag->feat == FEAT_LESS) {
         /* Take the stairs */
-        borg.on_dnstairs = true;
         borg_note("# Escaping level via stairs.");
         borg_keypress('<');
 

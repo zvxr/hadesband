@@ -151,27 +151,39 @@ fi
 
 if test "x$with_no_install" != "x"; then
 	configpath="${PWD}/lib/"
+elif test "x$enable_win" = xyes; then
+	configpath=".\\\\lib\\\\"
 else
 	configpath="${sysconfdir}/${PACKAGE}/"
 fi
 
-case "/$configpath" in
-	*/) MY_EXPAND_DIR(configdir, "$configpath")  ;;
-	*)  MY_EXPAND_DIR(configdir, "$configpath/") ;;
-esac
+if test "x$enable_win" != xyes; then
+	case "/$configpath" in
+		*/) MY_EXPAND_DIR(configdir, "$configpath")  ;;
+		*)  MY_EXPAND_DIR(configdir, "$configpath/") ;;
+	esac
+else
+	configdir="$configpath"
+fi
 
 
 if test "x$with_no_install" != "x"; then
 	libpath="${PWD}/lib/"
 	bindir=".."
+elif test "x$enable_win" = xyes; then
+	libpath=".\\\\lib\\\\"
 else
 	libpath="${datarootdir}/${PACKAGE}/"
 fi
 
-case "/$libpath" in
-	*/) MY_EXPAND_DIR(libdatadir, "$libpath")  ;;
-	*)  MY_EXPAND_DIR(libdatadir, "$libpath/") ;;
-esac
+if test "x$enable_win" != xyes; then
+	case "/$libpath" in
+		*/) MY_EXPAND_DIR(libdatadir, "$libpath")  ;;
+		*)  MY_EXPAND_DIR(libdatadir, "$libpath/") ;;
+	esac
+else
+	libdatadir="$libpath"
+fi
 
 if test "x$with_no_install" != "x"; then
 	docdir="${PWD}/doc/"
@@ -189,14 +201,21 @@ esac
 
 if test "x$with_no_install" != "x"; then
 	varpath="${PWD}/lib/"
+elif test "x$enable_win" = xyes; then
+	varpath=".\\\\lib\\\\"
 else
 	varpath="${localstatedir}/games/${PACKAGE}/"
 fi
 
-case "/$varpath" in
-	*/) MY_EXPAND_DIR(vardatadir, "$varpath")  ;;
-	*)  MY_EXPAND_DIR(vardatadir, "$varpath/") ;;
-esac
+if test "x$enable_win" != xyes; then
+	case "/$varpath" in
+		*/) MY_EXPAND_DIR(vardatadir, "$varpath")  ;;
+		*)  MY_EXPAND_DIR(vardatadir, "$varpath/") ;;
+	esac
+else
+	vardatadir="$varpath"
+fi
+
 if test "x$with_private_dirs" != "x"; then
 	varshareddatadir="${vardatadir}user/"
 else
@@ -207,7 +226,7 @@ AC_ARG_WITH(gamedata_in_lib,
 	[AS_HELP_STRING([--with-gamedata-in-lib], [store the game data in the lib path.])])
 
 GAMEDATA_IN_LIB="false"
-if test "x$with_gamedata_in_lib" == "xyes"; then
+if test "x$with_gamedata_in_lib" = "xyes"; then
 	GAMEDATA_IN_LIB="true"
 	AC_DEFINE(GAMEDATA_IN_LIB, 1, [Define to store the game data in the lib path.])
 fi
@@ -225,7 +244,7 @@ AC_DEFINE_UNQUOTED([DEFAULT_DATA_PATH], "${vardatadir}", [Path to the game's var
 
 NOINSTALL="$with_no_install"; AC_SUBST(NOINSTALL)
 SETEGID="$with_setgid";      AC_SUBST(SETEGID)
-if test "x$wsetgid" == "xyes"; then
+if test "x$wsetgid" = "xyes"; then
 	AC_DEFINE(SETGID, 1, [Define if running as a central install on a multiuser system that has setresgid or setegid support.])
 fi
 
@@ -291,6 +310,11 @@ AC_ARG_ENABLE(sdl_mixer,
 	[enable_sdl_mixer=$enable_sdl])
 
 MAINFILES="\$(BASEMAINFILES)"
+
+dnl The libraries needed when linking the test cases start out the same
+dnl as what is needed to link the game but, typically, do not need to pick
+dnl up the extra dependencies needed by the front ends.
+TEST_LIBS="${LIBS}"
 
 dnl The Windows front end does not allow access to the others so disable them
 dnl unless explicitly told to build them.
@@ -432,24 +456,6 @@ if test "$enable_sdl" = "yes" || test "$enable_sdl_mixer" = "yes"; then
 fi
 ENABLESDL="$with_sdl"; AC_SUBST(ENABLESDL)
 
-dnl Windows checking
-if test "$enable_win" = "yes"; then
-	if test x"$with_no_install" != x || test x"$with_setgid" != x ; then
-		AC_MSG_ERROR([--enable-win is not compatible with --with-no-install or --with-setgid])
-	fi
-	AC_DEFINE(USE_WIN, 1, [Define to 1 if using the Windows interface.])
-	AC_DEFINE(SOUND, 1, [Define to 1 if including sound support.])
-	CPPFLAGS="${CPPFLAGS} -DWINDOWS -Iwin/include"
-	CFLAGS="${CFLAGS} -static"
-	LDFLAGS="${LDFLAGS} -Lwin/lib"
-	LIBS="${LIBS} -mwindows -lwinmm -lzlib -llibpng -lmsimg32"
-dnl Note complete replacement of all main files
-	MAINFILES="\$(WINMAINFILES)"
-fi
-# Set up for Windows-specific behavior in the Makefiles.
-ENABLEWIN="$enable_win"; AC_SUBST(ENABLEWIN)
-
-
 dnl Test checking
 if test "$enable_test" = "yes"; then
 	AC_DEFINE(USE_TEST, 1, [Define to 1 to build the test frontend])
@@ -457,7 +463,6 @@ if test "$enable_test" = "yes"; then
 fi
 
 dnl Stats checking
-
 LDFLAGS_SAVE="$LDFLAGS"
 if test "$enable_stats" = "yes"; then
 	# SQLite3 detection
@@ -516,7 +521,54 @@ if test "$enable_spoil" = "yes"; then
 	MAINFILES="${MAINFILES} \$(SPOILMAINFILES)"
 fi
 
+dnl Windows checking
+if test "$enable_win" = "yes"; then
+	if test x"$with_no_install" != x || test x"$with_setgid" != x ; then
+		AC_MSG_ERROR([--enable-win is not compatible with --with-no-install or --with-setgid])
+	fi
+	AC_DEFINE(USE_WIN, 1, [Define to 1 if using the Windows interface.])
+	AC_DEFINE(SOUND, 1, [Define to 1 if including sound support.])
+	CPPFLAGS="${CPPFLAGS} -DWINDOWS -Iwin/include"
+	CFLAGS="${CFLAGS} -static"
+	LDFLAGS="${LDFLAGS} -Lwin/lib"
+	LIBS="${LIBS} -mwindows -lwinmm -lzlib -llibpng -lmsimg32"
+	TEST_LIBS="${TEST_LIBS} -mwindows"
+dnl Note complete replacement of all main files
+	MAINFILES="\$(WINMAINFILES)"
+fi
+# Set up for Windows-specific behavior in the Makefiles.
+ENABLEWIN="$enable_win"; AC_SUBST(ENABLEWIN)
+
+dnl Remember if we are cross compiling.  Currently used so "make tests" only
+dnl compiles but does not run test cases when cross compiling.
+if test x"$build_alias" = x"$host_alias" ; then
+	CROSS_COMPILE=no
+else
+	CROSS_COMPILE=yes
+fi
+AC_SUBST(CROSS_COMPILE)
+
+dnl If installing elsewhere or using the Windows front end, allow the test
+dnl cases which use set_file_paths() to find the data files.  This relies on
+dnl the setting for TEST_DEFAULT_PATH in src/tests/unit-test.h which uses a
+dnl relative path and has the drawback that a test case will not work if it
+dnl uses set_file_paths() and the working directory is not the top level
+dnl directory of a distribution.  Also set TEST_WORKING_DIRECTORY so, that
+dnl when run by src/tests/run-tests, the working directory will match that.
+if test x"$with_no_install" = x || test x"$enable_win" = xyes ; then
+	CFLAGS="${CFLAGS} -DTEST_OVERRIDE_PATHS"
+	case "$srcdir" in
+		.) TEST_WORKING_DIRECTORY="$PWD" ;;
+		[\\/]* | ?:[\\/]* ) TEST_WORKING_DIRECTORY="$srcdir" ;;
+		*) TEST_WORKING_DIRECTORY="$PWD/$srcdir" ;;
+	esac
+else
+	TEST_WORKING_DIRECTORY=
+fi
+AC_SUBST(TEST_WORKING_DIRECTORY)
+
 AC_SUBST(MAINFILES, ${MAINFILES})
+AC_SUBST(TEST_LIBS, ${TEST_LIBS})
 AC_CONFIG_FILES([mk/buildsys.mk mk/extra.mk])
 AC_OUTPUT
 
@@ -553,7 +605,7 @@ echo "  config path:                            ${displayedconfigdir}"
 echo "  lib path:                               ${displayedlibdatadir}"
 echo "  doc path:                               ${displayeddocdir}"
 echo "  var path:                               ${displayedvardatadir}"
-if test "x$with_gamedata_in_lib" == "xyes"; then
+if test "x$with_gamedata_in_lib" = "xyes"; then
 	echo "  gamedata path:                          ${displayedlibdatadir}"
 else
 	echo "  gamedata path:                          ${displayedconfigdir}"
@@ -563,7 +615,7 @@ if test "x$wsetgid" = "xyes"; then
 elif test "x$with_private_dirs" = "xyes" && test ! "x$enable_win" = "xyes"; then
 	echo "  (with private save and score files in ~/.angband/TacticalAngband/)"
 fi
-if test "x$with_sphinx" == "xyes"; then
+if test "x$with_sphinx" = "xyes"; then
 	echo "  documentation:                          Yes"
 else
 	echo "  documentation:                          No"

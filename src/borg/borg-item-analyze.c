@@ -261,6 +261,61 @@ static int32_t borg_object_value_known(borg_item *item)
 }
 
 /*
+ * Guess the value of un-id'd items
+ */
+static int32_t borg_object_value_guess(borg_item *item)
+{
+    int32_t value;
+
+    /* Guess at value */
+    switch (item->tval) {
+    case TV_FOOD:
+        value = 5L;
+        break;
+    case TV_POTION:
+        value = 20L;
+        break;
+    case TV_SCROLL:
+        value = 20L;
+        break;
+    case TV_STAFF:
+        value = 70L;
+        break;
+    case TV_WAND:
+        value = 50L;
+        break;
+    case TV_ROD:
+        value = 90L;
+        break;
+    case TV_RING:
+    case TV_AMULET:
+        value = 45L;
+
+        /* Hack -- negative bonuses are bad */
+        if (item->to_a < 0)
+            value = 0;
+        if (item->to_h < 0)
+            value = 0L;
+        if (item->to_d < 0)
+            value = 0L;
+        break;
+    default:
+        value = 20L;
+
+        /* Hack -- negative bonuses are bad */
+        if (item->to_a < 0)
+            value = 0;
+        if (item->to_h < 0)
+            value = 0L;
+        if (item->to_d < 0)
+            value = 0L;
+        break;
+    }
+
+    return value;
+}
+
+/*
  * Convert from the object slays structure to a basic multiplier per race
  */
 static void borg_set_slays(borg_item *item, const struct object *o)
@@ -401,7 +456,7 @@ void borg_item_analyze(
     item->tval    = real_item->tval;
     item->sval    = real_item->sval;
     item->iqty    = real_item->number;
-    item->weight  = real_item->weight;
+    item->weight  = object_weight_one(real_item);
     item->timeout = real_item->timeout;
     item->level   = real_item->kind->level;
     item->aware   = object_flavor_is_aware(real_item);
@@ -440,6 +495,42 @@ void borg_item_analyze(
         if (o->activation->index == act_bizarre)
             item->one_ring = true;
         item->activ_idx = o->activation->index;
+    } else {
+        /* assign special activations that are now effects */
+        if (item->tval == TV_RING) {
+            if (item->sval == sv_ring_flames)
+                item->activ_idx = act_ring_flames;
+            if (item->sval == sv_ring_acid)
+                item->activ_idx = act_ring_acid;
+            if (item->sval == sv_ring_ice)
+                item->activ_idx = act_ring_ice;
+            if (item->sval == sv_ring_lightning)
+                item->activ_idx = act_ring_lightning;
+        }
+        /* NOTE two activations are missed (don't have activation indexes) */
+        /* white and black dragon */
+        if (item->tval == TV_DRAG_ARMOR) {
+            if (item->sval == sv_dragon_blue)
+                item->activ_idx = act_dragon_blue;
+            if (item->sval == sv_dragon_red)
+                item->activ_idx = act_dragon_red;
+            if (item->sval == sv_dragon_green)
+                item->activ_idx = act_dragon_green;
+            if (item->sval == sv_dragon_multihued)
+                item->activ_idx = act_dragon_multihued;
+            if (item->sval == sv_dragon_shining)
+                item->activ_idx = act_dragon_shining;
+            if (item->sval == sv_dragon_law)
+                item->activ_idx = act_dragon_law;
+            if (item->sval == sv_dragon_gold)
+                item->activ_idx = act_dragon_gold;
+            if (item->sval == sv_dragon_chaos)
+                item->activ_idx = act_dragon_chaos;
+            if (item->sval == sv_dragon_balance)
+                item->activ_idx = act_dragon_balance;
+            if (item->sval == sv_dragon_power)
+                item->activ_idx = act_dragon_power;
+        }
     }
 
     /* default the pval */
@@ -500,34 +591,7 @@ void borg_item_analyze(
     } else if (item->aware) {
         item->value = o->kind->cost;
     } else {
-        /* Guess at value */
-        switch (item->tval) {
-        case TV_FOOD:
-            item->value = 5L;
-            break;
-        case TV_POTION:
-            item->value = 20L;
-            break;
-        case TV_SCROLL:
-            item->value = 20L;
-            break;
-        case TV_STAFF:
-            item->value = 70L;
-            break;
-        case TV_WAND:
-            item->value = 50L;
-            break;
-        case TV_ROD:
-            item->value = 90L;
-            break;
-        case TV_RING:
-        case TV_AMULET:
-            item->value = 45L;
-            break;
-        default:
-            item->value = 20L;
-            break;
-        }
+        item->value = borg_object_value_guess(item);
     }
 
     /* If it's not The One Ring, then it's worthless if cursed */

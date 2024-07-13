@@ -171,9 +171,9 @@ struct ttf {
  *     print qq(\t"$s"\n);
  * }
  * and then manually hacked to substitute the escape codes for the non-null
- * control characters (0x01 to 0x1f) so the graphics characters at those
- * indices in Angband's packaged .fon files remain available, if the user
- * wants to access them (those characters are likely the ones specified by
+ * control characters (0x01 to 0x1f, and 0x7f) so the graphics characters at
+ * those indices in Angband's packaged .fon files remain available, if the
+ * user wants to access them (those characters are likely the ones specified by
  * code page 437, https://en.wikipedia.org/wiki/Code_page_437 ).
  */
 static const char g_ascii_codepoints_for_cache[] =
@@ -181,7 +181,7 @@ static const char g_ascii_codepoints_for_cache[] =
 	"\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"
 	" !\"#$%&'()*+,-./0123456789:;<=>?"
 	"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
-	"`abcdefghijklmnopqrstuvwxyz{|}~ ";
+	"`abcdefghijklmnopqrstuvwxyz{|}~\x7f";
 /* Simple font cache. Only for ascii (which is like 99.99% (?) of what the game
  * displays, anyway) */
 #define ASCII_CACHE_SIZE \
@@ -266,6 +266,8 @@ struct subwindow {
 	SDL_Rect inner_rect;
 	/* for use when resizing term */
 	SDL_Rect sizing_rect;
+	/* version of full_rect for the opposite setting of fullscreen */
+	SDL_Rect stored_rect;
 	/* a one pixel texture, mostly for displaying something when
 	 * the player is resizing term */
 	SDL_Texture *aux_texture;
@@ -356,6 +358,8 @@ struct sdlpui_window {
 	SDL_Rect full_rect;
 	/* size of window without status bar, basically */
 	SDL_Rect inner_rect;
+	/* version of full_rect for the opposite setting of fullscreen */
+	SDL_Rect stored_rect;
 
 	SDL_Color color;
 	/* for making terms transparent while moving or sizing them */
@@ -1208,6 +1212,22 @@ static SDL_Texture *make_subwindow_texture(const struct sdlpui_window *window,
 	return texture;
 }
 
+static void get_minimum_subwindow_size(bool is_main, int cell_w, int cell_h,
+		int *minw, int *minh)
+{
+	int min_cols, min_rows;
+
+	if (is_main) {
+		min_cols = MIN_COLS_MAIN;
+		min_rows = MIN_ROWS_MAIN;
+	} else {
+		min_cols = MIN_COLS_OTHER;
+		min_rows = MIN_ROWS_OTHER;
+	}
+	*minw = min_cols * cell_w + 2 * DEFAULT_BORDER;
+	*minh = min_rows * cell_h + 2 * DEFAULT_BORDER;
+}
+
 static void get_minimum_window_size(struct sdlpui_window *window,
 		int *minw, int *minh)
 {
@@ -1225,21 +1245,15 @@ static void get_minimum_window_size(struct sdlpui_window *window,
 
 	for (i = 0; i < MAX_SUBWINDOWS; ++i) {
 		if (window->subwindows[i]) {
-			int cols, rows;
+			int this_min_w, this_min_h;
 
-			if (window->subwindows[i]->index == MAIN_SUBWINDOW) {
-				cols = MIN_COLS_MAIN;
-				rows = MIN_ROWS_MAIN;
-			} else {
-				cols = MIN_COLS_OTHER;
-				rows = MIN_ROWS_OTHER;
-			}
-			max_sub_w = MAX(max_sub_w,
-				window->subwindows[i]->font->ttf.glyph.w
-				* cols + 2 * DEFAULT_BORDER);
-			max_sub_h = MAX(max_sub_h,
-				window->subwindows[i]->font->ttf.glyph.h
-				* rows + 2 * DEFAULT_BORDER);
+			get_minimum_subwindow_size(
+				window->subwindows[i]->index == MAIN_SUBWINDOW,
+				window->subwindows[i]->font->ttf.glyph.w,
+				window->subwindows[i]->font->ttf.glyph.h,
+				&this_min_w, &this_min_h);
+			max_sub_w = MAX(max_sub_w, this_min_w);
+			max_sub_h = MAX(max_sub_h, this_min_h);
 			have_sub = true;
 		}
 	}
@@ -1249,8 +1263,8 @@ static void get_minimum_window_size(struct sdlpui_window *window,
 		 * There's no currently configured subwindows; leave room
 		 * for one.
 		 */
-		max_sub_w = MIN_COLS_OTHER * window->app->def_font_w;
-		max_sub_h = MIN_ROWS_OTHER * window->app->def_font_h;
+		get_minimum_subwindow_size(false, window->app->def_font_w,
+			window->app->def_font_h, &max_sub_w, &max_sub_h);
 	}
 
 	*minw = MAX(*minw, max_sub_w);
@@ -1273,18 +1287,9 @@ static bool is_usable_font_for_subwindow(const struct font *font,
 
 	if (!is_ok_col_row(subwindow, &bounds, font->ttf.glyph.w,
 			font->ttf.glyph.h)) {
-		int min_cols, min_rows;
-
-		if (subwindow->index == MAIN_SUBWINDOW) {
-			min_cols = MIN_COLS_MAIN;
-			min_rows = MIN_ROWS_MAIN;
-		} else {
-			min_cols = MIN_COLS_OTHER;
-			min_rows = MIN_ROWS_OTHER;
-		}
-
-		bounds.w = min_cols * font->ttf.glyph.w + 2 * DEFAULT_BORDER;
-		bounds.h = min_rows * font->ttf.glyph.h + 2 * DEFAULT_BORDER;
+		get_minimum_subwindow_size(subwindow->index == MAIN_SUBWINDOW,
+			font->ttf.glyph.w, font->ttf.glyph.h,
+			&bounds.w, &bounds.h);
 	}
 
 	if (bounds.w > subwindow->window->inner_rect.w
@@ -1609,6 +1614,51 @@ static struct sdlpui_control *find_shortcut_editor_control_containing(
 	return c;
 }
 
+static void query_shortcut_editor_natural_size(struct sdlpui_dialog *d,
+		struct sdlpui_window *w, int *width, int *height)
+{
+	struct shortcut_editor_data *pse;
+	int dw = 0, dh = 0, cw, ch, roww, rowh;
+
+	SDL_assert(d->type_code == SHORTCUT_EDITOR_CODE && d->priv);
+	pse = d->priv;
+	(*pse->labels[0].ftb->query_natural_size)(&pse->labels[0],
+		d, w, &roww, &rowh);
+	/*
+	 * The shortcut display will be three times the width of the label that
+	 * precedes it.
+	 */
+	roww *= 3;
+	(*pse->change_buttons[0].ftb->query_natural_size)(
+		&pse->change_buttons[0], d, w, &cw, &ch);
+	/*
+	 * Leave 1/8 of the width (rounded up) as space between the change and
+	 * clear buttons.
+	 */
+	roww += (9 * cw + 7) / 8;
+	rowh = MAX(rowh, ch);
+	(*pse->clear_buttons[0].ftb->query_natural_size)(&pse->clear_buttons[0],
+		d, w, &cw, &ch);
+	roww += cw;
+	rowh = MAX(rowh, ch);
+	dw = MAX(dw, roww);
+	dh += MAX_WINDOWS * rowh;
+	(*pse->close_button.ftb->query_natural_size)(&pse->close_button,
+		d, w, &roww, &rowh);
+	(*pse->reset_button.ftb->query_natural_size)(&pse->reset_button,
+		d, w, &cw, &ch);
+	roww = 4 * MAX(roww, cw);
+	rowh = MAX(rowh, ch);
+	dw = MAX(dw, roww);
+	/*
+	 * Leave space between the buttons at the bottom of the dialog and the
+	 * rest.
+	 */
+	dh += 3 * rowh;
+	*width = dw;
+	*height = dh;
+}
+
 static void resize_shortcut_editor(struct sdlpui_dialog *d,
 		struct sdlpui_window *w, int width, int height)
 {
@@ -1617,7 +1667,7 @@ static void resize_shortcut_editor(struct sdlpui_dialog *d,
 
 	SDL_assert(d->type_code == SHORTCUT_EDITOR_CODE && d->priv);
 	pse = d->priv;
-#ifdef NDEBUG
+#ifndef NDEBUG
 	{
 		int dw, dh;
 
@@ -1739,51 +1789,6 @@ static void resize_shortcut_editor(struct sdlpui_dialog *d,
 
 	d->rect.w = width;
 	d->rect.h = height;
-}
-
-static void query_shortcut_editor_natural_size(struct sdlpui_dialog *d,
-		struct sdlpui_window *w, int *width, int *height)
-{
-	struct shortcut_editor_data *pse;
-	int dw = 0, dh = 0, cw, ch, roww, rowh;
-
-	SDL_assert(d->type_code == SHORTCUT_EDITOR_CODE && d->priv);
-	pse = d->priv;
-	(*pse->labels[0].ftb->query_natural_size)(&pse->labels[0],
-		d, w, &roww, &rowh);
-	/*
-	 * The shortcut display will be three times the width of the label that
-	 * precedes it.
-	 */
-	roww *= 3;
-	(*pse->change_buttons[0].ftb->query_natural_size)(
-		&pse->change_buttons[0], d, w, &cw, &ch);
-	/*
-	 * Leave 1/8 of the width (rounded up) as space between the change and
-	 * clear buttons.
-	 */
-	roww += (9 * cw + 7) / 8;
-	rowh = MAX(rowh, ch);
-	(*pse->clear_buttons[0].ftb->query_natural_size)(&pse->clear_buttons[0],
-		d, w, &cw, &ch);
-	roww += cw;
-	rowh = MAX(rowh, ch);
-	dw = MAX(dw, roww);
-	dh += MAX_WINDOWS * rowh;
-	(*pse->close_button.ftb->query_natural_size)(&pse->close_button,
-		d, w, &roww, &rowh);
-	(*pse->reset_button.ftb->query_natural_size)(&pse->reset_button,
-		d, w, &cw, &ch);
-	roww = 4 * MAX(roww, cw);
-	rowh = MAX(rowh, ch);
-	dw = MAX(dw, roww);
-	/*
-	 * Leave space between the buttons at the bottom of the dialog and the
-	 * rest.
-	 */
-	dh += 3 * rowh;
-	*width = dw;
-	*height = dh;
 }
 
 static void cleanup_shortcut_editor(struct sdlpui_dialog *d)
@@ -2161,13 +2166,52 @@ static struct sdlpui_dialog *handle_menu_windows(struct sdlpui_control *ctrl,
 static void handle_menu_fullscreen(struct sdlpui_control *ctrl,
 		struct sdlpui_dialog *dlg, struct sdlpui_window *window)
 {
+	SDL_Rect tmp_rect;
+	size_t i;
+
 	sdlpui_popdown_dialog(dlg, window, true);
+
+	tmp_rect = window->stored_rect;
+	SDL_GetWindowPosition(window->window, &window->full_rect.x,
+		&window->full_rect.y);
+	window->stored_rect = window->full_rect;
+	window->full_rect = tmp_rect;
+	for (i = 0; i < N_ELEMENTS(window->subwindows); ++i) {
+		struct subwindow *subwindow = window->subwindows[i];
+
+		if (subwindow != NULL) {
+			tmp_rect = subwindow->stored_rect;
+			subwindow->stored_rect = subwindow->full_rect;
+			subwindow->full_rect = tmp_rect;
+			if (!subwindow->full_rect.w
+					|| !subwindow->full_rect.h) {
+				/*
+				 * Nothing configured so far for this mode, so
+				 * use the configuration from the other mode.
+				 */
+				subwindow->full_rect = subwindow->stored_rect;
+			}
+		}
+	}
+
 	if (window->flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
 		int minw, minh;
 
 		SDL_SetWindowFullscreen(window->window, 0);
 		get_minimum_window_size(window, &minw, &minh);
 		SDL_SetWindowMinimumSize(window->window, minw, minh);
+		/*
+		 * If there is a previously configured size, use it.
+		 * Otherwise, rely on SDL's default behavior.
+		 */
+		if (window->full_rect.w && window->full_rect.h) {
+			SDL_SetWindowSize(window->window, window->full_rect.w,
+				window->full_rect.h);
+			resize_window(window, window->full_rect.w,
+				window->full_rect.h);
+			SDL_SetWindowPosition(window->window,
+				window->full_rect.x, window->full_rect.y);
+		}
 	} else {
 		SDL_SetWindowFullscreen(window->window,
 			SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -2367,7 +2411,9 @@ static void handle_menu_pw(struct sdlpui_control *ctrl,
 	SDL_assert(ctrl->type_code == SDLPUI_CTRL_MENU_BUTTON);
 	mb = (struct sdlpui_menu_button*)ctrl->priv;
 	SDL_assert(mb->subtype_code == SDLPUI_MB_TOGGLE);
-	new_flags = mem_zalloc(N_ELEMENTS(window_flag) * sizeof(*new_flags));
+	new_flags = mem_alloc(N_ELEMENTS(window_flag) * sizeof(*new_flags));
+	memcpy(new_flags, window_flag, N_ELEMENTS(window_flag)
+		* sizeof(*new_flags));
 	if (mb->v.toggled) {
 		new_flags[subw_idx] |= (uint32_t)1 << flag_idx;
 	} else {
@@ -2985,6 +3031,43 @@ static void fit_rect_in_rect_proportional(SDL_Rect *small, const SDL_Rect *big)
 	if (small->h > big->h) {
 		small->w = small->w * big->h / small->h;
 		small->h = big->h;
+	}
+}
+
+/*
+ * Like fit_rect_in_rect_by_xy() but allow changing the size as well as position
+ * of small.  If not possible to fit one dimension of small in big while leaving
+ * the size at least the minimum size specified, leave the size in that
+ * dimension as it is.
+ */
+static void coerce_rect_in_rect(SDL_Rect *small, const SDL_Rect *big,
+		int min_w, int min_h)
+{
+	if (small->x < big->x) {
+		small->x = big->x;
+	}
+	if (small->y < big->y) {
+		small->y = big->y;
+	}
+	if (small->x + small->w > big->x + big->w) {
+		if (small->w <= big->w) {
+			small->x = big->x + big->w - small->w;
+		} else {
+			small->x = big->x;
+			if (min_w <= big->w) {
+				small->w = big->w;
+			}
+		}
+	}
+	if (small->y + small->h > big->y + big->h) {
+		if (small->h <= big->h) {
+			small->y = big->y + big->h - small->h;
+		} else {
+			small->y = big->y;
+			if (min_h <= big->h) {
+				small->h = big->h;
+			}
+		}
 	}
 }
 
@@ -4838,8 +4921,17 @@ static const struct font_info *find_font_info(const struct font_info *fonts,
 static void make_font_cache(const struct sdlpui_window *window,
 		struct font *font)
 {
+	const int glyph_w = font->ttf.glyph.w;
+	const int glyph_h = font->ttf.glyph.h;
+	/*
+	 * Limit the horizontal size of the texture for the cached font to
+	 * avoid bumping into limits in the renderer.
+	 */
+	const size_t ncol = 16;
+
 	font->cache.texture = make_subwindow_texture(window,
-			(int) ASCII_CACHE_SIZE * font->ttf.glyph.w, font->ttf.glyph.h);
+		(int)ncol * glyph_w,
+		(int)((ASCII_CACHE_SIZE + (ncol - 1)) / ncol) * glyph_h);
 	assert(font->cache.texture != NULL);
 		
 	/* fill texture with white transparent pixels */
@@ -4848,10 +4940,7 @@ static void make_font_cache(const struct sdlpui_window *window,
 	/* restore the alpha; we will render glyphs in white */
 	white.a = 0xFF;
 
-	const int glyph_w = font->ttf.glyph.w;
-	const int glyph_h = font->ttf.glyph.h;
-
-	for (size_t i = 0; i < ASCII_CACHE_SIZE; i++) {
+	for (size_t i = 0, icol = 0, irow = 0; i < ASCII_CACHE_SIZE; i++) {
 		SDL_Surface *surface = TTF_RenderGlyph_Blended(font->ttf.handle,
 				(Uint16) g_ascii_codepoints_for_cache[i], white);
 		if (surface == NULL) {
@@ -4868,7 +4957,7 @@ static void make_font_cache(const struct sdlpui_window *window,
 		}
 
 		SDL_Rect src = {0, 0, surface->w, surface->h};
-		SDL_Rect dst = {glyph_w * i, 0, glyph_w, glyph_h};
+		SDL_Rect dst = {glyph_w * icol, glyph_h * irow, glyph_w, glyph_h};
 
 		crop_rects(&src, &dst);
 
@@ -4878,6 +4967,13 @@ static void make_font_cache(const struct sdlpui_window *window,
 
 		SDL_FreeSurface(surface);
 		SDL_DestroyTexture(texture);
+
+		if (icol < ncol - 1) {
+			++icol;
+		} else {
+			icol = 0;
+			++irow;
+		}
 	}
 }
 
@@ -4908,7 +5004,10 @@ static struct font *make_font(const struct sdlpui_window *window,
 static bool reload_font(struct subwindow *subwindow,
 		const struct font_info *info)
 {
-	struct font *new_font = make_font(subwindow->window, info->name, info->size);
+	struct font *new_font =
+		make_font(subwindow->window, info->name, info->size);
+	int min_w, min_h;
+
 	if (new_font == NULL) {
 		return false;
 	}
@@ -4919,7 +5018,10 @@ static bool reload_font(struct subwindow *subwindow,
 		return false;
 	}
 
-	fit_rect_in_rect_by_xy(&subwindow->sizing_rect, &subwindow->window->inner_rect);
+	get_minimum_subwindow_size(subwindow->index == MAIN_SUBWINDOW,
+		new_font->ttf.glyph.w, new_font->ttf.glyph.h, &min_w, &min_h);
+	coerce_rect_in_rect(&subwindow->sizing_rect,
+		&subwindow->window->inner_rect, min_w, min_h);
 
 	free_font(subwindow->font);
 	subwindow->font = new_font;
@@ -4972,15 +5074,12 @@ static void free_font(struct font *font)
 static bool is_ok_col_row(const struct subwindow *subwindow,
 		const SDL_Rect *rect, int cell_w, int cell_h)
 {
-	const int min_col =
-		subwindow->index == MAIN_SUBWINDOW ? MIN_COLS_MAIN : MIN_COLS_OTHER;
-	const int min_row =
-		subwindow->index == MAIN_SUBWINDOW ? MIN_ROWS_MAIN : MIN_ROWS_OTHER;
+	int min_w, min_h;
 
-	if ((rect->w - DEFAULT_BORDER * 2) / cell_w < min_col) {
-		return false;
-	}
-	if ((rect->h - DEFAULT_BORDER * 2) / cell_h < min_row) {
+	get_minimum_subwindow_size(subwindow->index == MAIN_SUBWINDOW,
+		cell_w, cell_h, &min_w, &min_h);
+
+	if (rect->w < min_w || rect->h < min_h) {
 		return false;
 	}
 
@@ -5291,7 +5390,13 @@ static void reload_status_bar(struct sdlpui_window *window)
 static void fit_subwindow_in_window(const struct sdlpui_window *window,
 		struct subwindow *subwindow)
 {
-	fit_rect_in_rect_by_xy(&subwindow->full_rect, &window->inner_rect);
+	int min_w, min_h;
+
+	get_minimum_subwindow_size(subwindow->index == MAIN_SUBWINDOW,
+		subwindow->font->ttf.glyph.w, subwindow->font->ttf.glyph.h,
+		&min_w, &min_h);
+	coerce_rect_in_rect(&subwindow->full_rect, &window->inner_rect,
+		min_w, min_h);
 	if (!is_rect_in_rect(&subwindow->full_rect, &window->inner_rect)) {
 		subwindow->borders.error = true;
 		render_borders(subwindow);
@@ -5301,7 +5406,8 @@ static void fit_subwindow_in_window(const struct sdlpui_window *window,
 static void resize_window(struct sdlpui_window *window, int w, int h)
 {
 	if (window->full_rect.w == w
-			&& window->full_rect.h == h)
+			&& window->full_rect.h == h
+			&& window->status_bar->rect.w == w)
 	{
 		return;
 	}
@@ -5463,6 +5569,23 @@ static void start_window(struct sdlpui_window *window)
 				window->full_rect.w, window->full_rect.h,
 				SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_RESIZABLE);
 	} else {
+		/*
+		 * For newer configuration files, stored_rect will have the
+		 * desired size for fullscreen.  Older configuration files
+		 * only save the size for whatever mode (fullscreen, not
+		 * fullscreen) the game was in so those will already have the
+		 * right size in full_rect.
+		 */
+		if (window->config->window_flags
+				& SDL_WINDOW_FULLSCREEN_DESKTOP) {
+			if (window->stored_rect.w &&
+					window->stored_rect.h) {
+				SDL_Rect tmp_rect = window->full_rect;
+
+				window->full_rect = window->stored_rect;
+				window->stored_rect = tmp_rect;
+			}
+		}
 		window->window = SDL_CreateWindow(VERSION_NAME,
 				window->full_rect.x, window->full_rect.y,
 				window->full_rect.w, window->full_rect.h,
@@ -5549,6 +5672,10 @@ static void wipe_window_aux_config(struct sdlpui_window *window)
 	window->full_rect.h = mode.h / 2;
 	window->full_rect.x = mode.w / 4;
 	window->full_rect.y = mode.h / 4;
+	window->stored_rect.w = 0;
+	window->stored_rect.h = 0;
+	window->stored_rect.x = 0;
+	window->stored_rect.y = 0;
 
 	if (current_graphics_mode != NULL) {
 		window->graphics.id = current_graphics_mode->grafID;
@@ -5579,6 +5706,10 @@ static void wipe_window(struct sdlpui_window *window, int display)
 
 	window->full_rect.w = mode.w;
 	window->full_rect.h = mode.h;
+	window->stored_rect.w = 0;
+	window->stored_rect.h = 0;
+	window->stored_rect.x = 0;
+	window->stored_rect.y = 0;
 
 	window->color = window->app->colors[DEFAULT_WINDOW_BG_COLOR];
 	window->alpha = DEFAULT_ALPHA_FULL;
@@ -5603,9 +5734,21 @@ static void dump_subwindow(const struct subwindow *subwindow, ang_file *config)
 	file_putf(config, "subwindow-" sym ":%u:" fmt "\n", subwindow->index, __VA_ARGS__)
 	DUMP_SUBWINDOW("window", "%u:%d", subwindow->window->index,
 			(subwindow->visible) ? 1 : 0);
-	DUMP_SUBWINDOW("full-rect", "%d:%d:%d:%d",
+	if (subwindow->window->flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+		DUMP_SUBWINDOW("full-rect", "%d:%d:%d:%d",
+			subwindow->stored_rect.x, subwindow->stored_rect.y,
+			subwindow->stored_rect.w, subwindow->stored_rect.h);
+		DUMP_SUBWINDOW("full-rect-fs", "%d:%d:%d:%d",
 			subwindow->full_rect.x, subwindow->full_rect.y,
 			subwindow->full_rect.w, subwindow->full_rect.h);
+	} else {
+		DUMP_SUBWINDOW("full-rect", "%d:%d:%d:%d",
+			subwindow->full_rect.x, subwindow->full_rect.y,
+			subwindow->full_rect.w, subwindow->full_rect.h);
+		DUMP_SUBWINDOW("full-rect-fs", "%d:%d:%d:%d",
+			subwindow->stored_rect.x, subwindow->stored_rect.y,
+			subwindow->stored_rect.w, subwindow->stored_rect.h);
+	}
 	DUMP_SUBWINDOW("font", "%d:%s",
 			subwindow->font->size, subwindow->font->name);
 	DUMP_SUBWINDOW("borders", "%s",
@@ -5627,8 +5770,19 @@ static void dump_window(const struct sdlpui_window *window, ang_file *config)
 	int x;
 	int y;
 	SDL_GetWindowPosition(window->window, &x, &y);
-	DUMP_WINDOW("full-rect", "%d:%d:%d:%d",
+	if (window->flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+		DUMP_WINDOW("full-rect", "%d:%d:%d:%d",
+			window->stored_rect.x, window->stored_rect.y,
+			window->stored_rect.w, window->stored_rect.h);
+		DUMP_WINDOW("full-rect-fs", "%d:%d:%d:%d",
 			x, y, window->full_rect.w, window->full_rect.h);
+	} else {
+		DUMP_WINDOW("full-rect", "%d:%d:%d:%d",
+			x, y, window->full_rect.w, window->full_rect.h);
+		DUMP_WINDOW("full-rect-fs", "%d:%d:%d:%d",
+			window->stored_rect.x, window->stored_rect.y,
+			window->stored_rect.w, window->stored_rect.h);
+	}
 
 	DUMP_WINDOW("fullscreen", "%s",
 			(window->flags & SDL_WINDOW_FULLSCREEN_DESKTOP) ? "true" : "false");
@@ -5820,6 +5974,23 @@ static void load_subwindow(struct sdlpui_window *window,
 			++i;
 		}
 	}
+
+	/*
+	 * For newer configuration files, stored_rect will have the desired
+	 * size for fullscreen.  Older configuration files only save the
+	 * size of whatever mode (fullscreen, not fullscreen) the game was in
+	 * so those will already have the right size in full_rect.
+	 */
+	if (subwindow->config && window->config && (window->config->window_flags
+			& SDL_WINDOW_FULLSCREEN_DESKTOP)
+			&& subwindow->stored_rect.w
+			&& subwindow->stored_rect.h) {
+		SDL_Rect tmp_rect = subwindow->full_rect;
+
+		subwindow->full_rect = subwindow->stored_rect;
+		subwindow->stored_rect = tmp_rect;
+	}
+
 	if (!adjust_subwindow_geometry(window, subwindow)) {
 		quit_fmt("cannot adjust geometry of subwindow %u in window %u",
 				subwindow->index, window->index);
@@ -5941,10 +6112,9 @@ static bool wipe_subwindow(struct subwindow *subwindow)
 	subwindow->index = index;
 
 	/* XXX 80x24 is essential for main */
-	subwindow->full_rect.w = MIN_COLS_MAIN * subwindow->app->def_font_w
-		+ DEFAULT_BORDER * 2;
-	subwindow->full_rect.h = MIN_ROWS_MAIN * subwindow->app->def_font_h
-		+ DEFAULT_BORDER * 2;
+	get_minimum_subwindow_size(true,
+		subwindow->app->def_font_w, subwindow->app->def_font_h,
+		&subwindow->full_rect.w, &subwindow->full_rect.h);
 	if (subwindow->index != MAIN_SUBWINDOW) {
 		subwindow->full_rect.w /= 2;
 		subwindow->full_rect.h /= 2;
@@ -6651,10 +6821,36 @@ static enum parser_error config_window_rect(struct parser *parser)
 	if (!window->inited) {
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	}
+	/*
+	 * Assume not in fullscreen mode for now.  If necessary, swap
+	 * full_rect and stored_rect later in start_window().
+	 */
 	window->full_rect.x = parser_getint(parser, "x");
 	window->full_rect.y = parser_getint(parser, "y");
 	window->full_rect.w = parser_getint(parser, "w");
 	window->full_rect.h = parser_getint(parser, "h");
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error config_window_rect_fs(struct parser *parser)
+{
+	struct sdlpui_window *window = get_window_from_parser(parser);
+
+	if (!window) {
+		return PARSE_ERROR_OUT_OF_BOUNDS;
+	}
+	if (!window->inited) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	/*
+	 * Assume not in fullscreen mode for now.  If necessary, swap
+	 * full_rect and stored_rect later in start_window().
+	 */
+	window->stored_rect.x = parser_getint(parser, "x");
+	window->stored_rect.y = parser_getint(parser, "y");
+	window->stored_rect.w = parser_getint(parser, "w");
+	window->stored_rect.h = parser_getint(parser, "h");
 
 	return PARSE_ERROR_NONE;
 }
@@ -6845,10 +7041,37 @@ static enum parser_error config_subwindow_rect(struct parser *parser)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	}
 
+	/*
+	 * Assume not in fullscreen mode for now.  If necessary, swap
+	 * full_rect and stored_rect later in load_subwindow().
+	 */
 	subwindow->full_rect.x = parser_getint(parser, "x");
 	subwindow->full_rect.y = parser_getint(parser, "y");
 	subwindow->full_rect.w = parser_getint(parser, "w");
 	subwindow->full_rect.h = parser_getint(parser, "h");
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error config_subwindow_rect_fs(struct parser *parser)
+{
+	struct subwindow *subwindow = get_subwindow_from_parser(parser);
+
+	if (!subwindow) {
+		return PARSE_ERROR_OUT_OF_BOUNDS;
+	}
+	if (!subwindow->inited) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+
+	/*
+	 * Assume not in fullscreen mode for now.  If necessary, swap
+	 * full_rect and stored_rect later in load_subwindow().
+	 */
+	subwindow->stored_rect.x = parser_getint(parser, "x");
+	subwindow->stored_rect.y = parser_getint(parser, "y");
+	subwindow->stored_rect.w = parser_getint(parser, "w");
+	subwindow->stored_rect.h = parser_getint(parser, "h");
 
 	return PARSE_ERROR_NONE;
 }
@@ -6995,8 +7218,10 @@ static struct parser *init_parse_config(struct my_app *a)
 			config_window_display);
 	parser_reg(parser, "window-fullscreen uint index sym fullscreen",
 			config_window_fullscreen);
-	parser_reg(parser, "window-full-rect uint index int x int y int w int h",
-			config_window_rect);
+	parser_reg(parser, "window-full-rect uint index int x int y int w "
+			"int h", config_window_rect);
+	parser_reg(parser, "window-full-rect-fs uint index int x int y int w "
+			"int h", config_window_rect_fs);
 	parser_reg(parser, "window-renderer uint index sym type",
 			config_window_renderer);
 	parser_reg(parser, "window-wallpaper-path uint index str path",
@@ -7012,8 +7237,10 @@ static struct parser *init_parse_config(struct my_app *a)
 
 	parser_reg(parser, "subwindow-window uint index uint windex ?int vis",
 			config_subwindow_window);
-	parser_reg(parser, "subwindow-full-rect uint index int x int y int w int h",
-			config_subwindow_rect);
+	parser_reg(parser, "subwindow-full-rect uint index int x int y "
+			"int w int h", config_subwindow_rect);
+	parser_reg(parser, "subwindow-full-rect-fs uint index int x int y "
+			"int w int h", config_subwindow_rect_fs);
 	parser_reg(parser, "subwindow-font uint index int size str name",
 			config_subwindow_font);
 	parser_reg(parser, "subwindow-borders uint index sym borders",

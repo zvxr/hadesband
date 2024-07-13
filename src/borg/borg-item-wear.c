@@ -48,9 +48,8 @@ int16_t  track_worn_size;
 uint8_t *track_worn_name1;
 int16_t  track_worn_time;
 
-int16_t borg_best_fit_item
-    = -1; /* Item to be worn.  Index used to note which item not to sell */
-int borg_best_item = -1; /* Attempting to wear a best fit item */
+/* Item to be worn.  Index used to note which item not to sell */
+int16_t borg_best_fit_item = -1; 
 
 /*
  * Identify items if possible
@@ -387,7 +386,6 @@ bool borg_swap_rings(void)
         if (borg_items[INVEN_RIGHT].iqty) {
             borg_keypress('t');
             borg_keypress(all_letters_nohjkl[INVEN_RIGHT - INVEN_WIELD]);
-            borg_keypress(' ');
         }
 
         /* make sure one is on the left */
@@ -395,7 +393,6 @@ bool borg_swap_rings(void)
             borg_note("# Taking off more valuable left ring.");
             borg_keypress('t');
             borg_keypress(all_letters_nohjkl[INVEN_LEFT - INVEN_WIELD]);
-            borg_keypress(' ');
         }
 
         /* Success */
@@ -948,6 +945,7 @@ bool borg_wear_stuff(void)
             /* Evaluate local danger */
             d = borg_danger(borg.c.y, borg.c.x, 1, true, false);
 
+#if 0
             if (borg_cfg[BORG_VERBOSE]) {
                 /* dump list and power...  for debugging */
                 borg_note(format("Trying  Item %s (best power %ld)",
@@ -955,6 +953,7 @@ bool borg_wear_stuff(void)
                 borg_note(format("Against Item %s (borg_power %ld)",
                     safe_items[slot].desc, (long int)b_p));
             }
+#endif
 
             /* Restore the old item */
             memcpy(&borg_items[slot], &safe_items[slot], sizeof(borg_item));
@@ -1211,15 +1210,15 @@ static void borg_best_stuff_aux(
     borg_best_stuff_aux(n + 1, test, best, vp);
 
     /* Try other possible objects */
-    for (i = 0;
-         i < ((shop_num == 7) ? (z_info->pack_size + z_info->store_inven_max)
-                              : z_info->pack_size);
+    for (i = 0; i < ((shop_num == BORG_HOME)
+                         ? (z_info->pack_size + z_info->store_inven_max)
+                         : z_info->pack_size);
          i++) {
         borg_item *item;
         if (i < z_info->pack_size)
             item = &borg_items[i];
         else
-            item = &borg_shops[7].ware[i - z_info->pack_size];
+            item = &borg_shops[BORG_HOME].ware[i - z_info->pack_size];
 
         /* Skip empty items */
         if (!item->iqty)
@@ -1316,11 +1315,12 @@ bool borg_best_stuff(void)
         memcpy(&safe_items[i], &borg_items[i], sizeof(borg_item));
     }
 
-    if (shop_num == 7) {
+    if (shop_num == BORG_HOME) {
         /* Hack -- Copy all the store slots */
         for (i = 0; i < z_info->store_inven_max; i++) {
             /* Save the item */
-            memcpy(&safe_home[i], &borg_shops[7].ware[i], sizeof(borg_item));
+            memcpy(&safe_home[i], &borg_shops[BORG_HOME].ware[i],
+                sizeof(borg_item));
         }
     }
 
@@ -1361,7 +1361,7 @@ bool borg_best_stuff(void)
                 /* wield the item */
                 borg_note(format("# Best Combo %s.", item->desc));
                 borg_keypress('w');
-                borg_best_item = i;
+                borg_keypress(all_letters_nohjkl[i]);
                 return (true);
             }
 
@@ -1378,13 +1378,13 @@ bool borg_best_stuff(void)
 
             i -= 100;
 
-            item = &borg_shops[7].ware[i];
+            item = &borg_shops[BORG_HOME].ware[i];
 
             /* Dont do it if you just sold this item */
             for (p = 0; p < sold_item_num; p++) {
                 if (sold_item_tval[p] == item->tval
                     && sold_item_sval[p] == item->sval
-                    && sold_item_store[p] == 7)
+                    && sold_item_store[p] == BORG_HOME)
                     return (false);
             }
 
@@ -1397,7 +1397,7 @@ bool borg_best_stuff(void)
             /* Purchase that item */
             borg_keypress(purchase_target[0]);
             borg_keypress('p');
-            /* press ENTER twice (mulitple objects) */
+            /* press ENTER twice (multiple objects) */
             borg_keypress(KC_ENTER);
             borg_keypress(KC_ENTER);
 
@@ -1489,8 +1489,6 @@ bool borg_wear_recharge(void)
         borg_keypress(ESCAPE);
         borg_keypress('w');
         borg_keypress(all_letters_nohjkl[b_i]);
-        borg_keypress(' ');
-        borg_keypress(' ');
 
         /* rest for a while */
         borg_keypress('R');

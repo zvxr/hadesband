@@ -39,6 +39,7 @@
 #include "obj-make.h"
 #include "obj-pile.h"
 #include "obj-tval.h"
+#include "obj-util.h"
 #include "player-calcs.h"
 #include "player-history.h"
 #include "player-quest.h"
@@ -179,6 +180,8 @@ static bool item_tester_uncursable(const struct object *obj)
 static bool uncurse_object(struct object *obj, int strength, char *dice_string)
 {
 	int index = 0;
+	int old_weight = obj->number * object_weight_one(obj);
+	int new_weight = old_weight;
 
 	if (get_curse(&index, obj, dice_string)) {
 		struct curse_data curse = obj->curses[index];
@@ -191,6 +194,7 @@ static bool uncurse_object(struct object *obj, int strength, char *dice_string)
 			/* Successfully removed this curse */
 			remove_object_curse(obj->known, index, false);
 			remove_object_curse(obj, index, true);
+			new_weight = obj->number * object_weight_one(obj);
 		} else if (!of_has(obj->flags, OF_FRAGILE)) {
 			/* Failure to remove, object is now fragile */
 			object_desc(o_name, sizeof(o_name), obj, ODESC_FULL,
@@ -202,7 +206,15 @@ static bool uncurse_object(struct object *obj, int strength, char *dice_string)
 			/* Failure - unlucky fragile object is destroyed */
 			struct object *destroyed;
 			bool none_left = false;
-			msg("There is a bang and a flash!");
+			int dam = damroll(5, 5);
+			char dam_text[16] = "";
+
+			dam = player_apply_damage_reduction(player, dam);
+			if (dam > 0 && OPT(player, show_damage)) {
+				strnfmt(dam_text, sizeof(dam_text), " (%d)",
+					dam);
+			}
+			msg("%s%s", "There is a bang and a flash!", dam_text);
 			if (object_is_carried(player, obj)) {
 				destroyed = gear_object_for_use(player, obj,
 					1, false, &none_left);
@@ -215,7 +227,7 @@ static bool uncurse_object(struct object *obj, int strength, char *dice_string)
 			} else {
 				square_delete_object(cave, obj->grid, obj, true, true);
 			}
-			take_hit(player, damroll(5, 5), "Failed uncursing");
+			take_hit(player, dam, "Failed uncursing");
 		} else {
 			/* Non-destructive failure */
 			msg("The removal fails.");
@@ -223,6 +235,7 @@ static bool uncurse_object(struct object *obj, int strength, char *dice_string)
 	} else {
 		return false;
 	}
+	player->upkeep->total_weight += new_weight - old_weight;
 	player->upkeep->notice |= (PN_COMBINE);
 	player->upkeep->update |= (PU_BONUS);
 	player->upkeep->redraw |= (PR_EQUIP | PR_INVEN);
@@ -813,14 +826,20 @@ bool effect_handler_DRAIN_STAT(effect_handler_context_t *context)
 	/* Attempt to reduce the stat */
 	if (player_stat_dec(player, stat, false)){
 		int dam = effect_calculate_value(context, false);
+		char dam_text[32] = "";
+
+		dam = player_apply_damage_reduction(player, dam);
 
 		/* Notice effect */
 		equip_learn_flag(player, flag);
 
 		/* Message */
-		msgt(MSG_DRAIN_STAT, "You feel very %s.", desc_stat(stat, false));
-		if (dam)
-			take_hit(player, dam, "stat drain");
+		if (dam > 0 && OPT(player, show_damage)) {
+			strnfmt(dam_text, sizeof(dam_text), " (%d)", dam);
+		}
+		msgt(MSG_DRAIN_STAT, "You feel very %s.%s",
+			desc_stat(stat, false), dam_text);
+		take_hit(player, dam, "stat drain");
 	}
 
 	return (true);
@@ -1239,9 +1258,13 @@ bool effect_handler_MAP_AREA(effect_handler_context_t *context)
 				}
 			}
 
-			/* Forget unprocessed, unknown grids in the mapping area */
-			if (square_isnotknown(cave, grid))
+			/*
+			 * Forget grids that are both unprocessed and
+			 * misremembered in the mapping area.
+			 */
+			if (square_ismemorybad(cave, grid)) {
 				square_forget(cave, grid);
+			}
 		}
 	}
 
@@ -1423,14 +1446,17 @@ bool effect_handler_DETECT_DOORS(effect_handler_context_t *context)
 				doors = true;
 			} else if (square_isdoor(cave, grid)) {
 				/* Detect other types of doors. */
-				if (square_isnotknown(cave, grid)) {
+				if (square_ismemorybad(cave, grid)) {
 					square_memorize(cave, grid);
 					square_light_spot(cave, grid);
 					doors = true;
 				}
 			} else if (square_isdoor(player->cave, grid)
-					&& square_isnotknown(cave, grid)) {
-				/* Forget unknown doors in the mapping area */
+					&& square_ismemorybad(cave, grid)) {
+				/*
+				 * Forget misremembered doors in the mapping
+				 * area.
+				 */
 				square_forget(cave, grid);
 			}
 		}
@@ -2397,7 +2423,7 @@ bool effect_handler_BANISH(effect_handler_context_t *context)
 		/*
 		 * Skip "wrong" monsters (see warning above); for shape shifters
 		 * it is the original race that matters not whatever shape the
-		 * the monster has now.
+		 * monster has now.
 		 */
 		if (mon->original_race) {
 			if ((char) mon->original_race->d_char != typ) continue;
@@ -2406,13 +2432,17 @@ bool effect_handler_BANISH(effect_handler_context_t *context)
 		}
 
 		/* Delete the monster */
-		delete_monster_idx(i);
+		delete_monster_idx(cave, i);
 
 		/* Take some damage */
 		dam += randint1(4);
 	}
 
 	/* Hurt the player */
+	dam = player_apply_damage_reduction(player, dam);
+	if (dam > 0 && OPT(player, show_damage)) {
+		msg("You take %d damage.\n", dam);
+	}
 	take_hit(player, dam, "the strain of casting Banishment");
 
 	/* Update monster list window */
@@ -2454,13 +2484,17 @@ bool effect_handler_MASS_BANISH(effect_handler_context_t *context)
 		if (mon->cdis > radius) continue;
 
 		/* Delete the monster */
-		delete_monster_idx(i);
+		delete_monster_idx(cave, i);
 
 		/* Take some damage */
 		dam += randint1(3);
 	}
 
 	/* Hurt the player */
+	dam = player_apply_damage_reduction(player, dam);
+	if (dam > 0 && OPT(player, show_damage)) {
+		msg("You take %d damage.\n", dam);
+	}
 	take_hit(player, dam, "the strain of casting Mass Banishment");
 
 	/* Update monster list window */
@@ -2926,7 +2960,7 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 	if (t_mon) {
 		/* Monster is just gone */
 		add_monster_message(t_mon, MON_MSG_DISAPPEAR, false);
-		delete_monster_idx(t_mon->midx);
+		delete_monster_idx(cave, t_mon->midx);
 		return true;
 	}
 
@@ -3023,7 +3057,8 @@ bool effect_handler_RUBBLE(effect_handler_context_t *context)
 	 * necessary.
 	 */
 	int rubble_grids = randint1(3);
-	int open_grids = count_feats(NULL, square_isempty, false);
+	int open_grids = count_neighbors(NULL, cave, player->grid,
+		square_isempty, false);
 
 	if (rubble_grids > open_grids) {
 		rubble_grids = open_grids;
@@ -3199,6 +3234,8 @@ bool effect_handler_CURSE_ARMOR(effect_handler_context_t *context)
 	} else {
 		int num = randint1(3);
 		int max_tries = 20;
+		int old_weight = obj->number * object_weight_one(obj);
+
 		msg("A terrible black aura blasts your %s!", o_name);
 
 		/* Take down bonus a wee bit */
@@ -3215,6 +3252,10 @@ bool effect_handler_CURSE_ARMOR(effect_handler_context_t *context)
 			append_object_curse(obj, pick, power);
 			num--;
 		}
+
+		/* Account for a weight change, if any */
+		player->upkeep->total_weight +=
+			(obj->number * object_weight_one(obj)) - old_weight;
 
 		/* Recalculate bonuses */
 		player->upkeep->update |= (PU_BONUS);
@@ -3257,6 +3298,8 @@ bool effect_handler_CURSE_WEAPON(effect_handler_context_t *context)
 	} else {
 		int num = randint1(3);
 		int max_tries = 20;
+		int old_weight = obj->number * object_weight_one(obj);
+
 		msg("A terrible black aura blasts your %s!", o_name);
 
 		/* Hurt it a bit */
@@ -3274,6 +3317,10 @@ bool effect_handler_CURSE_WEAPON(effect_handler_context_t *context)
 			append_object_curse(obj, pick, power);
 			num--;
 		}
+
+		/* Account for a weight change, if any */
+		player->upkeep->total_weight +=
+			(obj->number * object_weight_one(obj)) - old_weight;
 
 		/* Recalculate bonuses */
 		player->upkeep->update |= (PU_BONUS);

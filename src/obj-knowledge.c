@@ -84,6 +84,7 @@ static void init_rune(void)
 		if (prop->subtype == OFT_LIGHT) continue;
 		if (prop->subtype == OFT_DIG) continue;
 		if (prop->subtype == OFT_THROW) continue;
+		if (prop->subtype == OFT_CURSE_ONLY) continue;
 		count++;
 	}
 	for (i = 0; i < OBJ_MOD_MAX; i++) {
@@ -180,6 +181,7 @@ static void init_rune(void)
 		if (prop->subtype == OFT_LIGHT) continue;
 		if (prop->subtype == OFT_DIG) continue;
 		if (prop->subtype == OFT_THROW) continue;
+		if (prop->subtype == OFT_CURSE_ONLY) continue;
 
 		rune_list[count++] = (struct rune)
 			{ RUNE_VAR_FLAG, i, 0, prop->name };
@@ -1748,7 +1750,11 @@ void object_learn_unknown_rune(struct player *p, struct object *obj)
 	int i = object_find_unknown_rune(p, obj);
 
 	/* No unknown runes */
-	if (i < 0) return;
+	if (i < 0) {
+		obj->known->notice |= OBJ_NOTICE_ASSESSED;
+		player_know_object(player, obj);
+		return;
+	}
 
 	/* Learn the rune */
 	player_learn_rune(p, i, true);

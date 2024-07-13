@@ -50,6 +50,9 @@ void borg_log_death(void)
     ang_file *borg_log_file;
     time_t    death_time;
 
+    if (!borg_cfg[BORG_SAVE_DEATH])
+        return;
+
     /* Build path to location of the definition file */
     path_build(buf, 1024, ANGBAND_DIR_USER, "borg-log.txt");
 
@@ -92,6 +95,9 @@ void borg_log_death_data(void)
     char      buf[1024];
     ang_file *borg_log_file;
     time_t    death_time;
+
+    if (!borg_cfg[BORG_SAVE_DEATH])
+        return;
 
     path_build(buf, 1024, ANGBAND_DIR_USER, "borg.dat");
 
@@ -148,9 +154,10 @@ void borg_write_map(bool ask)
 
     int16_t m_idx;
 
-    struct store *st_ptr = &stores[7];
-
     char o_name[80];
+
+    if (!borg_cfg[BORG_SAVE_DEATH])
+        return;
 
     /* Process the player name */
     for (i = 0; player->full_name[i]; i++) {
@@ -255,7 +262,9 @@ void borg_write_map(bool ask)
         file_putf(borg_map_file, "%s\n", ch_line);
     }
     mem_free(line);
+    line = NULL;
     mem_free(ch_line);
+    ch_line = NULL;
 
     /* Known/Seen monsters */
     for (i = 1; i < borg_kills_nxt; i++) {
@@ -318,7 +327,7 @@ void borg_write_map(bool ask)
     file_putf(borg_map_file, "  [Home Inventory (page 1)]\n\n");
     struct object **list
         = mem_zalloc(sizeof(struct object *) * z_info->store_inven_max);
-    store_stock_list(st_ptr, list, z_info->store_inven_max);
+    store_stock_list(&stores[BORG_HOME], list, z_info->store_inven_max);
     for (i = 0; i < z_info->store_inven_max / 2; i++) {
         object_desc(o_name, sizeof(o_name), list[i], ODESC_FULL, player);
         file_putf(
@@ -335,6 +344,7 @@ void borg_write_map(bool ask)
     }
     file_putf(borg_map_file, "\n\n");
     mem_free(list);
+    list = NULL;
 
     /* Write swap info */
     if (borg_cfg[BORG_USES_SWAPS]) {
@@ -458,7 +468,7 @@ void borg_write_map(bool ask)
         borg_map_file, "borg_plays_risky; %d\n", borg_cfg[BORG_PLAYS_RISKY]);
     file_putf(borg_map_file, "borg_slow_optimizehome; %d\n\n",
         borg_cfg[BORG_SLOW_OPTIMIZEHOME]);
-    file_putf(borg_map_file, "borg.scumming_pots; %d\n\n", borg.scumming_pots);
+    file_putf(borg_map_file, "prepping for big fight; %d\n\n", borg.trait[BI_PREP_BIG_FIGHT]);
     file_putf(borg_map_file, "\n\n");
 
     /* Dump the spells */
@@ -483,11 +493,11 @@ void borg_write_map(bool ask)
     }
 
     /* Dump the borg.trait[] information */
-    itemm = z_info->k_max;
-    to    = z_info->k_max + BI_MAX;
+    itemm = 0;
+    to    = BI_MAX;
     for (; itemm < to; itemm++) {
         file_putf(borg_map_file, "skill %d (%s) value= %d.\n", itemm,
-            prefix_pref[itemm - z_info->k_max], borg.has[itemm]);
+            prefix_pref[itemm], borg.trait[itemm]);
     }
 
 #if 0

@@ -30,6 +30,7 @@
 #include "borg-cave.h"
 #include "borg-danger.h"
 #include "borg-fight-attack.h"
+#include "borg-flow-misc.h"
 #include "borg-flow-stairs.h"
 #include "borg-flow-take.h"
 #include "borg-flow.h"
@@ -125,14 +126,6 @@ static void borg_update_kill_new(int i)
 
     /* Extract the monster speed */
     kill->speed = (m_ptr->mspeed);
-
-#if 0
-    /* Hack -- assume optimal racial variety */
-    if (!(rf_has(r_ptr->flags, RF_UNIQUE))) {
-        /* Hack -- Assume full speed bonus */
-        kill->fast += (extract_energy[kill->fast] / 10);
-    }
-#endif
 
     /* Extract max hitpoints */
     /* This is a cheat.  Borg does not look
@@ -278,7 +271,7 @@ static void borg_update_kill_old(int i)
      *
      * Basically the borg is cheating the real hit points of the monster then
      * using that information to calculate the estimated hp of the monster.
-     * Its the same basic tactict that we would use.
+     * It's the same basic tactics that we would use.
      *
      * Kill->power is used a lot in borg_danger,
      * for calculating damage from breath attacks.
@@ -906,11 +899,6 @@ static unsigned int borg_guess_race(
      * in order to correctly id the monster.  but i am passing that up for
      * the sake of speed
      */
-#if 0
-    int i, s, n;
-    int b_i = 0, b_s = 0;
-#endif
-
     struct monster *m_ptr;
     m_ptr = square_monster(cave, loc(x, y));
 
@@ -919,93 +907,6 @@ static unsigned int borg_guess_race(
 
     /* Actual monsters */
     return (m_ptr->race->ridx);
-
-#if 0
-    /* If I cannot locate it, then use the old routine to id the monster */
-    /* Find an "acceptable" monster */
-    for (i = 1; i < z_info->r_max - 1; i++) {
-        monster_race *r_ptr = &r_info[i];
-
-        /* Skip non-monsters */
-        if (!r_ptr->name) continue;
-
-
-        /* Base score */
-        s = 10000;
-
-
-        /* Verify char rr9*/
-        if (c != r_ptr->d_char) continue;
-
-        /* Clear or multi-hued monsters */
-        if (r_ptr->flags1 & (RF1_ATTR_MULTI | RF1_ATTR_CLEAR)) {
-            /* Penalize "weird" monsters */
-            if (!multi) s = s - 1000;
-        }
-
-        /* Normal monsters */
-        else {
-            /* Verify multi */
-            if (multi) continue;
-
-            /* Verify attr */
-            if (a != r_ptr->d_attr) continue;
-        }
-
-
-        /* Check uniques */
-        if (rf_has(r_ptr->flags, RF_UNIQUE)) {
-            /* Hack -- Dead uniques stay dead */
-            if (borg_race_death[i] > 0) continue;
-
-            /* Prefer normals */
-            s = s - 10;
-        }
-
-
-        /* Hack -- penalize "extremely" out of depth */
-        if (r_ptr->level > borg.trait[BI_CDEPTH] + 50) continue;
-
-        /* Hack -- penalize "very" out of depth */
-        if (r_ptr->level > borg.trait[BI_CDEPTH] + 15) s = s - 100;
-
-        /* Hack -- penalize "rather" out of depth */
-        if (r_ptr->level > borg.trait[BI_CDEPTH] + 5) s = s - 50;
-
-        /* Hack -- penalize "somewhat" out of depth */
-        if (r_ptr->level > borg.trait[BI_CDEPTH]) s = s - 10;
-
-        /* Penalize "depth miss" */
-        s = s - ABS(r_ptr->level - borg.trait[BI_CDEPTH]);
-
-        /* Hack -- Reward multiplying monsters */
-        if (rf_has(r_ptr->flags, RF_MULTIPLY)) s = s + 10;
-
-
-        /* Count occurances */
-        n = borg_race_count[i];
-
-        /* Mega-Hack -- Reward occurances XXX XXX XXX */
-        s = s + (n / 100) + (((n < 100) ? n : 100) / 10) + ((n < 10) ? n : 10);
-
-
-        /* Desire "best" possible score */
-        if (b_i && (s < b_s)) continue;
-
-        /* Track it */
-        b_i = i; b_s = s;
-    }
-
-    /* Success */
-    if (b_i) return (b_i);
-
-
-    /* Message */
-    borg_note(format("# Assuming player ghost (char %d, attr %d)", c, a));
-
-    /* Assume player ghost */
-    return (z_info->r_max - 1);
-#endif
 }
 
 /*
@@ -1165,7 +1066,7 @@ bool observe_kill_move(int y, int x, int d, uint8_t a, wchar_t c, bool flag)
             /* Note */
             borg_note(
                 format("# Tracking a monster '%s' at (%d,%d) from (%d,%d)",
-                    (r_ptr->name), kill->pos.y, kill->pos.x, ox, oy));
+                    (r_ptr->name), kill->pos.y, kill->pos.x, oy, ox));
 
             /* Recalculate danger */
             borg_danger_wipe = true;
@@ -1973,12 +1874,8 @@ bool borg_flow_kill(bool viewable, int nearness)
         if (skip_monster)
             continue;
 
-        /* Clear the flow codes */
-        borg_flow_clear();
-
-        /* Check the distance to stair for this proposed grid and leash*/
-        if (borg_flow_cost_stair(y, x, b_stair) > borg.trait[BI_CLEVEL] * 3 + 9
-            && borg.trait[BI_CLEVEL] < 20)
+        /* don't go too far from the stairs */
+        if (borg_flow_far_from_stairs(x, y, b_stair))
             continue;
 
         /* Careful -- Remember it */
@@ -2023,15 +1920,16 @@ bool borg_flow_kill(bool viewable, int nearness)
  */
 static bool borg_has_distance_attack(void)
 {
-
     /* line up Magic Missile shots (covers Mages) */
     if (borg_attack_aux_spell_bolt(
-            MAGIC_MISSILE, 0, 10, BORG_ATTACK_MISSILE, z_info->max_range))
+            MAGIC_MISSILE, 0, 10, BORG_ATTACK_MISSILE, z_info->max_range, false)
+        > 0)
         return true;
 
     /* line up Nether Bolt shots (covers Necromancers) */
     if (borg_attack_aux_spell_bolt(
-            NETHER_BOLT, 0, 10, BORG_ATTACK_NETHER, z_info->max_range))
+            NETHER_BOLT, 0, 10, BORG_ATTACK_NETHER, z_info->max_range, false)
+        > 0)
         return true;
 
     /* or arrows (covers warrior/ranger/paladins/rogues) */
@@ -2722,11 +2620,11 @@ bool borg_flow_kill_direct(bool viewable, bool twitchy)
         borg_flow_spread(150, true, false, true, -1, false);
 
         /* Attempt to Commit the flow */
-        if (!borg_flow_commit("center direct", GOAL_KILL))
+        if (!borg_flow_commit("center direct", GOAL_DIGGING))
             return (false);
 
         /* Take one step */
-        if (!borg_flow_old(GOAL_KILL))
+        if (!borg_flow_old(GOAL_DIGGING))
             return (false);
 
         return (true);
@@ -2747,11 +2645,11 @@ bool borg_flow_kill_direct(bool viewable, bool twitchy)
         borg_flow_spread(15, true, false, true, -1, false);
 
         /* Attempt to Commit the flow */
-        if (!borg_flow_commit("kill direct", GOAL_KILL))
+        if (!borg_flow_commit("kill direct", GOAL_DIGGING))
             return (false);
 
         /* Take one step */
-        if (!borg_flow_old(GOAL_KILL))
+        if (!borg_flow_old(GOAL_DIGGING))
             return (false);
 
         return (true);
@@ -2857,7 +2755,7 @@ void borg_near_monster_type(int dist)
 
         /* Nether breath is bad */
         if (!borg.trait[BI_SRNTHR]
-            && (strstr(r_ptr->name, "Azriel")
+            && (strstr(r_ptr->name, "Ossë, Herald of Ulmo")
                 || strstr(r_ptr->name, "Dracolich")
                 || strstr(r_ptr->name, "Dracolisk")))
             scaryguy_on_level = true;
@@ -3201,7 +3099,7 @@ static void borg_init_monster_names(void)
         if (!(rf_has(r_ptr->flags, RF_UNIQUE)))
             continue;
 
-        text[size] = borg_massage_special_chars(r_ptr->name, NULL);
+        text[size] = borg_massage_special_chars(r_ptr->name);
         what[size] = i;
 
         /* a few special uniques to look out for */
@@ -3251,11 +3149,11 @@ static void borg_init_monster_names(void)
         if (rf_has(r_ptr->flags, RF_UNIQUE))
             continue;
 
-        text[size] = borg_massage_special_chars(r_ptr->name, NULL);
+        text[size] = borg_massage_special_chars(r_ptr->name);
         what[size] = i;
         size++;
         if (r_ptr->plural) {
-            text[size] = borg_massage_special_chars(r_ptr->plural, NULL);
+            text[size] = borg_massage_special_chars(r_ptr->plural);
             what[size] = i;
             size++;
         }
@@ -3352,7 +3250,9 @@ void borg_free_flow_kill(void)
 
     mem_free(borg_race_death);
     borg_race_death = NULL;
+
     mem_free(borg_race_count);
+    borg_race_count = NULL;
 
     mem_free(borg_kills);
     borg_kills = NULL;
