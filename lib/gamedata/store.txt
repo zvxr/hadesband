@@ -202,7 +202,7 @@ normal:wand:Magic Missile
 normal:wand:Stinking Cloud
 normal:wand:Stone to Mud
 normal:wand:Swap Places
-normal:staff:Phase Door
+#normal:staff:Phase Door
 normal:staff:Light
 normal:staff:Mapping
 normal:staff:Detect Invisible
