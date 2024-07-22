@@ -1962,7 +1962,7 @@ bool build_staircase(struct chunk *c, struct loc centre, int rating)
 bool build_circular(struct chunk *c, struct loc centre, int rating)
 {
 	/* Pick a room size */
-	int radius = 2 + randint1(2) + randint1(3);
+	int radius = 2 + randint1(3);
 
 	/* Occasional light */
 	bool light = c->depth <= randint1(25) ? true : false;
