@@ -1564,7 +1564,7 @@ static void clearing_stats(void)
 		}
 
 		/* Do game iterations */
-		for (depth = 2 ; depth < MAX_LVL; depth+=2) {
+		for (depth = 4 ; depth < MAX_LVL; depth+=4) {
 			/* Debug 
 			msg_format("Attempting level %d",depth); */
 
