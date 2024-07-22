@@ -2860,7 +2860,7 @@ graphics:?:w
 level:10
 weight:5
 cost:250
-alloc:20:1 to 100
+alloc:20:50 to 100
 pile:20:2
 power:19
 effect:DEEP_DESCENT
