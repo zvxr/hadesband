@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
           pushd src/
-          make -f Makefile.3ds
+          make -f Makefile.3ds -j$(nproc)
           popd
 
       - name: Setup cxitool
@@ -76,20 +76,20 @@ jobs:
         shell: bash
         run: |
           pushd src/
-          make -f Makefile.blocksds
+          make -f Makefile.blocksds -j$(nproc)
           popd
 
-  nds:
-    name: Nintendo DS
-    runs-on: ubuntu-latest
-    container: devkitpro/devkitarm
-    steps:
-      - name: Clone Project
-        uses: actions/checkout@v4
+#  nds:
+#    name: Nintendo DS
+#    runs-on: ubuntu-latest
+#    container: devkitpro/devkitarm
+#    steps:
+#      - name: Clone Project
+#        uses: actions/checkout@v4
 
-      - name: Build
-        shell: bash
-        run: |
-          pushd src/
-          make -f Makefile.nds
-          popd
+#      - name: Build
+#        shell: bash
+#        run: |
+#          pushd src/
+#          make -f Makefile.nds
+#          popd

@@ -59,7 +59,11 @@ void do_cmd_go_up(struct command *cmd)
 
 	/* Verify stairs */
 	if (!square_isupstairs(cave, player->grid)) {
-		do_cmd_navigate_up(cmd);
+		if (OPT(player, autoexplore_commands)) {
+			do_cmd_navigate_up(cmd);
+		} else {
+			msg("I see no up staircase here.");
+		}
 		return;
 	}
 
@@ -100,7 +104,11 @@ void do_cmd_go_down(struct command *cmd)
 
 	/* Verify stairs */
 	if (!square_isdownstairs(cave, player->grid)) {
-		do_cmd_navigate_down(cmd);
+		if (OPT(player, autoexplore_commands)) {
+			do_cmd_navigate_down(cmd);
+		} else {
+			msg("I see no down staircase here.");
+		}
 		return;
 	}
 
@@ -119,7 +127,7 @@ void do_cmd_go_down(struct command *cmd)
 			return;
 	}
 
-	/* Hack -- take a turn */
+	/* Take a turn */
 	player->upkeep->energy_use = z_info->move_energy;
 
 	/* Success */
@@ -548,7 +556,13 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 		}
 		player->body.slots[weapon_slot].obj = best_digger;
 		memcpy(&local_state, &player->state, sizeof(local_state));
-		calc_bonuses(player, &local_state, false, true);
+		/*
+		 * Avoid side effects from using update set to false with
+		 * calc_bonuses().
+		 */
+		local_state.stat_ind[STAT_STR] = 0;
+		local_state.stat_ind[STAT_DEX] = 0;
+		calc_bonuses(player, &local_state, false, false);
 		used_state = &local_state;
 	}
 	calc_digging_chances(used_state, digging_chances);
@@ -571,7 +585,6 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 			best_digger->number = oldn;
 		}
 		player->body.slots[weapon_slot].obj = current_weapon;
-		calc_bonuses(player, &local_state, false, true);
 	}
 
 	/* Success */
@@ -1394,12 +1407,10 @@ void do_cmd_run(struct command *cmd)
  */
 void do_cmd_navigate_down(struct command *cmd)
 {
-	int visible_monster_count = 0;
-
 	/* cancel if confused */
 	if (player->timed[TMD_CONFUSED]) {
 		msg("You cannot explore while confused.");
-	   	return;
+		return;
 	}
 
 
@@ -1411,27 +1422,10 @@ void do_cmd_navigate_down(struct command *cmd)
 		player->upkeep->energy_use = z_info->move_energy;
 		return;
 	}
-	
+
 
 	/* Screen for visible monsters */
-	for (int y = 0; y < cave->height; y++) {
-		for (int x = 0; x < cave->width; x++) {
-			struct loc grid = loc(x, y);
-			
-			if (loc_eq(grid, player->grid)) continue;
-
-			if (square_isoccupied(cave, grid)) {
-				int m_idx = square(cave, grid)->mon;
-				struct monster *mon = cave_monster(cave, m_idx);
-				if (monster_is_obvious(mon)) {
-					visible_monster_count++;
-					break;
-				}
-			}
-		}
-	}
-
-	if (visible_monster_count > 0) {
+	if (player_has_monster_in_view(player)) {
 		msg("Something is here.");
 		return;
 	}
@@ -1441,6 +1435,7 @@ void do_cmd_navigate_down(struct command *cmd)
 		square_isdownstairs, &player->upkeep->path_dest,
 		&player->upkeep->steps);
 	if (player->upkeep->step_count > 0) {
+		player->upkeep->running_firststep = true;
 		player->upkeep->running = player->upkeep->step_count;
 		/* Calculate torch radius */
 		player->upkeep->update |= (PU_TORCH);
@@ -1458,11 +1453,10 @@ void do_cmd_navigate_down(struct command *cmd)
  */
 void do_cmd_navigate_up(struct command *cmd)
 {
-	int visible_monster_count = 0;
 	/* cancel if confused */
 	if (player->timed[TMD_CONFUSED]) {
 		msg("You cannot explore while confused.");
-	   	return;
+		return;
 	}
 
 
@@ -1474,27 +1468,10 @@ void do_cmd_navigate_up(struct command *cmd)
 		player->upkeep->energy_use = z_info->move_energy;
 		return;
 	}
-	
+
 
 	/* Screen for visible monsters */
-	for (int y = 0; y < cave->height; y++) {
-		for (int x = 0; x < cave->width; x++) {
-			struct loc grid = loc(x, y);
-
-			if (loc_eq(grid, player->grid)) continue;
-
-			if (square_isoccupied(cave, grid)) {
-				int m_idx = square(cave, grid)->mon;
-				struct monster *mon = cave_monster(cave, m_idx);
-				if (monster_is_obvious(mon)) {
-					visible_monster_count++;
-					break;
-				}
-			}
-		}
-	}
-
-	if (visible_monster_count > 0) {
+	if (player_has_monster_in_view(player)) {
 		msg("Something is here.");
 		return;
 	}
@@ -1504,6 +1481,7 @@ void do_cmd_navigate_up(struct command *cmd)
 		square_isupstairs, &player->upkeep->path_dest,
 		&player->upkeep->steps);
 	if (player->upkeep->step_count > 0) {
+		player->upkeep->running_firststep = true;
 		player->upkeep->running = player->upkeep->step_count;
 		/* Calculate torch radius */
 		player->upkeep->update |= (PU_TORCH);
@@ -1521,11 +1499,15 @@ void do_cmd_navigate_up(struct command *cmd)
  */
 void do_cmd_explore(struct command *cmd)
 {
-	bool visible_monster = false;
+	/* Do nothing if autoexplore commands disabled. */
+	if (!OPT(player, autoexplore_commands)) {
+		return;
+	}
+
 	/* cancel if confused */
 	if (player->timed[TMD_CONFUSED]) {
 		msg("You cannot explore while confused.");
-	   	return;
+		return;
 	}
 
 
@@ -1537,27 +1519,10 @@ void do_cmd_explore(struct command *cmd)
 		player->upkeep->energy_use = z_info->move_energy;
 		return;
 	}
-	
+
 
 	/* Screen for visible monsters */
-	for (int y = 0; y < cave->height && !visible_monster; y++) {
-		for (int x = 0; x < cave->width; x++) {
-			struct loc grid = loc(x, y);
-			
-			if (loc_eq(grid, player->grid)) continue;
-
-			if (square_isoccupied(cave, grid)) {
-				int m_idx = square(cave, grid)->mon;
-				struct monster *mon = cave_monster(cave, m_idx);
-				if (monster_is_obvious(mon)) {
-					visible_monster = true;
-					break; /* only breaks the inner loop */
-				}
-			}
-		}
-	}
-
-	if (visible_monster) {
+	if (player_has_monster_in_view(player)) {
 		msg("Something is here.");
 		return;
 	}
@@ -1566,6 +1531,7 @@ void do_cmd_explore(struct command *cmd)
 	player->upkeep->step_count = path_nearest_unknown(player, player->grid,
 		&player->upkeep->path_dest, &player->upkeep->steps);
 	if (player->upkeep->step_count > 0) {
+		player->upkeep->running_firststep = true;
 		player->upkeep->running = player->upkeep->step_count;
 		/* Calculate torch radius */
 		player->upkeep->update |= (PU_TORCH);
@@ -1597,6 +1563,7 @@ void do_cmd_pathfind(struct command *cmd)
 		find_path(player, player->grid, grid, &player->upkeep->steps);
 	if (player->upkeep->step_count > 0) {
 		player->upkeep->path_dest = grid;
+		player->upkeep->running_firststep = true;
 		player->upkeep->running = player->upkeep->step_count;
 		/* Calculate torch radius */
 		player->upkeep->update |= (PU_TORCH);

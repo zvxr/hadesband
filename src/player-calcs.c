@@ -1275,13 +1275,13 @@ static void calc_spells(struct player *p)
 
 	int16_t old_spells;
 
-	/* Hack -- must be literate */
+	/* Must be literate */
 	if (!p->class->magic.total_spells) return;
 
-	/* Hack -- wait for creation */
+	/* Wait for creation */
 	if (!character_generated) return;
 
-	/* Hack -- handle partial mode */
+	/* Handle partial mode */
 	if (p->upkeep->only_partial) return;
 
 	/* Save the new_spells value */
@@ -1290,7 +1290,7 @@ static void calc_spells(struct player *p)
 	/* Determine the number of spells allowed */
 	levels = p->lev - p->class->magic.spell_first + 1;
 
-	/* Hack -- no negative spells */
+	/* No negative spells */
 	if (levels < 0) levels = 0;
 
 	/* Number of 1/100 spells per level (or something - needs clarifying) */
@@ -1692,6 +1692,7 @@ int calc_unlocking_chance(const struct player *p, int lock_power,
 /**
  * Calculate the blows a player would get.
  *
+ * \param p is the player of interest
  * \param obj is the object for which we are calculating blows
  * \param state is the player state for which we are calculating blows
  * \param extra_blows is the number of +blows available from this object and
@@ -2312,7 +2313,6 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		if (pf_has(state->pflags, PF_BLESS_WEAPON)
 				&& (weapon->tval == TV_HAFTED
 				|| of_has(state->flags, OF_BLESSED))) {
-			state->to_h += 2;
 			state->to_d += 2;
 			state->bless_wield = true;
 		}
@@ -2380,12 +2380,12 @@ static void update_bonuses(struct player *p)
 	}
 
 
-	/* Hack -- Telepathy Change */
+	/* Telepathy Change */
 	if (of_has(state.flags, OF_TELEPATHY) !=
 		of_has(p->state.flags, OF_TELEPATHY))
 		/* Update monster visibility */
 		p->upkeep->update |= (PU_MONSTERS);
-	/* Hack -- See Invis Change */
+	/* See Invis Change */
 	if (of_has(state.flags, OF_SEE_INVIS) !=
 		of_has(p->state.flags, OF_SEE_INVIS))
 		/* Update monster visibility */
@@ -2411,7 +2411,7 @@ static void update_bonuses(struct player *p)
 		p->upkeep->redraw |= (PR_INVEN);
 	}
 
-	/* Hack -- handle partial mode */
+	/* Handle partial mode */
 	if (!p->upkeep->only_partial) {
 		/* Take note when "heavy bow" changes */
 		if (p->state.heavy_shoot != state.heavy_shoot) {
@@ -2449,9 +2449,9 @@ static void update_bonuses(struct player *p)
 		if (p->state.cumber_armor != state.cumber_armor) {
 			/* Message */
 			if (state.cumber_armor)
-				msg("The weight of your armor encumbers your movement.");
+				msg("The weight of your armor reduces your maximum SP.");
 			else
-				msg("You feel able to move more freely.");
+				msg("Your maximum SP is no longer reduced by armor weight.");
 		}
 	}
 

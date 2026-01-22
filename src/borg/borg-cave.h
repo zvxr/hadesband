@@ -67,7 +67,9 @@ typedef struct borg_grid borg_grid;
  *
  * traps and glyphs are now separate flags
  *
- * Hack -- note that the "char" zero will often crash the system!
+ * Note that the "char" zero will often crash the system!
+ * !FIX !TODO Verify if this is still true and, if so, document how/why
+ * char zero causes crashes.
  */
 struct borg_grid {
     uint8_t  feat; /* Grid type */

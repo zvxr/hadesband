@@ -10,33 +10,53 @@ PROG    = $(PROGNAME)$(PROG_SUFFIX)
 # Will dynamically generate version.h with the build number.
 CFLAGS += -DHAVE_VERSION_H
 
-CFLAGS += -I. -fPIC -std=c99 -O0
+CFLAGS += -I. -fPIC -std=c99
 # Replace above line with the two below and then look at gmon.out
 # to do performance monitoring
-# CFLAGS += -g -pg -I. -fPIC -std=c99 -O0
+# CFLAGS += -g -pg -I. -fPIC -std=c99
 # LDFLAGS += -g -pg
 
 # gcov intermediate data
 GCOBJS = $(OBJECTS:.o=.gcno) $(OBJECTS:.o=.gcda)
 GCOVS = $(OBJECTS:.o=.c.gcov)
 
-# buildsys's default clean will take care of any .o from SRCS.
-CLEAN = $(PROGNAME).o $(ALLMAINFILES) ${ALLMAINFILES:.o=.dep} version.h
+# buildsys's default clean will take care of any .o from SRCS; $(PROGNAME).o
+# is a relic and only there to clean up an intermediate from previous versions
+# of this Makefile.
+CLEAN = $(PROGNAME).a $(PROGNAME).o $(ALLMAINFILES) ${ALLMAINFILES:.o=.dep} version.h
 DISTCLEAN = autoconf.h tests/.deps
 
-$(PROG): $(PROGNAME).o $(MAINFILES)
-	$(CC) -o $@ $(PROGNAME).o $(MAINFILES) $(LDFLAGS) $(LDADD) $(LIBS)
+$(PROG): $(PROGNAME).a $(MAINFILES)
+	$(CC) -o $@ $(MAINFILES) $(PROGNAME).a $(LDFLAGS) $(LDADD) $(LIBS)
 	@printf "%10s %-20s\n" LINK $@
 
 win/$(PROGNAME).res: win/$(PROGNAME).rc
 	$(RC) $< -O coff -o $@
 
-$(PROGNAME).o: $(OBJECTS)
-	$(LD) $(LDFLAGS) -nostdlib -r -o $@ $(OBJECTS)
-	@printf "%10s %-20s\n" LINK $@
+$(PROGNAME).a: $(OBJECTS)
+	$(LINK_STATUS)
+	@if test ! -e $@ || $(RM) $@ ; then \
+		if $(AR) -rc $@ $(OBJECTS) && $(RANLIB) $@ ; then \
+			$(LINK_OK); \
+		else \
+			$(LINK_FAILED); \
+		fi; \
+	else \
+		$(LINK_FAILED); \
+	fi
+
+# Allow for some introspection:  have rules to print out names that something
+# downstream could use.  Have the output start with "our-<something>=" so it
+# can very likely be separated from whatever other junk the build system prints
+# out.
+print-project-name:
+	@echo our-project-name=${NAME}
+
+print-executable-name:
+	@echo our-executable-name=${PROG}
 
 check: tests
-tests: $(PROGNAME).o
+tests: $(PROGNAME).a
 	env CC="$(CC)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" \
 		LDFLAGS="$(LDFLAGS)" LDADD="$(LDADD)" LIBS="$(TEST_LIBS)" \
 		CROSS_COMPILE="$(CROSS_COMPILE)" \
@@ -82,7 +102,12 @@ splint:
 
 clean-coverage:
 	rm -f tests/ran-already
-	rm -f $(GCOVS) $(GCOBJS)
+	rm -f $(GCOVS) $(GCOBJS) borg*.c.gcov
+	env CC="$(CC)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" \
+		LDFLAGS="$(LDFLAGS)" LDADD="$(LDADD)" LIBS="$(TEST_LIBS)" \
+		CROSS_COMPILE="$(CROSS_COMPILE)" \
+		TEST_WORKING_DIRECTORY="$(TEST_WORKING_DIRECTORY)" \
+		$(MAKE) -C tests clean-coverage
 
 coverage: CFLAGS+=-fprofile-arcs -ftest-coverage
 coverage: LDFLAGS+=-lgcov
@@ -110,7 +135,7 @@ install-extra:
 		done ; \
 		for i in zlib1.dll libpng12.dll ; do \
 			${INSTALL_STATUS}; \
-			if ${INSTALL} -m 644 win/dll/$$i ../$$i ; then \
+			if ${INSTALL} -m 755 win/dll/$$i ../$$i ; then \
 				${INSTALL_OK}; \
 			else \
 				${INSTALL_FAILED}; \
@@ -131,4 +156,4 @@ post-install:
 	fi
 
 FORCE :
-.PHONY : check tests coverage clean-coverage tests/ran-already
+.PHONY : print-project-name print-executable-name check tests coverage clean-coverage tests/ran-already

@@ -146,7 +146,7 @@ static void flavor_reset_fixed(void)
  * can happen is when the current title has 6 letters and the new word
  * has 8 letters, which would result in a 6 letter scroll title.
  *
- * Hack -- make sure everything stays the same for each saved game
+ * Make sure everything stays the same for each saved game
  * This is accomplished by the use of a saved "random seed", as in
  * "town_gen()".  Since no other functions are called while the special
  * seed is in effect, so this function is pretty "safe".
@@ -155,10 +155,10 @@ void flavor_init(void)
 {
 	int i, j;
 
-	/* Hack -- Use the "simple" RNG */
+	/* Use the "simple" RNG */
 	Rand_quick = true;
 
-	/* Hack -- Induce consistant flavors */
+	/* Induce consistant flavors */
 	Rand_value = seed_flavor;
 
 	/* Scrub all flavors and re-parse for new players */
@@ -224,7 +224,7 @@ void flavor_init(void)
 	}
 	flavor_assign_random(TV_SCROLL);
 
-	/* Hack -- Use the "complex" RNG */
+	/* Use the "complex" RNG */
 	Rand_quick = false;
 
 	/* Analyze every object */
@@ -546,9 +546,11 @@ const struct artifact *lookup_artifact_name(const char *name)
  */
 struct ego_item *lookup_ego_item(const char *name, int tval, int sval)
 {
+	struct object_kind *kind = lookup_kind(tval, sval);
 	int i;
 
 	/* Look for it */
+	if (!kind) return NULL;
 	for (i = 0; i < z_info->e_max; i++) {
 		struct ego_item *ego = &e_info[i];
 		struct poss_item *poss_item = ego->poss_items;
@@ -559,7 +561,6 @@ struct ego_item *lookup_ego_item(const char *name, int tval, int sval)
 
 		/* Check tval and sval */
 		while (poss_item) {
-			struct object_kind *kind = lookup_kind(tval, sval);
 			if (kind->kidx == poss_item->kidx) {
 				return ego;
 			}
@@ -919,9 +920,9 @@ bool obj_can_fail(const struct object *o)
 /**
  * Failure rate for magic devices.
  * This has been rewritten for 4.2.3 following the discussions in the thread
- * http://angband.oook.cz/forum/showthread.php?t=10594
+ * https://angband.live/forums/forum/angband/development/9911-please-help-md-negative-value
  * It uses a scaled, shifted version of the sigmoid function x/(1+|x|), namely
- * 380 - 370(x/(10+|x|)), where x is 2 * (device skill - device level) + 1,
+ * 380 - 370(x/(5+|x|)), where x is 2 * (device skill - device level) + 1,
  * to give fail rates out of 1000.
  */
 int get_use_device_chance(const struct object *obj)
@@ -930,17 +931,15 @@ int get_use_device_chance(const struct object *obj)
 	int skill = player->state.skills[SKILL_DEVICE];
 
 	/* Extract the item level, which is the difficulty rating */
-	if (obj->artifact)
-		lev = obj->artifact->level;
-	else
-		lev = obj->kind->level;
+	lev = obj->artifact ? obj->artifact->level :
+		(obj->activation ? obj->activation->level : obj->kind->level);
 
 	/* Calculate x */
 	x = 2 * (skill - lev) + 1;
 
 	/* Now calculate the failure rate */
 	fail = -370 * x;
-	fail /= (10 + ABS(x));
+	fail /= (5 + ABS(x));
 	fail += 380;
 
 	return fail;
@@ -953,40 +952,62 @@ int get_use_device_chance(const struct object *obj)
  * \param source is the source item
  * \param dest is the target item, must be of the same type as source
  * \param amt is the number of items that are transfered
+ * \param dest_new will, if true, ignore whatever charges or timeout, dest
+ * has (i.e. treat it as a new stack).
  */
-void distribute_charges(struct object *source, struct object *dest, int amt)
+void distribute_charges(struct object *source, struct object *dest, int amt,
+		bool dest_new)
 {
-	int charge_time = randcalc(source->time, 0, AVERAGE), max_time;
-
 	/*
-	 * Hack -- If rods, staves, or wands are dropped, the total maximum
+	 * If rods, staves, or wands are dropped, the total maximum
 	 * timeout or charges need to be allocated between the two stacks.
 	 * If all the items are being dropped, it makes for a neater message
 	 * to leave the original stack's pval alone. -LM-
 	 */
 	if (tval_can_have_charges(source)) {
-		dest->pval = source->pval * amt / source->number;
+		int change = source->pval * amt / source->number;
 
-		if (amt < source->number)
-			source->pval -= dest->pval;
+		if (dest_new) {
+			dest->pval = change;
+		} else {
+			dest->pval += change;
+		}
+		if (amt < source->number) {
+			source->pval -= change;
+		}
 	}
 
 	/*
-	 * Hack -- Rods also need to have their timeouts distributed.
+	 * Rods also need to have their timeouts distributed.
 	 *
 	 * The dropped stack will accept all time remaining to charge up to
 	 * its maximum.
 	 */
 	if (tval_can_have_timeout(source)) {
+		int charge_time = randcalc(source->time, 0, AVERAGE), max_time;
+
 		max_time = charge_time * amt;
+		if (dest_new) {
+			dest->timeout = (source->timeout > max_time)
+				? max_time : source->timeout;
+			if (amt < source->number) {
+				source->timeout -= dest->timeout;
+			}
+		} else {
+			int change = (source->timeout > max_time)
+				? max_time : source->timeout;
 
-		if (source->timeout > max_time)
-			dest->timeout = max_time;
-		else
-			dest->timeout = source->timeout;
-
-		if (amt < source->number)
-			source->timeout -= dest->timeout;
+			max_time = charge_time * (dest->number + amt);
+			if (dest->timeout < max_time) {
+				if (change > max_time - dest->timeout) {
+					change = max_time - dest->timeout;
+				}
+				dest->timeout += change;
+				if (amt < source->number) {
+					source->timeout -= change;
+				}
+			}
+		}
 	}
 }
 

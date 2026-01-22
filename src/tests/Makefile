@@ -35,6 +35,9 @@ TESTPROGS := $(TESTPROGS:%=%.exe)
 
 TESTOBJS += test-utils.o unit-test.o
 
+# gcov intermediate data
+GCOBJS = $(TESTOBJS:.o=.gcno) $(TESTOBJS:.o=.gcda)
+
 include Makefile.inc
 
 build : $(TESTPROGS)
@@ -47,15 +50,18 @@ run : build
 .c.o :
 	@$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
-$(TESTPROGS) : ../tactical-angband.o test-utils.o unit-test.o
+$(TESTPROGS) : ../tactical-angband.a test-utils.o unit-test.o
 .o.exe :
 	@$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ $< \
-		../tactical-angband.o test-utils.o unit-test.o \
+		test-utils.o unit-test.o ../tactical-angband.a \
 		$(LDFLAGS) $(LDADD) $(LIBS)
 	@echo "  CC $@"
 
 clean :
 	-$(RM) $(TESTOBJS) $(TESTPROGS)
 
-.PHONY : all clean
+clean-coverage :
+	-$(RM) $(GCOBJS)
+
+.PHONY : all clean clean-coverage
 .PRECIOUS : %.o

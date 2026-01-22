@@ -148,7 +148,7 @@ static void init_stuff(void)
 	libpath[511] = '\0';
 	datapath[511] = '\0';
 
-	/* Hack -- Add a path separator (only if needed) */
+	/* Add a path separator (only if needed) */
 	if (!suffix(configpath, PATH_SEP)) my_strcat(configpath, PATH_SEP,
 												 sizeof(configpath));
 	if (!suffix(libpath, PATH_SEP)) my_strcat(libpath, PATH_SEP,
@@ -199,15 +199,15 @@ static const struct {
 	{ "user", &ANGBAND_DIR_USER, true },
 	{ "save", &ANGBAND_DIR_SAVE, false },
 	{ "panic", &ANGBAND_DIR_PANIC, false },
-	{ "archive", &ANGBAND_DIR_ARCHIVE, false },
+	{ "archive", &ANGBAND_DIR_ARCHIVE, true },
 };
 
 /**
- * Handle a "-d<dir>=<path>" option.
+ * Handle a "-d`dir`=`path`" option.
  *
- * Sets any of angband's special directories to <path>.
+ * Sets any of angband's special directories to `path`.
  *
- * The "<path>" can be any legal path for the given system, and should
+ * The `path` can be any legal path for the given system, and should
  * not end in any special path separator (i.e. "/tmp" or "~/.ang-info").
  */
 static void change_path(const char *info)
@@ -281,8 +281,10 @@ static void list_saves(void)
 	savefile_getter g = NULL;
 
 	if (!got_savefile(&g)) {
+		bool nodir = !got_savefile_dir(g);
+
 		cleanup_savefile_getter(g);
-		if (!got_savefile_dir(g)) {
+		if (nodir) {
 			quit_fmt("Cannot open savefile directory");
 		}
 		printf("There are no savefiles you can use.\n");
@@ -465,7 +467,7 @@ int main(int argc, char *argv[])
 		if (*arg) goto usage;
 	}
 
-	/* Hack -- Forget standard args */
+	/* Forget standard args */
 	if (args) {
 		argc = 1;
 		argv[1] = NULL;

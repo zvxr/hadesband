@@ -215,8 +215,10 @@ bool append_slay(bool **current, int pick)
 }
 
 /**
- * Count a set of brands
- * \param brands The brands to count.
+ * Return the number of brands present
+ *
+ * \param brands_on is an array of z_info->brand_max booleans indicating
+ * whether each brand is present
  */
 int brand_count(const bool *brands_on)
 {
@@ -234,8 +236,10 @@ int brand_count(const bool *brands_on)
 
 
 /**
- * Count a set of slays
- * \param slays The slays to count.
+ * Return the number of slays present
+ *
+ * \param slays_on is an array of z_info->slay_max booleans indicating whether
+ * each slay is present
  */
 int slay_count(const bool *slays_on)
 {
@@ -339,7 +343,7 @@ int get_monster_brand_multiplier(const struct monster *mon,
 /**
  * Extract the multiplier from a given object hitting a given monster.
  *
- * \param player is the player performing the attack
+ * \param p is the player performing the attack
  * \param obj is the object being used to attack
  * \param mon is the monster being attacked
  * \param brand_used is the brand that gave the best multiplier, or NULL
@@ -461,20 +465,20 @@ static void learn_brand_slay_helper(struct player *p, struct object *obj1,
 		bool allow_temp)
 {
 	struct monster_lore *lore = get_lore(mon->race);
-	struct object **objs = mem_alloc((2 + p->body.count) * sizeof(*objs));
 	int i;
 
 	/* Handle brands. */
 	for (i = 1; i < z_info->brand_max; i++) {
-		int n = 0, j;
+		int j;
 		struct brand *b;
+		bool learn = false;
 
 		/* Check the objects directly involved. */
 		if (obj1 && obj1->brands && obj1->brands[i]) {
-			objs[n++] = obj1;
+			learn = true;
 		}
 		if (obj2 && obj2->brands && obj2->brands[i]) {
-			objs[n++] = obj2;
+			learn = true;
 		}
 
 		/* Check for an off-weapon brand. */
@@ -485,7 +489,7 @@ static void learn_brand_slay_helper(struct player *p, struct object *obj1,
 				if (obj && obj->brands && obj->brands[i]
 						&& !tval_is_weapon(obj)
 						&& !tval_is_launcher(obj)) {
-					objs[n++] = obj;
+					learn = true;
 				}
 			}
 		}
@@ -494,19 +498,22 @@ static void learn_brand_slay_helper(struct player *p, struct object *obj1,
 		 * Check for the temporary brand (only relevant if the brand
 		 * is not already present).
 		 */
-		if (n == 0 && allow_temp && !player_has_temporary_brand(p, i)) {
+		if (!learn && !(allow_temp && player_has_temporary_brand(p, i))) {
 			continue;
 		}
 
 		b = &brands[i];
-		if (!rf_has(mon->race->flags, b->resist_flag)) {
-			/* Learn about the equipment. */
-			for (j = 0; j < n; ++j) {
-				object_learn_brand(p, objs[j], i);
+		if (!b->resist_flag || !rf_has(mon->race->flags, b->resist_flag)) {
+			/* Learn the brand */
+			if (learn) {
+				player_learn_brand(p, i);
 			}
 
 			/* Learn about the monster. */
-			lore_learn_flag_if_visible(lore, mon, b->resist_flag);
+			if (b->resist_flag) {
+				lore_learn_flag_if_visible(lore, mon,
+					b->resist_flag);
+			}
 			if (b->vuln_flag) {
 				lore_learn_flag_if_visible(lore, mon,
 					b->vuln_flag);
@@ -514,24 +521,21 @@ static void learn_brand_slay_helper(struct player *p, struct object *obj1,
 		} else if (player_knows_brand(p, i)) {
 			/* Learn about the monster. */
 			lore_learn_flag_if_visible(lore, mon, b->resist_flag);
-			if (b->vuln_flag) {
-				lore_learn_flag_if_visible(lore, mon,
-					b->vuln_flag);
-			}
 		}
 	}
 
 	/* Handle slays. */
 	for (i = 1; i < z_info->slay_max; ++i) {
-		int n = 0, j;
+		int j;
 		struct slay *s;
+		bool learn = false;
 
 		/* Check the objects directly involved. */
 		if (obj1 && obj1->slays && obj1->slays[i]) {
-			objs[n++] = obj1;
+			learn = true;
 		}
 		if (obj2 && obj2->slays && obj2->slays[i]) {
-			objs[n++] = obj2;
+			learn = true;
 		}
 
 		/* Check for an off-weapon slay. */
@@ -542,7 +546,7 @@ static void learn_brand_slay_helper(struct player *p, struct object *obj1,
 				if (obj && obj->slays && obj->slays[i]
 						&& !tval_is_weapon(obj)
 						&& !tval_is_launcher(obj)) {
-					objs[n++] = obj;
+					learn = true;
 				}
 			}
 		}
@@ -551,27 +555,31 @@ static void learn_brand_slay_helper(struct player *p, struct object *obj1,
 		 * Check for the temporary slay (only relevant if the slay
 		 * is not already present.
 		 */
-		if (n == 0 && allow_temp && !player_has_temporary_slay(p, i)) {
+		if (!learn && !(allow_temp && player_has_temporary_slay(p, i))) {
 			continue;
 		}
 
 		s = &slays[i];
 		if (react_to_specific_slay(s, mon)) {
 			/* Learn about the monster. */
-			lore_learn_flag_if_visible(lore, mon, s->race_flag);
+			if (s->race_flag) {
+				lore_learn_flag_if_visible(lore, mon,
+					s->race_flag);
+			}
 			if (monster_is_visible(mon)) {
-				/* Learn about the equipment. */
-				for (j = 0; j < n; ++j) {
-					object_learn_slay(p, objs[j], i);
+				/* Learn the slay */
+				if (learn) {
+					player_learn_slay(p, i);
 				}
 			}
 		} else if (player_knows_slay(p, i)) {
 			/* Learn about unaffected monsters. */
-			lore_learn_flag_if_visible(lore, mon, s->race_flag);
+			if (s->race_flag) {
+				lore_learn_flag_if_visible(lore, mon,
+					s->race_flag);
+			}
 		}
 	}
-
-	mem_free(objs);
 }
 
 
@@ -615,9 +623,7 @@ void learn_brand_slay_from_launch(struct player *p, struct object *missile,
  * from a ranged attack with a thrown object.
  *
  * \param p is the player learning from the experience.
- * \param missile is the missile used in the attack.  Must not be NULL.
- * \param launcher is the launcher used in the attack; this is a parameter
- * to allow for body types with multiple equipped launchers.
+ * \param missile is the thrown object used in the attack.  Must not be NULL.
  * \param mon is the monster being attacked.
  */
 void learn_brand_slay_from_throw(struct player *p, struct object *missile,

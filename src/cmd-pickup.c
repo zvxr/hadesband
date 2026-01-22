@@ -297,8 +297,9 @@ static void player_pickup_aux(struct player *p, struct object *obj,
  * Note the lack of chance for the character to be disturbed by unmarked
  * objects.  They are truly "unknown".
  *
+ * \param p is the player picking up the item.
  * \param obj is the object to pick up.
- * \param menu is whether to present a menu to the player
+ * \param menu is whether to present a menu to the player.
  */
 static uint8_t player_pickup_item(struct player *p, struct object *obj, bool menu)
 {
@@ -425,7 +426,7 @@ int do_autopickup(struct player *p)
 		if (!ignore_item_ok(p, obj)) {
 			int auto_num;
 
-			/* Hack -- disturb */
+			/* Disturb */
 			disturb(p);
 
 			/* Automatically pick up items into the backpack */

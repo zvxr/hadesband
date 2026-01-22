@@ -21,7 +21,6 @@
 
 #ifdef ALLOW_BORG
 
-#include "../cmds.h"
 #include "../game-input.h"
 #include "../game-world.h"
 #include "../player-timed.h"
@@ -43,6 +42,7 @@
 #include "borg-inventory.h"
 #include "borg-io.h"
 #include "borg-item-id.h"
+#include "borg-item-wear.h"
 #include "borg-log.h"
 #include "borg-magic.h"
 #include "borg-messages-react.h"
@@ -88,9 +88,8 @@ int *borg_cfg;
  */
 bool borg_active; /* Actually active */
 bool borg_cancel; /* Being cancelled */
-bool borg_flag_save     = false; /* Save savefile at each level */
 bool borg_save          = false; /* do a save next level */
-bool borg_graphics      = false; /* rr9's graphics */
+bool borg_graphics      = false; /* graphics mode */
 
 int16_t old_depth       = 128;
 int16_t borg_respawning = 0;
@@ -99,7 +98,7 @@ int w_x; /* Current panel offset (X) */
 int w_y; /* Current panel offset (Y) */
 
 /*
- * Hack -- Time variables
+ * Time variables
  */
 int16_t borg_t = 0L; /* Current "time" */
 int32_t borg_began; /* When this level began */
@@ -111,11 +110,11 @@ int16_t borg_t_morgoth = 0L; /* Last time I saw Morgoth */
  */
 uint16_t borg_step = 0;
 
-// !FIX !AJG double check this comment
+// !FIX double check this comment
 /*
- * This file implements the "Ben Borg", an "Automatic Angband Player".
+ * This file implements the Borg, an "Automatic Angband Player".
  *
- * Use of the "Ben Borg" requires re-compilation with ALLOW_BORG defined,
+ * Use of the Borg requires re-compilation with ALLOW_BORG defined,
  * and with the various "borg*.c" files linked into the executable.
  *
  * The "do_cmd_borg()" function, called when the user hits "^Z", allows
@@ -134,16 +133,16 @@ uint16_t borg_step = 0;
  * (3) Some "historical" information (killed uniques, maximum dungeon depth)
  *     is "stolen" from the game.
  *
- * The Ben Borg is only supposed to "know" what is visible on the screen,
+ * The Borg is only supposed to "know" what is visible on the screen,
  * which it learns by using the "term.c" screen access function "COLOUR_what()",
  * the cursor location function "COLOUR_locate()", and the cursor visibility
  * extraction function "COLOUR_get_cursor()".
  *
- * The Ben Borg is only supposed to "send" keypresses when the "COLOUR_inkey()"
+ * The Borg is only supposed to "send" keypresses when the "COLOUR_inkey()"
  * function asks for a keypress, which is accomplished by using a special
  * function hook in the "z-term.c" file, which allows the Borg to "steal"
  * control from the "COLOUR_inkey()" and "COLOUR_flush(0, 0, 0)" functions. This
- * allows the Ben Borg to pretend to be a normal user.
+ * allows the Borg to pretend to be a normal user.
  *
  * The Borg is thus allowed to examine the screen directly (by efficient
  * direct access of the "Term->scr->a" and "Term->scr->c" arrays, which
@@ -174,10 +173,23 @@ uint16_t borg_step = 0;
  */
 
 /*
- * KEYMAP_MODE_ROGUE or KEYMAP_MODE_ORIG
+ * saved initialization data to be restored when the borg stops
  */
-int key_mode;
+struct borg_save_init borg_init_save;
 
+
+static struct keypress internal_borg_inkey(int flush_first);
+
+/*
+ * **START HERE FOR BORG PROCESSING**
+ *
+ * This routine is what captures control from Angband and feeds back keystrokes
+ * It wraps the main keypress routine to enable capture of the keys generated
+ */
+static struct keypress borg_inkey_hack(int flush_first)
+{
+    return save_keypress_history(internal_borg_inkey(flush_first));
+}
 
 /*
  * This function lets the Borg "steal" control from the user.
@@ -226,7 +238,7 @@ static struct keypress internal_borg_inkey(int flush_first)
     char buffer[1024];
     char *buf = buffer;
 
-    bool borg_prompt; /* ajg  For now we can just use this locally.
+    bool borg_prompt; /* For now we can just use this locally.
                           in the 283 borg he uses this to optimize knowing if
                           we are waiting at a prompt for info */
     /* Locate the cursor */
@@ -250,14 +262,16 @@ static struct keypress internal_borg_inkey(int flush_first)
         flush(0, 0, 0);
 
         /* Restore user key mode */
-        if (key_mode == KEYMAP_MODE_ROGUE) {
+        if (borg_init_save.key_mode == KEYMAP_MODE_ROGUE) {
             option_set("rogue_like_commands", true);
-        } else if (key_mode == KEYMAP_MODE_ORIG) {
+        } else if (borg_init_save.key_mode == KEYMAP_MODE_ORIG) {
             option_set("rogue_like_commands", false);
         }
 
+        borg_reset_ignore();
+
         /* Done */
-        /* HACK need to flush the key buffer to change modes */
+        /* Need to flush the key buffer to change modes */
         key.type = EVT_KBRD;
         key.code = ESCAPE;
         return key;
@@ -290,8 +304,11 @@ static struct keypress internal_borg_inkey(int flush_first)
     /* get everything on the message line */
     buf = buffer;
     borg_what_text(0, 0, ((Term->wid - 1) / (tile_width)), &t_a, buffer);
+#if 0
+    /* just used for debugging.  Not so useful in general */
     if (borg_cfg[BORG_VERBOSE])
         borg_note(format("got message '%s'", buf));
+#endif 
     /* Trim whitespace */
     buf = borg_trim(buf);
 
@@ -309,139 +326,10 @@ static struct keypress internal_borg_inkey(int flush_first)
         borg_prompt = false;
     }
 
-    /* Mega-Hack -- Catch "Die? [y/n]" messages */
-    /* If there is text on the first line... */
-    /* And the game does not want a command... */
-    /* And the cursor is on the top line... */
-    /* And the text acquired above is "Die?" */
-    if (borg_prompt && !inkey_flag && (y == 0) && (x >= 4)
-        && prefix(buf, "Die?")
-        && borg_cheat_death) {
-        /* Flush messages */
-        borg_parse(NULL);
-
-        /* flush the buffer */
-        borg_flush();
-
-        /* Take note */
-        borg_note("# Cheating death...");
-
-#ifndef BABLOS
-        /* Dump the Character Map*/
-        if (borg.trait[BI_CLEVEL] >= borg_cfg[BORG_DUMP_LEVEL]
-            || strstr(player->died_from, "starvation"))
-            borg_write_map(false);
-
-        /* Log the death */
-        borg_log_death();
-        borg_log_death_data();
-
-#if 0
-        /* Note the score */
-        borg_enter_score();
-#endif
-
-        if (!borg_cfg[BORG_CHEAT_DEATH]) {
-            reincarnate_borg();
-            borg_respawning = 7;
-        } else
-            do_cmd_wiz_cure_all(0);
-#endif /* BABLOS */
-
-        /* for some reason the message line sometimes contains spaces */
-        /* right after the borg respawns */
-        borg_keypress(' ');
-        borg_keypress(' ');
-
-        key.code = 'n';
-        return key;
-    }
-
-    /* with 292, there is a flush(0, 0, 0) introduced as it asks for
-     * confirmation. This flush is messing up the borg.  This will allow the
-     * borg to work around the flush Attempt to catch "Attempt it anyway? [y/n]"
-     */
-    if (borg_prompt && !inkey_flag && (y == 0) && (x >= 4)
-        && prefix(buf, "Atte")) {
-        /* Return the confirmation */
-        if (borg_cfg[BORG_VERBOSE])
-            borg_note("# Confirming use of Spell/Prayer when low on mana.");
-        key.code = 'y';
-        return key;
-    }
-
-    /* Wearing two rings.  Place this on the left hand */
-    if (borg_prompt && !inkey_flag && (y == 0) && (x >= 12)
-        && (prefix(buf, "(Equip: c-d,"))) {
-        /* Left hand */
-        key.code = 'c';
-        if (borg_cfg[BORG_VERBOSE])
-            borg_note("# Putting ring on the left hand.");
-        return key;
-    }
-
-    /* 
-     * with 292, there is a flush(0, 0, 0) introduced as it asks for
-     * confirmation. This flush is messing up the borg.  This will allow the
-     * borg to work around the flush This is used only with emergency use of
-     * spells like Magic Missile Attempt to catch "Direction (5 old target"
-     */
-    if (borg_prompt && !inkey_flag && (y == 0) && !borg_inkey(false)
-        && (x >= 10) && strncmp(buf, "Direction", 9) == 0) {
-        if (borg_confirm_target) {
-            if (borg_cfg[BORG_VERBOSE])
-                borg_note("# Expected request for Direction.");
-            /* reset the flag */
-            borg_confirm_target = false;
-            /* Return queued target */
-            key.code = borg_get_queued_direction();
+    /* handle the messages the borg has to react to immediately */
+    if (borg_prompt && !inkey_flag && strlen(buf)) {
+        if (borg_react_prompted(buf, &key, x, y))
             return key;
-        } else {
-            borg_note("** UNEXPECTED REQUEST FOR DIRECTION Dumping keypress history ***");
-            borg_note(format("** line starting <%s> ***", buf));
-            borg_dump_recent_keys(20);
-            borg_oops("unexpected request for direction");
-            /* Hack -- Escape */
-            key.code = ESCAPE;
-            return key;
-        }
-    }
-
-    /* Stepping on a stack when the inventory is full gives a message */
-    /* and the keypress when given this message is requeued so the borg */
-    /* thinks it is a user keypress when it isn't */
-    if (borg_prompt && !inkey_flag && (y == 0) && (x >= 12)
-        && (prefix(buf, "You have no room"))) {
-        if (borg_cfg[BORG_VERBOSE])
-            borg_note("# 'You have no room' is a no-op");
-        /* key code 0 seems to be a no-op and ignored as a user keypress */
-        key.code = 0;
-        return key;
-    }
-
-    /* ***MEGA-HACK***  */
-    /* This will be hit if the borg uses an unidentified effect that has */
-    /* EF_SELECT/multiple effects. Always pick "one of the following at random"
-     */
-    /* when the item is used post ID, an effect will be selected */
-    if (borg_prompt && !inkey_flag && !borg_inkey(false) && (y == 1)
-        && prefix(buf, "Which effect?")) {
-        if (borg_cfg[BORG_VERBOSE])
-            borg_note("# Use of unknown object with multiple effects");
-        /* the first selection (a) is random */
-        key.code = 'a';
-        return key;
-    }
-
-    /* prompt for stepping in lava.  This should be avoided but */
-    /* if the borg is stuck, give him a pass */
-    if (borg_prompt && !inkey_flag && (y == 0) && (x >= 12)
-        && (prefix(buf, "The lava will") || prefix(buf, "Lava blocks y"))) {
-        if (borg_cfg[BORG_VERBOSE])
-            borg_note("# ignoring Lava warning");
-        /* yes step in */
-        key.code = 'y';
-        return key;
     }
 
     /* Mega-Hack -- Handle death */
@@ -560,19 +448,23 @@ static struct keypress internal_borg_inkey(int flush_first)
     /* Check for user abort */
     (void)Term_inkey(&ch_evt, false, true);
 
-    /* Hack to keep him active in town. */
+    /* Keep him active in town */
     if (borg.trait[BI_CDEPTH] >= 1)
         borg.in_shop = false;
 
     if (!borg.in_shop && (ch_evt.type & EVT_KBRD) && ch_evt.key.code > 0
         && ch_evt.key.code != 10) {
         /* Oops */
-        borg_note(format(
-            "# User key press <%d><%c>", ch_evt.key.code, ch_evt.key.code));
+        if (ch_evt.key.code >= 32 && ch_evt.key.code <= 126) {
+            borg_note(format("# User key press <%lu><%c>",
+                (unsigned long)ch_evt.key.code, (char)ch_evt.key.code));
+        } else {
+            borg_note(format("# User key press <%lu>",
+                (unsigned long)ch_evt.key.code));
+        }
         borg_note(format("# Key type was <%d><%c>", ch_evt.type, ch_evt.type));
         borg_oops("user abort");
 
-        /* Hack -- Escape */
         key.code = ESCAPE;
         return key;
     }
@@ -605,7 +497,7 @@ static struct keypress internal_borg_inkey(int flush_first)
     while (!borg_think()) /* loop */
         ;
 
-    /* DVE- Update the status screen */
+    /* Update the status screen */
     borg_status();
 
     /* Save the local random info */
@@ -615,7 +507,7 @@ static struct keypress internal_borg_inkey(int flush_first)
     Rand_quick = borg_rand_quick;
     Rand_value = borg_rand_value;
 
-    /* Hack -- allow stepping to induce a clean cancel */
+    /* Allow stepping to induce a clean cancel */
     if (borg_step && (!--borg_step))
         borg_cancel = true;
 
@@ -631,24 +523,13 @@ static struct keypress internal_borg_inkey(int flush_first)
     /* Oops */
     borg_oops("normal abort");
 
-    /* Hack -- Escape */
     key.code = ESCAPE;
     return key;
 }
 
-/* wrapper around keypress capture */
-static struct keypress borg_inkey_hack(int flush_first)
-{
-    struct keypress k = internal_borg_inkey(flush_first);
-
-    save_keypress_history(&k);
-
-    return k;
-}
-
 
 /*
- * Hack -- interact with the "Ben Borg".
+ * Interact with the Borg
  */
 void do_cmd_borg(void)
 {
@@ -677,6 +558,19 @@ void do_cmd_borg(void)
 
 #endif /* BABLOS */
 
+    /* Set the Borg's player location using the game's internal state.
+     *
+     * Normally, the Borg is only supposed to "know" what is visible on the screen.
+     * But at this point the screen has not yet been scanned, so we cannot rely on
+     * screen data. Some Borg commands (a/%/@/#/^/_/y/!/G) require knowing the
+     * player's position before screen processing occurs, so we temporarily break
+     * the abstraction here to ensure correct behavior for those commands.
+     *
+     * This does not affect normal Borg behavior. All automated play and
+     * decision-making still rely solely on information obtained by scanning the screen.
+     */
+    borg.c = player->grid;
+
     /* Simple help */
     if (cmd == '?') {
         int i = 2;
@@ -688,51 +582,42 @@ void do_cmd_borg(void)
         Term_clear();
 
         i++;
-        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'z' activates the Borg.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'a' displays avoidances.");
         Term_putstr(42, i++, -1, COLOUR_WHITE, "Command 'u' updates the Borg.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command 'x' steps the Borg.");
-        Term_putstr(
-            42, i, -1, COLOUR_WHITE, "Command 'f' modifies the normal flags.");
-        Term_putstr(
-            2, i++, -1, COLOUR_WHITE, "Command 'c' modifies the cheat flags.");
-        Term_putstr(
-            42, i, -1, COLOUR_WHITE, "Command 'l' activates a log file.");
-        Term_putstr(
-            2, i++, -1, COLOUR_WHITE, "Command 's' activates search mode.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command 'i' displays grid info.");
-        Term_putstr(
-            2, i++, -1, COLOUR_WHITE, "Command 'g' displays grid feature.");
-        Term_putstr(
-            42, i, -1, COLOUR_WHITE, "Command 'a' displays avoidances.");
-        Term_putstr(
-            2, i++, -1, COLOUR_WHITE, "Command 'k' displays monster info.");
-        Term_putstr(
-            42, i, -1, COLOUR_WHITE, "Command 't' displays object info.");
-        Term_putstr(
-            2, i++, -1, COLOUR_WHITE, "Command '%' displays targeting flow.");
-        Term_putstr(
-            42, i, -1, COLOUR_WHITE, "Command '#' displays danger grid.");
-        Term_putstr(
-            2, i++, -1, COLOUR_WHITE, "Command '_' Regional Fear info.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command 'p' Borg Power.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command '1' change max depth.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command '2' level prep info.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command '3' Feature of grid.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command '!' Time.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command '@' Borg LOS.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command 'w' My Swap Weapon.");
-        Term_putstr(
-            2, i++, -1, COLOUR_WHITE, "Command 'q' Auto stop on level.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command 'v' Version stamp.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command 'd' Dump spell info.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command 'h' Borg_Has function.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command '$' Reload Borg.txt.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command 'y' Last 75 steps.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command 'm' money Scum.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command '^' Flow Pathway.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command 'R' Respawn Borg.");
-        Term_putstr(42, i, -1, COLOUR_WHITE, "Command 'o' Object Flags.");
-        Term_putstr(2, i++, -1, COLOUR_WHITE, "Command 'r' Restock Stores.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'c' toggle cheat flags.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command 'v' Version stamp.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'C' List nasties.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command 'w' My Swap Weapon.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'd' Dump spell info.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command 'x' steps the Borg.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'f' toggle flags.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command 'y' Last 75 steps.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'g' displays grid feature.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command 'z' activates the Borg.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'h' Borg_Has function.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '?' List Borg commands.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'i' displays grid info.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '!' Time.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'k' displays monster info.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '#' displays danger grid.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'l' creates snapshot log file.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '%' displays targeting flow.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'm' money Scum.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '$' Reload Borg.txt.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'o' Object Flags.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '@' Borg LOS.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'p' Borg Power.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '^' Flow Pathway.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'q' Auto stop on level.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '_' Regional Fear info.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'r' Restock Stores.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command ';' Display glyphs.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 'R' Respawn Borg.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '1' change max depth.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 's' activates search mode.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '2' level prep info.");
+        Term_putstr(2, i, -1, COLOUR_WHITE, "Command 't' displays object info.");
+        Term_putstr(42, i++, -1, COLOUR_WHITE, "Command '3' Feature of grid.");
 
         /* Prompt for key */
         msg("Commands: ");
@@ -746,7 +631,7 @@ void do_cmd_borg(void)
     }
 
     /*
-     * Hack -- force initialization or reinitialize if the game was closed
+     * Force initialization or reinitialize if the game was closed
      * and restarted without exiting since the last initialization
      */
     if (!borg_initialized || game_closed) {
@@ -767,7 +652,7 @@ void do_cmd_borg(void)
     switch (cmd) {
         /* Command: Nothing */
     case '$': {
-        /*** Hack -- initialize borg.ini options ***/
+        /*** Initialize borg.ini options ***/
         borg_init_txt_file();
         break;
     }
@@ -777,6 +662,8 @@ void do_cmd_borg(void)
         /* make sure the important game options are set correctly */
         borg_reinit_options();
 
+        borg_clear_best();
+
         /* Activate */
         borg_active = true;
 
@@ -785,8 +672,6 @@ void do_cmd_borg(void)
 
         /* Step forever */
         borg_step = 0;
-
-        borg_notice_player();
 
         if (player->opts.lazymove_delay != 0) {
             borg_note("# Turning off lazy movement controls");
@@ -821,7 +706,7 @@ void do_cmd_borg(void)
         /* Step forever */
         borg_step = 0;
 
-        borg_notice_player();
+        borg_notice(true);
 
         /* Message */
         borg_note("# Installing keypress hook");
@@ -838,6 +723,8 @@ void do_cmd_borg(void)
         /* make sure the important game options are set correctly */
         borg_reinit_options();
 
+        borg_clear_best();
+
         /* Activate */
         borg_active = true;
 
@@ -849,7 +736,7 @@ void do_cmd_borg(void)
         if (borg_step < 1)
             borg_step = 1;
 
-        borg_notice_player();
+        borg_notice(true);
 
         /* Message */
         borg_note("# Installing keypress hook");
@@ -869,37 +756,58 @@ void do_cmd_borg(void)
     case 'f':
     case 'F': {
         /* Get a "Borg command", or abort */
-        if (!get_com("Borg command: Toggle Flag: (m/d/s/f/g) ", &cmd))
+        if (!get_com("Borg command: Toggle Flag: (b/c/k/l/s/v) ", &cmd))
             return;
 
         switch (cmd) {
-            /* Give borg thought messages in window */
-        case 'm':
-        case 'M': {
-            msg("Command No Longer Useful");
+        /* stop when alert bell rings */
+        case 'b':
+        case 'B': {
+            borg_cfg[BORG_STOP_ON_BELL] = !borg_cfg[BORG_STOP_ON_BELL];
+            msg("Borg -- borg_stop_on_bell is now %d.",
+                borg_cfg[BORG_STOP_ON_BELL]);
             break;
         }
 
-        /* Give borg the ability to use graphics ----broken */
-        case 'g':
-        case 'G': {
-            borg_graphics = !borg_graphics;
-            msg("Borg -- borg_graphics is now %d.", borg_graphics);
+        /* self scum */
+        case 'c':
+        case 'C': {
+            borg_cfg[BORG_SELF_SCUM] = !borg_cfg[BORG_SELF_SCUM];
+            msg("Borg -- borg_self_scum is now %d.", borg_cfg[BORG_SELF_SCUM]);
+            break;
+        }
+
+        /* Stop when the borg wins */
+        case 'k':
+        case 'K': {
+            borg_cfg[BORG_STOP_KING] = !borg_cfg[BORG_STOP_KING];
+            msg("Borg -- borg_stop_king is now %d.", borg_cfg[BORG_STOP_KING]);
+            break;
+        }
+
+        /* lunal mode */
+        case 'l':
+        case 'L': {
+            borg_cfg[BORG_LUNAL_MODE] = !borg_cfg[BORG_LUNAL_MODE];
+            msg("Borg -- borg_lunal_mode is now %d.",
+                borg_cfg[BORG_LUNAL_MODE]);
             break;
         }
 
         /* Dump savefile at each level */
         case 's':
         case 'S': {
-            borg_flag_save = !borg_flag_save;
-            msg("Borg -- borg_flag_save is now %d.", borg_flag_save);
+            borg_cfg[BORG_AUTOSAVE] = !borg_cfg[BORG_AUTOSAVE];
+            msg("Borg -- borg_autosave is now %d.", borg_cfg[BORG_AUTOSAVE]);
             break;
         }
 
-        /* clear 'fear' levels */
-        case 'f':
-        case 'F': {
-            msg("Command No Longer Useful");
+        /* verbose mode */
+        case 'v':
+        case 'V':
+        {
+            borg_cfg[BORG_VERBOSE] = !borg_cfg[BORG_VERBOSE];
+            msg("Borg -- borg_verbose is now %d.", borg_cfg[BORG_VERBOSE]);
             break;
         }
         }
@@ -1001,7 +909,7 @@ void do_cmd_borg(void)
             low = high = FEAT_NONE;
             break;
         case ';':
-            low = high = -1;
+            low = high = FEAT_NONE;
             glyph      = true;
             break;
         case ',':
@@ -1021,7 +929,7 @@ void do_cmd_borg(void)
             high = FEAT_HOME;
             break;
         case '^':
-            low = high = -1;
+            low = high = FEAT_NONE;
             glyph      = true;
             break;
         case '+':
@@ -1390,8 +1298,8 @@ void do_cmd_borg(void)
         player->opts.delay_factor = 200;
 
         /* Determine "path" */
-        n_x = player->grid.x;
-        n_y = player->grid.y;
+        n_x = borg.c.x;
+        n_y = borg.c.y;
         target_get(&l);
         x = l.x;
         y = l.y;
@@ -1406,15 +1314,15 @@ void do_cmd_borg(void)
                 break;
 
             /* Calculate the new location */
-            borg_inc_motion(&n_y, &n_x, player->grid.y, player->grid.x, y, x);
+            borg_inc_motion(&n_y, &n_x, borg.c.y, borg.c.x, y, x);
         }
 
         msg("Borg's Targeting Path");
         event_signal(EVENT_MESSAGE_FLUSH);
 
         /* Determine "path" */
-        n_x = player->grid.x;
-        n_y = player->grid.y;
+        n_x = borg.c.x;
+        n_y = borg.c.y;
         x   = l.x;
         y   = l.y;
 
@@ -1626,9 +1534,6 @@ void do_cmd_borg(void)
     case 'P': {
         int32_t p;
 
-        /* Examine the screen */
-        borg_notice_player();
-
         /* Cheat the "equip" screen */
         borg_cheat_equip();
 
@@ -1639,11 +1544,14 @@ void do_cmd_borg(void)
         borg_cheat_store();
 
         /* Examine the screen */
+        borg_notice(true);
+
+        /* Examine the screen */
         borg_update();
 
         /* Examine the inventory */
         borg_object_fully_id();
-        borg_notice(true);
+
         /* Evaluate */
         p = borg_power();
 
@@ -1780,21 +1688,22 @@ void do_cmd_borg(void)
 
         break;
     }
-    /* Command:  HACK debug -- preparation for level */
+    /* Command: preparation for level */
     case '2': {
         int i = 0;
 
         /* Extract some "hidden" variables */
+        /* note: if we recode to do screen scraping again, this will fail */
         borg_cheat_equip();
         borg_cheat_inven();
 
+        borg_notice(true);
+
         /* Examine the screen */
-        borg_notice_player();
         borg_update();
 
         /* Examine the inventory */
         borg_object_fully_id();
-        borg_notice(true);
         borg_notice_home(NULL, false);
 
         /* Dump prep codes */
@@ -1805,7 +1714,9 @@ void do_cmd_borg(void)
         }
         msg("Max Level: %d  Prep'd For: %d  Reason: %s",
             borg.trait[BI_MAXDEPTH], i - 1, borg_prepared(i));
-        if (borg.ready_morgoth == 1) {
+        if (!borg.trait[BI_CDEPTH]) {
+            msg("Unable to check for big fight from town.");
+        } else if (borg.ready_morgoth == 1) {
             msg("You are ready for the big fight!!");
         } else if (borg.ready_morgoth == 0) {
             msg("You are NOT ready for the big fight!!");
@@ -1820,7 +1731,10 @@ void do_cmd_borg(void)
 
         int i;
         for (i = 0; i < STAT_MAX; i++) {
-            borg_note(format("stat # %d, is: %d", i, borg.stat_cur[i]));
+            borg_note(format("stat # %s, is: cur %d, used %d",
+                prefix_pref[BI_STR + i],
+                borg.trait[BI_CSTR + i],
+                borg.trait[BI_STR + i]));
         }
 #if 0
         artifact_type *a_ptr;
@@ -1843,6 +1757,7 @@ void do_cmd_borg(void)
         borg_cheat_equip();
         /* Cheat the "inven" screen */
         borg_cheat_inven();
+
         /* Examine the inventory */
         borg_notice(true);
         borg_notice_home(NULL, false);
@@ -1851,9 +1766,6 @@ void do_cmd_borg(void)
 
         /* Examine the screen */
         borg_update();
-
-        /* Examine the screen */
-        borg_notice_player();
 
         /* note the swap items */
         if (weapon_swap) {
@@ -1878,7 +1790,7 @@ void do_cmd_borg(void)
         Term_save();
 
         /* Dump the spells */
-        if (player->class->magic.total_spells) {
+        if (borg_can_cast()) {
 
             int i;
 
@@ -1898,8 +1810,8 @@ void do_cmd_borg(void)
                     failpercent = (borg_spell_fail_rate(as->spell_enum));
 
                     Term_putstr(1, ii++, -1, COLOUR_WHITE,
-                        format("%s, %s, attempted %d times, fail rate:%d",
-                            as->name, legal, as->times, failpercent));
+                        format("%s, %s, attempted %ld times, fail rate:%d",
+                            as->name, legal, (long int)as->times, failpercent));
                 }
                 get_com(
                     "Exam spell books.  Press any key for next book.", &cmd);
@@ -1957,14 +1869,13 @@ void do_cmd_borg(void)
         borg_cheat_inven();
 
         /* Examine the screen */
-        borg_notice_player();
+        borg_notice(true);
 
         /* Examine the screen */
         borg_update();
 
         /* Examine the inventory */
         borg_object_fully_id();
-        borg_notice(true);
         borg_notice_home(NULL, false);
         for (; item < to; item++) {
             switch (cmd) {
@@ -2008,10 +1919,17 @@ void do_cmd_borg(void)
         break;
     }
 
+    case 'l':
+        /* Cheat the "inven" screen */
+        borg_cheat_inven();
+
+        borg_write_map(true);
+        break;
+
     /* Version of the game */
     case 'v':
     case 'V': {
-        msg("APWBorg Version: %s", borg_engine_date);
+        msg("Borg Version: %s", borg_engine_date);
         break;
     }
     /* Command: Display all known info on item */
@@ -2037,9 +1955,6 @@ void do_cmd_borg(void)
 
         /* Examine the screen */
         borg_update();
-
-        /* Examine the screen */
-        borg_notice_player();
 
         /* Save the screen */
         Term_save();
@@ -2082,8 +1997,8 @@ void do_cmd_borg(void)
             msg("Updating Shops... currently not allowed");
 #if false
             msg("Updating Shops...");
-            // need to change base code to make store_maint accessable .. trying not to change that too much right now.  
-            // this functionality seems a bit bogus anyway !FIX !TODO !AJG
+            // need to change base code to make store_maint accessible .. trying not to change that too much right now.  
+            // this functionality seems a bit bogus anyway !FIX !TODO
                             /* Maintain each shop (except home) */
             for (n = 0; n < MAX_STORES; n++) {
                 /* Skip the home */

@@ -495,8 +495,7 @@ static void melee_effect_elemental(melee_effect_handler_context_t *context,
  * \param amount is the amount that the timer should be increased by.
  * \param of_flag is the OF_ flag that is passed on to monster learning for
  * this effect.
- * \param attempt_save indicates if a saving throw should be attempted for
- * this effect.
+ * \param save indicates if a saving throw should be attempted for this effect.
  * \param save_msg is the message that is displayed if the saving throw is
  * successful.
  */
@@ -1017,7 +1016,7 @@ static void melee_effect_handler_TERRIFY(melee_effect_handler_context_t *context
  */
 static void melee_effect_handler_PARALYZE(melee_effect_handler_context_t *context)
 {
-	/* Hack -- Prevent perma-paralysis via damage */
+	/* Prevent perma-paralysis via damage */
 	if (context->p && context->p->timed[TMD_PARALYZED] && (context->damage < 1))
 		context->damage = 1;
 
@@ -1089,7 +1088,7 @@ static void melee_effect_handler_SHATTER(melee_effect_handler_context_t *context
 	/* Obvious */
 	context->obvious = true;
 
-	/* Hack -- Reduce damage based on the player armor class */
+	/* Reduce damage based on the player armor class */
 	context->damage = adjust_dam_armor(context->damage, context->ac);
 
 	/* Take damage */

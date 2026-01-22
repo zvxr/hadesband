@@ -70,10 +70,29 @@ typedef bool (*target_aux_handler)(struct chunk *c, struct player *p,
  */
 int target_dir(struct keypress ch)
 {
-	return target_dir_allow(ch, false);
+	return target_dir_allow(ch, false, false);
 }
 
-int target_dir_allow(struct keypress ch, bool allow_5)
+/**
+ * Extract, with finer control, a direction (or zero) from a character.
+ *
+ * \param ch is the keypress to examine.
+ * \param allow_5 will, if true, allow 5 to be returned as a direction.
+ * If false, zero will be returned when 5 is extracted.
+ * \param allow_esc will, if true, test if ch is the trigger for a keymap
+ * whose first character in the action is ESCAPE and, when that happens,
+ * return ESCAPE.
+ * \return an integer that is either in 0 to 4, inclusive, or 6 to 9, inclusive,
+ * indicating the direction extracted.  If it was not possible to extract a
+ * direction, return 0.  If allow_5 is true, the returned value can be 5 as
+ * well when the extracted direction is 5.  If allow_esc is true, the returned
+ * value can be ESCAPE as well if ch is the trigger for a keymap whose first
+ * character in the action is ESCAPE.
+ *
+ * When examining a keymap, should any '(' or ')' be skipped over since they
+ * do nothing but toggle how more prompts are handled?
+ */
+int target_dir_allow(struct keypress ch, bool allow_5, bool allow_esc)
 {
 	int d = 0;
 
@@ -96,13 +115,37 @@ int target_dir_allow(struct keypress ch, bool allow_5)
 		else
 			mode = KEYMAP_MODE_ORIG;
 
-		/* XXX see if this key has a digit in the keymap we can use */
 		act = keymap_find(mode, ch);
-		if (act) {
-			const struct keypress *cur;
-			for (cur = act; cur->type == EVT_KBRD; cur++) {
-				if (isdigit((unsigned char) cur->code))
-					d = D2I(cur->code);
+		if (act && act->type == EVT_KBRD) {
+			if (allow_esc && act->code == ESCAPE) {
+				/*
+				 * Let the player break out of the targeting
+				 * with a keymap whose action starts with
+				 * escape.  Suggested by
+				 * https://github.com/angband/angband/issues/6297 .
+				 * To save extra keystrokes by the player, it
+				 * is tempting, if there isn't a kaymap active
+				 * or the current keymap is at its end, to
+				 * insert the keymap triggered by ch into the
+				 * command queue, but we do not know if the
+				 * ESCAPE passed out here will end the
+				 * processing of the last command.
+				 */
+				d = ESCAPE;
+			} else if (((unsigned char)act->code
+					== cmd_lookup_key(CMD_WALK, mode)
+					|| (unsigned char)act->code
+					== cmd_lookup_key(CMD_RUN, mode))) {
+				/*
+				 * Let the player use a single action movement
+				 * keymap to specify the direction.
+				 */
+				++act;
+				if (act->type == EVT_KBRD
+						&& isdigit((unsigned char)act->code)
+						&& (act + 1)->type == EVT_NONE) {
+					d = D2I(act->code);
+				}
 			}
 		}
 	}
@@ -115,9 +158,16 @@ int target_dir_allow(struct keypress ch, bool allow_5)
 }
 
 /**
+ * Height of the help screen; any higher than 4 will overlap the health
+ * bar which we want to keep in targeting mode.
+ */
+#define HELP_HEIGHT 3
+
+/**
  * Display targeting help at the bottom of the screen.
  */
-void target_display_help(bool monster, bool object, bool free)
+static void target_display_help(bool monster, bool object, bool free,
+		bool allow_pathfinding)
 {
 	/* Determine help location */
 	int wid, hgt, help_loc;
@@ -137,8 +187,10 @@ void target_display_help(bool monster, bool object, bool free)
 	text_out(" and ");
 	text_out_c(COLOUR_L_GREEN, "<click>");
 	text_out(" look around. '");
-	text_out_c(COLOUR_L_GREEN, "g");
-	text_out("' moves to selection. '");
+	if (allow_pathfinding) {
+		text_out_c(COLOUR_L_GREEN, "g");
+		text_out("' moves to selection. '");
+	}
 	text_out_c(COLOUR_L_GREEN, "p");
 	text_out("' selects player. '");
 	text_out_c(COLOUR_L_GREEN, "q");
@@ -197,7 +249,7 @@ void target_display_help(bool monster, bool object, bool free)
 
 
 /**
- * Return whether a key triggers a running action.
+ * Return whether a key triggers a keymap whose only action is to run.
  */
 static bool is_running_keymap(struct keypress ch)
 {
@@ -205,14 +257,13 @@ static bool is_running_keymap(struct keypress ch)
 		KEYMAP_MODE_ROGUE : KEYMAP_MODE_ORIG;
 	const struct keypress *act = keymap_find(mode, ch);
 
-	if (act) {
-		unsigned char run_key = cmd_lookup_key(CMD_RUN, mode);
-		const struct keypress *cur;
-
-		for (cur = act; cur->type == EVT_KBRD; cur++) {
-			if ((unsigned char)cur->code == run_key) {
-				return true;
-			}
+	if (act && act->type == EVT_KBRD && (unsigned char)act->code
+			== cmd_lookup_key(CMD_RUN, mode)) {
+		++act;
+		if (act->type == EVT_NONE || (act->type == EVT_KBRD
+				&& isdigit((unsigned char)act->code)
+				&& (act + 1)->type == EVT_NONE)) {
+			return true;
 		}
 	}
 	return false;
@@ -303,7 +354,7 @@ static void adjust_panel_help(int y, int x, bool help,
 
 /**
  * Display the object name of the selected object and allow for full object
- * recall. Returns an event that occurred display.
+ * recall.
  *
  * This will only work for a single object on the ground and not a pile. This
  * loop is similar to the monster recall loop in target_set_interactive_aux().
@@ -318,7 +369,9 @@ static void adjust_panel_help(int y, int x, bool help,
  * \param s1 is part of the output string.
  * \param s2 is part of the output string.
  * \param s3 is part of the output string.
- * \param coords is part of the output string
+ * \param coords is part of the output string.
+ * \param p is the player doing the targeting.
+ * \return the last event that occurred during display.
  */
 static ui_event target_recall_loop_object(struct object *obj, int y, int x,
 		char out_val[TARGET_OUT_VAL_SIZE],
@@ -849,7 +902,7 @@ static bool aux_terrain(struct chunk *c, struct player *p,
 	/* Terrain feature if needed */
 	name = square_apparent_name(p->cave, auxst->grid);
 
-	/* Hack -- handle unknown grids */
+	/* Handle unknown grids */
 
 	/* Pick a preposition if needed */
 	lphrase2 = (*auxst->phrase2) ?
@@ -969,7 +1022,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
  */
 void textui_target(void)
 {
-	if (target_set_interactive(TARGET_KILL, -1, -1))
+	if (target_set_interactive(TARGET_KILL, -1, -1, true))
 		msg("Target Selected.");
 	else
 		msg("Target Aborted.");
@@ -1161,6 +1214,18 @@ static bool pile_has_known(const struct object *obj) {
 /**
  * Handle "target" and "look". May be called from commands or "get_aim_dir()".
  *
+ * \param mode is either TARGET_LOOK (the list of interesting targets can
+ * include the player, monsters, objects, traps, and interesting terrain) or
+ * TARGET_KILL (the list of interesting targets only includes targetable
+ * monsters).
+ * \param x is the initial x position of the targeting cursor.  Use -1 to
+ * have this function determine the initial position.
+ * \param y is the initial y position of the targeting cursor.  Use -1 to
+ * have this function determine the initial position.
+ * \param allow_pathfinding will, if true, allow the player to initiate
+ * pathfinding to a location.
+ * \return true if a target has been successfully set, false otherwise.
+ *
  * Currently, when "interesting" grids are being used, and a directional key is
  * pressed, we only scroll by a single panel, in the direction requested, and
  * check for any interesting grids on that panel.  The "correct" solution would
@@ -1195,14 +1260,8 @@ static bool pile_has_known(const struct object *obj) {
  *
  * This command will cancel any old target, even if used from
  * inside the "look" command.
- *
- *
- * 'mode' is one of TARGET_LOOK or TARGET_KILL.
- * 'x' and 'y' are the initial position of the target to be highlighted,
- * or -1 if no location is specified.
- * Returns true if a target has been successfully set, false otherwise.
  */
-bool target_set_interactive(int mode, int x, int y)
+bool target_set_interactive(int mode, int x, int y, bool allow_pathfinding)
 {
 	int path_n;
 	struct loc path_g[256];
@@ -1267,7 +1326,8 @@ bool target_set_interactive(int mode, int x, int y)
 			bool has_target = target_able(square_monster(cave, loc(x, y)));
 			bool has_object = !(mode & TARGET_KILL)
 					&& pile_has_known(square_object(cave, loc(x, y)));
-			target_display_help(has_target, has_object, use_free_mode);
+			target_display_help(has_target, has_object,
+				use_free_mode, allow_pathfinding);
 		}
 
 		/* Find the path. */
@@ -1313,7 +1373,8 @@ bool target_set_interactive(int mode, int x, int y)
 				}
 			}
 
-		} else if (event_is_mouse_m(press, 2, KC_MOD_ALT)) {
+		} else if (allow_pathfinding
+				&& event_is_mouse_m(press, 2, KC_MOD_ALT)) {
 			/* Navigate to location and done */
 			y = KEY_GRID_Y(press);
 			x = KEY_GRID_X(press);
@@ -1424,7 +1485,7 @@ bool target_set_interactive(int mode, int x, int y)
 				done = true;
 			}
 
-		} else if (event_is_key(press, 'g')) {
+		} else if (allow_pathfinding && event_is_key(press, 'g')) {
 			/* Navigate to a location and done */
 			cmdq_push(CMD_PATHFIND);
 			cmd_set_arg_point(cmdq_peek(), "point", loc(x, y));
@@ -1511,10 +1572,12 @@ bool target_set_interactive(int mode, int x, int y)
 
 		} else {
 			/* Try to extract a direction from the key press */
-			int dir = target_dir(press.key);
+			int dir = target_dir_allow(press.key, false, true);
 
 			if (!dir) {
 				bell();
+			} else if (dir == ESCAPE) {
+				done = true;
 			} else if (use_interesting_mode) {
 				/* Interesting mode direction: Pick new interesting grid */
 				int old_y = targets->pts[target_index].y;

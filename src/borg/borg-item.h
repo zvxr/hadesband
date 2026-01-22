@@ -154,8 +154,7 @@ struct borg_item {
 
 /* Quiver */
 #define QUIVER_START INVEN_TOTAL
-#define QUIVER_SIZE  (z_info->quiver_size)
-#define QUIVER_END   (QUIVER_START + QUIVER_SIZE)
+#define QUIVER_END   (QUIVER_START + (z_info->quiver_size))
 
 /*
  * Current "inventory"
@@ -167,13 +166,15 @@ extern borg_item *borg_items;
  */
 
 extern borg_item *safe_items; /* Safety "inventory" */
-extern borg_item *safe_home; /* Safety "home stuff" */
 
 /* get the items inscription (note) */
 extern const char *borg_get_note(const borg_item *item);
 
 /* remove the items inscription (note) */
 extern void borg_deinscribe(int i);
+
+/* helper to give weight of items */
+extern int16_t borg_item_weight(borg_item *item);
 
 /* initialize and free items */
 extern void borg_init_item(void);

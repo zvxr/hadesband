@@ -53,7 +53,7 @@ static int32_t borg_object_value_known(borg_item *item)
     /* Extract the base value */
     value = k_ptr->cost;
 
-    /* Hack -- use artifact base costs */
+    /* Use artifact base costs Cheat */
     if (item->art_idx) {
         struct artifact *a_ptr = &a_info[item->art_idx];
 
@@ -61,11 +61,11 @@ static int32_t borg_object_value_known(borg_item *item)
         if (!a_ptr->cost)
             return (0L);
 
-        /* Hack -- use the artifact cost */
+        /* Use the artifact cost Cheat */
         value = a_ptr->cost;
     }
 
-    /* Hack -- add in ego-item bonus cost */
+    /* Add in ego-item bonus cost Cheat */
     if (item->ego_idx) {
         struct ego_item *e_ptr = &e_info[item->ego_idx];
 
@@ -73,7 +73,7 @@ static int32_t borg_object_value_known(borg_item *item)
         if (!e_ptr->cost)
             return (0L);
 
-        /* Hack -- reward the ego-item cost */
+        /* Reward the ego-item cost Cheat */
         value += e_ptr->cost;
     }
 
@@ -109,7 +109,7 @@ static int32_t borg_object_value_known(borg_item *item)
     case TV_LIGHT:
     case TV_AMULET:
     case TV_RING: {
-        /* Hack -- Negative "pval" is always bad */
+        /* Negative "pval" is always bad */
         if (item->pval < 0)
             return (0L);
 
@@ -176,7 +176,7 @@ static int32_t borg_object_value_known(borg_item *item)
 
     /* Fall through */
     case TV_AMULET: {
-        /* Hack -- negative bonuses are bad */
+        /* Negative bonuses are bad */
         if (item->to_a < 0)
             return (0L);
         if (item->to_h < 0)
@@ -200,7 +200,7 @@ static int32_t borg_object_value_known(borg_item *item)
     case TV_SOFT_ARMOR:
     case TV_HARD_ARMOR:
     case TV_DRAG_ARMOR: {
-        /* Hack -- negative armor bonus */
+        /* Negative armor bonus */
         if (item->to_a < 0)
             return (0L);
 
@@ -221,14 +221,14 @@ static int32_t borg_object_value_known(borg_item *item)
     case TV_HAFTED:
     case TV_SWORD:
     case TV_POLEARM: {
-        /* Hack -- negative hit/damage bonuses */
+        /* Negative hit/damage bonuses */
         if (item->to_h + item->to_d < 0)
             return (0L);
 
         /* Factor in the bonuses */
         value += ((item->to_h + item->to_d + item->to_a) * 100L);
 
-        /* Hack -- Factor in extra damage dice */
+        /* Factor in extra damage dice */
         if ((item->dd > k_ptr->dd) && (item->ds == k_ptr->ds)) {
             value += (item->dd - k_ptr->dd) * item->ds * 200L;
         }
@@ -240,14 +240,14 @@ static int32_t borg_object_value_known(borg_item *item)
     case TV_SHOT:
     case TV_ARROW:
     case TV_BOLT: {
-        /* Hack -- negative hit/damage bonuses */
+        /* Negative hit/damage bonuses */
         if (item->to_h + item->to_d < 0)
             return (0L);
 
         /* Factor in the bonuses */
         value += ((item->to_h + item->to_d) * 5L);
 
-        /* Hack -- Factor in extra damage dice */
+        /* Factor in extra damage dice */
         if ((item->dd > k_ptr->dd) && (item->ds == k_ptr->ds)) {
             value += (item->dd - k_ptr->dd) * item->ds * 5L;
         }
@@ -291,18 +291,23 @@ static int32_t borg_object_value_guess(borg_item *item)
     case TV_AMULET:
         value = 45L;
 
-        /* Hack -- negative bonuses are bad */
+        /* Negative bonuses are bad */
         if (item->to_a < 0)
             value = 0;
         if (item->to_h < 0)
             value = 0L;
         if (item->to_d < 0)
             value = 0L;
+
+        for (int i = 0; i < OBJ_MOD_MAX && value; i++)
+            if (item->modifiers[i] < 0)
+                value = 0L;
+
         break;
     default:
         value = 20L;
 
-        /* Hack -- negative bonuses are bad */
+        /* Negative bonuses are bad */
         if (item->to_a < 0)
             value = 0;
         if (item->to_h < 0)
@@ -327,20 +332,20 @@ static void borg_set_slays(borg_item *item, const struct object *o)
 }
 
 /*
- * Convert from the dynmaic curses to the set the borg knows
+ * Convert from the dynamic curses to the set the borg knows
  */
 static void borg_set_curses(borg_item *item, const struct object *o)
 {
     int   i;
     bool *item_curses = item->curses;
-    item->uncursable  = true;
+
+    item->uncursable  = false;
     for (i = 0; i < z_info->curse_max; i++) {
         struct curse *c = &curses[i];
         if (o->curses[i].power > 0) {
             item->cursed = true;
-
-            if (o->curses[i].power == 100)
-                item->uncursable = false;
+            if (o->curses[i].power < 100)
+                item->uncursable = true;
 
             if (streq(c->name, "vulnerability"))
                 item_curses[BORG_CURSE_VULNERABILITY] = true;
@@ -400,10 +405,23 @@ static void borg_set_curses(borg_item *item, const struct object *o)
                 item_curses[BORG_CURSE_UNKNOWN] = true;
         }
     }
+}
 
-    /* this is to catch any items we removed all the curses from */
-    if (!item->cursed)
-        item->uncursable = false;
+/*
+ * Look for a negative flag on the object
+ */
+static bool borg_item_has_negative_flag(const borg_item* item)
+{
+    size_t i;
+    for (i = of_next(item->flags, FLAG_START); i != FLAG_END;
+        i = of_next(item->flags, i + 1)) {
+
+        /* Get the flag details */
+        struct obj_property* flag = lookup_obj_property(OBJ_PROPERTY_FLAG, i);
+        if (flag && flag->power < 0)
+            return true;
+    }
+    return false;
 }
 
 /*
@@ -459,7 +477,9 @@ void borg_item_analyze(
     item->weight  = object_weight_one(real_item);
     item->timeout = real_item->timeout;
     item->level   = real_item->kind->level;
-    item->aware   = object_flavor_is_aware(real_item);
+
+    /* always aware of items in the store */
+    item->aware   = in_store || object_flavor_is_aware(real_item);
 
     /* get info from the known part of the object */
     item->ac   = o->ac;
@@ -480,6 +500,11 @@ void borg_item_analyze(
 
     if (o->curses != NULL)
         borg_set_curses(item, o);
+
+    /* If any of the flags are negative, count the object as cursed */
+    if (borg_item_has_negative_flag(item)) {
+        item->cursed = true;
+    }
 
     if (o->slays)
         borg_set_slays(item, o);
@@ -571,12 +596,10 @@ void borg_item_analyze(
         /* if seen {empty} assume pval 0 */
         if (!item->aware && !o->pval)
             item->pval = 0;
-        if (strstr(borg_get_note(item), "empty"))
-            item->pval = 0;
     }
 
-    /* Kind index -- Only if partially ID or this is a store object */
-    if (item->aware || in_store)
+    /* Kind index -- Only if we are aware of its kind */
+    if (item->aware)
         item->kind = o->kind->kidx;
 
     if (o->artifact)

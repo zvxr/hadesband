@@ -579,15 +579,35 @@ void textui_process_command(void)
 		if (cmd && cmd->prereq && !cmd->prereq()) cmd = NULL;
 
 		/* Split on type of command */
-		if (cmd && cmd->hook)
+		if (cmd && cmd->hook) {
 			/* UI command */
 			cmd->hook();
-		else if (cmd && cmd->cmd)
+		} else if (cmd && cmd->cmd) {
 			/* Game command */
 			cmdq_push_repeat(cmd->cmd, count);
-	} else
+		} else if (!cmd && inkey_next) {
+			/*
+			 * If processing a keymap, skip the rest if a command
+			 * lookup, confirmation, or prereq failed.  For
+			 * keymaps that specify multiple commands, the player
+			 * might want to continue with the keymap, but that
+			 * would require skipping over the keys in the keymap
+			 * that provide input to the command that failed.
+			 */
+			inkey_next = NULL;
+		}
+	} else {
 		/* Error */
 		do_cmd_unknown();
+		if (inkey_next) {
+			/*
+			 * As above, abandon the rest of a keymap when a
+			 * command was expected and what we got was not
+			 * recognized.
+			 */
+			inkey_next = NULL;
+		}
+	}
 }
 
 errr textui_get_cmd(cmd_context context)
@@ -983,7 +1003,9 @@ bool savefile_name_already_used(const char *fname, bool make_safe,
 	bool result;
 
 	savefile_set_name(fname, make_safe, strip_suffix);
+	safe_setuid_grab();
 	result = file_exists(savefile);
+	safe_setuid_drop();
 	my_strcpy(savefile, hold, sizeof(savefile));
 	string_free(hold);
 	return result;
@@ -1097,7 +1119,7 @@ void close_game(bool prompt_failed_save)
 	/* No suspending now */
 	signals_ignore_tstp();
 
-	/* Hack -- Increase "icky" depth */
+	/* Increase "icky" depth */
 	screen_save_depth++;
 
 	/* Deal with the randarts file */
@@ -1141,7 +1163,7 @@ void close_game(bool prompt_failed_save)
 	/* Wipe the monster list */
 	wipe_mon_list(cave, player);
 
-	/* Hack -- Decrease "icky" depth */
+	/* Decrease "icky" depth */
 	screen_save_depth--;
 
 	/* Tell the UI we're done with the game state */

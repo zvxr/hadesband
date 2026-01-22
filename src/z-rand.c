@@ -172,7 +172,7 @@ uint32_t Rand_div(uint32_t m)
 	/* Division by zero will result if m is larger than 0x10000000 */
 	assert(m <= 0x10000000);
 
-	/* Hack -- simple case */
+	/* Simple case */
 	if (m <= 1) return (0);
 
 	if (rand_fixed)
@@ -578,8 +578,8 @@ void rand_fix(uint32_t val)
  */
 uint32_t Rand_simple(uint32_t m)
 {
-	static time_t seed;
-	time_t v = time(NULL);
+	static uint32_t seed;
+	uint32_t v = (uint32_t)time(NULL);
 
 #ifdef UNIX
 	seed = LCRNG(seed % m) + ((v << 16) ^ v ^ getpid());

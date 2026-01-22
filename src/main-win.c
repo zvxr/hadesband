@@ -72,9 +72,18 @@
 #include "ui-prefs.h"
 #include "win/win-menu.h"
 
-/* Make sure the winver allows the AlphaBlend function */
-#if (WINVER < 0x0500)
+/* Set the minimum version of Windows to accept so AlphaBlend() is available */
+#ifndef WINVER
 #define WINVER 0x0500
+#elif WINVER < 0x0500
+#undef WINVER
+#define WINVER 0x0500
+#endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+#elif _WIN32_WINNT < 0x0500
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
 #endif
 
 #include <locale.h>
@@ -91,7 +100,7 @@
 #ifdef ALLOW_BORG
 
 /*
- * Hack -- allow use of "screen saver" mode
+ * Allow use of "screen saver" mode
  */
 #define USE_SAVER
 
@@ -184,7 +193,7 @@
 #include <wingdi.h>
 
 /**
- * Hack -- Fake declarations from "dos.h" XXX XXX XXX
+ * Fake declarations from "dos.h" XXX XXX XXX
  */
 #define INVALID_FILE_NAME (DWORD)0xFFFFFFFF
 
@@ -260,7 +269,7 @@ bool use_graphics_nice;
 static term_data data[MAX_TERM_DATA];
 
 /**
- * Hack -- global "window creation" pointer
+ * Global "window creation" pointer
  */
 static term_data *my_td;
 
@@ -447,7 +456,7 @@ static void show_win_error(void)
 
 
 /**
- * Hack -- given a simple filename, extract the "font size" info
+ * Given a simple filename, extract the "font size" info
  *
  * Return a pointer to a static buffer holding the capitalized base name.
  */
@@ -1471,7 +1480,7 @@ static errr term_force_font(term_data *td, const char *path)
 	                         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 	                         FIXED_PITCH | FF_DONTCARE, base);
 
-	/* Hack -- Unknown size */
+	/* Unknown size */
 	if (!wid || !hgt)
 	{
 		HDC hdcDesktop;
@@ -1569,7 +1578,7 @@ static void windows_map_aux(void);
 
 
 /**
- * Hack -- redraw a term_data
+ * Redraw a term_data
  */
 static void term_data_redraw(term_data *td)
 {
@@ -1590,7 +1599,7 @@ static void term_data_redraw(term_data *td)
 
 
 /**
- * Hack -- redraw a term_data
+ * Redraw a term_data
  */
 static void term_data_redraw_section(term_data *td, int x1, int y1,
 									 int x2, int y2)
@@ -1779,7 +1788,7 @@ static errr Term_xtra_win_react(void)
 			/* Activate */
 			Term_activate(&td->t);
 
-			/* Hack -- Resize the term */
+			/* Resize the term */
 			Term_resize(td->cols, td->rows);
 
 			/* Redraw the contents */
@@ -1845,7 +1854,7 @@ static errr Term_xtra_win_flush(void)
 
 
 /**
- * Hack -- clear the screen
+ * Clear the screen
  *
  * Make this more efficient XXX XXX XXX
  */
@@ -1873,7 +1882,7 @@ static errr Term_xtra_win_clear(void)
 
 
 /**
- * Hack -- make a noise
+ * Make a noise
  */
 static errr Term_xtra_win_noise(void)
 {
@@ -2036,15 +2045,22 @@ static errr Term_bigcurs_win(int x, int y)
 static errr Term_wipe_win_helper(int x, int y, int nc, int nr, COLORREF c)
 {
 	term_data *td = (term_data*)(Term->data);
-
+	int tile_wid, tile_hgt;
 	HDC hdc;
 	RECT rc;
 
 	/* Rectangle to erase in client coords */
-	rc.left = x * td->tile_wid + td->size_ow1;
-	rc.right = rc.left + nc * td->tile_wid;
-	rc.top = y * td->tile_hgt + td->size_oh1;
-	rc.bottom = rc.top + nr * td->tile_hgt;
+	if (td->map_active) {
+		tile_wid = td->map_tile_wid;
+		tile_hgt = td->map_tile_hgt;
+	} else {
+		tile_wid = td->tile_wid;
+		tile_hgt = td->tile_hgt;
+	}
+	rc.left = x * tile_wid + td->size_ow1;
+	rc.right = rc.left + nc * tile_wid;
+	rc.top = y * tile_hgt + td->size_oh1;
+	rc.bottom = rc.top + nr * tile_hgt;
 
 	hdc = GetDC(td->w);
 	SetBkColor(hdc, c);
@@ -2355,9 +2371,15 @@ size_t Term_mbstowcs_win(wchar_t *dest, const char *src, int n)
 			if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
 				required = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
 											   src, -1, NULL, 0);
+				if (required <= 0)
+					return (size_t)-1;
 				tmp = malloc(required * sizeof(wchar_t));
-				MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src, -1, tmp,
+				res = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, src, -1, tmp,
 									required);
+				if (res <= 0) {
+					free(tmp);
+					return (size_t)-1;
+				}
 				memcpy(dest, tmp, n * sizeof(wchar_t));
 				free(tmp);
 				return n;
@@ -2557,8 +2579,8 @@ static void windows_map_aux(void)
 	max_y = cave->height;
 
 	/* Draw the map */
-	for (x = min_x; x < max_x; x++) {
-		for (y = min_y; y < max_y; y++) {
+	for (y = min_y; y < max_y; y++) {
+		for (x = min_x; x < max_x; x++) {
 			struct grid_data g;
 
 			map_info(loc(x, y), &g);
@@ -2566,7 +2588,7 @@ static void windows_map_aux(void)
 
 			/* Ignore non-graphics */
 			if (a & 0x80)
-				Term_pict_win(x - min_x, y - min_y, 1, &a, &c, &ta, &tc);
+				(*td->t.pict_hook)(x - min_x, y - min_y, 1, &a, &c, &ta, &tc);
 		}
 	}
 
@@ -2613,6 +2635,21 @@ static void windows_map(void)
 }
 
 
+static void term_view_map_hook(term* t) {
+	(void)t;
+
+    if (!use_graphics) {
+		/* Fall back to default view of map */
+		Term->view_map_hook = NULL;
+		do_cmd_view_map();
+		Term->view_map_hook = term_view_map_hook;
+		return;
+	}
+
+	windows_map();
+}
+
+
 /**
  * ------------------------------------------------------------------------
  *  Other routines
@@ -2653,6 +2690,7 @@ static void term_data_link(term_data *td)
 	t->text_hook = Term_text_win;
 	t->pict_hook = Term_pict_win;
 	t->dblh_hook = NULL;
+	t->view_map_hook = term_view_map_hook;
 
 	/* Remember where we came from */
 	t->data = td;
@@ -3055,14 +3093,6 @@ static void setup_menus(void)
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 	EnableMenuItem(hm, IDM_OPTIONS_LOW_PRIORITY,
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-
-	/* Menu "Options", Item "Map" */
-	if (inkey_flag && initialized && (use_graphics != GRAPHICS_NONE))
-		EnableMenuItem(GetMenu(data[0].w), IDM_OPTIONS_MAP,
-					   MF_BYCOMMAND | MF_ENABLED);
-	else
-		EnableMenuItem(GetMenu(data[0].w), IDM_OPTIONS_MAP,
-		               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 
 	/* Menu "Options", update all */
 	mode = graphics_modes;
@@ -3474,7 +3504,7 @@ static void process_menus(WORD wCmd)
 		case IDM_FILE_SAVE:
 		{
 			if (game_in_progress && character_generated && inkey_flag) {
-				/* Hack -- Forget messages */
+				/* Forget messages */
 				msg_flag = false;
 
 				/* Save the game */
@@ -3496,7 +3526,7 @@ static void process_menus(WORD wCmd)
 					break;
 				}
 
-				/* Hack -- Forget messages */
+				/* Forget messages */
 				msg_flag = false;
 
 				/* Save the game */
@@ -3565,7 +3595,7 @@ static void process_menus(WORD wCmd)
 			term_change_font(td);
 
 			if (use_graphics_nice) {
-			        /* Hack -- Force redraw */
+			        /* Force redraw */
 			        Term_key_push(KTRL('R'));
 			}
 
@@ -3770,7 +3800,7 @@ static void process_menus(WORD wCmd)
 				/* React to changes */
 				Term_xtra_win_react();
 
-				/* Hack -- Force redraw */
+				/* Force redraw */
 				Term_key_push(KTRL('R'));			
 			}
 
@@ -3790,7 +3820,7 @@ static void process_menus(WORD wCmd)
 			/* React to changes */
 			Term_xtra_win_react();
 
-			/* Hack -- Force redraw */
+			/* Force redraw */
 			Term_key_push(KTRL('R'));
 			
 			break;
@@ -3903,7 +3933,7 @@ static void process_menus(WORD wCmd)
 			/* React to changes */
 			Term_xtra_win_react();
 
-			/* Hack -- Force redraw */
+			/* Force redraw */
 			Term_key_push(KTRL('R'));
 
 			break;
@@ -4072,18 +4102,6 @@ static void process_menus(WORD wCmd)
 			break;
 		}
 
-		case IDM_OPTIONS_MAP:
-		{
-			/* Paranoia */
-			if (!inkey_flag || !initialized) {
-				plog("You may not do that right now.");
-				break;
-			}
-
-			windows_map();
-			break;
-		}
-
 		case IDM_HELP_GENERAL:
 		{
 			display_help();
@@ -4156,7 +4174,7 @@ static void process_menus(WORD wCmd)
 					/* React to changes */
 					Term_xtra_win_react();
 
-					/* Hack -- Force redraw */
+					/* Force redraw */
 					Term_key_push(KTRL('R'));
 				}
 			}
@@ -4522,7 +4540,7 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 					return 0;
 				}
 
-				/* Hack -- Forget messages */
+				/* Forget messages */
 				msg_flag = false;
 				save_game();
 				close_game(true);
@@ -4606,9 +4624,8 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 		{
 			/* Ignore if palette change caused by itself */
 			if ((HWND)wParam == hWnd) return 0;
-
-			/* Fall through... */
 		}
+		/* fall through */
 
 		case WM_QUERYNEWPALETTE:
 		{
@@ -4843,8 +4860,8 @@ static LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 		{
 			/* ignore if palette change caused by itself */
 			if ((HWND)wParam == hWnd) return false;
-			/* otherwise, fall through!!! */
 		}
+		/* fall through */
 
 		case WM_QUERYNEWPALETTE:
 		{
@@ -5171,7 +5188,7 @@ static void init_stuff(void)
 	/* Init the file paths */
 	init_file_paths(path, path, path);
 
-	/* Hack -- Validate the paths */
+	/* Validate the paths */
 	validate_dir(ANGBAND_DIR_GAMEDATA);
 	validate_dir(ANGBAND_DIR_CUSTOMIZE);
 	validate_dir(ANGBAND_DIR_HELP);
@@ -5184,17 +5201,18 @@ static void init_stuff(void)
 	validate_dir(ANGBAND_DIR_SAVE);
 	validate_dir(ANGBAND_DIR_PANIC);
 	validate_dir(ANGBAND_DIR_SCORES);
+	validate_dir(ANGBAND_DIR_ARCHIVE);
 
 	/* Build the filename */
 	path_build(path, sizeof(path), ANGBAND_DIR_SCREENS, "news.txt");
 
-	/* Hack -- Validate the "news.txt" file */
+	/* Validate the "news.txt" file */
 	validate_file(path);
 
 	/* Build the filename */
 	path_build(path, sizeof(path), ANGBAND_DIR_FONTS, DEFAULT_FONT);
 
-	/* Hack -- Validate the basic font */
+	/* Validate the basic font */
 	validate_file(path);
 
 	/* Validate the "graf" directory */
@@ -5240,6 +5258,12 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 
 	/* Unused parameter */
 	(void)nCmdShow;
+
+	if (AttachConsole(ATTACH_PARENT_PROCESS)) {
+        /* Reopen stdout/stderr so printf works */
+        freopen("CONOUT$", "w", stdout);
+        freopen("CONOUT$", "w", stderr);
+    }
 
 #ifdef USE_SAVER
 	if (lpCmdLine && ((*lpCmdLine == '-') || (*lpCmdLine == '/'))) {

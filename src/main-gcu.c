@@ -27,16 +27,6 @@
 
 #ifdef USE_GCU
 #include "main.h"
-#ifdef _WIN32
-/*
- * Microsoft puts write() in io.h and marks it with a deprecation warning.
- * Use the equivalent _write() instead.
- */
-#include <io.h>
-#define PLATFORM_WRITE _write
-#else
-#define PLATFORM_WRITE write
-#endif
 
 /**
  * Avoid 'struct term' name conflict with <curses.h> (via <term.h>) on AIX
@@ -59,8 +49,6 @@
 # include <curses.h>
 #endif
 
-#include <term.h>
-
 #undef term
 
 /**
@@ -70,8 +58,8 @@
 
 
 /**
- * Hack -- Windows Console mode uses PDCURSES and cannot do any terminal stuff
- * Hack -- Windows needs Sleep(), and I really don't want to pull in all
+ * Windows Console mode uses PDCURSES and cannot do any terminal stuff
+ * Windows needs Sleep(), and I really don't want to pull in all
  *         the Win32 headers for this one function
  */
 #if defined(WIN32_CONSOLE_MODE)
@@ -110,12 +98,6 @@ static struct termios  norm_termios;
 static struct termios  game_termios;
 
 #endif
-
-/**
- * The TERM environment variable; used for terminal capabilities.
- */
-static char *termtype;
-static bool loaded_terminfo;
 
 /**
  * Simple rectangle type
@@ -167,7 +149,7 @@ static int active = 0;
 #ifdef A_COLOR
 
 /**
- * Hack -- define "A_BRIGHT" to be "A_BOLD", because on many
+ * Define "A_BRIGHT" to be "A_BOLD", because on many
  * machines, "A_BRIGHT" produces ugly "inverse" video.
  */
 #ifndef A_BRIGHT
@@ -268,7 +250,7 @@ static void keymap_game_prepare(void) {
 	game_termios.c_cc[VSUSP] = (char)26;
 
 #ifdef VDSUSP
-	/* Hack -- disable "Ctrl-Y" on *BSD */
+	/* Disable "Ctrl-Y" on *BSD */
 	game_termios.c_cc[VDSUSP] = (char)-1;
 #endif
 
@@ -305,7 +287,7 @@ static errr Term_xtra_gcu_alive(int v) {
 		echo();
 		nl();
 
-		/* Hack -- make sure the cursor is visible */
+		/* Make sure the cursor is visible */
 		Term_xtra(TERM_XTRA_SHAPE, 1);
 
 		/* Flush the curses buffer */
@@ -339,21 +321,36 @@ static errr Term_xtra_gcu_alive(int v) {
 	return 0;
 }
 
+/**
+ * Usage:
+ *
+ * angband -mgcu
+ *
+ * or
+ *
+ * angband -mgcu -- [one or more options described in help_gcu below]
+ */
 const char help_gcu[] = "Text mode, subopts\n"
 	"              -B     Use brighter bold characters\n"
 	"              -D     Use terminal default background color\n"
 	"              -K     Keep terminal's color table when changing colors\n"
-	"              -nN    Use N terminals (up to 6)";
-
-/**
- * Usage:
- *
- * angband -mgcu -- [-B] [-D] [-nN]
- *
- *   -B      Use brighter bold characters
- *   -D      Use terminal default background color
- *   -nN     Use N terminals (up to 6)
- */
+	"              -nN    Use N terminals (up to 6, calculate size automatically. This option cannot be used with below options)\n"
+	"                   To manually set terminal sizes use below options\n"
+	"              -right (dimension)[,dimension]\n"
+	"              -left (dimension)[,dimension]\n"
+	"              -bottom (dimension)[,dimension]\n"
+	"              -top (dimension)[,dimension]\n"
+	"              -spacer (dimension)     space between terminals\n"
+	"                   Where dimension is = (columns)x(rows)\n"
+	"                   ex: 10x10\n"
+	"                   one of the value can also be ommited like 10x*\n"
+	"                   where * is automatically calculated if possible\n"
+	"                   if second dimension is specified then that side is split and second terminal is created.\n"
+	"                   incase of second dimension it can be automatically calculated by using *, ex: 10x10,*\n"
+	"                   second dimension is not allowed for top and bottom\n"
+	"                   NOTE: order of arguments matters\n"
+	"                   if top and bottom specified first then entire row is given to them, if they are specified after left, then margin is left for terminal and then the top and bottom terminal starts\n"
+	;
 
 #ifdef MSYS2_ENCODING_WORKAROUND
 /*
@@ -586,7 +583,7 @@ static void Term_init_gcu(term *t) {
 	/* Count init's, handle first */
 	if (active++ != 0) return;
 
-	#if defined(USE_NCURSES) && defined(KEY_MOUSE)
+	#if defined(NCURSES_MOUSE_VERSION) && defined(KEY_MOUSE)
 	/* Turn on the mouse. */
 	mousemask(ALL_MOUSE_EVENTS, NULL);
 	#endif
@@ -629,7 +626,7 @@ static void Term_nuke_gcu(term *t) {
 	/* Count nuke's, handle last */
 	if (--active != 0) return;
 
-	/* Hack -- make sure the cursor is visible */
+	/* Make sure the cursor is visible */
 	Term_xtra(TERM_XTRA_SHAPE, 1);
 
 #ifdef A_COLOR
@@ -817,8 +814,12 @@ static errr Term_xtra_gcu_event(int v) {
 		if (i == EOF) return (1);
 	}
 
-	/* Not sure if this is portable to non-ncurses platforms */
-	#ifdef USE_NCURSES
+	/*
+	 * Both NCurses and PDCurses define KEY_RESIZE.  According to
+	 * PDCurses User's Guide, KEY_RESIZE is not part of the X/Open
+	 * specification so this generally will not work with Curses.
+	 */
+	#ifdef KEY_RESIZE
 	if (i == KEY_RESIZE) {
 		/* wait until we go one second (10 deci-seconds) before actually
 		 * doing the resizing. users often end up triggering multiple
@@ -833,7 +834,7 @@ static errr Term_xtra_gcu_event(int v) {
 	}
 	#endif
 
-	#if defined(USE_NCURSES) && defined(KEY_MOUSE)
+	#if defined(NCURSES_MOUSE_VERSION) && defined(KEY_MOUSE)
 	if (i == KEY_MOUSE) {
 		MEVENT m;
 		if (getmouse(&m) != OK) return (0);
@@ -1059,8 +1060,10 @@ static errr Term_xtra_gcu(int n, int v) {
 		/* Clear screen */
 		case TERM_XTRA_CLEAR: touchwin(td->win); wclear(td->win); return 0;
 
-		/* Make a noise */
-		case TERM_XTRA_NOISE: PLATFORM_WRITE(1, "\007", 1); return 0;
+		/* Make a noise; beep() has been part of the Curses interface
+		 * since 1984; on systems not capable of an audible warning,
+		 * it may flash the screen */
+		case TERM_XTRA_NOISE: beep(); return 0;
 
 		/* Flush the Curses buffer */
 		case TERM_XTRA_FRESH: wrefresh(td->win); return 0;
@@ -1103,7 +1106,7 @@ static errr Term_curs_gcu(int x, int y) {
 
 /**
  * Erase a grid of space
- * Hack -- try to be "semi-efficient".
+ * Try to be "semi-efficient".
  */
 static errr Term_wipe_gcu(int x, int y, int n) {
 	term_data *td = (term_data *)(Term->data);
@@ -1281,10 +1284,6 @@ static void hook_quit(const char *str) {
  */
 errr init_gcu(int argc, char **argv) {
 	int i;
-
-	/* Initialize info about terminal capabilities */
-	termtype = getenv("TERM");
-	loaded_terminfo = termtype && tgetent(0, termtype) == 1;
 
 	/* Parse args */
 	for (i = 1; i < argc; i++) {
@@ -1475,7 +1474,7 @@ errr init_gcu(int argc, char **argv) {
         --------------------------------|----------------------
         <----Term-3: (COLS-30)x7------->| Term-2: 30x(LINES-27)
 
-        composband -mgcu -- -bottom *x7 -right 30x27,* will layout as
+        angband -mgcu -- -bottom *x7 -right 30x27,* will layout as
 
         Term-0: Map (COLS-30)x(LINES-7) | Term-2: 30x27
                                         |------------------------------

@@ -277,7 +277,7 @@ static SDL_Color text_colours[MAX_COLORS];
 SDL_Color back_colour;		/* Background colour */
 Uint32 back_pixel_colour;
 /* Default color for button captions */
-SDL_Color DefaultCapColour = { 0, 0, 0 };
+SDL_Color DefaultCapColour = { 0, 0, 0, 0 };
 
 typedef struct sdl_ButtonBank sdl_ButtonBank;
 typedef struct sdl_Button sdl_Button;
@@ -392,16 +392,16 @@ static SDL_Surface *mratt = NULL;
  * 'Font Browser' panels; also used to highlight the currently selected font
  * in the font menu
  */
-static SDL_Color AltUnselColour = { 160, 60, 60 };
+static SDL_Color AltUnselColour = { 160, 60, 60, 0 };
 /*
  * Selected colour used on the 'More', 'Point Size', and 'Font Browser' panels
  */
-SDL_Color AltSelColour = { 210, 110, 110 };
+SDL_Color AltSelColour = { 210, 110, 110, 0 };
 /*
  * Used to highlight the currently selected font in the font menu and
  * 'Font Browser' panel
  */
-SDL_Color AltCapColour = { 95, 95, 195 };
+SDL_Color AltCapColour = { 95, 95, 195, 0 };
 
 /* Buttons on the 'More' panel */
 static int MoreOK;			/* Accept changes */
@@ -4561,7 +4561,7 @@ static errr sdl_HandleEvent(SDL_Event *event)
 
 			/* We are playing a game with an active character */
 			if (character_generated && inkey_flag) {
-				/* Hack -- Forget messages */
+				/* Forget messages */
 				msg_flag = false;
 				
 				/* Save the game */
@@ -5702,7 +5702,7 @@ static void init_paths(void)
 	char buf[1024], path[1024];
 	ang_dir *dir;
 
-	/* Hack -- Validate the basic font */
+	/* Validate the basic font */
 	if (default_term_font.preset) {
 		/* Build the filename */
 		path_build(path, sizeof(path), ANGBAND_DIR_FONTS,

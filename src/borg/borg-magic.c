@@ -25,6 +25,8 @@
 #include "../player-spell.h"
 #include "../ui-menu.h"
 
+#include "borg-cave.h"
+#include "borg-cave-view.h"
 #include "borg-init.h"
 #include "borg-io.h"
 #include "borg-trait.h"
@@ -37,7 +39,7 @@ borg_magic *borg_magics = NULL;
 
 
 static borg_spell_rating *borg_spell_ratings;
-// !FIX !TODO !AJG for now put this in the code.  It should probably end up in borg.txt or a new borg.cfg
+// !FIX !TODO for now put this in the code.  It should probably end up in borg.txt or a new borg.cfg
 // I also gave low ratings to spells that are new since the borg doesn't know when to use them yet.
 static borg_spell_rating borg_spell_ratings_MAGE[] =
 {
@@ -75,7 +77,7 @@ static borg_spell_rating borg_spell_ratings_MAGE[] =
 static borg_spell_rating borg_spell_ratings_DRUID[] =
 {
     { "Detect Life", 95,  DETECT_LIFE },
-    { "Fox Form", 5, FOX_FORM }, // !FIX !TODO !AJG need to know when to cast any of the shapechanges
+    { "Fox Form", 5, FOX_FORM }, // !FIX !TODO need to know when to cast any of the shapechanges
     { "Remove Hunger", 85, REMOVE_HUNGER },
     { "Stinking Cloud", 95, STINKING_CLOUD },
     { "Confuse Monster", 55, CONFUSE_MONSTER },
@@ -88,9 +90,9 @@ static borg_spell_rating borg_spell_ratings_DRUID[] =
     { "Earth Rising", 70, EARTH_RISING },
     { "Trance", 55, TRANCE },
     { "Mass Sleep", 80, MASS_SLEEP },
-    { "Become Pukel-man", 5, BECOME_PUKEL_MAN }, // !FIX !TODO !AJG shapechange
-    { "Eagle's Flight", 5, EAGLES_FLIGHT }, // !FIX !TODO !AJG shapechange
-    { "Bear Form", 5, BEAR_FORM }, // !FIX !TODO !AJG shapechange
+    { "Become Pukel-man", 5, BECOME_PUKEL_MAN }, // !FIX !TODO shapechange
+    { "Eagle's Flight", 5, EAGLES_FLIGHT }, // !FIX !TODO shapechange
+    { "Bear Form", 5, BEAR_FORM }, // !FIX !TODO shapechange
     { "Tremor", 80, TREMOR },
     { "Haste Self", 90, HASTE_SELF },
     { "Revitalize", 95, REVITALIZE },
@@ -131,15 +133,15 @@ static borg_spell_rating borg_spell_ratings_PRIEST[] =
     { "Banish Evil", 85, BANISH_EVIL },
     { "Word of Destruction", 75, WORD_OF_DESTRUCTION },
     { "Holy Word", 85, HOLY_WORD },
-    { "Spear of Orom\xC3\xab", 85, SPEAR_OF_OROME }, /* "Spear of Oromë" */
-    { "Light of Manw\xC3\xab", 85, LIGHT_OF_MANWE } /* "Light of Manwë"*/
+    { "Spear of Orom\xC3\xab", 85, SPEAR_OF_OROME }, /* "Spear of Orom(e + diaresis)" */
+    { "Light of Manw\xC3\xab", 85, LIGHT_OF_MANWE } /* "Light of Manw(e + diaresis)"*/
 };
 static borg_spell_rating borg_spell_ratings_NECROMANCER[] =
 {
     { "Nether Bolt", 95, NETHER_BOLT },
     { "Sense Invisible", 85, SENSE_INVISIBLE },
-    { "Create Darkness", 5, CREATE_DARKNESS }, /* not sure this is borg happy */
-    { "Bat Form", 5, BAT_FORM }, // !FIX !TODO !AJG shapechange
+    { "Create Darkness", 5, CREATE_DARKNESS }, 
+    { "Bat Form", 5, BAT_FORM }, // !FIX !TODO shapechange
     { "Read Minds", 85, READ_MINDS },
     { "Tap Unlife", 85, TAP_UNLIFE },
     { "Crush", 95, CRUSH },
@@ -150,7 +152,7 @@ static borg_spell_rating borg_spell_ratings_NECROMANCER[] =
     { "Vampire Strike", 75, VAMPIRE_STRIKE },
     { "Dispel Life", 65, DISPEL_LIFE },
     { "Dark Spear", 65, DARK_SPEAR },
-    { "Warg Form", 5, WARG_FORM }, // !FIX !TODO !AJG shapechange
+    { "Warg Form", 5, WARG_FORM }, // !FIX !TODO shapechange
     { "Banish Spirits", 65, BANISH_SPIRITS },
     { "Annihilate", 95, ANNIHILATE },
     { "Grond's Blow", 85, GRONDS_BLOW },
@@ -158,10 +160,10 @@ static borg_spell_rating borg_spell_ratings_NECROMANCER[] =
     { "Fume of Mordor", 75, FUME_OF_MORDOR },
     { "Storm of Darkness", 65, STORM_OF_DARKNESS },
     { "Power Sacrifice", 5, POWER_SACRIFICE },  /* not sure if this is borg happy. */
-    { "Zone of Unmagic", 5, ZONE_OF_UNMAGIC },  // !FIX !TODO !AJG defense?  not sure how to code. 
-    { "Vampire Form", 5, VAMPIRE_FORM }, // !FIX !TODO !AJG shapechange
+    { "Zone of Unmagic", 5, ZONE_OF_UNMAGIC },  // !FIX !TODO defense?  not sure how to code. 
+    { "Vampire Form", 5, VAMPIRE_FORM }, // !FIX !TODO shapechange
     { "Curse", 65, CURSE },
-    { "Command", 5, COMMAND } // !FIX !TODO !AJG defense?  not sure how to code. 
+    { "Command", 5, COMMAND } // !FIX !TODO defense?  not sure how to code. 
 };
 static borg_spell_rating borg_spell_ratings_PALADIN[] =
 {
@@ -180,7 +182,7 @@ static borg_spell_rating borg_spell_ratings_PALADIN[] =
     { "Demon Bane", 55, DEMON_BANE },
     { "Enchant Weapon", 75, ENCHANT_WEAPON },
     { "Enchant Armour", 85, ENCHANT_ARMOUR },
-    { "Single Combat", 95, SINGLE_COMBAT } // !FIX !TODO !AJG defense?  not sure how to code.
+    { "Single Combat", 95, SINGLE_COMBAT } // !FIX !TODO defense?  not sure how to code.
 };
 static borg_spell_rating borg_spell_ratings_ROGUE[] =
 {
@@ -191,7 +193,7 @@ static borg_spell_rating borg_spell_ratings_ROGUE[] =
     { "Recharging", 85, RECHARGING },
     { "Reveal Monsters", 85, REVEAL_MONSTERS },
     { "Teleport Self", 95, TELEPORT_SELF },
-    { "Hit and Run", 15, HIT_AND_RUN }, // !FIX !TODO !AJG not sure how to code this
+    { "Hit and Run", 15, HIT_AND_RUN }, // !FIX !TODO not sure how to code this
     { "Teleport Other", 85, TELEPORT_OTHER },
     { "Teleport Level", 75, TELEPORT_LEVEL }
 };
@@ -203,10 +205,10 @@ static borg_spell_rating borg_spell_ratings_RANGER[] =
     { "Resist Poison", 85, RESIST_POISON },
     { "Turn Stone to Mud", 85, TURN_STONE_TO_MUD },
     { "Sense Surroundings", 75, SENSE_SURROUNDINGS },
-    { "Cover Tracks", 25, COVER_TRACKS }, // !FIX !TODO !AJG prep?
-    { "Create Arrows", 85, CREATE_ARROWS }, // !FIX !TODO !AJG 
+    { "Cover Tracks", 25, COVER_TRACKS }, // !FIX !TODO prep?
+    { "Create Arrows", 85, CREATE_ARROWS }, // !FIX !TODO 
     { "Haste Self", 95, HASTE_SELF },
-    { "Decoy", 5, DECOY }, // !FIX !TODO !AJG not sure what to do with this
+    { "Decoy", 5, DECOY }, // !FIX !TODO not sure what to do with this
     { "Brand Ammunition", 95, BRAND_AMMUNITION }
 };
 static borg_spell_rating borg_spell_ratings_BLACKGUARD[] =
@@ -221,21 +223,21 @@ static borg_spell_rating borg_spell_ratings_BLACKGUARD[] =
     { "Howl of the Damned", 55, HOWL_OF_THE_DAMNED },
     { "Relentless Taunting", 5, RELENTLESS_TAUNTING }, /* seems to dangerous for borg right now */
     { "Venom", 55, VENOM },
-    { "Werewolf Form", 5, WEREWOLF_FORM }, // !FIX !TODO !AJG shapechange
+    { "Werewolf Form", 5, WEREWOLF_FORM }, // !FIX !TODO shapechange
     { "Bloodlust", 5, BLOODLUST }, /* seems to dangerous for borg right now */
     { "Unholy Reprieve", 95, UNHOLY_REPRIEVE },
-    { "Forceful Blow", 5, FORCEFUL_BLOW }, // !FIX !TODO !AJG need to code this 
+    { "Forceful Blow", 5, FORCEFUL_BLOW }, // !FIX !TODO need to code this 
     { "Quake", 95, QUAKE }
 };
 
 /*
  * get the stat used for casting spells
  *
- * *HACK* assumes the first spell determins the realm thus stat for all spells
+ * Assumes the first spell determines the realm thus stat for all spells
  */
 int borg_spell_stat(void)
 {
-    if (player->class->magic.total_spells) {
+    if (borg_can_cast()) {
         struct class_spell *spell = &(player->class->magic.books[0].spells[0]);
         if (spell != NULL) {
             return spell->realm->stat;
@@ -246,7 +248,26 @@ int borg_spell_stat(void)
 }
 
 /*
- * get the level at which Heroism grants Heroism
+ * Does this player cast spells
+ */
+bool borg_can_cast(void)
+{
+    return player->class->magic.total_spells != 0;
+}
+
+/*
+ * Does this player mostly cast spells
+ * HACK: Rather than hard code classes, assume any class with
+ * more than three books is primarily casting
+ * !FIX !TODO consider adding is_primary_caster to class struct
+ */
+bool borg_primarily_caster(void)
+{
+    return player->class->magic.num_books > 3;
+}
+
+/*
+ * get the level at which Heroism (spell) grants Heroism (effect)
  */
 int borg_heroism_level(void)
 {
@@ -262,7 +283,7 @@ int borg_heroism_level(void)
  */
 int borg_get_book_num(int sval)
 {
-    if (!player->class->magic.total_spells)
+    if (!borg_can_cast())
         return -1;
 
     for (int book_num = 0; book_num < player->class->magic.num_books;
@@ -271,6 +292,32 @@ int borg_get_book_num(int sval)
             return book_num;
     }
     return -1;
+}
+
+/*
+ * is this a dungeon book (not a basic book)
+ */
+bool borg_is_dungeon_book(int tval, int sval)
+{
+    switch (tval) {
+    case TV_PRAYER_BOOK:
+    case TV_MAGIC_BOOK:
+    case TV_NATURE_BOOK:
+    case TV_SHADOW_BOOK:
+    case TV_OTHER_BOOK:
+        break;
+    default:
+        return false;
+    }
+
+    /* keep track of if this is a book from the dungeon */
+    for (int i = 0; i < player->class->magic.num_books; i++) {
+        struct class_book book = player->class->magic.books[i];
+        if (tval == book.tval && sval == book.sval && book.dungeon)
+            return true;
+    }
+
+    return false;
 }
 
 /*
@@ -336,18 +383,18 @@ bool borg_spell_legal(const enum borg_spells spell)
 
     /* The book must be possessed */
     if (borg.book_idx[as->book] < 0)
-        return (false);
+        return false;
 
     /* The spell must be "known" */
     if (borg_magics[spell_num].status < BORG_MAGIC_TEST)
-        return (false);
+        return false;
 
     /* The spell must be affordable (when rested) */
     if (borg_magics[spell_num].power > borg.trait[BI_MAXSP])
-        return (false);
+        return false;
 
     /* Success */
-    return (true);
+    return true;
 }
 
 /*
@@ -380,7 +427,7 @@ bool borg_spell_okay(const enum borg_spells spell)
 
     /* Dark */
     if (no_light(player))
-        return (false);
+        return false;
 
     /* Define reserve_mana for each class */
     switch (borg.trait[BI_CLASS]) {
@@ -413,36 +460,36 @@ bool borg_spell_okay(const enum borg_spells spell)
 
     /* Require ability (when rested) */
     if (!borg_spell_legal(spell))
-        return (false);
+        return false;
 
-    /* Hack -- blind/confused/amnesia */
+    /* Blind/confused/amnesia */
     if (borg.trait[BI_ISBLIND] || borg.trait[BI_ISCONFUSED])
-        return (false);
+        return false;
 
     /* The spell must be affordable (now) */
     if (as->power > borg.trait[BI_CURSP])
-        return (false);
+        return false;
 
     /* Do not cut into reserve mana (for final teleport) */
     if (borg.trait[BI_CURSP] - as->power < reserve_mana) {
         /* nourishing spells okay */
         if (borg_spell_has_effect(spell_num, EF_NOURISH))
-            return (true);
+            return true;
 
         /* okay to run away */
         if (borg_spell_has_effect(spell_num, EF_TELEPORT))
-            return (true);
+            return true;
 
         /* Magic Missile OK */
         if (MAGIC_MISSILE == spell && borg.trait[BI_CDEPTH] <= 35)
-            return (true);
+            return true;
 
         /* others are rejected */
-        return (false);
+        return false;
     }
 
     /* Success */
-    return (true);
+    return true;
 }
 
 /*
@@ -478,6 +525,14 @@ int borg_spell_fail_rate(const enum borg_spells spell)
     if (!player_has(player, PF_ZERO_FAIL)) {
         if (minfail < 5)
             minfail = 5;
+    }
+
+    /* Necromancers are punished by being on lit squares */
+    /* necromancers like the dark */
+    if (borg.trait[BI_CLASS] == CLASS_NECROMANCER &&
+        borg_grids[borg.c.y][borg.c.x].info & BORG_LIGHT) {
+        chance += 25;
+
     }
 
     /* Minimum failure rate and max */
@@ -549,14 +604,14 @@ bool borg_spell(const enum borg_spells spell)
 
     /* Require ability (right now) */
     if (!borg_spell_okay(spell))
-        return (false);
+        return false;
 
     /* Look for the book */
     i = borg.book_idx[as->book];
 
     /* Paranoia */
     if (i < 0)
-        return (false);
+        return false;
 
     /* Debugging Info */
     borg_note(format("# Casting %s (%d,%d).", as->name, i, as->book_offset));
@@ -570,18 +625,18 @@ bool borg_spell(const enum borg_spells spell)
     as->times++;
 
     /* Success */
-    return (true);
+    return true;
 }
 
 /*
- * Hack -- Cheat the "spell" info
+ * Cheat the "spell" info for a single book
  */
-void borg_cheat_spell(int book_num)
+static void borg_cheat_spell(int book_num)
 {
     struct class_book *book = &player->class->magic.books[book_num];
     for (int spell_num = 0; spell_num < book->num_spells; spell_num++) {
         struct class_spell *cspell = &book->spells[spell_num];
-        borg_magic         *as     = &borg_magics[cspell->sidx];
+        borg_magic *as = &borg_magics[cspell->sidx];
 
         /* Note "forgotten" spells */
         if (player->spell_flags[cspell->sidx] & PY_SPELL_FORGOTTEN) {
@@ -614,6 +669,53 @@ void borg_cheat_spell(int book_num)
         }
     }
 }
+
+/*
+ * Cheat the "spell" info
+ */
+void borg_cheat_spells(void)
+{
+    int i;
+
+    /* Assume no books */
+    for (i = 0; i < 9; i++)
+        borg.book_idx[i] = -1;
+
+    /* Scan the pack */
+    for (i = 0; i < z_info->pack_size; i++) {
+        int        book_num;
+        borg_item *item = &borg_items[i];
+
+        for (book_num = 0; book_num < player->class->magic.num_books;
+            book_num++) {
+            struct class_book book = player->class->magic.books[book_num];
+            if (item->tval == book.tval && item->sval == book.sval) {
+                /* Note book locations */
+                borg.book_idx[book_num] = i;
+                break;
+            }
+        }
+    }
+
+    /* only browse spells if casting is possible */
+    if (!borg_can_cast())
+        return;
+
+    /* XXX XXX XXX Dark */
+
+    for (int book_idx = 0; book_idx < 8; book_idx++)         {
+        /* Look for the book */
+        i = borg.book_idx[book_idx];
+
+        /* Cheat the "spell" screens (all of them) */
+        if (i >= 0)
+            /* Cheat that page */
+            borg_cheat_spell(book_idx);
+    }
+
+    return;
+}
+
 
 /*
  * Get the offset in the book this spell is so you can cast it (book) (offset)

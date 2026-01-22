@@ -56,25 +56,25 @@ int16_t borg_kills_nxt;
 borg_kill *borg_kills;
 
 /*
- * Hack -- count racial appearances per level
+ * Count racial appearances per level
  */
 int16_t *borg_race_count;
 
 /*
- * Hack -- count racial kills (for uniques)
+ * Count racial kills (for uniques)
  */
 
 int16_t *borg_race_death;
 
 /*
- * Hack -- help identify "unique" monster names
+ * Help identify "unique" monster names
  */
 static int           borg_unique_size; /* Number of uniques */
 static unsigned int *borg_unique_what; /* Indexes of uniques */
 static const char  **borg_unique_text; /* Names of uniques */
 
 /*
- * Hack -- help identify "normal" monster names
+ * Help identify "normal" monster names
  */
 static int           borg_normal_size; /* Number of normals */
 static unsigned int *borg_normal_what; /* Indexes of normals */
@@ -110,7 +110,24 @@ bool borg_fighting_evil_unique; /* Need to know if evil for Priest Banishment */
 bool borg_fighting_summoner;
 
 /*
- * Hack -- Update a "new" monster
+ * Helper to get the name of a kill.  Adds safeguards against 
+ * player ghosts or dead monsters 
+ */
+const char *borg_race_name(int r_idx)
+{
+    /* Paranoia */
+    if (!r_idx)
+        return "dead monster";
+
+    /* "player ghosts" */
+    if (r_idx >= z_info->r_max - 1)
+        return "player ghost";
+
+    return r_info[r_idx].name;
+}
+
+/*
+ * Update a "new" monster
  */
 static void borg_update_kill_new(int i)
 {
@@ -224,14 +241,14 @@ static void borg_update_kill_new(int i)
         morgy_panel_x = j;
     }
 
-    /* Hack -- Force the monster to be sitting on a floor
+    /* Force the monster to be sitting on a floor
      * grid unless that monster can pass through walls
      */
     if (!rf_has(r_ptr->flags, RF_PASS_WALL)) {
         borg_grids[kill->pos.y][kill->pos.x].feat = FEAT_FLOOR;
     }
 
-    /* Hack -- Force the ghostly monster to be in a wall
+    /* Force the ghostly monster to be in a wall
      * grid until the grid is proven to be something else
      */
     if (borg_grids[kill->pos.y][kill->pos.x].feat != FEAT_FLOOR
@@ -241,7 +258,7 @@ static void borg_update_kill_new(int i)
 }
 
 /*
- * Hack -- Update a "old" monster
+ * Update a "old" monster
  *
  * We round the player speed down, and the monster speed up,
  * and we assume maximum racial speed for each monster.
@@ -354,7 +371,7 @@ static void borg_update_kill_old(int i)
         borg_race_death[i] = 1;
 
     /* We want to remember Morgy's panel */
-    if (streq(r_ptr->base->name, "Morgoth")) {
+    if (kill->r_idx == borg_morgoth_id) {
         j = ((kill->pos.y - borg_panel_hgt() / 2) / borg_panel_hgt())
             * borg_panel_hgt();
         if (j < 0)
@@ -372,14 +389,14 @@ static void borg_update_kill_old(int i)
         morgy_panel_x = j;
     }
 
-    /* Hack -- Force the monster to be sitting on a floor
+    /* HACK/CHEAT: Force the monster to be sitting on a floor
      * grid unless that monster can pass through walls
      */
     if (!rf_has(r_ptr->flags, RF_PASS_WALL)) {
         borg_grids[kill->pos.y][kill->pos.x].feat = FEAT_FLOOR;
     }
 
-    /* Hack -- Force the ghostly monster to be in a wall
+    /* Force the ghostly monster to be in a wall
      * grid until the grid is proven to be something else
      */
     if (borg_grids[kill->pos.y][kill->pos.x].feat != FEAT_FLOOR
@@ -401,8 +418,7 @@ void borg_delete_kill(int i)
 
     /* Note */
     borg_note(format("# Forgetting a monster '%s' at (%d,%d)",
-        (r_info[kill->r_idx].name), kill->pos.y, kill->pos.x));
-
+        borg_race_name(kill->r_idx), kill->pos.y, kill->pos.x));
     /* Clear goals if I am flowing to this monster.*/
     if (borg.goal.type == GOAL_KILL && borg_flow_y[0] == kill->pos.y
         && borg_flow_x[0] == kill->pos.x)
@@ -439,7 +455,7 @@ void borg_sleep_kill(int i)
 
     /* Note */
     borg_note(format("# Noting sleep on a monster '%s' at (%d,%d)",
-        (r_info[kill->r_idx].name), kill->pos.y, kill->pos.x));
+        borg_race_name(kill->r_idx), kill->pos.y, kill->pos.x));
 
     /* note sleep */
     kill->awake = false;
@@ -469,14 +485,14 @@ static bool borg_follow_kill_aux(int i, int y, int x)
 
     /* Too far away */
     if (d > z_info->max_sight)
-        return (false);
+        return false;
 
     /* Access the grid */
     ag = &borg_grids[y][x];
 
     /* Not on-screen */
     if (!(ag->info & BORG_OKAY))
-        return (false);
+        return false;
 
     /* Line of sight */
     if (ag->info & BORG_VIEW) {
@@ -484,18 +500,18 @@ static bool borg_follow_kill_aux(int i, int y, int x)
         if (ag->info & (BORG_LIGHT | BORG_GLOW)) {
             /* We can see invisible */
             if (borg.trait[BI_SINV] || borg.see_inv)
-                return (true);
+                return true;
 
             /* Monster is not invisible */
             if (!(rf_has(r_ptr->flags, RF_INVISIBLE)))
-                return (true);
+                return true;
         }
 
         /* Use "infravision" */
         if (d <= borg.trait[BI_INFRA]) {
             /* Infravision works on "warm" creatures */
             if (!(rf_has(r_info->flags, RF_COLD_BLOOD)))
-                return (true);
+                return true;
         }
     }
 
@@ -503,16 +519,16 @@ static bool borg_follow_kill_aux(int i, int y, int x)
     if (borg.trait[BI_ESP]) {
         /* Telepathy fails on "strange" monsters */
         if (rf_has(r_info->flags, RF_EMPTY_MIND))
-            return (false);
+            return false;
         if (rf_has(r_info->flags, RF_WEIRD_MIND))
-            return (false);
+            return false;
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* Nope */
-    return (false);
+    return false;
 }
 
 /*
@@ -560,7 +576,7 @@ void borg_follow_kill(int i)
 
     /* Note */
     borg_note(format("# There was a monster '%s' at (%d,%d)",
-        (r_info[kill->r_idx].name), oy, ox));
+        borg_race_name(kill->r_idx), oy, ox));
 
     /* Prevent silliness */
     if (!borg_cave_floor_bold(oy, ox)) {
@@ -694,7 +710,7 @@ void borg_follow_kill(int i)
 
     /* Note */
     borg_note(format("# Following a monster '%s' to (%d,%d) from (%d,%d)",
-        (r_info[kill->r_idx].name), kill->pos.y, kill->pos.x, oy, ox));
+        borg_race_name(kill->r_idx), kill->pos.y, kill->pos.x, oy, ox));
 
     /* Recalculate danger */
     borg_danger_wipe = true;
@@ -731,12 +747,12 @@ static int borg_new_kill(unsigned int r_idx, int y, int x)
         n = borg_kills_nxt++;
     }
 
-    /* Hack -- steal an old monster */
+    /* Steal an old monster */
     if (n < 0) {
         /* Note */
         borg_note("# Too many monsters");
 
-        /* Hack -- Pick a random monster */
+        /* Pick a random monster */
         n = randint1(borg_kills_nxt - 1) + 1;
 
         /* Kill it */
@@ -785,7 +801,7 @@ static int borg_new_kill(unsigned int r_idx, int y, int x)
     /* Note (r_info[kill->r_idx].name)*/
     borg_note(format(
         "# Creating a monster '%s' at (%d,%d), HP: %d, Time: %d, Index: %d",
-        (r_info[kill->r_idx].name), kill->pos.y, kill->pos.x, kill->power,
+        borg_race_name(kill->r_idx), kill->pos.y, kill->pos.x, kill->power,
         kill->when, kill->r_idx));
 
     /* Recalculate danger */
@@ -819,22 +835,22 @@ static int borg_new_kill(unsigned int r_idx, int y, int x)
         borg_fear_region[y2][x1] = 0;
         borg_fear_region[y2][x2] = 0;
         borg_note(format("# Removing Regional Fear (%d,%d) because of a LOS %s",
-            y, x, r_info[kill->r_idx].name));
+            y, x, borg_race_name(kill->r_idx)));
     }
 
     /* Wipe goals only if I have some light source */
-    if (borg.trait[BI_CURLITE]
+    if (borg.trait[BI_LIGHT]
         && borg_los(kill->pos.y, kill->pos.x, borg.c.y, borg.c.x))
         borg.goal.type = 0;
 
-    /* Hack -- Force the monster to be sitting on a floor
+    /* Force the monster to be sitting on a floor
      * grid unless that monster can pass through walls
      */
     if (!(rf_has(r_ptr->flags, RF_PASS_WALL))) {
         ag->feat = FEAT_FLOOR;
     }
 
-    /* Hack -- Force the ghostly monster to be in a wall
+    /* Force the ghostly monster to be in a wall
      * grid until the grid is proven to be something else
      */
     if (rf_has(r_ptr->flags, RF_PASS_WALL)) {
@@ -849,7 +865,7 @@ static int borg_new_kill(unsigned int r_idx, int y, int x)
     }
 
     /* Return the monster */
-    return (n);
+    return n;
 }
 
 /*
@@ -890,7 +906,7 @@ static int borg_new_kill(unsigned int r_idx, int y, int x)
  *
  * The actual rewards and penalties probably need some tweaking.
  *
- * Hack -- try not to choose "unique" monsters, or we will flee a lot.
+ * HACK: Try not to choose "unique" monsters, or we will flee a lot.
  */
 static unsigned int borg_guess_race(
     uint8_t a, wchar_t c, bool multi, int y, int x)
@@ -924,11 +940,11 @@ bool observe_kill_diff(int y, int x, uint8_t a, wchar_t c)
 
     /* Oops */
     if (!r_idx)
-        return (false);
+        return false;
 
     /* no new monsters if hallucinations */
     if (borg.trait[BI_ISIMAGE])
-        return (false);
+        return false;
 
     /* Create a new monster */
     i = borg_new_kill(r_idx, y, x);
@@ -944,7 +960,7 @@ bool observe_kill_diff(int y, int x, uint8_t a, wchar_t c)
         borg_t_morgoth = borg_t;
 
     /* Done */
-    return (true);
+    return true;
 }
 
 /*
@@ -1030,7 +1046,7 @@ bool observe_kill_move(int y, int x, int d, uint8_t a, wchar_t c, bool flag)
 
                 /* Note */
                 borg_note(format("# Converting a monster '%s' at (%d,%d)",
-                    (r_info[kill->r_idx].name), kill->pos.y, kill->pos.x));
+                    borg_race_name(kill->r_idx), kill->pos.y, kill->pos.x));
 
                 /* Change the race */
                 kill->r_idx = r_idx;
@@ -1066,7 +1082,7 @@ bool observe_kill_move(int y, int x, int d, uint8_t a, wchar_t c, bool flag)
             /* Note */
             borg_note(
                 format("# Tracking a monster '%s' at (%d,%d) from (%d,%d)",
-                    (r_ptr->name), kill->pos.y, kill->pos.x, oy, ox));
+                    borg_race_name(kill->r_idx), kill->pos.y, kill->pos.x, oy, ox));
 
             /* Recalculate danger */
             borg_danger_wipe = true;
@@ -1099,11 +1115,11 @@ bool observe_kill_move(int y, int x, int d, uint8_t a, wchar_t c, bool flag)
         kill->seen = true;
 
         /* Done */
-        return (true);
+        return true;
     }
 
     /* Oops */
-    return (false);
+    return false;
 }
 
 /*
@@ -1169,7 +1185,7 @@ static unsigned int borg_guess_race_name(char *who)
         return (borg_unique_what[m]);
     }
 
-    /* Hack -- handle "offscreen" */
+    /* Handle "offscreen" */
     if (suffix(who, " (offscreen)")) {
         /* Remove the suffix */
         my_strcpy(partial, who, sizeof(partial));
@@ -1304,7 +1320,7 @@ int borg_locate_kill(char *who, struct loc c, int r)
         }
 
         /* Ignore */
-        return (0);
+        return 0;
     }
 
     /* Handle offsreen monsters */
@@ -1316,7 +1332,7 @@ int borg_locate_kill(char *who, struct loc c, int r)
         borg.need_shift_panel = true;
 
         /* Ignore */
-        return (0);
+        return 0;
     }
 
     /* Guess the monster race */
@@ -1326,11 +1342,12 @@ int borg_locate_kill(char *who, struct loc c, int r)
     r_ptr = &r_info[r_idx];
 
     /* Note */
-    if (borg_cfg[BORG_VERBOSE])
+    if (borg_cfg[BORG_VERBOSE]) {
         borg_note(format("# There is a monster '%s' within %d grids of %d,%d",
-            (r_ptr->name), r, c.y, c.x));
+            borg_race_name(r_idx), r, c.y, c.x));
+    }
 
-    /* Hack -- count racial appearances */
+    /* Count racial appearances */
     if (borg_race_count[r_idx] < SHRT_MAX)
         borg_race_count[r_idx]++;
 
@@ -1340,7 +1357,7 @@ int borg_locate_kill(char *who, struct loc c, int r)
         borg_note("# Bizarre monster nearby");
     }
 
-    /*** Hack -- Find a similar object ***/
+    /*** Find a similar object ***/
 
     /* Nothing yet */
     b_i = -1;
@@ -1423,10 +1440,10 @@ int borg_locate_kill(char *who, struct loc c, int r)
             kill->known = true;
 
         /* Return the index */
-        return (b_i);
+        return b_i;
     }
 
-    /*** Hack -- Find a similar monster ***/
+    /*** Find a similar monster ***/
 
     /* Nothing yet */
     b_i = -1;
@@ -1483,7 +1500,7 @@ int borg_locate_kill(char *who, struct loc c, int r)
 
         /* Note */
         borg_note(format("# Converting a monster '%s' at (%d,%d)",
-            (r_info[kill->r_idx].name), kill->pos.y, kill->pos.x));
+            borg_race_name(kill->r_idx), kill->pos.y, kill->pos.x));
 
         /* Change the race */
         kill->r_idx = r_idx;
@@ -1505,10 +1522,10 @@ int borg_locate_kill(char *who, struct loc c, int r)
         borg.goal.type = 0;
 
         /* Index */
-        return (b_i);
+        return b_i;
     }
 
-    /*** Hack -- Find an existing monster ***/
+    /*** Find an existing monster ***/
 
     /* Nothing yet */
     b_i = -1;
@@ -1546,7 +1563,7 @@ int borg_locate_kill(char *who, struct loc c, int r)
         b_d = d;
     }
 
-    /*** Hack -- Find an existing monster Last Chance ***/
+    /*** Find an existing monster Last Chance ***/
     /* Note:
      * There can be some problems with monsters that use melee
      * attack.  The range (r) will be 1.  But the known monster
@@ -1603,24 +1620,24 @@ int borg_locate_kill(char *who, struct loc c, int r)
         if (borg_cfg[BORG_VERBOSE])
             borg_note(format(
                 "# Matched a monster '%s' at (%d,%d) for the parsed msg.",
-                (r_info[kill->r_idx].name), kill->pos.y, kill->pos.x));
+                borg_race_name(kill->r_idx), kill->pos.y, kill->pos.x));
 
         /* Known identity */
         if (!r)
             kill->known = true;
 
         /* Index */
-        return (b_i);
+        return b_i;
     }
 
     /*** Oops ***/
 
     /* Note */
-    if (borg_cfg[BORG_VERBOSE])
+    if (borg_cfg[BORG_VERBOSE]) {
         borg_note(format("# Unable to locate monster '%s' near (%d,%d), which "
-                         "generated the msg (%s).",
-            (r_ptr->name), c.y, c.x, who));
-
+            "generated the msg (%s).",
+            borg_race_name(r_idx), c.y, c.x, who));
+    }
     /* Oops */
     /* this is the case where we know the name of the monster */
     /* but cannot locate it on the monster list. */
@@ -1635,7 +1652,7 @@ void borg_count_death(int i)
     borg_kill *kill = &borg_kills[i];
 
     if (kill->r_idx) {
-        /* Hack -- count racial deaths */
+        /* Count racial deaths */
         if (borg_race_death[kill->r_idx] < SHRT_MAX)
             borg_race_death[kill->r_idx]++;
 
@@ -1663,26 +1680,27 @@ bool borg_flow_kill(bool viewable, int nearness)
 
     /* Efficiency -- Nothing to kill */
     if (!borg_kills_cnt)
-        return (false);
+        return false;
 
     /* Don't chase down town monsters when you are just starting out */
-    if (borg.trait[BI_CDEPTH] == 0 && borg.trait[BI_CLEVEL] < 20)
-        return (false);
+    if (borg.trait[BI_CDEPTH] == 0 && borg.trait[BI_CLEVEL] < 20
+        && !borg_cfg[BORG_MONEY_SCUM_AMOUNT])
+        return false;
 
     /* YOU ARE NOT A WARRIOR!! DON'T ACT LIKE ONE!! */
     if ((borg.trait[BI_CLASS] == CLASS_MAGE
             || borg.trait[BI_CLASS] == CLASS_NECROMANCER)
         && borg.trait[BI_CLEVEL] < (borg.trait[BI_CDEPTH] ? 35 : 25))
-        return (false);
+        return false;
 
     /* Not if Weak from hunger or no food */
     if (borg.trait[BI_ISHUNGRY] || borg.trait[BI_ISWEAK]
         || borg.trait[BI_FOOD] == 0)
-        return (false);
+        return false;
 
     /* Not if sitting in a sea of runes */
     if (borg_morgoth_position)
-        return (false);
+        return false;
 
     /* Nothing found */
     borg_temp_n = 0;
@@ -1768,9 +1786,10 @@ bool borg_flow_kill(bool viewable, int nearness)
             && (rf_has(r_info[kill->r_idx].flags, RF_MULTIPLY)))
             continue;
 
-        /* Hack -- ignore Maggot until later.  Player will chase Maggot
+        /* Ignore Maggot until later.  Player will chase Maggot
          * down all across the screen waking up all the monsters.  Then
          * he is stuck in a compromised situation.
+         * !FIX !TODO: Handle all uniques generically.
          */
         if ((rf_has(r_info[kill->r_idx].flags, RF_UNIQUE))
             && borg.trait[BI_CDEPTH] == 0 && borg.trait[BI_CLEVEL] < 5)
@@ -1790,7 +1809,7 @@ bool borg_flow_kill(bool viewable, int nearness)
         /* Calculate danger */
         p = borg_danger(y, x, 1, true, false);
 
-        /* Hack -- Skip "deadly" monsters unless uniques*/
+        /* Skip "deadly" monsters unless uniques*/
         if (borg.trait[BI_CLEVEL] > 25 && (!rf_has(r_info->flags, RF_UNIQUE))
             && p > avoidance / 2)
             continue;
@@ -1808,7 +1827,7 @@ bool borg_flow_kill(bool viewable, int nearness)
                 continue;
         }
 
-        /* Hack -- Avoid getting surrounded */
+        /* Avoid getting surrounded */
         if (borg_in_hall && (rf_has(r_info[kill->r_idx].flags, RF_GROUP_AI))) {
             /* check to see if monster is in a hall, */
             for (hall_x = -1; hall_x <= 1; hall_x++) {
@@ -1886,7 +1905,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 
     /* Nothing to kill */
     if (!borg_temp_n)
-        return (false);
+        return false;
 
     /* Clear the flow codes */
     borg_flow_clear();
@@ -1905,14 +1924,14 @@ bool borg_flow_kill(bool viewable, int nearness)
 
     /* Attempt to Commit the flow */
     if (!borg_flow_commit("kill", GOAL_KILL))
-        return (false);
+        return false;
 
     /* Take one step */
     if (!borg_flow_old(GOAL_KILL))
-        return (false);
+        return false;
 
     /* Success */
-    return (true);
+    return true;
 }
 
 /*
@@ -1956,21 +1975,21 @@ bool borg_flow_kill_aim(bool viewable)
 
     /* Efficiency -- Nothing to kill */
     if (!borg_kills_cnt)
-        return (false);
+        return false;
 
     /* Sometimes we loop on this if we back  up to a point where */
     /* the monster is out of site */
     if (borg.time_this_panel > 500)
-        return (false);
+        return false;
 
     /* Not if Weak from hunger or no food */
     if (borg.trait[BI_ISHUNGRY] || borg.trait[BI_ISWEAK]
         || borg.trait[BI_FOOD] == 0)
-        return (false);
+        return false;
 
     /* If you can shoot from where you are, don't bother reaiming */
     if (borg_has_distance_attack())
-        return (false);
+        return false;
 
     /* Consider each adjacent spot */
     for (o_x = -2; o_x <= 2; o_x++) {
@@ -2015,13 +2034,13 @@ bool borg_flow_kill_aim(bool viewable)
 
                 /* Attempt to Commit the flow */
                 if (!borg_flow_commit("targetable position", GOAL_KILL))
-                    return (false);
+                    return false;
 
                 /* Take one step */
                 if (!borg_flow_old(GOAL_KILL))
-                    return (false);
+                    return false;
 
-                return (true);
+                return true;
             }
         }
     }
@@ -2059,7 +2078,7 @@ bool borg_flow_kill_aim(bool viewable)
  * NORTH  SOUTH  WEST   East
  *
  */
-bool borg_flow_kill_corridor(bool viewable)
+bool borg_flow_kill_corridor(void)
 {
     int o_y = 0;
     int o_x = 0;
@@ -2151,55 +2170,55 @@ bool borg_flow_kill_corridor(bool viewable)
 
     /* Efficiency -- Nothing to kill */
     if (!borg_kills_cnt)
-        return (false);
+        return false;
 
     /* Only do this to summoners when they are close*/
     if (borg_kills_summoner == -1)
-        return (false);
+        return false;
 
     /* Hungry,starving */
     if (borg.trait[BI_ISHUNGRY] || borg.trait[BI_ISWEAK])
-        return (false);
+        return false;
 
     /* Sometimes we loop on this */
     if (borg.time_this_panel > 500)
-        return (false);
+        return false;
 
     /* Do not dig when confused */
     if (borg.trait[BI_ISCONFUSED])
-        return (false);
+        return false;
 
     /* Not when darkened */
-    if (borg.trait[BI_CURLITE] == 0)
-        return (false);
+    if (borg.trait[BI_LIGHT] == 0)
+        return false;
 
     /* Not if sitting in a sea of runes */
     if (borg_morgoth_position)
-        return (false);
+        return false;
     if (borg_as_position)
-        return (false);
+        return false;
 
     /* get the summoning monster */
     kill = &borg_kills[borg_kills_summoner];
 
     /* Summoner must be mobile */
     if (rf_has(r_info[kill->r_idx].flags, RF_NEVER_MOVE))
-        return (false);
+        return false;
     /* Summoner must be able to pass through walls */
     if (rf_has(r_info[kill->r_idx].flags, RF_PASS_WALL))
-        return (false);
+        return false;
     if (rf_has(r_info[kill->r_idx].flags, RF_KILL_WALL))
-        return (false);
+        return false;
 
     /* Summoner has to be awake (so he will chase me */
     if (!kill->awake)
-        return (false);
+        return false;
 
     /* Must have Stone to Mud spell */
     if (!borg_spell_okay(TURN_STONE_TO_MUD) && !borg_spell_okay(SHATTER_STONE)
         && !borg_equips_ring(sv_ring_digging)
         && !borg_equips_item(act_stone_to_mud, true))
-        return (false);
+        return false;
 
     /* Summoner needs to be able to follow me.
      * So I either need to be able to
@@ -2221,14 +2240,14 @@ bool borg_flow_kill_corridor(bool viewable)
             borg_flow_enqueue_grid(kill->pos.y, kill->pos.x);
             borg_flow_spread(10, true, false, false, -1, false);
             if (!borg_flow_commit("Monster Path", GOAL_KILL))
-                return (false);
+                return false;
         } else {
             borg_flow_clear();
             borg_digging = true;
             borg_flow_enqueue_grid(kill->pos.y, kill->pos.x);
             borg_flow_spread(10, true, true, false, -1, false);
             if (!borg_flow_commit("Monster Path", GOAL_KILL))
-                return (false);
+                return false;
         }
     }
 
@@ -2472,13 +2491,13 @@ bool borg_flow_kill_corridor(bool viewable)
         /* Attempt to Commit the flow */
         if (!borg_flow_commit(
                 "anti-summon corridor north type 1", GOAL_DIGGING))
-            return (false);
+            return false;
 
         /* Take one step */
         if (!borg_flow_old(GOAL_DIGGING))
-            return (false);
+            return false;
 
-        return (true);
+        return true;
     }
     if (b_s == true) {
         /* Clear the flow codes */
@@ -2495,13 +2514,13 @@ bool borg_flow_kill_corridor(bool viewable)
         /* Attempt to Commit the flow */
         if (!borg_flow_commit(
                 "anti-summon corridor south type 1", GOAL_DIGGING))
-            return (false);
+            return false;
 
         /* Take one step */
         if (!borg_flow_old(GOAL_DIGGING))
-            return (false);
+            return false;
 
-        return (true);
+        return true;
     }
     if (b_e == true) {
         /* Clear the flow codes */
@@ -2518,13 +2537,13 @@ bool borg_flow_kill_corridor(bool viewable)
 
         /* Attempt to Commit the flow */
         if (!borg_flow_commit("anti-summon corridor east type 1", GOAL_DIGGING))
-            return (false);
+            return false;
 
         /* Take one step */
         if (!borg_flow_old(GOAL_DIGGING))
-            return (false);
+            return false;
 
-        return (true);
+        return true;
     }
     if (b_w == true) {
         /* Clear the flow codes */
@@ -2540,20 +2559,20 @@ bool borg_flow_kill_corridor(bool viewable)
 
         /* Attempt to Commit the flow */
         if (!borg_flow_commit("anti-summon corridor west type 1", GOAL_DIGGING))
-            return (false);
+            return false;
 
         /* Take one step */
         if (!borg_flow_old(GOAL_DIGGING))
-            return (false);
+            return false;
 
-        return (true);
+        return true;
     }
 
     return false;
 }
 
 /* Dig a straight Tunnel to a close monster */
-bool borg_flow_kill_direct(bool viewable, bool twitchy)
+bool borg_flow_kill_direct(bool twitchy)
 {
     int i;
     int b_i = -1;
@@ -2564,25 +2583,25 @@ bool borg_flow_kill_direct(bool viewable, bool twitchy)
 
     /* Assume we need to dig granite */
     if (!borg_can_dig(false, FEAT_GRANITE))
-        return (false);
+        return false;
 
     /* Not if Weak from hunger or no food */
     if (!twitchy
         && (borg.trait[BI_ISHUNGRY] || borg.trait[BI_ISWEAK]
             || borg.trait[BI_FOOD] == 0))
-        return (false);
+        return false;
 
     /* Only when sitting for too long or twitchy */
     if (!twitchy && borg_t - borg_began < 3000 && borg.times_twitch < 5)
-        return (false);
+        return false;
 
     /* Do not dig when confused */
     if (borg.trait[BI_ISCONFUSED])
-        return (false);
+        return false;
 
     /* Not when darkened */
-    if (borg.trait[BI_CURLITE] == 0)
-        return (false);
+    if (borg.trait[BI_LIGHT] == 0)
+        return false;
 
     /* Efficiency -- Nothing to kill */
     if (borg_kills_cnt) {
@@ -2621,13 +2640,13 @@ bool borg_flow_kill_direct(bool viewable, bool twitchy)
 
         /* Attempt to Commit the flow */
         if (!borg_flow_commit("center direct", GOAL_DIGGING))
-            return (false);
+            return false;
 
         /* Take one step */
         if (!borg_flow_old(GOAL_DIGGING))
-            return (false);
+            return false;
 
-        return (true);
+        return true;
     }
 
     if (b_i) /* don't want it near permawall */
@@ -2646,13 +2665,13 @@ bool borg_flow_kill_direct(bool viewable, bool twitchy)
 
         /* Attempt to Commit the flow */
         if (!borg_flow_commit("kill direct", GOAL_DIGGING))
-            return (false);
+            return false;
 
         /* Take one step */
         if (!borg_flow_old(GOAL_DIGGING))
-            return (false);
+            return false;
 
-        return (true);
+        return true;
     }
 
     return false;
@@ -2687,6 +2706,10 @@ void borg_near_monster_type(int dist)
 
         /* Skip dead monsters */
         if (!kill->r_idx)
+            continue;
+
+        /* "player ghosts" */
+        if (kill->r_idx >= z_info->r_max - 1)
             continue;
 
         /* Count breeders */
@@ -2886,41 +2909,41 @@ bool borg_shoot_scoot_safe(int emergency, int turns, int b_p)
 
     /* no need if high level in town */
     if (borg.trait[BI_CLEVEL] >= 8 && borg.trait[BI_CDEPTH] == 0)
-        return (false);
+        return false;
 
     /* must have the ability */
     if (!borg.trait[BI_APHASE])
-        return (false);
+        return false;
 
     /* Not if No Light */
-    if (!borg.trait[BI_CURLITE])
-        return (false);
+    if (!borg.trait[BI_LIGHT])
+        return false;
 
     /* Cheat the floor grid */
     /* Not if in a vault since it throws us out of the vault */
     if (square_isvault(cave, borg.c))
-        return (false);
+        return false;
 
     /*** Need Missiles or cheap spells ***/
 
     /* classes that are mainly spellcaster */
-    if (player->class->magic.num_books > 3) {
+    if (borg_primarily_caster()) {
         /* Low mana */
         if (borg.trait[BI_CLEVEL] >= 45 && borg.trait[BI_CURSP] < 15)
-            return (false);
+            return false;
 
         /* Low mana, low level, generally OK */
         if (borg.trait[BI_CLEVEL] < 45 && borg.trait[BI_CURSP] < 5)
-            return (false);
+            return false;
     } else /* Other classes need some missiles */
     {
         if (borg.trait[BI_AMISSILES] < 5 || borg.trait[BI_CLEVEL] >= 45)
-            return (false);
+            return false;
     }
 
     /* Not if I am in a safe spot for killing special monsters */
     if (borg_morgoth_position || borg_as_position)
-        return (false);
+        return false;
 
     /* scan the adjacent grids for an awake monster */
     for (i = 0; i < 8; i++) {
@@ -2981,7 +3004,7 @@ bool borg_shoot_scoot_safe(int emergency, int turns, int b_p)
 
     /* if No Adjacent_monster no need for it */
     if (adjacent_monster == false)
-        return (false);
+        return false;
 
     /* Simulate 100 attempts */
     for (n = k = 0; k < 100; k++) {
@@ -3066,13 +3089,22 @@ bool borg_shoot_scoot_safe(int emergency, int turns, int b_p)
     /* in an emergency try with extra danger allowed */
     if (n > emergency) {
         borg_note(format("# No Shoot'N'Scoot. scary squares: %d/100", n));
-        return (false);
+        return false;
     } else
         borg_note(format("# Safe to Shoot'N'Scoot. scary squares: %d/100", n));
 
     /* Okay */
-    return (true);
+    return true;
 }
+
+/*
+ *  Create a kill at the given location
+ */
+int borg_create_kill(char *who, struct loc c)
+{
+    return borg_new_kill(borg_guess_race_name(who), c.y, c.x);
+}
+
 
 static void borg_init_monster_names(void)
 {
@@ -3224,7 +3256,7 @@ void borg_init_flow_kill(void)
 
     /*** XXX XXX XXX Hack -- Cheat ***/
 
-    /* Hack -- Extract dead uniques */
+    /* Extract dead uniques */
     for (int i = 1; i < z_info->r_max - 1; i++) {
         struct monster_race *r_ptr = &r_info[i];
 

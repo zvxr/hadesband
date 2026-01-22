@@ -44,6 +44,7 @@ struct borg_shop {
     borg_item * ware; /* Store contents */
 };
 
+
 /*
  * Current "shops"
  */
@@ -52,13 +53,20 @@ extern borg_shop *borg_shops;
 /*
  * Saved (Safety) "shops"
  */
-extern borg_shop *safe_shops;
+extern borg_shop *borg_safe_shops;
 
 extern int borg_food_onsale; /* Are shops selling food? */
 extern int borg_fuel_onsale; /* Are shops selling fuel? */
 
 /* read store items rather than scraping the screen */
 extern void borg_cheat_store(void);
+
+/* check for the a full home */
+extern bool borg_home_full(void);
+
+/* check for the a full inventory */
+extern bool borg_inventory_full(void);
+
 
 /* initialize and free stores */
 extern void borg_init_store(void);

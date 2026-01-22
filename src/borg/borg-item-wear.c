@@ -48,9 +48,6 @@ int16_t  track_worn_size;
 uint8_t *track_worn_name1;
 int16_t  track_worn_time;
 
-/* Item to be worn.  Index used to note which item not to sell */
-int16_t borg_best_fit_item = -1; 
-
 /*
  * Identify items if possible
  *
@@ -59,7 +56,7 @@ int16_t borg_best_fit_item = -1;
  * Otherwise the "identify" might induce bizarre actions by sending
  * the "index" of an item as a command.
  *
- * Hack -- recover from mind blanking by re-identifying the equipment.
+ * Recover from mind blanking by re-identifying the equipment.
  *
  * We instantly identify items known to be "good" (or "terrible").
  *
@@ -94,11 +91,11 @@ bool borg_test_stuff(void)
     /* don't ID stuff when you can't recover spent spell point immediately */
     if (borg.trait[BI_CURSP] < 50 && borg_spell_legal(IDENTIFY_RUNE)
         && !borg_check_rest(borg.c.y, borg.c.x))
-        return (false);
+        return false;
 
     /* No ID if in danger */
     if (borg_danger(borg.c.y, borg.c.x, 1, true, false) > 1)
-        return (false);
+        return false;
 
     /* Look for an item to identify (equipment) */
     for (i = INVEN_WIELD; i < QUIVER_END; i++) {
@@ -160,8 +157,8 @@ bool borg_test_stuff(void)
         else if (free_id || borg_item_worth_id(item))
             v = item->value;
 
-        /* Hack -- reward "unaware" items */
-        if (!item->kind) {
+        /* Reward "unaware" items */
+        if (!item->aware) {
             /* Analyze the type */
             switch (item->tval) {
             case TV_RING:
@@ -180,11 +177,11 @@ bool borg_test_stuff(void)
 
             case TV_POTION:
             case TV_SCROLL:
-                /* Hack -- boring levels */
+                /* Boring levels */
                 if (borg.trait[BI_MAXDEPTH] < 5)
                     break;
 
-                /* Hack -- reward depth */
+                /* Reward depth */
                 v += (borg.trait[BI_MAXDEPTH] * 500L);
                 break;
 
@@ -224,11 +221,6 @@ bool borg_test_stuff(void)
                 /* Select the item */
                 borg_keypress(all_letters_nohjkl[b_i - INVEN_WIELD]);
 
-                /* HACK need to recheck stats if we id something on us. */
-                for (i = 0; i < STAT_MAX; i++) {
-                    //                    my_need_stat_check[i] = true;
-                    borg.stat_max[i] = 0;
-                }
             } else if (b_i >= QUIVER_START) {
                 /* Select quiver */
                 borg_keypress('|');
@@ -270,24 +262,21 @@ bool borg_swap_rings(void)
 
     int32_t v1, v2;
 
-    char current_right_ring[80];
-    char current_left_ring[80];
-
     /*** Check conditions ***/
 
     /* Require two empty slots */
     if (hole == -1)
-        return (false);
+        return false;
 
     if ((hole + 1) >= PACK_SLOTS)
-        return (false);
+        return false;
 
     /* Forbid if been sitting on level forever */
     /*    Just come back and work through the loop later */
     if (borg_t - borg_began > 1000)
-        return (false);
+        return false;
     if (borg.trait[BI_CDEPTH] != 0)
-        return (false);
+        return false;
 
     /*** Remove naked "loose" rings ***/
 
@@ -302,59 +291,49 @@ bool borg_swap_rings(void)
         borg_keypress(all_letters_nohjkl[INVEN_LEFT - INVEN_WIELD]);
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /*** Check conditions ***/
 
     /* Require "tight" ring */
     if (!borg_items[INVEN_RIGHT].iqty)
-        return (false);
+        return false;
 
     /* Cannot remove the One Ring */
     if (borg_items[INVEN_RIGHT].one_ring)
-        return (false);
+        return false;
 
     /*** Remove nasty "tight" rings ***/
 
-    /* Save the hole */
-    memcpy(&safe_items[hole], &borg_items[hole], sizeof(borg_item));
+    if (!borg_items[INVEN_LEFT].iqty) {
+        /* Take off the ring */
+        memcpy(&borg_items[hole], &borg_items[INVEN_LEFT], sizeof(borg_item));
 
-    /* Save the ring */
-    memcpy(&safe_items[INVEN_LEFT], &borg_items[INVEN_LEFT], sizeof(borg_item));
+        /* Erase left ring */
+        borg_items[INVEN_LEFT].iqty = 0;
 
-    /* Take off the ring */
-    memcpy(&borg_items[hole], &borg_items[INVEN_LEFT], sizeof(borg_item));
+        /* Examine the inventory */
+        borg_notice(true);
 
-    /* Erase left ring */
-    memset(&borg_items[INVEN_LEFT], 0, sizeof(borg_item));
+        /* Evaluate the inventory */
+        v1 = borg_power();
 
-    /* Examine the inventory */
-    borg_notice(false);
+        /* Restore the ring */
+        memcpy(&borg_items[INVEN_LEFT], &safe_items[INVEN_LEFT], sizeof(borg_item));
 
-    /* Evaluate the inventory */
-    v1 = borg_power();
-
-    /* Restore the ring */
-    memcpy(&borg_items[INVEN_LEFT], &safe_items[INVEN_LEFT], sizeof(borg_item));
-
-    /* Restore the hole */
-    memcpy(&borg_items[hole], &safe_items[hole], sizeof(borg_item));
+        /* Restore the hole */
+        borg_items[hole].iqty = 0;
+    } else
+        v1 = borg.power;
 
     /*** Consider taking off the "right" ring ***/
-
-    /* Save the hole */
-    memcpy(&safe_items[hole], &borg_items[hole], sizeof(borg_item));
-
-    /* Save the ring */
-    memcpy(
-        &safe_items[INVEN_RIGHT], &borg_items[INVEN_RIGHT], sizeof(borg_item));
 
     /* Take off the ring */
     memcpy(&borg_items[hole], &borg_items[INVEN_RIGHT], sizeof(borg_item));
 
     /* Erase the ring */
-    memset(&borg_items[INVEN_RIGHT], 0, sizeof(borg_item));
+    borg_items[INVEN_RIGHT].iqty = 0;
 
     /* Examine the inventory */
     borg_notice(false);
@@ -363,19 +342,12 @@ bool borg_swap_rings(void)
     v2 = borg_power();
 
     /* Restore the ring */
-    memcpy(
-        &borg_items[INVEN_RIGHT], &safe_items[INVEN_RIGHT], sizeof(borg_item));
+    memcpy(&borg_items[INVEN_RIGHT], &safe_items[INVEN_RIGHT], sizeof(borg_item));
 
     /* Restore the hole */
-    memcpy(&borg_items[hole], &safe_items[hole], sizeof(borg_item));
+    borg_items[hole].iqty = 0;
 
     /*** Swap rings if necessary ***/
-
-    /* Define the rings and descriptions.  */
-    my_strcpy(current_right_ring, borg_items[INVEN_RIGHT].desc,
-        sizeof(current_right_ring));
-    my_strcpy(current_left_ring, borg_items[INVEN_LEFT].desc,
-        sizeof(current_left_ring));
 
     /* Remove "useless" ring */
     if (v2 > v1) {
@@ -396,11 +368,14 @@ bool borg_swap_rings(void)
         }
 
         /* Success */
-        return (true);
+        return true;
     }
 
+    /* fix the inventory */
+    borg_notice(true);
+
     /* Nope */
-    return (false);
+    return false;
 }
 
 /*
@@ -421,7 +396,6 @@ bool borg_swap_rings(void)
  */
 bool borg_wear_rings(void)
 {
-    int slot;
     int hole = borg_first_empty_inventory_slot();
 
     int32_t p, b_p = 0L;
@@ -433,28 +407,28 @@ bool borg_wear_rings(void)
     bool fix = false;
 
     if (hole == -1)
-        return (false);
+        return false;
 
     /* Require no rings */
     if (borg_items[INVEN_LEFT].iqty)
-        return (false);
+        return false;
     if (borg_items[INVEN_RIGHT].iqty)
-        return (false);
+        return false;
 
     /* Require two empty slots */
     if (hole + 1 >= PACK_SLOTS)
-        return (false);
+        return false;
     if (borg_items[hole + 1].iqty)
-        return (false);
+        return false;
 
     /* hack prevent the swap till you drop loop */
     if (borg.trait[BI_ISHUNGRY] || borg.trait[BI_ISWEAK])
-        return (false);
+        return false;
 
     /* Forbid if been sitting on level forever */
     /*    Just come back and work through the loop later */
     if (borg_t - borg_began > 2000)
-        return (false);
+        return false;
 
     /* Scan inventory */
     for (i = 0; i < z_info->pack_size; i++) {
@@ -464,11 +438,11 @@ bool borg_wear_rings(void)
         if (!item->iqty)
             continue;
 
-        /* Require "aware" */
-        if (!item->kind)
+        /* Require aware */
+        if (!item->aware)
             continue;
 
-        /* Hack -- ignore "worthless" items */
+        /* Ignore "worthless" items */
         if (!item->value)
             continue;
 
@@ -476,44 +450,24 @@ bool borg_wear_rings(void)
         if (OPT(player, birth_randarts) && !item->ident && item->art_idx)
             continue;
 
-        /* Where does it go */
-        slot = borg_wield_slot(item);
-
         /* Only process "rings" */
-        if (slot != INVEN_LEFT)
+        if (item->tval != TV_RING)
             continue;
-
-        /* Occassionally evaluate swapping into the tight finger */
-        if (randint0(100) > 75 || item->one_ring) {
-            slot = INVEN_RIGHT;
-        }
-
-        /* Need to be careful not to put the One Ring onto
-         * the Left Hand
-         */
-        if (item->one_ring && (borg_items[INVEN_RIGHT].iqty))
-            continue;
-
-        /* Save the old item (empty) */
-        memcpy(&safe_items[slot], &borg_items[slot], sizeof(borg_item));
-
-        /* Save the new item */
-        memcpy(&safe_items[i], &borg_items[i], sizeof(borg_item));
 
         /* Wear new item */
-        memcpy(&borg_items[slot], &safe_items[i], sizeof(borg_item));
+        memcpy(&borg_items[INVEN_LEFT], item, sizeof(borg_item));
 
         /* Only a single item */
-        borg_items[slot].iqty = 1;
+        borg_items[INVEN_LEFT].iqty = 1;
 
         /* Reduce the inventory quantity by one */
-        borg_items[i].iqty--;
+        item->iqty--;
 
         /* Fix later */
         fix = true;
 
         /* Examine the inventory */
-        borg_notice(false);
+        borg_notice(true);
 
         /* Evaluate the inventory */
         p = borg_power();
@@ -523,10 +477,10 @@ bool borg_wear_rings(void)
             p = borg.power * 2;
 
         /* Restore the old item (empty) */
-        memcpy(&borg_items[slot], &safe_items[slot], sizeof(borg_item));
+        borg_items[INVEN_LEFT].iqty = 0;
 
-        /* Restore the new item */
-        memcpy(&borg_items[i], &safe_items[i], sizeof(borg_item));
+        /* Restore the item in inventory */
+        item->iqty++;
 
         /* Ignore "bad" swaps */
         if ((b_i >= 0) && (p < b_p))
@@ -558,11 +512,11 @@ bool borg_wear_rings(void)
 
         /* Did something */
         borg.time_this_panel++;
-        return (true);
+        return true;
     }
 
     /* Nope */
-    return (false);
+    return false;
 }
 
 /*
@@ -598,16 +552,16 @@ bool borg_backup_swap(int p)
 
     /* hack prevent the swap till you drop loop */
     if (borg.trait[BI_ISHUNGRY] || borg.trait[BI_ISWEAK])
-        return (false);
+        return false;
 
     /* Forbid if been sitting on level forever */
     /*    Just come back and work through the loop later */
     if (borg.time_this_panel > 300)
-        return (false);
+        return false;
 
     /* make sure we have an appropriate swap */
     if (!armour_swap && !weapon_swap)
-        return (false);
+        return false;
 
     if (armour_swap) {
         /* Save our normal condition */
@@ -628,15 +582,9 @@ bool borg_backup_swap(int p)
         /* Where does it go */
         slot = borg_wield_slot(item);
 
-        /* safety check incase slot = -1 */
+        /* safety check in case slot = -1 */
         if (slot < 0)
-            return (false);
-
-        /* Save the old item (empty) */
-        memcpy(&safe_items[slot], &borg_items[slot], sizeof(borg_item));
-
-        /* Save the new item */
-        memcpy(&safe_items[i], &borg_items[i], sizeof(borg_item));
+            return false;
 
         /* Wear new item */
         memcpy(&borg_items[slot], &safe_items[i], sizeof(borg_item));
@@ -656,7 +604,7 @@ bool borg_backup_swap(int p)
         /* Evaluate the power with the new item worn */
         b_p1 = borg_danger(borg.c.y, borg.c.x, 1, true, false);
 
-        /* Restore the old item (empty) */
+        /* Restore the old item */
         memcpy(&borg_items[slot], &safe_items[slot], sizeof(borg_item));
 
         /* Restore the new item */
@@ -699,15 +647,9 @@ bool borg_backup_swap(int p)
         /* Where does it go */
         slot = borg_wield_slot(item);
 
-        /* safety check incase slot = -1 */
+        /* safety check in case slot = -1 */
         if (slot < 0)
-            return (false);
-
-        /* Save the old item (empty) */
-        memcpy(&safe_items[slot], &borg_items[slot], sizeof(borg_item));
-
-        /* Save the new item */
-        memcpy(&safe_items[i], &borg_items[i], sizeof(borg_item));
+            return false;
 
         /* Wear new item */
         memcpy(&borg_items[slot], &safe_items[i], sizeof(borg_item));
@@ -771,18 +713,18 @@ bool borg_backup_swap(int p)
         && b_p <= (borg_fighting_unique ? ((avoidance * 2) / 3)
                                         : (avoidance / 2))) {
         /* Log */
-        borg_note(format("# Swapping backup.  (%d < %d).", b_p, p));
+        borg_note(format("# Swapping backup.  (%ld < %d).", (long int)b_p, p));
 
         /* Wear it */
         borg_keypress('w');
         borg_keypress(all_letters_nohjkl[swap]);
 
         /* Did something */
-        return (true);
+        return true;
     }
 
     /* Nope */
-    return (false);
+    return false;
 }
 
 /*
@@ -826,19 +768,19 @@ bool borg_wear_stuff(void)
 
     /*  hack to prevent the swap till you drop loop */
     if (borg.trait[BI_ISHUNGRY] || borg.trait[BI_ISWEAK])
-        return (false);
+        return false;
 
     /* We need an empty slot to simulate pushing equipment */
     hole = borg_first_empty_inventory_slot();
     if (hole == -1)
-        return (false);
+        return false;
 
     /* Forbid if been sitting on level forever */
     /*    Just come back and work through the loop later */
     if (borg_t - borg_began > 2000)
-        return (false);
+        return false;
     if (borg.time_this_panel > 1300)
-        return (false);
+        return false;
 
     /* Scan inventory */
     for (i = 0; i < z_info->pack_size; i++) {
@@ -851,11 +793,11 @@ bool borg_wear_stuff(void)
         if (!item->iqty)
             continue;
 
-        /* Require "aware" */
-        if (!item->kind)
+        /* Require aware */
+        if (!item->aware)
             continue;
 
-        /* Hack -- ignore "worthless" items */
+        /* Ignore "worthless" items */
         if (!item->value)
             continue;
 
@@ -910,17 +852,8 @@ bool borg_wear_stuff(void)
 
         /* Non ring, non full hands */
         if (slot != INVEN_LEFT
-            || (!borg_items[INVEN_LEFT].tval
-                || !borg_items[INVEN_RIGHT].tval)) {
-            /* Save the old item */
-            memcpy(&safe_items[slot], &borg_items[slot], sizeof(borg_item));
-
-            /* Save the new item */
-            memcpy(&safe_items[i], &borg_items[i], sizeof(borg_item));
-
-            /* Save the hole */
-            memcpy(&safe_items[hole], &borg_items[hole], sizeof(borg_item));
-
+            || (!borg_items[INVEN_LEFT].iqty
+                || !borg_items[INVEN_RIGHT].iqty)) {
             /* Take off old item */
             memcpy(&borg_items[hole], &safe_items[slot], sizeof(borg_item));
 
@@ -937,7 +870,7 @@ bool borg_wear_stuff(void)
             fix = true;
 
             /* Examine the inventory */
-            borg_notice(false);
+            borg_notice(true);
 
             /* Evaluate the inventory */
             p = borg_power();
@@ -962,7 +895,7 @@ bool borg_wear_stuff(void)
             memcpy(&borg_items[i], &safe_items[i], sizeof(borg_item));
 
             /* Restore the hole */
-            memcpy(&borg_items[hole], &safe_items[hole], sizeof(borg_item));
+            borg_items[hole].iqty = 0;
 
             /* Need to be careful not to put the One Ring onto
              * the Left Hand
@@ -976,7 +909,7 @@ bool borg_wear_stuff(void)
 
             /* XXX XXX XXX Consider if slot is empty */
 
-            /* Hack -- Ignore "essentially equal" swaps */
+            /* Ignore "essentially equal" swaps */
             if (p <= b_p + 50)
                 continue;
 
@@ -987,23 +920,12 @@ bool borg_wear_stuff(void)
 
         if (randint0(100) == 10 || item->one_ring) {
             /* ring, full hands */
-            if (slot == INVEN_LEFT && borg_items[INVEN_LEFT].tval
-                && borg_items[INVEN_RIGHT].tval) {
+            if (slot == INVEN_LEFT && borg_items[INVEN_LEFT].iqty
+                && borg_items[INVEN_RIGHT].iqty) {
                 for (ii = INVEN_RIGHT; ii <= INVEN_LEFT; ii++) {
                     slot = ii;
 
                     /* Does One Ring need to be handled here? */
-
-                    /* Save the old item */
-                    memcpy(&safe_items[slot], &borg_items[slot],
-                        sizeof(borg_item));
-
-                    /* Save the new item */
-                    memcpy(&safe_items[i], &borg_items[i], sizeof(borg_item));
-
-                    /* Save the hole */
-                    memcpy(&safe_items[hole], &borg_items[hole],
-                        sizeof(borg_item));
 
                     /* Take off old item */
                     memcpy(&borg_items[hole], &safe_items[slot],
@@ -1023,7 +945,7 @@ bool borg_wear_stuff(void)
                     fix = true;
 
                     /* Examine the inventory */
-                    borg_notice(false);
+                    borg_notice(true);
 
                     /* Evaluate the inventory */
                     p = borg_power();
@@ -1039,8 +961,7 @@ bool borg_wear_stuff(void)
                     memcpy(&borg_items[i], &safe_items[i], sizeof(borg_item));
 
                     /* Restore the hole */
-                    memcpy(&borg_items[hole], &safe_items[hole],
-                        sizeof(borg_item));
+                    borg_items[hole].iqty = 0;
 
                     /* Need to be careful not to put the One Ring onto
                      * the Left Hand
@@ -1090,7 +1011,7 @@ bool borg_wear_stuff(void)
 
             /* Did something */
             borg.time_this_panel++;
-            return (true);
+            return true;
         }
 
         /* Log */
@@ -1108,22 +1029,15 @@ bool borg_wear_stuff(void)
             track_worn_time                  = borg_t;
             track_worn_num++;
         }
-        return (true);
+        return true;
     }
 
     /* Nope */
-    return (false);
+    return false;
 }
 
 /*
- * Hack -- order of the slots
- *
- * XXX XXX XXX Note that we ignore the "tight" ring, and we
- * assume that we will always be wearing our "best" ring on
- * our "right" (tight) finger, and if we are not, then the
- * "borg_swap_rings()" function will remove both the rings,
- * which will induce the "borg_best_stuff()" function to put
- * the rings back on in the "optimal" order.
+ * Order of the slots
  */
 static uint16_t borg_best_stuff_order(int n)
 {
@@ -1147,12 +1061,143 @@ static uint16_t borg_best_stuff_order(int n)
     case 8:
         return INVEN_LEFT;
     case 9:
-        return INVEN_LIGHT;
+        return INVEN_RIGHT;
     case 10:
+        return INVEN_LIGHT;
+    case 11:
         return INVEN_NECK;
     default:
         return 255;
     }
+}
+
+/*
+ * Take one step in wearing the optimized equipment
+ */
+static bool borg_one_step_wearing_best(int skip)
+{
+    borg_item *item;
+    int        item_num = 0;
+    int        slot;
+    int        i;
+
+    if (!borg.goal.best_item)
+        return false;
+
+    /* find a change */
+    while (true) {
+        /* skip some if there are issues with full inventory */
+        int skipping = skip;
+        if (borg.goal.best_item[item_num].tval
+            || borg.goal.best_item[item_num].pval
+            || borg.goal.best_item[item_num].sval) {
+            if (skipping) {
+                item_num++;
+                skipping--;
+                continue;
+            }
+
+            break;
+        }
+
+        item_num++;
+        if (item_num >= z_info->equip_slots_max) {
+            borg_clear_best();
+
+            /* If we aren't skipping we have done our best optimization.  */
+            /* if we are skipping and got to the end, we probably need */
+            /*  to start over */
+            if (!skip) {
+                borg.goal.do_best = false;
+            }
+
+            return false;
+        }
+    }
+
+    /* Extract the slot */
+    slot = borg_best_stuff_order(item_num);
+
+    /* if the item is a home item to be worn, */
+    /*  * drop any item you already have in the slot */
+    /*  * if the slot is empty, pick up the item and mark */
+    /*    as not in the home */
+    /* if the item is not a home item to be worn, */
+    /*      it is an inventory item.  */
+    /*  * take off any item you already have in the slot */
+    /*  * if the slot is empty, wear the item */
+    /* NOTE that items need to be found again because they could have */
+    /*   moved slots since other objects are being taken off and dropped */
+    /*   into inventory and the home*/
+    if (borg.goal.best_item[item_num].home) {
+        /* if wearing an item in that slot, drop it */
+        if (borg_items[slot].iqty) {
+
+            /* if we can't drop an item into the home try the next change */
+            if (borg_home_full())
+                return borg_one_step_wearing_best(skip+1);
+
+
+            borg_keypress('d');
+            borg_keypress('/');
+            borg_keypress(all_letters_nohjkl[slot - INVEN_WIELD]);
+            return true;
+        }
+
+        /* if we can't get an item from the home, try the next change */
+        if (borg_inventory_full())
+            return borg_one_step_wearing_best(skip + 1);
+
+        for (i = 0; i < z_info->store_inven_max; i++) {
+            item = &borg_shops[BORG_HOME].ware[i];
+
+            if (item->pval != borg.goal.best_item[item_num].pval
+                || item->tval != borg.goal.best_item[item_num].tval
+                || item->sval != borg.goal.best_item[item_num].sval)
+                continue;
+
+            /* "Buy" the desired item from the home */
+            borg_keypress(SHOP_MENU_ITEMS[i]);
+            borg_keypress('p');
+            if (item->iqty > 1)
+                borg_keypress(KC_ENTER);
+
+
+            borg.goal.best_item[item_num].home = false;
+            return true;
+        }
+        borg_oops("unable to find item in home");
+    } else {
+        /* if wearing an item in that slot, take it off */
+        if (borg_items[slot].iqty) {
+            /* take off an item because there is no room, try next */
+            if (borg_inventory_full())
+                return borg_one_step_wearing_best(skip + 1);
+
+            borg_keypress('t');
+            borg_keypress(all_letters_nohjkl[slot - INVEN_WIELD]);
+            return true;
+        }
+        for (i = 0; i < INVEN_TOTAL; i++) {
+            item = &borg_items[i];
+
+            if (item->pval != borg.goal.best_item[item_num].pval
+                || item->tval != borg.goal.best_item[item_num].tval
+                || item->sval != borg.goal.best_item[item_num].sval)
+                continue;
+            borg_keypress('w');
+            borg_keypress(all_letters_nohjkl[i]);
+
+            borg.goal.best_item[item_num].home = false;
+            borg.goal.best_item[item_num].tval = 0;
+            borg.goal.best_item[item_num].pval = 0;
+            borg.goal.best_item[item_num].sval = 0;
+            return true;
+        }
+        borg_oops("unable to find item in inventory");
+    }
+
+    return false;
 }
 
 /*
@@ -1173,26 +1218,15 @@ static void borg_best_stuff_aux(
         int32_t p;
 
         /* Examine */
-        borg_notice(false);
+        borg_notice(true);
 
         /* Evaluate */
         p = borg_power();
 
         /* Track best */
         if (p > *vp) {
-            if (borg_cfg[BORG_VERBOSE]) {
-                /* dump list and power...  for debugging */
-                borg_note(
-                    format("Trying Combo (best power %ld)", (long int)*vp));
-                borg_note(format("             (borg_power %ld)", (long int)p));
-                for (i = 0; i < z_info->pack_size; i++)
-                    borg_note(format("inv %d %s.", i, borg_items[i].desc));
-                for (i = 0; borg_best_stuff_order(i) != 255; i++)
-                    borg_note(format("stuff %s.",
-                        borg_items[borg_best_stuff_order(i)].desc));
-            }
             /* Save the results */
-            for (i = 0; i < n; i++)
+            for (i = 0; i < z_info->equip_slots_max; i++)
                 best[i] = test[i];
 
             /* Use it */
@@ -1209,7 +1243,7 @@ static void borg_best_stuff_aux(
     /* Evaluate the default item */
     borg_best_stuff_aux(n + 1, test, best, vp);
 
-    /* Try other possible objects */
+    /* Try other possible object combination */
     for (i = 0; i < ((shop_num == BORG_HOME)
                          ? (z_info->pack_size + z_info->store_inven_max)
                          : z_info->pack_size);
@@ -1224,11 +1258,11 @@ static void borg_best_stuff_aux(
         if (!item->iqty)
             continue;
 
-        /* Require "aware" */
-        if (!item->kind)
+        /* Require aware */
+        if (!item->aware)
             continue;
 
-        /* Hack -- ignore "worthless" items */
+        /* Ignore "worthless" items */
         if (!item->value)
             continue;
 
@@ -1242,21 +1276,29 @@ static void borg_best_stuff_aux(
 
         /* Make sure it goes in this slot, special consideration for checking
          * rings */
-        if (slot != borg_wield_slot(item))
+        if (!((slot == borg_wield_slot(item))
+                || (slot == INVEN_RIGHT
+                    && borg_wield_slot(item) == INVEN_LEFT)))
             continue;
 
-        /* Make sure that slot does not have a cursed item */
-        if (borg_items[slot].one_ring)
-            continue;
-
-        /* Do not wear certain items if I am over weight limit.  It induces
-         * loops */
-        if (borg.trait[BI_ISENCUMB]) {
-            /* Compare Str bonuses */
-            if (borg_items[slot].modifiers[OBJ_MOD_STR]
-                > item->modifiers[OBJ_MOD_STR])
+        /* don't test the same item in both ring slots */
+        if (slot == INVEN_RIGHT) {
+            if (i < z_info->pack_size) {
+                if (test[n - 1] == i)
+                    continue;
+            } else if (test[n - 1] == ((i - z_info->pack_size) + 100))
+                continue;
+        } else if (slot == INVEN_LEFT) {
+            if (i < z_info->pack_size) {
+                if (test[n + 1] == i)
+                    continue;
+            } else if (test[n + 1] == ((i - z_info->pack_size) + 100))
                 continue;
         }
+
+        /* Make sure that slot does not have an item that can't be removed */
+        if (borg_items[slot].one_ring)
+            continue;
 
         /* Wear the new item */
         memcpy(&borg_items[slot], item, sizeof(borg_item));
@@ -1268,7 +1310,7 @@ static void borg_best_stuff_aux(
             /* if in home, note by adding 100 to item number. */
             test[n] = (i - z_info->pack_size) + 100;
 
-        /* Evaluate the possible item */
+        /* Use recursion to test other slot changes */
         borg_best_stuff_aux(n + 1, test, best, vp);
 
         /* Restore equipment */
@@ -1278,50 +1320,45 @@ static void borg_best_stuff_aux(
 
 /*
  * Attempt to instantiate the *best* possible equipment.
+ * The other equipment optimization routines involve making
+ * single changes such as switch sword of flames for sword of
+ * electricity.  This allows multiple changes to get the most
+ * powerful set of items, out of everything worn, in equipment
+ * and in the home.  
  */
 bool borg_best_stuff(void)
 {
-    int     hole;
-    char    purchase_target[1];
-    int     k;
-    uint8_t t_a;
-    char    buf[1024];
-    int     p;
+    int k;
 
     int32_t value;
 
     int i;
 
-    uint8_t test[12];
-    uint8_t best[12];
+    uint8_t *test;
+    uint8_t *best;
 
-    /* Hack -- Anti-loop */
-    if (borg.time_this_panel >= 300)
-        return (false);
+    /* only do this at home */
+    if (shop_num != BORG_HOME)
+        return false;
 
-    /* Hack -- Initialize */
-    for (k = 0; k < 12; k++) {
+    /* if we don't need to do "best", check if we need to process the list */
+    if (!borg.goal.do_best)
+        return borg_one_step_wearing_best(0);
+
+    /* must have a free inventory slot and a free home slot */
+    if (borg_home_full() || borg_inventory_full())
+        return false;
+
+    /* only do this once per trip to town */
+    if (!borg.goal.do_best)
+        return false;
+
+    best = mem_alloc(sizeof(uint8_t) * z_info->equip_slots_max);
+    test = mem_alloc(sizeof(uint8_t) * z_info->equip_slots_max);
+    /* Initialize */
+    for (k = 0; k < z_info->equip_slots_max; k++) {
         /* Initialize */
         best[k] = test[k] = 255;
-    }
-
-    /* Hack -- Copy all the slots */
-    for (i = 0; i < INVEN_TOTAL; i++) {
-        /* Skip quiver slots */
-        if (i >= z_info->pack_size && i < INVEN_WIELD)
-            continue;
-
-        /* Save the item */
-        memcpy(&safe_items[i], &borg_items[i], sizeof(borg_item));
-    }
-
-    if (shop_num == BORG_HOME) {
-        /* Hack -- Copy all the store slots */
-        for (i = 0; i < z_info->store_inven_max; i++) {
-            /* Save the item */
-            memcpy(&safe_home[i], &borg_shops[BORG_HOME].ware[i],
-                sizeof(borg_item));
-        }
     }
 
     /* Evaluate the inventory */
@@ -1333,8 +1370,14 @@ bool borg_best_stuff(void)
     /* Restore bonuses */
     borg_notice(true);
 
+    /* convert the list into a list of items we can find even if they */
+    /* change locations due to picking up and dropping items */
     /* Make first change. */
-    for (k = 0; k < 12; k++) {
+    borg_item *item;
+    borg.goal.best_item
+        = mem_zalloc(sizeof(struct borg_best) * z_info->equip_slots_max);
+    bool found = false;
+    for (k = 0; k < z_info->equip_slots_max; k++) {
         /* Get choice */
         i = best[k];
 
@@ -1342,89 +1385,66 @@ bool borg_best_stuff(void)
         if (i == borg_best_stuff_order(k) || 255 == i)
             continue;
 
+        found = true;
         if (i < 100) {
-            borg_item *item = &borg_items[i];
-
-            /* Catch the keyboard flush induced from the 'w' */
-            if ((0 == borg_what_text(0, 0, 6, &t_a, buf))
-                && (streq(buf, "(Inven"))) {
-                borg_keypress(all_letters_nohjkl[i]);
-
-                /* Track the newly worn artifact item to avoid loops */
-                if (item->art_idx && (track_worn_num < track_worn_size)) {
-                    borg_note("# Noting the wearing of artifact.");
-                    track_worn_name1[track_worn_num] = item->art_idx;
-                    track_worn_time                  = borg_t;
-                    track_worn_num++;
-                }
-            } else {
-                /* wield the item */
-                borg_note(format("# Best Combo %s.", item->desc));
-                borg_keypress('w');
-                borg_keypress(all_letters_nohjkl[i]);
-                return (true);
-            }
-
-            borg.time_this_panel++;
-
-            return (true);
+            item = &borg_items[i];
         } else {
-            borg_item *item;
+            item = &borg_shops[BORG_HOME].ware[i - 100];
+            borg.goal.best_item[k].home = true;
+        }
 
-            /* can't get an item if full. */
-            hole = borg_first_empty_inventory_slot();
-            if (hole == -1)
-                return false;
+        /* hopefully this is enough to get a unique item */
+        borg.goal.best_item[k].tval = item->tval;
+        borg.goal.best_item[k].pval = item->pval;
+        borg.goal.best_item[k].sval = item->sval;
+    }
+    /* if we didn't change anything, clear out the changes */
+    if (!found)
+        borg_clear_best();
 
-            i -= 100;
+    /* we have done our best optimization.  */
+    borg.goal.do_best = false;
 
-            item = &borg_shops[BORG_HOME].ware[i];
-
-            /* Dont do it if you just sold this item */
-            for (p = 0; p < sold_item_num; p++) {
-                if (sold_item_tval[p] == item->tval
-                    && sold_item_sval[p] == item->sval
-                    && sold_item_store[p] == BORG_HOME)
-                    return (false);
+    /* if we are being super chatty, spit out the new list of best */
+    if (borg_cfg[BORG_VERBOSE]) {
+        if (found) {
+            for (i = 0; i < z_info->equip_slots_max; i++) {
+                if (best[i] > 100) {
+                    borg_note(format("new best: %s",
+                        borg_shops[BORG_HOME].ware[best[i] - 100].desc));
+                } else {
+                    borg_note(format("new best: %s", borg_items[best[i]].desc));
+                }
             }
-
-            /* Get the item */
-            borg_note(format("# Getting (Best Fit) %s.", item->desc));
-
-            /* Define the special key */
-            purchase_target[0] = SHOP_MENU_ITEMS[i];
-
-            /* Purchase that item */
-            borg_keypress(purchase_target[0]);
-            borg_keypress('p');
-            /* press ENTER twice (multiple objects) */
-            borg_keypress(KC_ENTER);
-            borg_keypress(KC_ENTER);
-
-            /* leave the building */
-            borg_keypress(ESCAPE);
-            borg_keypress(ESCAPE);
-            borg_keypress(ESCAPE);
-            borg_keypress(ESCAPE);
-            borg_keypress(ESCAPE);
-
-            /* tick the clock */
-            borg.time_this_panel++;
-
-            /* Note that this is a nice item and not to sell it right away */
-            borg_best_fit_item = item->art_idx;
-
-            return (true);
+        } else {
+            borg_note("new best: no changes");
         }
     }
+    mem_free(best);
+    best = NULL;
+    mem_free(test);
+    test = NULL;
 
-    /* Nope */
-    return (false);
+    return borg_one_step_wearing_best(0);
+}
+
+/*
+ * Clear out the "best" swap list and trigger to do another 
+ */
+void borg_clear_best(void)
+{
+    if (borg.goal.best_item) {
+        mem_free(borg.goal.best_item);
+        borg.goal.best_item = NULL;
+    }
+
+    borg.goal.do_best = true;
 }
 
 /*
  * Scan the item list and recharge items before leaving the
- * level.  Right now rod are not recharged from this.
+ * level.  Right now rod are not recharged from this except rods
+ * of recall.
  */
 bool borg_wear_recharge(void)
 {
@@ -1434,11 +1454,11 @@ bool borg_wear_recharge(void)
 
     /* No resting in danger */
     if (!borg_check_rest(borg.c.y, borg.c.x))
-        return (false);
+        return false;
 
     /* Not if hungry */
     if (borg.trait[BI_ISWEAK])
-        return (false);
+        return false;
 
     /* Look for an (wearable- non rod) item to recharge */
     for (i = 0; i < INVEN_TOTAL; i++) {
@@ -1454,6 +1474,13 @@ bool borg_wear_recharge(void)
 
         /* Where can it be worn? */
         slot = borg_wield_slot(item);
+        
+        /* if this is a rod, only count it if it is a rod of recall */
+        /* and we are in town.  This is to prevent walking down when */
+        /* the borg has a perfectly serviceable rod */
+        if (item->tval == TV_ROD && item->sval != sv_rod_recall
+            && borg.trait[BI_CDEPTH] == 0)
+            continue;
 
         /* skip non-ego lights, No need to rest to recharge a torch, which uses
          * fuels turns in o_ptr->timeout */
@@ -1466,7 +1493,11 @@ bool borg_wear_recharge(void)
         b_slot = slot;
     }
 
-    if (b_i >= INVEN_WIELD) {
+    /* nothing found */
+    if (b_i == -1)
+        return false;
+
+    if (b_i >= INVEN_WIELD || borg_items[b_i].tval == TV_ROD) {
         /* Item is worn, no swap is nec. */
         borg_note(
             format("# Waiting for '%s' to Recharge.", borg_items[b_i].desc));
@@ -1478,7 +1509,7 @@ bool borg_wear_recharge(void)
         borg_keypress(KC_ENTER);
 
         /* done */
-        return (true);
+        return true;
     }
     /* Item must be worn to be recharged
      */
@@ -1497,11 +1528,11 @@ bool borg_wear_recharge(void)
         borg_keypress(KC_ENTER);
 
         /* done */
-        return (true);
+        return true;
     }
 
     /* nothing to recharge */
-    return (false);
+    return false;
 }
 
 /*

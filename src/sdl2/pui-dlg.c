@@ -119,7 +119,7 @@ static const struct sdlpui_dialog_funcs simple_info_funcs = {
 };
 
 
-/*
+/**
  * Menus react to some additional keyboard events since the geometry allows
  * for easy interpretations of cursor movements.  Otherwise, they act like
  * simple dialogs.
@@ -1144,6 +1144,9 @@ static void cleanup_simple_info(struct sdlpui_dialog *d)
 		}
 	}
 	SDL_free(id->labels);
+	if (id->button.ftb->cleanup) {
+		(*id->button.ftb->cleanup)(&id->button);
+	}
 	SDL_free(id);
 }
 
@@ -1200,7 +1203,7 @@ bool sdlpui_is_descendant_dialog(struct sdlpui_dialog *ancestor,
  *
  * \param d is the dialog of interest.
  * \param w is the window containing the dialog.
- * \param give_key_focus, if true, causes the dialog to be given key focus
+ * \param give_key_focus causes, if true, the dialog to be given key focus
  * when it is popped up.
  */
 void sdlpui_popup_dialog(struct sdlpui_dialog *d, struct sdlpui_window *w,
@@ -1501,7 +1504,7 @@ bool sdlpui_dialog_handle_mouseclick(struct sdlpui_dialog *d,
 }
 
 
-/*
+/**
  * Perform basic handling of a mouse motion event for a menu or dialog.
  *
  * \param d is the menu or dialog.
@@ -1949,8 +1952,8 @@ void sdlpui_dialog_handle_loses_key(struct sdlpui_dialog *d,
  *
  * \param d is the menu.
  * \param w is the window containing the menu.
- * \param e is the mouse motion event causing the other dialog to take focus.
- * May be NULL if not available.
+ * \param new_c is the new control with key focus.
+ * \param new_d is the dialog or menu that contains new_c.
  */
 void sdlpui_menu_handle_loses_key(struct sdlpui_dialog *d,
 		struct sdlpui_window *w, struct sdlpui_control *new_c,
@@ -2073,13 +2076,24 @@ void sdlpui_menu_handle_loses_key(struct sdlpui_dialog *d,
  * be layed out in a single column; if false, it causes the controls to layed
  * out in a single row.
  * \param border will, if true, cause a border to be drawn about the menu.
+ * \param pop_callback will, if not NULL, be the function called when the
+ * menu is popped up or down.
+ * \param recreate_textures_callback will, if not NULL, be the function
+ * called by the controlling application in response to
+ * SDL_RENDER_TARGETS_RESET (all set to false) or SDL_RENDER_DEVICE_RESET
+ * (all set to true) events.
+ * \param tag sets the tag field of the generated menu so different menus using
+ * the same callbacks can be distinguished.
  * \return a pointer to the structure describing the menu.
  */
 struct sdlpui_dialog *sdlpui_start_simple_menu(struct sdlpui_dialog *parent,
 		struct sdlpui_control *parent_ctrl, int preallocated,
 		bool vertical, bool border, void (*pop_callback)(
 			struct sdlpui_dialog *d, struct sdlpui_window *w,
-			bool up), int tag)
+			bool up),
+		void (*recreate_textures_callback)(struct sdlpui_dialog *d,
+			struct sdlpui_window *w, bool all),
+		int tag)
 {
 	struct sdlpui_dialog *result = SDL_malloc(sizeof(*result));
 	struct sdlpui_simple_menu *psm = SDL_malloc(sizeof(*psm));
@@ -2106,6 +2120,7 @@ struct sdlpui_dialog *sdlpui_start_simple_menu(struct sdlpui_dialog *parent,
 
 	result->ftb = &simple_menu_funcs;
 	result->pop_callback = pop_callback;
+	result->recreate_textures_callback = recreate_textures_callback;
 	result->next = NULL;
 	result->prev = NULL;
 	result->texture = NULL;
@@ -2208,11 +2223,22 @@ void sdlpui_complete_simple_menu(struct sdlpui_dialog *d,
  *
  * \param button_label is the text label to use for the button that dismisses
  * the dialog.
+ * \param pop_callback will, if not NULL, be the function called when the
+ * dialog is popped up or down.
+ * \param recreate_textures_callback will, if not NULL, be the function
+ * called by the controlling application in response to
+ * SDL_RENDER_TARGETS_RESET (all set to false) or SDL_RENDER_DEVICE_RESET
+ * (all set to true) events.
+ * \param tag sets the tag field of the generated dialog so different dialogs
+ * using the same callbacks can be distinguished.
  * \return a pointer to the structure describing the dialog.
  */
 struct sdlpui_dialog *sdlpui_start_simple_info(const char *button_label,
 		void (*pop_callback)(struct sdlpui_dialog *d,
-			struct sdlpui_window *w, bool up), int tag)
+			struct sdlpui_window *w, bool up),
+		void (*recreate_textures_callback)(struct sdlpui_dialog *d,
+			struct sdlpui_window *w, bool all),
+		int tag)
 {
 	struct sdlpui_dialog *result = SDL_malloc(sizeof(*result));
 	struct sdlpui_simple_info *psi = SDL_malloc(sizeof(*psi));
@@ -2226,6 +2252,7 @@ struct sdlpui_dialog *sdlpui_start_simple_info(const char *button_label,
 
 	result->ftb = &simple_info_funcs;
 	result->pop_callback = pop_callback;
+	result->recreate_textures_callback = recreate_textures_callback;
 	result->next = NULL;
 	result->prev = NULL;
 	result->texture = NULL;
@@ -2244,6 +2271,7 @@ struct sdlpui_dialog *sdlpui_start_simple_info(const char *button_label,
 /**
  * Add an image to a simple information dialog.
  *
+ * \param d is the dialog to which the image will be added.
  * \param image is the texture containing the image to add.  The dialog assumes
  * ownership of the texture and calls SDL_DestroyTexture() on it when the dialog
  * is destroyed.
@@ -2291,6 +2319,7 @@ void sdlpui_simple_info_add_image(struct sdlpui_dialog *d, SDL_Texture *image,
 /**
  * Add a label to a simple information dialog.
  *
+ * \param d is the dialog to which the label will be added.
  * \param label is the null-terminated UTF-8 string to use as the label.
  * The contents of label are copied, so the lifetime of what's passed is
  * independent of the lifetime of the control.

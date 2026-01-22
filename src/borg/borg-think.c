@@ -40,7 +40,8 @@
 #include "borg.h"
 
 /*
- * Hack -- location of the "Lv Mana Fail" prompt
+ * Location of the "Lv Mana Fail" prompt
+ * !FIX !TODO use consts for other magic numbers and review file
  */
 #define ROW_SPELL 1
 #define COL_SPELL 20 + 35
@@ -58,7 +59,6 @@ bool    borg_do_equip     = true; /* Acquire "equip" info */
 bool    borg_do_panel     = true; /* Acquire "panel" info */
 bool    borg_do_frame     = true; /* Acquire "frame" info */
 bool    borg_do_spell     = true; /* Acquire "spell" info */
-uint8_t borg_do_spell_aux = 0; /* Hack -- book for "borg_do_spell" */
 
 /*
  * Abort the Borg, noting the reason
@@ -93,7 +93,7 @@ static bool borg_save_game(void)
     borg_keypress(ESCAPE);
 
     /* Success */
-    return (true);
+    return true;
 }
 
 /*
@@ -158,9 +158,6 @@ bool borg_think(void)
 
         /* Cheat the "equip" screen */
         borg_cheat_equip();
-
-        /* Done */
-        return (false);
     }
 
     /* Cheat */
@@ -171,9 +168,13 @@ bool borg_think(void)
         /* Cheat the "inven" screen */
         borg_cheat_inven();
 
-        /* Done */
-        return (false);
+        /* Do a quick cheat of the shops */
+        borg_cheat_store();
     }
+
+    /* save the items.  safe_items, from here on, should never be changed, */
+    /* just copied from */
+    memcpy(safe_items, borg_items, QUIVER_END * sizeof(borg_item));
 
     /* save now */
     if (borg_save && borg_save_game()) {
@@ -205,126 +206,73 @@ bool borg_think(void)
             }
             svSavefile2[i] = 0;
 
-            path_build(savefile, 1024, ANGBAND_DIR_USER, svSavefile2);
+            path_build(savefile, 1024, ANGBAND_DIR_ARCHIVE, svSavefile2);
 
             justSaved = true;
         }
-        return (true);
+        return true;
     }
     if (justSaved) {
         memcpy(savefile, svSavefile, sizeof(savefile));
         borg_save_game();
         justSaved = false;
-        return (true);
+        return true;
     }
 
-    /* Parse "equip" mode */
+    /* Parse equipment mode */
+    /* this shouldn't happen because we now pull equipment information */
+    /* directly from the game */
     if ((0 == borg_what_text(0, 0, 10, &t_a, buf))
         && (streq(buf, "(Equipment) "))) {
-        /* Parse the "equip" screen */
-        /* borg_parse_equip(); */
 
         /* Leave this mode */
         borg_keypress(ESCAPE);
 
         /* Done */
-        return (true);
+        return true;
     }
 
-    /* Parse "inven" mode */
+    /* Parse Inventory mode */
+    /* this shouldn't happen because we now pull inventory information */
+    /* directly from the game */
     if ((0 == borg_what_text(0, 0, 10, &t_a, buf))
         && (streq(buf, "(Inventory) "))) {
-        /* Parse the "inven" screen */
-        /* borg_parse_inven(); */
 
         /* Leave this mode */
         borg_keypress(ESCAPE);
 
         /* Done */
-        return (true);
+        return true;
     }
 
-    /* Parse "inven" mode */
+    /* Parse worn equipment mode */
+    /* this shouldn't happen because we now pull worn equipment information */
+    /* directly from the game */
     if ((0 == borg_what_text(0, 0, 6, &t_a, buf)) && (streq(buf, "Wear o"))) {
         /* Leave this mode */
         borg_keypress(ESCAPE);
 
         /* Done */
-        return (true);
+        return true;
     }
 
-    /*** Find books ***/
-
-    /* Only if needed */
-    if (borg_do_spell && (borg_do_spell_aux == 0)) {
-        /* Assume no books */
-        for (i = 0; i < 9; i++)
-            borg.book_idx[i] = -1;
-
-        /* Scan the pack */
-        for (i = 0; i < z_info->pack_size; i++) {
-            int        book_num;
-            borg_item *item = &borg_items[i];
-
-            for (book_num = 0; book_num < player->class->magic.num_books;
-                 book_num++) {
-                struct class_book book = player->class->magic.books[book_num];
-                if (item->tval == book.tval && item->sval == book.sval) {
-                    /* Note book locations */
-                    borg.book_idx[book_num] = i;
-                    break;
-                }
-            }
-        }
-    }
-
-    /*** Process books ***/
-    /* Hack -- Warriors never browse */
-    if (borg.trait[BI_CLASS] == CLASS_WARRIOR)
-        borg_do_spell = false;
-
-    /* Hack -- Blind or Confused prevents browsing */
-    if (borg.trait[BI_ISBLIND] || borg.trait[BI_ISCONFUSED])
-        borg_do_spell = false;
-
-    /* XXX XXX XXX Dark */
-
-    /* Hack -- Stop doing spells when done */
-    if (borg_do_spell_aux > 8)
-        borg_do_spell = false;
-
-    /* Cheat */
+    /*** Process books/spells ***/
     if (borg_do_spell) {
-        /* Look for the book */
-        i = borg.book_idx[borg_do_spell_aux];
-
-        /* Cheat the "spell" screens (all of them) */
-        if (i >= 0) {
-            /* Cheat that page */
-            borg_cheat_spell(borg_do_spell_aux);
-        }
-
-        /* Advance to the next book */
-        borg_do_spell_aux++;
-
-        /* Done */
-        return (false);
+        borg_cheat_spells();
+        borg_do_spell = false;
     }
 
     /* Check for "browse" mode */
+    /* this shouldn't happen because we now pull spell information */
+    /* directly from the game */
     if ((0 == borg_what_text(COL_SPELL, ROW_SPELL, -12, &t_a, buf))
         && (streq(buf, "Lv Mana Fail"))) {
-        /* Parse the "spell" screen */
-        /* borg_parse_spell(borg_do_spell_aux); */
-
-        /* Advance to the next book */
-        /* borg_do_spell_aux++; */
 
         /* Leave that mode */
         borg_keypress(ESCAPE);
 
         /* Done */
-        return (true);
+        return true;
     }
 
     /* If king, maybe retire. */
@@ -352,20 +300,27 @@ bool borg_think(void)
             reincarnate_borg();
 
             borg_flush();
+
+            return false;
 #endif /* bablos */
         }
     }
 
-    /* Hack -- always revert shapechanged players to normal form */
+    /* Always revert shapechanged players to normal form.
+     * !FIX !TODO: borg needs to know when to shapechange and how
+     * to deal with being in a different form.
+     */
     if (player_is_shapechanged(player)) {
-        borg_keypress('m');
+        /* it looks like throw is a good command that checks */
+        /* your form without a prerequisite check */
+        borg_keypress('v');
         borg_keypress('r');
         return true;
     }
 
     /*** Handle stores ***/
 
-    /* Hack -- Check for being in a store CHEAT*/
+    /* Check for being in a store CHEAT*/
     if ((0 == borg_what_text(1, 3, 4, &t_a, buf))
         && (streq(buf, "Stor") || streq(buf, "Home"))) {
         /* Cheat the store number */
@@ -374,11 +329,11 @@ bool borg_think(void)
         /* Clear the goal (the goal was probably going to a shop number) */
         borg.goal.type = 0;
 
-        /* Hack -- Reset food counter for money scumming */
+        /* Reset food counter for money scumming */
         if (shop_num == 0)
             borg_food_onsale = 0;
 
-        /* Hack -- Reset fuel counter for money scumming */
+        /* Reset fuel counter for money scumming */
         if (shop_num == 0)
             borg_fuel_onsale = 0;
 
@@ -397,18 +352,15 @@ bool borg_think(void)
         /* Recheck spells */
         borg_do_spell = true;
 
-        /* Restart spells */
-        borg_do_spell_aux = 0;
-
         /* Examine the inventory */
         borg_notice(true);
 
         /* Evaluate the current world */
         borg.power = borg_power();
 
-        /* Hack -- allow user abort */
+        /* Allow user abort */
         if (borg_cancel)
-            return (true);
+            return true;
 
         /* Do not allow a user key to interrupt the borg while in a store */
         borg.in_shop = true;
@@ -419,17 +371,17 @@ bool borg_think(void)
 
     /*** Determine panel ***/
 
-    /* Hack -- cheat */
+    /* Cheat */
     w_y = Term->offset_y;
     w_x = Term->offset_x;
 
     /* Done */
     borg_do_panel = false;
 
-    /* Hack -- Check for "sector" mode */
+    /* Check for "sector" mode */
     if ((0 == borg_what_text(0, 0, 16, &t_a, buf))
         && (prefix(buf, "Map sector "))) {
-        /* Hack -- get the panel info */
+        /* Get the panel info */
         w_y = (buf[12] - '0') * (SCREEN_HGT / 2);
         w_x = (buf[14] - '0') * (SCREEN_WID / 2);
 
@@ -437,7 +389,7 @@ bool borg_think(void)
         borg_keypress(ESCAPE);
 
         /* Done */
-        return (true);
+        return true;
     }
 
     /* Check panel */
@@ -449,7 +401,7 @@ bool borg_think(void)
         borg_keypress('L');
 
         /* Done */
-        return (true);
+        return true;
     }
 
     /*** Analyze the Frame ***/
@@ -480,9 +432,6 @@ bool borg_think(void)
     /* Check spells again later */
     borg_do_spell = true;
 
-    /* Hack -- Start the books over */
-    borg_do_spell_aux = 0;
-
     /*** Analyze status ***/
 
     /* Track best level */
@@ -509,9 +458,9 @@ bool borg_think(void)
     /* Evaluate the current world */
     borg.power = borg_power();
 
-    /* Hack -- allow user abort */
+    /* Allow user abort */
     if (borg_cancel)
-        return (true);
+        return true;
 
     /* Do something */
     return (borg_think_dungeon());

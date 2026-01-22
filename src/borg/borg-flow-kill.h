@@ -35,7 +35,7 @@
 typedef struct borg_kill borg_kill;
 
 struct borg_kill {
-    unsigned int r_idx; /* Race index */
+    uint16_t     r_idx; /* Race index */
 
     bool         known; /* Verified race */
     bool         awake; /* Probably awake */
@@ -75,12 +75,12 @@ extern int16_t    borg_kills_nxt;
 extern borg_kill *borg_kills;
 
 /*
- * Hack -- count racial appearances per level
+ * Count racial appearances per level
  */
 extern int16_t *borg_race_count;
 
 /*
- * Hack -- count racial kills (for uniques)
+ * Count racial kills (for uniques)
  */
 extern int16_t *borg_race_death;
 
@@ -112,6 +112,11 @@ extern bool
 
 /* am I fighting a summoner? */
 extern bool borg_fighting_summoner;
+
+/*
+ * Helper to get the name of a race.
+ */
+extern const char *borg_race_name(int i);
 
 /*
  * Delete an old "kill" record
@@ -162,12 +167,12 @@ extern bool borg_flow_kill_aim(bool viewable);
 /*
  * Dig an anti-summon corridor.
  */
-extern bool borg_flow_kill_corridor(bool viewable);
+extern bool borg_flow_kill_corridor(void);
 
 /*
  * Dig a straight Tunnel to a close monster
  */
-extern bool borg_flow_kill_direct(bool viewable, bool twitchy);
+extern bool borg_flow_kill_direct(bool twitchy);
 
 /*
  * Check if a dangerous monster is nearby
@@ -178,6 +183,11 @@ extern void borg_near_monster_type(int dist);
  * a bit of magic missile and phase
  */
 extern bool borg_shoot_scoot_safe(int emergency, int turns, int b_p);
+
+/*
+ *  Create a kill at the given location
+ */
+extern int  borg_create_kill(char *who, struct loc c);
 
 extern void borg_init_flow_kill(void);
 extern void borg_free_flow_kill(void);

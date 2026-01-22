@@ -23,6 +23,7 @@
 #include "game-world.h"
 #include "generate.h"
 #include "init.h"
+#include "mon-predicate.h"
 #include "obj-chest.h"
 #include "obj-gear.h"
 #include "obj-ignore.h"
@@ -101,6 +102,13 @@ bool player_get_recall_depth(struct player *p)
 	bool level_ok = false;
 	int new = 0;
 
+	/*
+	 * No choice when have not entered the dungeon or descent is forced,
+	 * so do not prompt.
+	 */
+	if (p->max_depth <= 0 || OPT(p, birth_force_descend)) {
+		return true;
+	}
 	while (!level_ok) {
 		const char *prompt =
 			"Which level do you wish to return to (0 to cancel)? ";
@@ -182,7 +190,7 @@ int player_apply_damage_reduction(struct player *p, int dam)
  * \param kb_str is the null-terminated string describing the cause of the
  * damage.
  *
- * Hack -- this function allows the user to save (or quit) the game
+ * This function allows the user to save (or quit) the game
  * when he dies, since the "You die." message is shown before setting
  * the player to "dead".
  */
@@ -239,7 +247,7 @@ void take_hit(struct player *p, int dam, const char *kb_str)
 					&& !get_check("Die? ")) {
 				event_signal(EVENT_CHEAT_DEATH);
 			} else {
-				/* Hack -- Note death */
+				/* Note death */
 				msgt(MSG_DEATH, "You die.");
 				event_signal(EVENT_MESSAGE_FLUSH);
 
@@ -257,7 +265,7 @@ void take_hit(struct player *p, int dam, const char *kb_str)
 
 	/* Hitpoint warning */
 	if (p->chp < warning) {
-		/* Hack -- bell on first notice */
+		/* Bell on first notice */
 		if (old_chp > warning)
 			bell();
 
@@ -279,7 +287,7 @@ void death_knowledge(struct player *p)
 	/* Retire in the town in a good state */
 	if (p->total_winner) {
 		p->depth = 0;
-		my_strcpy(p->died_from, "Ripe Old Age", sizeof(p->died_from));
+		my_strcpy(p->died_from, WINNING_HOW, sizeof(p->died_from));
 		p->exp = p->max_exp;
 		p->lev = p->max_lev;
 		p->au += 10000000L;
@@ -304,7 +312,7 @@ void death_knowledge(struct player *p)
 	(void)time(&death_time);
 	enter_score(p, &death_time);
 
-	/* Hack -- Recalculate bonuses */
+	/* Recalculate bonuses */
 	p->upkeep->update |= (PU_BONUS);
 	handle_stuff(p);
 }
@@ -348,7 +356,7 @@ int16_t modify_stat_value(int value, int amount)
 			/* Ten points at a time */
 			if (value >= 18+10) value -= 10;
 
-			/* Hack -- prevent weirdness */
+			/* Prevent weirdness */
 			else if (value > 18) value = 18;
 
 			/* One point at a time */
@@ -693,14 +701,14 @@ void player_update_light(struct player *p)
 			/* Decrease life-span */
 			obj->timeout--;
 
-			/* Hack -- notice interesting fuel steps */
+			/* Notice interesting fuel steps */
 			if ((obj->timeout < 100) || (!(obj->timeout % 100)))
 				/* Redraw stuff */
 				p->upkeep->redraw |= (PR_EQUIP);
 
-			/* Hack -- Special treatment when blind */
+			/* Special treatment when blind */
 			if (p->timed[TMD_BLIND]) {
-				/* Hack -- save some light for later */
+				/* Save some light for later */
 				if (obj->timeout == 0) obj->timeout++;
 			} else if (obj->timeout == 0) {
 				/* The light is now out */
@@ -899,7 +907,7 @@ void player_over_exert(struct player *p, int flag, int chance, int amount)
  *
  * \param p is the player to check
  * \param grid is the location of the terrain
- * \param actual, if true, will cause the player to learn the appropriate
+ * \param actual will, if true, cause the player to learn the appropriate
  * runes if equipment or effects mitigate the damage.
  */
 int player_check_terrain_damage(struct player *p, struct loc grid, bool actual)
@@ -1411,6 +1419,7 @@ static bool player_rest_disturb = false;
 /**
  * Set the number of resting turns.
  *
+ * \param p is the player trying to rest.
  * \param count is the number of turns to rest or one of the REST_ constants.
  */
 void player_resting_set_count(struct player *p, int16_t count)
@@ -1526,6 +1535,7 @@ int player_get_resting_repeat_count(struct player *p)
 /**
  * Set the number of resting turns to repeat.
  *
+ * \param p is the player trying to rest.
  * \param count is the number of turns requested for rest most recently.
  */
 void player_set_resting_repeat_count(struct player *p, int16_t count)
@@ -1580,9 +1590,9 @@ void player_place(struct chunk *c, struct player *p, struct loc grid)
  * Take care of bookkeeping after moving the player with monster_swap().
  *
  * \param p is the player that was moved.
- * \param eval_trap, if true, will cause evaluation (possibly affecting the
+ * \param eval_trap will, if true, cause evaluation (possibly affecting the
  * player) of the traps in the grid.
- * \param is_involuntary, if true, will do appropriate actions (flush the
+ * \param is_involuntary will, if true, do appropriate actions (flush the
  * command queue) for a move not expected by the player.
  */
 void player_handle_post_move(struct player *p, bool eval_trap,
@@ -1703,4 +1713,21 @@ void search(struct player *p)
 			}
 		}
 	}
+}
+
+/**
+ * Test if there are any monsters the player knows about in the field of view.
+ */
+bool player_has_monster_in_view(const struct player *p)
+{
+	int n = cave_monster_max(cave), i;
+
+	for (i = 1; i < n; ++i) {
+		const struct monster *mon = cave_monster(cave, i);
+
+		if (monster_is_obvious(mon) && monster_is_in_view(mon)) {
+			return true;
+		}
+	}
+	return false;
 }

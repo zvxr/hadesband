@@ -878,7 +878,7 @@ void lore_append_kills(textblock *tb, const struct monster_race *race,
 
 	/* Treat by whether unique, then by whether they have any player kills */
 	if (rf_has(known_flags, RF_UNIQUE)) {
-		/* Hack -- Determine if the unique is "dead" */
+		/* Determine if the unique is "dead" */
 		bool dead = (race->max_num == 0) ? true : false;
 
 		/* We've been killed... */
@@ -1020,7 +1020,7 @@ void lore_append_movement(textblock *tb, const struct monster_race *race,
 		/* Adjective */
 		textblock_append(tb, " erratically");
 
-		/* Hack -- Occasional conjunction */
+		/* Occasional conjunction */
 		if (race->speed != 110) textblock_append(tb, ", and");
 	}
 
@@ -1617,8 +1617,6 @@ void lore_append_spells(textblock *tb, const struct monster_race *race,
  * \param lore is the known information about the monster race.
  * \param known_flags is the preprocessed bitfield of race flags known to the
  *        player.
- * \param melee_colors is a list of colors that is associated with each
- *        blow effect.
  */
 void lore_append_attack(textblock *tb, const struct monster_race *race,
 						const struct monster_lore *lore,
@@ -1815,10 +1813,11 @@ static void write_lore_entries(ang_file *fff)
 		/* Output 'drop' */
 		if (lore->drops) {
 			struct monster_drop *drop = lore->drops;
-			struct object_kind *kind = drop->kind;
 			char name[120] = "";
 
 			while (drop) {
+				struct object_kind *kind = drop->kind;
+
 				if (kind) {
 					object_short_name(name, sizeof name, kind->name);
 					file_putf(fff, "drop:%s:%s:%d:%d:%d\n",

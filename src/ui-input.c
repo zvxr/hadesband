@@ -181,7 +181,7 @@ ui_event inkey_ex(void)
 		inkey_xtra = false;
 	}
 
-	/* Hack -- Use the "inkey_next" pointer */
+	/* Use the "inkey_next" pointer */
 	while (inkey_next && inkey_next->code) {
 		/* Get next character, and advance */
 		ke.key = *inkey_next++;
@@ -248,27 +248,27 @@ ui_event inkey_ex(void)
 		(void)Term_set_cursor(true);
 
 
-	/* Hack -- Activate main screen */
+	/* Activate main screen */
 	Term_activate(term_screen);
 
 
 	/* Get a key */
 	while (ke.type == EVT_NONE) {
-		/* Hack -- Handle "inkey_scan == SCAN_INSTANT */
+		/* Handle "inkey_scan == SCAN_INSTANT */
 		if (inkey_scan == SCAN_INSTANT &&
 			(0 != Term_inkey(&kk, false, false)))
 			break;
 
 
-		/* Hack -- Flush output once when no key ready */
+		/* Flush output once when no key ready */
 		if (!done && (0 != Term_inkey(&kk, false, false))) {
-			/* Hack -- activate proper term */
+			/* Activate proper term */
 			Term_activate(old);
 
 			/* Flush output */
 			Term_fresh();
 
-			/* Hack -- activate main screen */
+			/* Activate main screen */
 			Term_activate(term_screen);
 
 			/* Mega-Hack -- reset saved flag */
@@ -294,7 +294,7 @@ ui_event inkey_ex(void)
 			ke.key.code = ESCAPE;
 	}
 
-	/* Hack -- restore the term */
+	/* Restore the term */
 	Term_activate(old);
 
 	/* Restore the cursor */
@@ -380,7 +380,7 @@ ui_event inkey_m(void)
 
 
 /**
- * Hack -- flush
+ * Flush
  */
 static void msg_flush(int x)
 {
@@ -408,18 +408,20 @@ static void msg_flush_split_existing(int w, int *x)
 {
 	/* Default place to split what's there */
 	int split = MIN(*x, w - 8);
+	int i = split;
 	wchar_t *svc = NULL;
 	int *sva = NULL;
-	int i;
 
 	/* Find the rightmost split point. */
-	for (i = w / 2; i < MIN(*x, w - 8); ++i) {
+	while (i > w / 2) {
 		int a;
 		wchar_t c;
 
+		--i;
 		Term_what(i, 0, &a, &c);
 		if (c == L' ') {
 			split = i;
+			break;
 		}
 	}
 
@@ -433,7 +435,7 @@ static void msg_flush_split_existing(int w, int *x)
 		}
 	}
 
-	Term_erase(split + 1, 0, w);
+	Term_erase(split, 0, w);
 	msg_flush(split + 1);
 
 	/* Put back what was remembered. */
@@ -476,7 +478,7 @@ bool msg_flag;
  * result in the loss of information if the screen is cleared, or if anything
  * is displayed on the top line.
  *
- * Hack -- Note that "msg("%s", NULL)" will clear the top line even if no
+ * Note that "msg("%s", NULL)" will clear the top line even if no
  * messages are pending.
  */
 void display_message(game_event_type unused, game_event_data *data, void *user)
@@ -506,13 +508,13 @@ void display_message(game_event_type unused, game_event_data *data, void *user)
 	/* Obtain the size */
 	(void)Term_get_size(&w, &h);
 
-	/* Hack -- Reset */
+	/* Reset */
 	if (!msg_flag) message_column = 0;
 
 	/* Message Length */
 	n = (msg ? strlen(msg) : 0);
 
-	/* Hack -- flush when requested or needed */
+	/* Flush when requested or needed */
 	if (message_column && (!msg || ((message_column + n) > (w - 8)))) {
 		/* Flush */
 		if (message_column <= w - 8) {
@@ -543,17 +545,18 @@ void display_message(game_event_type unused, game_event_data *data, void *user)
 
 	/* Split message */
 	while (message_column + n > w - 1) {
+		/* Default split */
+		int split = MAX(w - 8 - message_column, 0);
+		int check = split;
 		char oops;
 
-		int check, split;
-
-		/* Default split */
-		split = MAX(w - 8 - message_column, 0);
-
 		/* Find the rightmost split point */
-		for (check = MAX(w / 2 - message_column, 0);
-				check < w - 8; check++) {
-			if (t[check] == ' ') split = check;
+		while (check > MAX(w / 2 - message_column, 0)) {
+			--check;
+			if (t[check] == ' ') {
+				split = check;
+				break;
+			}
 		}
 
 		/* Save the split character */
@@ -566,7 +569,7 @@ void display_message(game_event_type unused, game_event_data *data, void *user)
 		Term_putstr(message_column, 0, split, color, t);
 
 		/* Flush it */
-		msg_flush(split + 1);
+		msg_flush(message_column + split + 1);
 
 		/* Restore the split character */
 		t[split] = oops;
@@ -605,7 +608,7 @@ void bell_message(game_event_type unused, game_event_data *data, void *user)
  */
 void message_flush(game_event_type unused, game_event_data *data, void *user)
 {
-	/* Hack -- Reset */
+	/* Reset */
 	if (!msg_flag) message_column = 0;
 
 	/* Flush when needed */
@@ -1271,7 +1274,7 @@ static bool textui_get_check(const char *prompt)
 	char buf[80];
 
 	/*
-	 * Hack -- Build a "useful" prompt; do this first so prompts built by
+	 * Build a "useful" prompt; do this first so prompts built by
 	 * format() won't run afoul of event_signal()'s side effects.
 	 */
 	strnfmt(buf, 78, "%.70s[y/n] ", prompt);
@@ -1317,7 +1320,7 @@ char get_char(const char *prompt, const char *options, size_t len, char fallback
 	/* Paranoia */
 	event_signal(EVENT_MESSAGE_FLUSH);
 
-	/* Hack -- Build a "useful" prompt */
+	/* Build a "useful" prompt */
 	strnfmt(buf, 78, "%.70s[%s] ", prompt, options);
 
 	/* Prompt for it */
@@ -1484,19 +1487,17 @@ static int dir_transitions[10][10] =
 };
 
 /**
- * Request a "movement" direction (1,2,3,4,6,7,8,9) from the user.
+ * Request a "movement" direction (1,2,3,4,5(optional),6,7,8,9) from the user.
  *
  * Return true if a direction was chosen, otherwise return false.
  *
  * This function should be used for all "repeatable" commands, such as
  * run, walk, open, close, bash, disarm, spike, tunnel, etc, as well
- * as all commands which must reference a grid adjacent to the player,
- * and which may not reference the grid under the player.
+ * as all commands which must reference a grid adjacent to the player.
+ * If the command does not allow the grid under the player, pass false
+ * for allow_5.  Otherwise, use true for allow_5.
  *
- * Directions "5" and "0" are illegal and will not be accepted.
- *
- * This function tracks and uses the "global direction", and uses
- * that as the "desired direction", if it is set.
+ * The direction, "0", is illegal and will not be accepted.
  */
 static bool textui_get_rep_dir(int *dp, bool allow_5)
 {
@@ -1522,7 +1523,7 @@ static bool textui_get_rep_dir(int *dp, bool allow_5)
 
 		if (ke.type == EVT_NONE ||
 				(ke.type == EVT_KBRD
-				&& !target_dir_allow(ke.key, allow_5))) {
+				&& !target_dir_allow(ke.key, allow_5, true))) {
 			prt("Direction or <click> (Escape to cancel)? ", 0, 0);
 			ke = inkey_ex();
 		}
@@ -1557,10 +1558,17 @@ static bool textui_get_rep_dir(int *dp, bool allow_5)
 
 				/* XXX Ideally show and move the cursor here to indicate
 				 the currently "Pending" direction. XXX */
-				this_dir = target_dir_allow(ke.key, allow_5);
+				this_dir = target_dir_allow(ke.key, allow_5,
+					true);
 
-				if (this_dir)
+				if (this_dir == ESCAPE) {
+					/* Clear the prompt */
+					prt("", 0, 0);
+
+					return (false);
+				} else if (this_dir) {
 					dir = dir_transitions[dir][this_dir];
+				}
 
 				if (player->opts.lazymove_delay == 0 || ++keypresses_handled > 1)
 					break;
@@ -1616,7 +1624,7 @@ static bool textui_get_aim_dir(int *dp)
 	/* Initialize */
 	(*dp) = 0;
 
-	/* Hack -- auto-target if requested */
+	/* Auto-target if requested */
 	if (OPT(player, use_old_target) && target_okay() && !dir) dir = 5;
 
 	/* Ask until satisfied */
@@ -1638,8 +1646,9 @@ static bool textui_get_aim_dir(int *dp)
 
 		if (ke.type == EVT_MOUSE) {
 			if (ke.mouse.button == 1) {
-				if (target_set_interactive(TARGET_KILL, KEY_GRID_X(ke),
-										   KEY_GRID_Y(ke)))
+				if (target_set_interactive(TARGET_KILL,
+						KEY_GRID_X(ke), KEY_GRID_Y(ke),
+						false))
 					dir = 5;
 			} else if (ke.mouse.button == 2) {
 				break;
@@ -1647,7 +1656,8 @@ static bool textui_get_aim_dir(int *dp)
 		} else if (ke.type == EVT_KBRD) {
 			if (ke.key.code == '*') {
 				/* Set new target, use target if legal */
-				if (target_set_interactive(TARGET_KILL, -1, -1))
+				if (target_set_interactive(TARGET_KILL, -1, -1,
+						false))
 					dir = 5;
 			} else if (ke.key.code == '\'') {
 				/* Set to closest target */
@@ -1672,8 +1682,12 @@ static bool textui_get_aim_dir(int *dp)
 
 					/* XXX Ideally show and move the cursor here to indicate
 					 * the currently "Pending" direction. XXX */
-					this_dir = target_dir(ke.key);
+					this_dir = target_dir_allow(ke.key,
+						false, true);
 
+					if (this_dir == ESCAPE) {
+						return false;
+					}
 					if (this_dir) {
 						dir = dir_transitions[dir][this_dir];
 					} else {
@@ -1776,7 +1790,7 @@ static int textui_get_count(void)
 
 
 /**
- * Hack -- special buffer to hold the action of the current keymap
+ * Special buffer to hold the action of the current keymap
  */
 static struct keypress request_command_buffer[256];
 
@@ -1806,7 +1820,7 @@ ui_event textui_get_command(int *count)
 
 	/* Get command */
 	while (1) {
-		/* Hack -- no flush needed */
+		/* No flush needed */
 		msg_flag = false;
 
 		/* Activate "command mode" */
@@ -1910,7 +1924,7 @@ bool key_confirm_command(unsigned char c)
 {
 	int i;
 
-	/* Hack -- Scan equipment */
+	/* Scan equipment */
 	for (i = 0; i < player->body.count; i++) {
 		char verify_inscrip[] = "^*";
 		unsigned n;

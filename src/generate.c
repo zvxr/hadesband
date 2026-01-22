@@ -706,6 +706,7 @@ static void place_feeling(struct chunk *c)
 /**
  * Calculate the level feeling for objects.
  * \param c is the cave where the feeling is being measured
+ * \param p is the player
  */
 static int calc_obj_feeling(struct chunk *c, struct player *p)
 {
@@ -812,8 +813,12 @@ static bool labyrinth_check(int depth)
 static const struct cave_profile *choose_profile(struct player *p)
 {
 	const struct cave_profile *profile = NULL;
-	int moria_alloc = find_cave_profile("moria")->alloc;
-	int labyrinth_alloc = find_cave_profile("labyrinth")->alloc;
+	const struct cave_profile *moria_profile = find_cave_profile("moria");
+	const struct cave_profile *labyrinth_profile =
+		find_cave_profile("labyrinth");
+	int moria_alloc = (moria_profile) ? moria_profile->alloc : 0;
+	int labyrinth_alloc = (labyrinth_profile) ?
+		labyrinth_profile->alloc : 0;
 
 	/* A bit of a hack, but worth it for now NRM */
 	if (p->noscore & NOSCORE_JUMPING) {
@@ -838,10 +843,10 @@ static const struct cave_profile *choose_profile(struct player *p)
 		profile = find_cave_profile("modified");
 	} else if (labyrinth_check(p->depth) &&
 			(labyrinth_alloc > 0 || labyrinth_alloc == -1)) {
-		profile = find_cave_profile("labyrinth");
+		profile = labyrinth_profile;
 	} else if ((p->depth >= 10) && (p->depth < 40) && one_in_(40) &&
 			(moria_alloc > 0 || moria_alloc == -1)) {
-		profile = find_cave_profile("moria");
+		profile = moria_profile;
 	} else {
 		int total_alloc = 0;
 		size_t i;
@@ -887,25 +892,28 @@ static const struct cave_profile *choose_profile(struct player *p)
  */
 static void get_join_info(struct player *p, struct dun_data *dd)
 {
-	struct level *lev = NULL;
+	struct level *lev;
+	struct chunk *check;
 
 	/* Check level above */
 	lev = level_by_depth(dungeon_get_next_level(p, p->depth, -1));
 	if (lev) {
-		struct chunk *check = chunk_find_name(lev->name);
-		if (check) {
-			struct connector *join = check->join;
-			while (join) {
-				if (join->feat == FEAT_MORE) {
-					struct connector *new = mem_zalloc(sizeof *new);
-					new->grid.y = join->grid.y;
-					new->grid.x = join->grid.x;
-					new->feat = FEAT_LESS;
-					new->next = dd->join;
-					dd->join = new;
-				}
-				join = join->next;
+		check = chunk_find_name(lev->name);
+	} else {
+		check = NULL;
+	}
+	if (check) {
+		struct connector *join = check->join;
+		while (join) {
+			if (join->feat == FEAT_MORE) {
+				struct connector *new = mem_zalloc(sizeof *new);
+				new->grid.y = join->grid.y;
+				new->grid.x = join->grid.x;
+				new->feat = FEAT_LESS;
+				new->next = dd->join;
+				dd->join = new;
 			}
+			join = join->next;
 		}
 	} else if ((lev = level_by_depth(dungeon_get_next_level(p, p->depth, -2)))) {
 		/*
@@ -914,8 +922,12 @@ static void get_join_info(struct player *p, struct dun_data *dd)
 		 * on this level won't conflict with them if the level above is
 		 * ever generated.
 		 */
-		struct chunk *check = chunk_find_name(lev->name);
-
+		lev = level_by_depth(p->depth - 2);
+		if (lev) {
+			check = chunk_find_name(lev->name);
+		} else {
+			check = NULL;
+		}
 		if (check) {
 			struct connector *join;
 
@@ -936,25 +948,31 @@ static void get_join_info(struct player *p, struct dun_data *dd)
 	/* Check level below */
 	lev = level_by_depth(dungeon_get_next_level(p, p->depth, 1));
 	if (lev) {
-		struct chunk *check = chunk_find_name(lev->name);
-		if (check) {
-			struct connector *join = check->join;
-			while (join) {
-				if (join->feat == FEAT_LESS) {
-					struct connector *new = mem_zalloc(sizeof *new);
-					new->grid.y = join->grid.y;
-					new->grid.x = join->grid.x;
-					new->feat = FEAT_MORE;
-					new->next = dd->join;
-					dd->join = new;
-				}
-				join = join->next;
+		check = chunk_find_name(lev->name);
+	} else {
+		check = NULL;
+	}
+	if (check) {
+		struct connector *join = check->join;
+		while (join) {
+			if (join->feat == FEAT_LESS) {
+				struct connector *new = mem_zalloc(sizeof *new);
+				new->grid.y = join->grid.y;
+				new->grid.x = join->grid.x;
+				new->feat = FEAT_MORE;
+				new->next = dd->join;
+				dd->join = new;
 			}
+			join = join->next;
 		}
 	} else if ((lev = level_by_depth(dungeon_get_next_level(p, p->depth, 2)))) {
 		/* Same logic as above for looking one past the next level */
-		struct chunk *check = chunk_find_name(lev->name);
-
+		lev = level_by_depth(p->depth + 2);
+		if (lev) {
+			check = chunk_find_name(lev->name);
+		} else {
+			check = NULL;
+		}
 		if (check) {
 			struct connector *join;
 
@@ -1062,6 +1080,8 @@ static void cleanup_dun_data(struct dun_data *dd)
  *
  * Confusingly, this function also generates the town level (level 0).
  * \param p is the current player struct, in practice the global player
+ * \param height is the minimum height, in grids, for the level
+ * \param width is the minimum width, in grids, for the level
  * \return a pointer to the new level
  */
 static struct chunk *cave_generate(struct player *p, int height, int width)
@@ -1145,21 +1165,22 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 
 		/* Ensure quest monsters */
 		if (dun->quest) {
-			int i2;
-			for (i2 = 1; i2 < z_info->r_max; i2++) {
-				struct monster_race *race = &r_info[i2];
+			for (i = 0; i < z_info->quest_max; i++) {
+				struct quest *q = &player->quests[i];
 				struct monster_group_info info = { 0, 0 };
 				struct loc grid;
 
-				/* The monster must be an unseen quest monster of this depth. */
-				if (race->cur_num > 0) continue;
-				if (!rf_has(race->flags, RF_QUESTOR)) continue;
-				if (race->level != chunk->depth) continue;
-	
-				/* Pick a location and place the monster */
-				find_empty(chunk, &grid);
-				place_new_monster(chunk, grid, race, true, true, info,
-								  ORIGIN_DROP);
+				if (q->level != chunk->depth) continue;
+
+				/* If the quest monster is unique and has already been placed, don't place again */
+				if (rf_has(q->race->flags, RF_UNIQUE) && q->race->cur_num > 0) continue;
+
+				/* Pick a location and place the monster(s) */
+				for (int n = 0; n < q->max_num; n++) {
+					find_empty(chunk, &grid);
+					place_new_monster(chunk, grid, q->race, true, true, info,
+									  ORIGIN_DROP);
+				}
 			}
 		}
 
@@ -1315,7 +1336,6 @@ static void sanitize_player_loc(struct chunk *c, struct player *p)
  * Prepare the level the player is about to enter, either by generating
  * or reloading
  *
- * \param c is the level we're going to end up with, in practice the global cave
  * \param p is the current player struct, in practice the global player
 */
 void prepare_next_level(struct player *p)

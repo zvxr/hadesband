@@ -120,9 +120,9 @@ struct store_context {
 /* Return a random hint from the global hints list */
 static const char *random_hint(void)
 {
-	struct hint *v, *r = NULL;
+	struct hint *v, *r = hints;
 	int n;
-	for (v = hints, n = 1; v; v = v->next, n++)
+	for (v = hints->next, n = 2; v; v = v->next, n++)
 		if (one_in_(n))
 			r = v;
 	return r->hint;
@@ -153,7 +153,7 @@ static void prt_welcome(const struct owner *proprietor)
 	/* Truncate the name */
 	short_name[j] = '\0';
 
-	if (one_in_(3)) {
+	if (hints && one_in_(3)) {
 		size_t i = randint0(N_ELEMENTS(comment_hint));
 		msg(comment_hint[i], random_hint());
 	} else if (player->lev > 5) {
@@ -766,7 +766,7 @@ static void store_examine(struct store_context *ctx, int item)
 		odesc_flags |= ODESC_STORE;
 	}
 
-	/* Hack -- no flush needed */
+	/* No flush needed */
 	msg_flag = false;
 
 	/* Show full info in most stores, but normal info in player home */
@@ -776,7 +776,7 @@ static void store_examine(struct store_context *ctx, int item)
 	textui_textblock_show(tb, area, header);
 	textblock_free(tb);
 
-	/* Hack -- Browse book, then prompt for a command */
+	/* Browse book, then prompt for a command */
 	if (obj_can_browse(obj))
 		textui_book_browse(obj);
 }
@@ -824,7 +824,7 @@ static bool store_process_command_key(struct keypress kp)
 {
 	int cmd = 0;
 
-	/* Hack -- no flush needed */
+	/* No flush needed */
 	prt("", 0, 0);
 	msg_flag = false;
 
@@ -917,7 +917,7 @@ static int context_menu_store(struct store_context *ctx, const int oid, int mx, 
 	}
 	menu_dynamic_add_label(m, "Exit", '`', ACT_EXIT, labels);
 
-	/* Hack -- no flush needed */
+	/* No flush needed */
 	msg_flag = false;
 	screen_save();
 
@@ -999,7 +999,7 @@ static bool context_menu_store_item(struct store_context *ctx, const int oid, in
 		m->switch_keys = "g";
 	}
 
-	/* Hack -- no flush needed */
+	/* No flush needed */
 	msg_flag = false;
 	screen_save();
 
@@ -1036,7 +1036,7 @@ static bool store_menu_handle(struct menu *m, const ui_event *event, int oid)
 	struct store *store = ctx->store;
 	
 	if (event->type == EVT_SELECT) {
-		/* Hack -- there's no mouse event coordinates to use for */
+		/* HACK there's no mouse event coordinates to use for */
 		/* menu_store_item, so fake one as if mouse clicked on letter */
 		bool purchased = context_menu_store_item(ctx, oid, 1, m->active.row + oid);
 		ctx->flags |= (STORE_FRAME_CHANGE | STORE_GOLD_CHANGE);

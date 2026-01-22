@@ -32,7 +32,7 @@
 #include "borg-trait.h"
 
 /*
- * Hack -- Glyph creating
+ * Glyph creating
  */
 
 static uint8_t glyph_x;
@@ -78,7 +78,7 @@ bool borg_needs_new_sea;
  * lmnop  24 grids
  *
  */
-bool borg_flow_glyph(int why)
+bool borg_flow_glyph(void)
 {
     int i;
     int cost;
@@ -125,7 +125,7 @@ bool borg_flow_glyph(int why)
                 /* Stop if we already new about this glyph */
                 if ((track_glyph.x[i] == borg.c.x)
                     && (track_glyph.y[i] == borg.c.y))
-                    return (false);
+                    return false;
             }
 
             /* Track the newly discovered glyph */
@@ -137,11 +137,11 @@ bool borg_flow_glyph(int why)
             }
 
             /* Success */
-            return (true);
+            return true;
         }
 
         /* Nope */
-        return (false);
+        return false;
     }
 
     /* Reverse flow */
@@ -299,9 +299,9 @@ bool borg_flow_glyph(int why)
     /* Clear the flow codes */
     borg_flow_clear();
 
-    /* Hack -- Nothing found */
+    /* Nothing found */
     if (b_v < 0)
-        return (false);
+        return false;
 
     /* Access grid */
     ag = &borg_grids[b_y][b_x];
@@ -318,14 +318,14 @@ bool borg_flow_glyph(int why)
 
     /* Attempt to Commit the flow */
     if (!borg_flow_commit("Glyph", GOAL_MISC))
-        return (false);
+        return false;
 
     /* Take one step */
     if (!borg_flow_old(GOAL_MISC))
-        return (false);
+        return false;
 
     /* Success */
-    return (true);
+    return true;
 }
 
 void borg_init_flow_glyph(void)

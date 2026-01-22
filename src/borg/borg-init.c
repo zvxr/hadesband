@@ -21,6 +21,7 @@
 
 #ifdef ALLOW_BORG
 
+#include "../obj-ignore.h"
 #include "../player-calcs.h"
 #include "../ui-command.h"
 #include "../ui-keymap.h"
@@ -43,7 +44,7 @@
 #include "borg-update.h"
 #include "borg.h"
 
-bool borg_initialized; /* Hack -- Initialized */
+bool borg_initialized; /* Initialized */
 bool game_closed; /* Has the game been closed since the borg was
                       initialized */
 
@@ -68,7 +69,6 @@ struct borg_setting borg_settings[] = {
     { "borg_kills_uniques", 'b', false }, 
     { "borg_uses_swaps", 'b', true },
     { "borg_uses_dynamic_calcs", 'b', false },
-    { "borg_slow_optimizehome", 'b', false },
     { "borg_stop_dlevel", 'i', 128 }, 
     { "borg_stop_clevel", 'i', 51 },
     { "borg_no_deeper", 'i', 127 }, 
@@ -87,6 +87,9 @@ struct borg_setting borg_settings[] = {
     { "borg_dump_level", 'i', 1 }, 
     { "borg_save_death", 'i', 1 },
     { "borg_stop_on_bell", 'b', false },
+    { "borg_allow_strange_opts", 'b', false},
+    { "borg_autosave", 'b', false},
+    { "borg_restore_ignore_settings", 'b', false},
     { 0, 0, 0 }};
 
 
@@ -294,7 +297,7 @@ bool borg_init_txt_file(void)
                 "performance loss (~20 percent).");
         }
 
-        /* Hack -- flush it */
+        /* Flush it */
         Term_fresh();
     }
 
@@ -333,14 +336,74 @@ bool borg_init_txt_file(void)
     return warning;
 }
 
+void borg_reset_ignore(void)
+{
+    int i, j;
+
+    if (borg_cfg[BORG_RESTORE_IGNORE_SETTINGS]) {
+        /* Reset ignore bits */
+        for (i = 0; i < z_info->k_max; i++)
+            k_info[i].ignore = borg_init_save.kinfo_ignore[i];
+
+        /* Clear the ignore bytes */
+        for (i = ITYPE_NONE; i < ITYPE_MAX; i++)
+            ignore_level[i] = borg_init_save.ignore_level[i];
+
+        /* Clear ego ignore */
+        for (i = 0; i < z_info->e_max; i++)
+            for (j = ITYPE_NONE; j < ITYPE_MAX; j++)
+                ego_ignore_types[i][j] = borg_init_save.ego_ignore_types[i][j];
+    }
+
+    for (i = 0; i < z_info->e_max; i++)
+        mem_free(borg_init_save.ego_ignore_types[i]);
+    mem_free(borg_init_save.ego_ignore_types);
+
+    borg_init_save.ego_ignore_types = NULL;
+
+    mem_free(borg_init_save.kinfo_ignore);
+    borg_init_save.kinfo_ignore = NULL;
+}
+
+
+static void borg_init_ignore(void)
+{
+    int i, j;
+
+    /* allocate the memory */
+    borg_init_save.kinfo_ignore = mem_alloc(sizeof(uint8_t) * z_info->k_max);
+ 
+    borg_init_save.ego_ignore_types = mem_zalloc(z_info->e_max * sizeof(bool*));
+    for (i = 0; i < z_info->e_max; i++)
+        borg_init_save.ego_ignore_types[i] = mem_zalloc(ITYPE_MAX * sizeof(bool));
+
+    /* Reset ignore bits */
+    for (i = 0; i < z_info->k_max; i++)
+        borg_init_save.kinfo_ignore[i] = k_info[i].ignore;
+
+    /* Clear the ignore bytes */
+    for (i = ITYPE_NONE; i < ITYPE_MAX; i++)
+        borg_init_save.ignore_level[i] = ignore_level[i];
+
+    /* Clear ego ignore */
+    for (i = 0; i < z_info->e_max; i++)
+        for (j = ITYPE_NONE; j < ITYPE_MAX; j++)
+            borg_init_save.ego_ignore_types[i][j] = ego_ignore_types[i][j];
+
+    /* clear the saved flags */
+    ignore_birth_init();
+}
+
 /*
  * Reset the required options when returning from user control
  */
 void borg_reinit_options(void)
 {
     /* Save current key mode */
-    key_mode = OPT(player, rogue_like_commands) ? KEYMAP_MODE_ROGUE
+    borg_init_save.key_mode = OPT(player, rogue_like_commands) ? KEYMAP_MODE_ROGUE
                                                 : KEYMAP_MODE_ORIG;
+
+    borg_init_ignore();
 
     /* The Borg uses the original keypress codes */
     option_set("rogue_like_commands", false);
@@ -388,7 +451,7 @@ static void borg_leave_game(
 }
 
 /*
- * Hack -- prepare some stuff based on the player race and class
+ * Prepare some stuff based on the player race and class
  */
 void borg_prepare_race_class_info(void)
 {
@@ -404,7 +467,7 @@ void borg_init(void)
     uint8_t *memory_test;
     bool    warning_given;
 
-    /*** Hack -- verify system ***/
+    /*** Verify system ***/
     /* Redraw everything */
     do_cmd_redraw();
 
@@ -412,7 +475,7 @@ void borg_init(void)
     borg_note("Initializing the Borg... (memory)");
     borg_init_failure = false;
 
-    /* Hack -- flush it */
+    /* Flush it */
     Term_fresh();
 
     /* Mega-Hack -- verify memory */
@@ -426,18 +489,18 @@ void borg_init(void)
 
     borg.player = player; /* HACK work around msvc issue */
 
-    /*** Hack -- initialize borg.ini options ***/
+    /*** Initialize borg.ini options ***/
 
     /* Message */
     borg_note("Initializing the Borg... (borg.txt)");
     warning_given = borg_init_txt_file();
 
-    /*** Hack -- initialize game options ***/
+    /*** Initialize game options ***/
 
     /* Message */
     borg_note("Initializing the Borg... (options)");
 
-    /* Hack -- flush it */
+    /* Flush it */
     Term_fresh();
 
     /* Make sure it rolls up a new guy at death */
@@ -491,7 +554,7 @@ void borg_init(void)
     /* Message */
     borg_note("Initializing the Borg... (various)");
 
-    /* Hack -- flush it */
+    /* Flush it */
     Term_fresh();
 
     /*** Cheat / Panic ***/
@@ -525,7 +588,7 @@ void borg_init(void)
     /*** Object/Monster tracking ***/
     borg_init_update();
 
-    /*** Hack -- react to race and class ***/
+    /*** React to race and class ***/
 
     /* Notice the new race and class */
     borg_prepare_race_class_info();
@@ -558,6 +621,33 @@ void borg_init(void)
         || !streq(player_id2class(CLASS_BLACKGUARD)->name, "Blackguard")) {
         borg_note("**STARTUP FAILURE** classes do not match");
         borg_init_failure = true;
+    }
+
+    /* Don't allow the user to do stupid things unless they ask to */
+    if (!borg_cfg[BORG_ALLOW_STRANGE_OPTS]) {
+        if (OPT(player, birth_force_descend)) {
+            borg_note("**STARTUP FAILURE** must allow up stairs");
+            borg_note("** birth option failure **");
+            borg_init_failure = true;
+        }
+
+        if (!OPT(player, birth_connect_stairs)) {
+            borg_note("**STARTUP FAILURE** must connect stairs");
+            borg_note("** birth option failure **");
+            borg_init_failure = true;
+        }
+
+        if (OPT(player, birth_no_recall)) {
+            borg_note("**STARTUP FAILURE** must allow recall");
+            borg_note("** birth option failure **");
+            borg_init_failure = true;
+        }
+
+        if (OPT(player, birth_percent_damage)) {
+            borg_note("**STARTUP FAILURE** strange damage calculation");
+            borg_note("** birth option failure **");
+            borg_init_failure = true;
+        }
     }
 
     /* Official message */

@@ -1,5 +1,5 @@
 /**
- * \file borg_util.c
+ * \file borg-util.c
  * \brief Utility functions like sorting
  *
  * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke
@@ -107,11 +107,11 @@ bool borg_sort_comp_hook(void *u, void *v, int a, int b)
 
     /* Strictly less */
     if (cmp < 0)
-        return (true);
+        return true;
 
     /* Strictly more */
     if (cmp > 0)
-        return (false);
+        return false;
 
     /* Enforce "stable" sort */
     return (what[a] <= what[b]);
@@ -148,19 +148,20 @@ void borg_sort_swap_hook(void *u, void *v, int a, int b)
  */
 char *borg_trim(char *line)
 {
-    // Trim leading space
+    /* Trim leading space */
     while (isspace((unsigned char)*line))
         line++;
 
-    if (*line == 0) // All spaces?
+    /* All spaces */
+    if (*line == 0)
         return line;
 
-    // Trim trailing space
+    /* Trim trailing spaces */
     char *end = line + strlen(line) - 1;
     while (end > line && isspace((unsigned char)*end))
         end--;
 
-    // Write new null terminator character
+    /* Write new null terminator character */
     end[1] = '\0';
 
     return line;

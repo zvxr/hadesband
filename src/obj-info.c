@@ -2096,7 +2096,8 @@ static bool describe_effect(textblock *tb, const struct object *obj,
 		textblock_append(tb, "%s", obj->activation->desc);
 	} else {
 		int level = obj->artifact ?
-			obj->artifact->level : obj->kind->level;
+			obj->artifact->level : (obj->activation ?
+			obj->activation->level : obj->kind->level);
 		int boost = MAX((player->state.skills[SKILL_DEVICE] - level) / 2, 0);
 		const char *prefix;
 		textblock *tbe;
@@ -2266,18 +2267,28 @@ static void describe_flavor_text(textblock *tb, const struct object *obj,
  */
 static bool describe_ego(textblock *tb, const struct ego_item *ego)
 {
-	if (kf_has(ego->kind_flags, KF_RAND_HI_RES))
-		textblock_append(tb, "It provides one random higher resistance.  ");
-	else if (kf_has(ego->kind_flags, KF_RAND_SUSTAIN))
-		textblock_append(tb, "It provides one random sustain.  ");
-	else if (kf_has(ego->kind_flags, KF_RAND_POWER))
-		textblock_append(tb, "It provides one random ability.  ");
-	else if (kf_has(ego->kind_flags, KF_RAND_RES_POWER))
-		textblock_append(tb, "It provides one random ability or base resistance.  ");
-	else
-		return false;
+	bool something = false;
 
-	return true;
+	if (kf_has(ego->kind_flags, KF_RAND_HI_RES)) {
+		something = true;
+		textblock_append(tb, "It provides one random higher resistance.  ");
+	} else if (kf_has(ego->kind_flags, KF_RAND_SUSTAIN)) {
+		something = true;
+		textblock_append(tb, "It provides one random sustain.  ");
+	} else if (kf_has(ego->kind_flags, KF_RAND_POWER)) {
+		something = true;
+		textblock_append(tb, "It provides one random ability.  ");
+	} else if (kf_has(ego->kind_flags, KF_RAND_RES_POWER)) {
+		something = true;
+		textblock_append(tb, "It provides one random ability or base resistance.  ");
+	}
+	if (of_has(ego->flags, OF_NO_FUEL)
+			&& of_has(ego->flags_off, OF_TAKES_FUEL)) {
+		something = true;
+		textblock_append(tb, "It burns forever without fuel.  ");
+	}
+
+	return something;
 }
 
 
@@ -2379,15 +2390,30 @@ textblock *object_info_ego(struct ego_item *ego)
 {
 	struct object_kind *kind = NULL;
 	struct object obj = OBJECT_NULL, known_obj = OBJECT_NULL;
-	size_t i;
 	textblock *result;
 
-	for (i = 0; i < z_info->k_max; i++) {
-		kind = &k_info[i];
-		if (!kind->name)
-			continue;
-		if (i == ego->poss_items->kidx)
-			break;
+	if (ego->poss_items) {
+		size_t i;
+
+		for (i = 0; i < z_info->k_max; i++) {
+			kind = &k_info[i];
+			if (!kind->name)
+				continue;
+			if (i == ego->poss_items->kidx)
+				break;
+		}
+	}
+	if (!kind) {
+		result = textblock_new();
+		if (ego->poss_items) {
+			textblock_append(result, "Bug: the array of kinds of "
+				"objects no longer contains the first kind "
+				"that can have this ego.");
+		} else {
+			textblock_append(result,
+				"This ego does not appear on any items.");
+		}
+		return result;
 	}
 
 	obj.kind = kind;

@@ -18,6 +18,7 @@
 .project
 .settings
 .vs/
+.vscode/
 /*.vcxproj*
 aclocal.m4
 angband
@@ -40,6 +41,7 @@ docs/manual.pdf
 docs/manual.tex
 docs/manual.toc
 docs/_build
+src/doc/_doxygen/
 lib/user/CharOutput.txt
 lib/user/lore.txt
 lib/user/save/*
@@ -57,6 +59,7 @@ src/*.d
 src/*.dep
 src/*.o
 src/*.o.*
+src/*.a
 src/.deps
 src/3ds-build
 src/angband
@@ -67,3 +70,4 @@ src/config
 src/stats/db.dep
 src/tests/ran-already
 src/version.h
+build*/

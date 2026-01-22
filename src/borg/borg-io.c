@@ -76,7 +76,7 @@ errr borg_what_text(int x, int y, int n, uint8_t *a, char *s)
     /* Obtain the size */
     (void)Term_get_size(&w, &h);
 
-    /* Hack -- Do not run off the screen */
+    /* Do not run off the screen */
     if (x + m > w)
         m = w - x;
 
@@ -126,10 +126,10 @@ errr borg_what_text(int x, int y, int n, uint8_t *a, char *s)
     wcstombs(s, screen_str, ABS(n) + 1);
     /* Too short */
     if ((n > 0) && (i != n))
-        return (1);
+        return 1;
 
     /* Success */
-    return (0);
+    return 0;
 }
 
 /*
@@ -308,7 +308,7 @@ static keycode_t borg_queued_direction = 0;
  */
 errr borg_keypress(keycode_t k)
 {
-    /* Hack -- Refuse to enqueue "nul" */
+    /* Refuse to enqueue "nul" */
     if (!k) {
         borg_note(" & Key * *BAD KEY * *");
         return (-1);
@@ -321,52 +321,53 @@ errr borg_keypress(keycode_t k)
     if (borg_key_head == KEY_SIZE)
         borg_key_head = 0;
 
-    /* Hack -- Catch overflow (forget oldest) */
+    /* Catch overflow (forget oldest) */
     if (borg_key_head == borg_key_tail)
         borg_oops("overflow");
 
-    /* Hack -- Overflow may induce circular queue */
+    /* Overflow may induce circular queue */
     if (borg_key_tail == KEY_SIZE)
         borg_key_tail = 0;
 
     /* Success */
-    return (0);
+    return 0;
 }
 
 /*
  * Add a keypress to the history of what has been passed back to the game
  */
-void save_keypress_history(struct keypress *kp)
+struct keypress save_keypress_history(struct keypress kp)
 {
     /* Note the keypress */
     if (borg_cfg[BORG_VERBOSE]) {
-        if (kp->type == EVT_KBRD) {
-            keycode_t k = kp->code;
+        if (kp.type == EVT_KBRD) {
+            keycode_t k = kp.code;
             if (k >= 32 && k <= 126) {
-                borg_note(format("& Key <%c> (0x%02X)", k, k));
+                borg_note(format("& Key <%c> (0x%02lX)", (char)k, (unsigned long)k));
             } else {
                 if (k == KC_ENTER)
-                    borg_note(format("& Key <Enter> (0x%02X)", k));
+                    borg_note(format("& Key <Enter> (0x%02lX)", (unsigned long)k));
                 else if (k == ESCAPE)
-                    borg_note(format("& Key <Esc> (0x%02X)", k));
+                    borg_note(format("& Key <Esc> (0x%02lX)", (unsigned long)k));
                 else
-                    borg_note(format("& Key <0x%02X>", k));
+                    borg_note(format("& Key <0x%02lX>", (unsigned long)k));
             }
         } else {
-            borg_note(format("& non-Keyboard <0x%02X>", kp->type));
+            borg_note(format("& non-Keyboard <0x%02X>", kp.type));
         }
-
     }
 
     /* Store the char, advance the queue */
-    borg_key_history[borg_key_history_head].code = kp->code;
-    borg_key_history[borg_key_history_head++].type = kp->type;
+    borg_key_history[borg_key_history_head].code = kp.code;
+    borg_key_history[borg_key_history_head++].type = kp.type;
 
     /* on full array, keep the last 100 */
     if (borg_key_history_head == KEY_SIZE) {
         memcpy(borg_key_history, &borg_key_history[KEY_SIZE - 101], sizeof(struct keypress) * 100);
         borg_key_history_head = 100;
     }
+
+    return kp;
 }
 
 
@@ -382,7 +383,7 @@ errr borg_keypresses(const char *str)
         borg_keypress(*s);
 
     /* Success */
-    return (0);
+    return 0;
 }
 
 /*
@@ -394,14 +395,14 @@ keycode_t borg_inkey(bool take)
 
     /* Nothing ready */
     if (borg_key_head == borg_key_tail)
-        return (0);
+        return 0;
 
     /* Extract the keypress */
     i = borg_key_queue[borg_key_tail];
 
     /* Do not advance */
     if (!take)
-        return (i);
+        return i;
 
     /* Advance the queue */
     borg_key_tail++;
@@ -411,7 +412,7 @@ keycode_t borg_inkey(bool take)
         borg_key_tail = 0;
 
     /* Return the key */
-    return (i);
+    return i;
 }
 
 /*
@@ -443,10 +444,11 @@ keycode_t borg_get_queued_direction(void)
 }
 
 /*
- * *HACK* this handles the é and á in some monster names but, gods it is
- * ugly convert to wide and back to match the processing of special characters
- * this routine will allocate any memory it needs and it is up to the caller 
- * to detect that memory was allocated and free it.
+ * *HACK* this handles the non-ASCII (examples are U+00E9, e + acute accent
+ * and U+00E1, a + acute accent) characters in some monster names but, gods it
+ * is ugly convert to wide and back to match the processing of special
+ * characters this routine will allocate any memory it needs and it is up to
+ * the caller to detect that memory was allocated and free it.
  */
 char *borg_massage_special_chars(char *name)
 {
@@ -471,14 +473,14 @@ void borg_dump_recent_keys(int num)
         if (kp->type == EVT_KBRD) {
             keycode_t k = kp->code;
             if (k >= 32 && k <= 126) {
-                borg_note(format("& Key history <%c> (0x%02X)", k, k));
+                borg_note(format("& Key history <%c> (0x%02lX)", (char)k, (unsigned long)k));
             } else {
                 if (k == KC_ENTER)
-                    borg_note(format("& Key history <Enter> (0x%02X)", k));
+                    borg_note(format("& Key history <Enter> (0x%02lX)", (unsigned long)k));
                 else if (k == ESCAPE)
-                    borg_note(format("& Key history <Esc> (0x%02X)", k));
+                    borg_note(format("& Key history <Esc> (0x%02lX)", (unsigned long)k));
                 else
-                    borg_note(format("& Key history <0x%02X>", k));
+                    borg_note(format("& Key history <0x%02lX>", (unsigned long)k));
             }
         }
         else {
@@ -489,7 +491,8 @@ void borg_dump_recent_keys(int num)
 
 /*
  * The bell should never sound when the borg is running.  If it does,
- * log ... something.
+ * log the keypress history and halt, if configured to do so.
+ * NOTE: parameters set by event handler requirements.
  */
 static void borg_bell(game_event_type unused, game_event_data *data, void *user)
 {

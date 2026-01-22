@@ -1080,8 +1080,8 @@ static bool project_m_monster_attack(project_monster_handler_context_t *context,
 	enum mon_messages hurt_msg = context->hurt_msg;
 	struct monster *mon = context->mon;
 
-	/* "Unique" monsters can only be "killed" by the player */
-	if (monster_is_unique(mon)) {
+	/* "Unique" or arena monsters can only be "killed" by the player */
+	if (monster_is_unique(mon) || player->upkeep->arena_level) {
 		/* Reduce monster hp to zero, but don't kill it. */
 		if (dam > mon->hp) dam = mon->hp;
 	}
@@ -1098,6 +1098,11 @@ static bool project_m_monster_attack(project_monster_handler_context_t *context,
 
 	/* Dead or damaged monster */
 	if (mon->hp < 0) {
+		/* Shapechanged monsters revert on death */
+		if (mon->original_race) {
+			monster_revert_shape(mon);
+		}
+
 		/* Give detailed messages if destroyed */
 		if (!seen) die_msg = MON_MSG_MORIA_DEATH;
 
@@ -1116,7 +1121,7 @@ static bool project_m_monster_attack(project_monster_handler_context_t *context,
 		if ((hurt_msg != MON_MSG_NONE) && seen)
 			add_monster_message(mon, hurt_msg, false);
 
-		/* Hack -- Pain message */
+		/* Pain message */
 		else if (dam > 0)
 			message_pain(mon, dam);
 	}
@@ -1153,6 +1158,11 @@ static bool project_m_player_attack(project_monster_handler_context_t *context)
 	 * ensures it doesn't print any death message and allows correct ordering
 	 * of messages. */
 	if (dam > mon->hp) {
+		/* Shapechanged monsters revert on death */
+		if (mon->original_race) {
+			monster_revert_shape(mon);
+		}
+
 		if (!seen) die_msg = MON_MSG_MORIA_DEATH;
 		if (display_dam) {
 			add_monster_message_show_damage(mon, die_msg, false,
@@ -1307,12 +1317,17 @@ static void project_m_apply_side_effects(project_monster_handler_context_t *cont
  *
  * \param origin is the monster list index of the caster
  * \param r is the distance from the centre of the effect
- * \param y the coordinates of the grid being handled
- * \param x the coordinates of the grid being handled
+ * \param grid is the coordinates of the grid being handled
  * \param dam is the "damage" from the effect at distance r from the centre
  * \param typ is the projection (PROJ_) type
  * \param flg consists of any relevant PROJECT_ flags
- * \return whether the effects were obvious
+ * \param did_hit is dereferenced and set to true if there is a monster in
+ * grid and the projection could affect it (note that does not account for
+ * things like a monster resistance).  Otherwise, did_hit is dereferenced and
+ * set to false.
+ * \param was_obvious is dereferenced and set to true if the effects of the
+ * projection on a monster in grid were obvious to the player.  Otherwise,
+ * was_obvious is dereferenced and set to false.
  *
  * Note that this routine can handle "no damage" attacks (like teleport) by
  * taking a zero damage, and can even take parameters to attacks (like
@@ -1356,7 +1371,7 @@ static void project_m_apply_side_effects(project_monster_handler_context_t *cont
  * Note that this function determines if the player can see anything that
  * happens by taking into account: blindness, line-of-sight, and illumination.
  *
- * Hack -- effects on grids which are memorized but not in view are also seen.
+ * Effects on grids which are memorized but not in view are also seen.
  */
 void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 			   int flg, bool *did_hit, bool *was_obvious)

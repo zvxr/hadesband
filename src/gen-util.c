@@ -350,10 +350,10 @@ void rand_dir(struct loc *offset)
 
 
 /**
- * Determine whether the given coordinate is a valid starting location.
- * \param c current chunk
- * \param y co-ordinates
- * \param x co-ordinates
+ * Locate a valid starting point for the player in a chunk
+ * \param c is the chunk of interest
+ * \param grid is, when the search is successful, dereferenced and set to the
+ * coordinates of the starting location
  * \return success
  */
 static bool find_start(struct chunk *c, struct loc *grid)
@@ -740,10 +740,11 @@ void alloc_stairs(struct chunk *c, int feat, int num, int minsep, bool sepany,
  * \param num number to place
  * \param depth generation depth
  * \param origin item origin (if appropriate)
+ * \return the number of entities that were not allocated.
  *
  * See alloc_object() for more information.
  */
-void alloc_objects(struct chunk *c, int set, int typ, int num, int depth,
+int alloc_objects(struct chunk *c, int set, int typ, int num, int depth,
 		uint8_t origin)
 {
 	int k, l = 0;
@@ -751,6 +752,7 @@ void alloc_objects(struct chunk *c, int set, int typ, int num, int depth,
 		bool ok = alloc_object(c, set, typ, depth, origin);
 		if (!ok) l++;
 	}
+	return l;
 }
 
 

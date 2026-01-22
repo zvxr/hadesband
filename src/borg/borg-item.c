@@ -37,7 +37,6 @@ borg_item *borg_items;
  */
 
 borg_item *safe_items; /* Safety "inventory" */
-borg_item *safe_home; /* Safety "home stuff" */
 
 /*
  * get the items inscription (note)
@@ -54,7 +53,6 @@ const char *borg_get_note(const borg_item *item)
  */
 void borg_deinscribe(int i)
 {
-
     /* Ok to inscribe Slime Molds */
     if (borg_items[i].tval == TV_FOOD
         && borg_items[i].sval == sv_food_slime_mold)
@@ -102,6 +100,14 @@ void borg_deinscribe(int i)
 }
 
 /*
+ * helper to give the item weight
+ */
+int16_t borg_item_weight(borg_item * item)
+{
+    return item->iqty * item->weight;
+}
+
+/*
  * allocate the item arrays
  */
 void borg_init_item(void)
@@ -113,9 +119,6 @@ void borg_init_item(void)
 
     /* Make the "safe" inventory array */
     safe_items = mem_zalloc(QUIVER_END * sizeof(borg_item));
-
-    /* Make the "safe" home inventory array */
-    safe_home = mem_zalloc(z_info->store_inven_max * sizeof(borg_item));
 }
 
 /*
@@ -125,8 +128,6 @@ void borg_free_item(void)
 {
     /*** Item/Ware arrays ***/
 
-    mem_free(safe_home);
-    safe_home = NULL;
     mem_free(safe_items);
     safe_items = NULL;
     mem_free(borg_items);

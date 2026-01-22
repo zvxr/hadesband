@@ -48,13 +48,9 @@
 #include "borg-trait.h"
 #include "borg.h"
 
-/*
-  * Name segments for random player names
-  * Copied Cth by DvE
-  * Copied from borgband by APW
-  */
+/* Name segments for random player names */
 
-  /* Dwarves */
+/* Dwarves */
 static const char *dwarf_syllable1[] =
 {
     "B", "D", "F", "G", "Gl", "H", "K", "L",
@@ -183,10 +179,6 @@ static const char *orc_syllable3[] =
 
 /*
  * Random Name Generator
- * based on a Javascript by Michael Hensley
- * "http://geocities.com/timessquare/castle/6274/"
- * Copied from Cth by DvE
- * Copied from borgband by APW
  */
 static void create_random_name(int race, char *name, size_t name_len)
 {
@@ -281,9 +273,9 @@ static void create_random_name(int race, char *name, size_t name_len)
 /*
  * Init players with some belongings
  *
- * Having an item makes the player "aware" of its purpose.
+ * Having an item makes the player aware of its purpose.
  */
-static void player_outfit_borg(struct player *p)
+static void borg_outfit_player(struct player *p)
 {
     int                      i;
     const struct start_item *si;
@@ -421,11 +413,14 @@ void reincarnate_borg(void)
 
     /* save the existing dungeon.  It is cleared later but needs to */
     /* be blank when  creating the new player */
-    struct chunk *sv_cave = cave;
-    cave                  = NULL;
+    struct chunk* sv_cave = cave;
+    struct chunk* sv_player_cave = player->cave;
+    struct loc sv_grid = player->grid;
+
+    cave = NULL;
+    player->cave = NULL;
 
     /* Cheat death */
-    player->is_dead          = false;
     borg.trait[BI_MAXDEPTH]  = 0;
     borg.trait[BI_MAXCLEVEL] = 1;
 
@@ -435,14 +430,6 @@ void reincarnate_borg(void)
 
     /* flush the commands */
     borg_flush();
-
-    /* remove the spell counters */
-    for (i = 0; i < player->class->magic.total_spells; i++) {
-        /* get the magics */
-        borg_magic *as = &borg_magics[i];
-        /* reset the counter */
-        as->times = 0;
-    }
 
     /*** Wipe the player ***/
     player_init(player);
@@ -495,7 +482,7 @@ void reincarnate_borg(void)
     /* Start in town */
     player->depth = 0;
 
-    /* Hack -- seed for flavors */
+    /* Seed for flavors */
     seed_flavor = randint0(0x10000000);
 
     /* Embody */
@@ -516,10 +503,10 @@ void reincarnate_borg(void)
     /* Give the player some money */
     player->au = player->au_birth = z_info->start_gold;
 
-    /* Hack - need some HP */
+    /* Need some HP */
     borg_roll_hp();
 
-    /* Hack - player knows all combat runes.  Maybe make them not runes? NRM */
+    /* Player knows all combat runes. Maybe make them not runes? */
     player->obj_k->to_a = 1;
     player->obj_k->to_h = 1;
     player->obj_k->to_d = 1;
@@ -531,7 +518,7 @@ void reincarnate_borg(void)
     player_spells_init(player);
 
     /* outfit the player */
-    player_outfit_borg(player);
+    borg_outfit_player(player);
 
     /* generate town */
     player->upkeep->generate_level = true;
@@ -559,10 +546,10 @@ void reincarnate_borg(void)
         deactivate_randart_file();
     }
 
-    /* Hack -- flush it */
+    /* Flush it */
     Term_fresh();
 
-    /*** Hack -- react to race and class ***/
+    /*** React to race and class ***/
 
     /* Notice the new race and class */
     borg_prepare_race_class_info();
@@ -591,6 +578,8 @@ void reincarnate_borg(void)
 
     /* restore the cave */
     cave = sv_cave;
+    player->cave = sv_player_cave;
+    player->grid = sv_grid;
 
     /* the new player is now ready */
     character_generated = true;

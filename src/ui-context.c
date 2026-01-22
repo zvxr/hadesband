@@ -118,7 +118,7 @@ static int context_menu_player_2(int mx, int my)
 	menu_dynamic_add_label(m, "Options", '=', MENU_VALUE_OPTIONS, labels);
 	menu_dynamic_add_label(m, "Commands", '?', MENU_VALUE_HELP, labels);
 
-	/* Hack -- no flush needed */
+	/* No flush needed */
 	msg_flag = false;
 	screen_save();
 
@@ -251,6 +251,7 @@ int context_menu_player(int mx, int my)
 	int selected;
 	char *labels;
 	bool allowed = true;
+	bool autoexplore = OPT(player, autoexplore_commands);
 	int mode = OPT(player, rogue_like_commands) ? KEYMAP_MODE_ROGUE : KEYMAP_MODE_ORIG;
 	unsigned char cmdkey;
 	struct object *obj;
@@ -270,12 +271,16 @@ int context_menu_player(int mx, int my)
 		ADD_LABEL("Cast", CMD_CAST, MN_ROW_VALID);
 	}
 
-	/* if player is on stairs add option to use them */
-	if (square_isupstairs(cave, player->grid)) {
+	/* if player is on stairs or autoexplore commands are enabled,
+		add option to use them */
+	if (square_isupstairs(cave, player->grid) || autoexplore) {
 		ADD_LABEL("Go Up", CMD_GO_UP, MN_ROW_VALID);
 	}
-	else if (square_isdownstairs(cave, player->grid)) {
+	if (square_isdownstairs(cave, player->grid) || autoexplore) {
 		ADD_LABEL("Go Down", CMD_GO_DOWN, MN_ROW_VALID);
+	}
+	if (autoexplore) {
+		ADD_LABEL("Explore", CMD_EXPLORE, MN_ROW_VALID);
 	}
 
 	/* Looking has different keys, but we don't have a way to look them up
@@ -310,7 +315,7 @@ int context_menu_player(int mx, int my)
 
 	menu_dynamic_add_label(m, "Other", ' ', MENU_VALUE_OTHER, labels);
 
-	/* Hack -- no flush needed */
+	/* No flush needed */
 	msg_flag = false;
 	screen_save();
 
@@ -337,6 +342,7 @@ int context_menu_player(int mx, int my)
 		case CMD_CAST:
 		case CMD_GO_UP:
 		case CMD_GO_DOWN:
+		case CMD_EXPLORE:
 		case CMD_PICKUP:
 			/* Only check for ^ inscriptions, since we don't have an object
 			 * selected (if we need one). */
@@ -376,6 +382,7 @@ int context_menu_player(int mx, int my)
 
 		case CMD_GO_UP:
 		case CMD_GO_DOWN:
+		case CMD_EXPLORE:
 		case CMD_PICKUP:
 			cmdq_push(selected);
 			break;
@@ -389,7 +396,7 @@ int context_menu_player(int mx, int my)
 			break;
 
 		case MENU_VALUE_LOOK:
-			if (target_set_interactive(TARGET_LOOK, player->grid.x, player->grid.y))
+			if (target_set_interactive(TARGET_LOOK, player->grid.x, player->grid.y, true))
 				msg("Target Selected.");
 			break;
 
@@ -504,7 +511,7 @@ int context_menu_cave(struct chunk *c, int y, int x, int adjacent, int mx,
 
 	ADD_LABEL("Throw To", CMD_THROW, MN_ROW_VALID);
 
-	/* Hack -- no flush needed */
+	/* No flush needed */
 	msg_flag = false;
 	screen_save();
 
@@ -592,7 +599,7 @@ int context_menu_cave(struct chunk *c, int y, int x, int adjacent, int mx,
 	switch (selected) {
 		case MENU_VALUE_LOOK:
 			/* Look at the spot */
-			if (target_set_interactive(TARGET_LOOK, x, y)) {
+			if (target_set_interactive(TARGET_LOOK, x, y, true)) {
 				msg("Target Selected.");
 			}
 			break;
@@ -772,7 +779,7 @@ int context_menu_object(struct object *obj)
 
 	area.width = -(r.width + 2);
 
-	/* Hack -- no flush needed */
+	/* No flush needed */
 	msg_flag = false;
 	screen_save();
 
@@ -1054,7 +1061,7 @@ void textui_process_click(ui_event e)
 									  motion_dir(player->grid, loc(x, y)));
 			} else if (e.mouse.mods & KC_MOD_ALT) {
 				/* alt-click - look */
-				if (target_set_interactive(TARGET_LOOK, x, y)) {
+				if (target_set_interactive(TARGET_LOOK, x, y, true)) {
 					msg("Target Selected.");
 				}
 			} else {

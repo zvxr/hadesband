@@ -671,7 +671,7 @@ void do_cmd_wiz_collect_obj_mon_stats(struct command *cmd)
  */
 void do_cmd_wiz_collect_pit_stats(struct command *cmd)
 {
-	int nsim, depth, pittype;
+	int nsim, depth_min, depth_max, pittype;
 	char s[80];
 
 	if (!stats_are_enabled()) return;
@@ -680,7 +680,8 @@ void do_cmd_wiz_collect_pit_stats(struct command *cmd)
 		/* Set default. */
 		strnfmt(s, sizeof(s), "%d", 1000);
 
-		if (!get_string("Number of simulations: ", s, sizeof(s))) return;
+		if (!get_string("Number of simulations per depth: ", s,
+				sizeof(s))) return;
 		if (!get_int_from_string(s, &nsim) || nsim < 1) return;
 		cmd_set_arg_number(cmd, "quantity", nsim);
 	}
@@ -695,16 +696,29 @@ void do_cmd_wiz_collect_pit_stats(struct command *cmd)
 		cmd_set_arg_choice(cmd, "choice", pittype);
 	}
 
-	if (cmd_get_arg_number(cmd, "depth", &depth) != CMD_OK) {
+	if (cmd_get_arg_number(cmd, "depth_min", &depth_min) != CMD_OK) {
 		/* Set default. */
 		strnfmt(s, sizeof(s), "%d", player->depth);
 
-		if (!get_string("Depth: ", s, sizeof(s))) return;
-		if (!get_int_from_string(s, &depth) || depth < 1) return;
-		cmd_set_arg_number(cmd, "depth", depth);
+		if (!get_string("Minimum depth: ", s, sizeof(s))) return;
+		if (!get_int_from_string(s, &depth_min)
+				|| depth_min < 1) return;
+		cmd_set_arg_number(cmd, "depth_min", depth_min);
 	}
 
-	pit_stats(nsim, pittype, depth);
+	if (cmd_get_arg_number(cmd, "depth_max", &depth_max) != CMD_OK) {
+		/* Set default. */
+		strnfmt(s, sizeof(s), "%d", depth_min);
+
+		if (!get_string("Maximum depth: ", s, sizeof(s))) return;
+		if (!get_int_from_string(s, &depth_max)
+				|| depth_max < depth_min) return;
+		cmd_set_arg_number(cmd, "depth_max", depth_max);
+	} else if (depth_max < depth_min) {
+		return;
+	}
+
+	pit_stats(nsim, pittype, depth_min, depth_max);
 }
 
 
@@ -1015,7 +1029,7 @@ void do_cmd_wiz_curse_item(struct command *cmd)
 		}
 		cmd_set_arg_number(cmd, "index", curse_index);
 	}
-	if (curse_index <= 1 || curse_index >= z_info->curse_max) {
+	if (curse_index <= 0 || curse_index >= z_info->curse_max) {
 		return;
 	}
 
@@ -1740,6 +1754,14 @@ void do_cmd_wiz_play_item(struct command *cmd)
 							obj->number
 							* object_weight_one(obj);
 					}
+					object_touch(player, obj);
+					if (object_is_equipped(player->body, obj)) {
+						assert(obj->known);
+						obj->known->notice &=
+							~OBJ_NOTICE_WORN;
+						object_learn_on_wield(player,
+							obj);
+					}
 					wiz_play_item_standard_upkeep(player,
 						obj);
 				}
@@ -1901,7 +1923,7 @@ void do_cmd_wiz_push_object(struct command *cmd)
 	struct loc grid;
 
 	if (cmd_get_arg_point(cmd, "point", &grid) != CMD_OK) {
-		if (!target_set_interactive(TARGET_KILL, -1, -1)) return;
+		if (!target_set_interactive(TARGET_KILL, -1, -1, false)) return;
 		target_get(&grid);
 		cmd_set_arg_point(cmd, "point", grid);
 	}
@@ -2332,7 +2354,7 @@ void do_cmd_wiz_reroll_item(struct command *cmd)
 		return;
 	}
 
-	/* Hack -- leave artifacts alone */
+	/* Leave artifacts alone */
 	if (obj->artifact) {
 		return;
 	}
@@ -2585,7 +2607,7 @@ void do_cmd_wiz_stat_item(struct command *cmd)
 	msg(repfmt, i, matches, better, worse, other);
 	event_signal(EVENT_MESSAGE_FLUSH);
 
-	/* Hack -- normally only make a single artifact */
+	/* Normally only make a single artifact */
 	if (obj->artifact) {
 		mark_artifact_created(obj->artifact, true);
 	}
@@ -2706,7 +2728,7 @@ void do_cmd_wiz_teleport_to(struct command *cmd)
 
 	if (cmd_get_arg_point(cmd, "point", &grid) != CMD_OK) {
 		/* Use the targeting function. */
-		if (!target_set_interactive(TARGET_LOOK, -1, -1)) return;
+		if (!target_set_interactive(TARGET_LOOK, -1, -1, false)) return;
 
 		/* Grab the target coordinates. */
 		target_get(&grid);
@@ -2765,7 +2787,7 @@ void do_cmd_wiz_tweak_item(struct command *cmd)
 		cmd_set_arg_item(cmd, "item", obj);
 	}
 
-	/* Hack -- leave artifacts alone */
+	/* Leave artifacts alone */
 	if (obj->artifact) return;
 
 	/*

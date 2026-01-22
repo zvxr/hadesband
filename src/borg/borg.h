@@ -22,6 +22,7 @@
  * must be included before ALLOW_BORG to avoid empty compilation unit
  */
 #include "../angband.h"
+#include "../obj-ignore.h"
 
 #ifdef ALLOW_BORG
 
@@ -56,7 +57,6 @@ enum {
     BORG_KILLS_UNIQUES,
     BORG_USES_SWAPS,
     BORG_USES_DYNAMIC_CALCS,
-    BORG_SLOW_OPTIMIZEHOME,
     BORG_STOP_DLEVEL,
     BORG_STOP_CLEVEL,
     BORG_NO_DEEPER,
@@ -75,6 +75,9 @@ enum {
     BORG_DUMP_LEVEL,
     BORG_SAVE_DEATH,
     BORG_STOP_ON_BELL,
+    BORG_ALLOW_STRANGE_OPTS,
+    BORG_AUTOSAVE,
+    BORG_RESTORE_IGNORE_SETTINGS,
     BORG_MAX_SETTINGS
 };
 extern int *borg_cfg;
@@ -84,15 +87,14 @@ extern int *borg_cfg;
  */
 extern bool borg_active; /* Actually active */
 extern bool borg_cancel; /* Being cancelled */
-extern bool borg_flag_save; /* Save savefile at each level */
 extern bool borg_save; /* do a save next time we get to press a key! */
-extern bool borg_graphics; /* rr9's graphics */
+extern bool borg_graphics; /* graphics mode */
 
 extern int16_t old_depth;
 extern int16_t borg_respawning;
 
 /*
- * Hack -- Time variables
+ * Time variables
  */
 extern int16_t borg_t; /* Current "time" */
 extern int32_t borg_began; /* When this level began */
@@ -107,10 +109,21 @@ extern uint16_t borg_step;
 extern int w_x; /* Current panel offset (X) */
 extern int w_y; /* Current panel offset (Y) */
 
-/*
- * KEYMAP_MODE_ROGUE or KEYMAP_MODE_ORIG
- */
-extern int key_mode;
+struct borg_save_init {
+
+	/*
+	 * KEYMAP_MODE_ROGUE or KEYMAP_MODE_ORIG
+	 */
+	int         key_mode;
+
+	/*
+	 * object ignore settings
+	 */
+	uint8_t*    kinfo_ignore;
+	uint8_t     ignore_level[ITYPE_MAX];
+	bool**      ego_ignore_types;
+};
+extern struct borg_save_init borg_init_save;
 
 /*
  * Special "inkey_hack" hook.

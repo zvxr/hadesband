@@ -35,7 +35,7 @@ static const struct effect_kind effects[]
     = { { EF_NONE, false, NULL, NULL, NULL, NULL },
 #define F(x)                        effect_handler_##x
 #define EFFECT(x, a, b, c, d, e, f) { EF_##x, a, b, F(x), e, f },
-#include "list-effects.h"
+#include "../list-effects.h"
 #undef EFFECT
 #undef F
           { EF_MAX, false, NULL, NULL, NULL, NULL } };
@@ -57,23 +57,27 @@ static bool borg_can_play_spell(borg_magic *as)
     case GLYPH_OF_WARDING:
     case SINGLE_COMBAT:
     case VAMPIRE_STRIKE:
+    case COMMAND:
+    case CURSE:
+    case FORCEFUL_BLOW:
+    case MAIM_FOE:
     return false;
     default:
         break;
     }
 
     if (as->effect_index == EF_BRAND_BOLTS)
-        return false; // !FIX !TODO !AJG check for a bolt
+        return false; // !FIX !TODO check for a bolt
     if (as->effect_index == EF_CREATE_ARROWS)
-        return false; // !FIX !TODO !AJG check for a staff
+        return false; // !FIX !TODO check for a staff
     if (as->effect_index == EF_BRAND_AMMO)
-        return false; // !FIX !TODO !AJG check for ammo
+        return false; // !FIX !TODO check for ammo
     if (as->effect_index == EF_ENCHANT)
-        return false; // !FIX !TODO !AJG check something to enchant
+        return false; // !FIX !TODO check something to enchant
     if (as->effect_index == EF_IDENTIFY)
-        return false; // !FIX !TODO !AJG check something to identify
+        return false; // !FIX !TODO check something to identify
     if (as->effect_index == EF_RECHARGE)
-        return false; // !FIX !TODO !AJG check for a wand or rod or staff
+        return false; // !FIX !TODO check for a wand or rod or staff
     return true;
 }
 
@@ -83,21 +87,22 @@ static bool borg_can_play_spell(borg_magic *as)
 bool borg_play_magic(bool bored)
 {
     int r, b_r = -1;
-    int spell_num, b_spell_num;
+    int spell_num, b_spell_num = -1;
 
-    /* Hack -- must use magic or prayers */
+    /* Must use magic or prayers */
+    /* !FIX !TODO add to borg struct and check that */
     if (!player->class->magic.total_spells)
-        return (false);
+        return false;
 
-    /* Hack -- blind/confused */
+    /* Blind/confused */
     if (borg.trait[BI_ISBLIND] || borg.trait[BI_ISCONFUSED])
-        return (false);
+        return false;
 
     /* Dark */
-    if (!borg.trait[BI_CURLITE])
-        return (false);
+    if (!borg.trait[BI_LIGHT])
+        return false;
     if (borg_grids[borg.c.y][borg.c.x].info == BORG_DARK)
-        return (false);
+        return false;
 
     /* loop through spells backward */
     for (spell_num = player->class->magic.total_spells - 1; spell_num >= 0;
@@ -133,7 +138,7 @@ bool borg_play_magic(bool bored)
     }
 
     /* Study */
-    if (borg.trait[BI_ISSTUDY] && (b_r > 0)) {
+    if (borg.trait[BI_ISSTUDY] && (b_r > 0) && (b_spell_num >= 0)) {
         borg_magic *as = &borg_magics[b_spell_num];
 
         /* Debugging Info */
@@ -152,16 +157,16 @@ bool borg_play_magic(bool bored)
         }
 
         /* Success */
-        return (true);
+        return true;
     }
 
-    /* Hack -- only in town */
+    /* Only in town */
     if (borg.trait[BI_CDEPTH] && !borg.munchkin_mode)
-        return (false);
+        return false;
 
-    /* Hack -- only when bored */
+    /* Only when bored */
     if (!bored)
-        return (false);
+        return false;
 
     /* Check each spell (backwards) */
     for (spell_num = player->class->magic.total_spells - 1; spell_num >= 0;
@@ -196,30 +201,30 @@ bool borg_play_magic(bool bored)
         /* Note */
         borg_note("# Testing untried spell/prayer");
 
-        /* Hack -- Use spell or prayer */
+        /* Use spell or prayer */
         if (borg_spell(as->spell_enum)) {
-            /* Hack -- Allow attack spells */
+            /* Allow attack spells */
             /* MEGAHACK -- assume "Random" is shooting.  */
             if (effects[as->effect_index].aim || as->effect_index == EF_RANDOM
                 || as->effect_index == EF_TELEPORT_TO) {
-                /* Hack -- target self */
+                /* Target self */
                 borg_keypress('*');
                 borg_keypress('t');
             }
 
-            /* Hack -- Allow spells that require selection of a monster type */
+            /* Allow spells that require selection of a monster type */
             if (as->effect_index == EF_BANISH) {
-                /* Hack -- target Maggot */
+                /* Target Maggot */
                 borg_keypress('h');
             }
 
             /* Success */
-            return (true);
+            return true;
         }
     }
 
     /* Nope */
-    return (false);
+    return false;
 }
 
 #endif

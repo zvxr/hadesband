@@ -1,5 +1,5 @@
 /**
- * \file borg-think-store.
+ * \file borg-think-store.c
  * \brief Prepare to perform an action while in a store
  *
  * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke
@@ -25,6 +25,7 @@
 #include "../ui-menu.h"
 
 #include "borg-io.h"
+#include "borg-inventory.h"
 #include "borg-item-wear.h"
 #include "borg-item.h"
 #include "borg-store-buy.h"
@@ -78,27 +79,29 @@
  * The "greed" value should exceed 100 when the player is "buying" the
  * object, and should be less than 100 when the player is "selling" it.
  *
- * Hack -- the black market always charges twice as much as it should.
+ * The black market always charges twice as much as it should.
  */
 /*
  * Choose a shop to visit
  */
 bool borg_choose_shop(void)
 {
+    int32_t best_home_power;
+
     /* Must be in town */
     if (borg.trait[BI_CDEPTH])
-        return (false);
+        return false;
 
     /* Forbid if been sitting on level forever */
     /*    Just come back and work through the loop later */
     if (borg_t - borg_began > 2000)
-        return (false);
+        return false;
     if (borg.time_this_panel > 1350)
-        return (false);
+        return false;
 
     /* Already flowing to a store to sell something */
     if (borg.goal.shop != -1 && borg.goal.ware != -1)
-        return (true);
+        return true;
 
     /* If poisoned or bleeding -- flow to temple */
     if (borg.trait[BI_ISCUT] || borg.trait[BI_ISPOISONED])
@@ -106,25 +109,21 @@ bool borg_choose_shop(void)
 
     /* If Starving  -- flow to general store */
     if (borg.trait[BI_FOOD] == 0
-        || (borg.trait[BI_CURLITE] == 0 && borg.trait[BI_CLEVEL] >= 2)) {
+        || (borg.trait[BI_LIGHT] == 0 && borg.trait[BI_CLEVEL] >= 2)) {
         /* G Store first */
         borg.goal.shop = 0;
     }
 
-    /* Do a quick cheat of the shops and inventory */
-    borg_cheat_store();
-    borg_notice(true);
-
     /* if No Lantern -- flow to general store */
-    if (borg.trait[BI_CURLITE] == 1 && borg.trait[BI_GOLD] >= 100)
+    if (borg.trait[BI_LIGHT] == 1 && borg.trait[BI_GOLD] >= 100)
         borg.goal.shop = 0;
 
     /* If poisoned, bleeding, or needing to shop instantly
      * Buy items straight away, without having to see each shop
      */
-    if ((borg.trait[BI_CURLITE] == 0 || borg.trait[BI_FOOD] == 0
+    if ((borg.trait[BI_LIGHT] == 0 || borg.trait[BI_FOOD] == 0
             || borg.trait[BI_ISCUT] || borg.trait[BI_ISPOISONED])
-        || (borg.trait[BI_CURLITE] == 1 && borg.trait[BI_GOLD] >= 100
+        || (borg.trait[BI_LIGHT] == 1 && borg.trait[BI_GOLD] >= 100
             && borg.trait[BI_CLEVEL] < 10)) {
         if (borg_think_shop_buy_useful()) {
             /* Message */
@@ -133,7 +132,7 @@ bool borg_choose_shop(void)
                 f_info[stores[borg.goal.shop].feat].name));
 
             /* Success */
-            return (true);
+            return true;
         }
 
         /* if temple is out of healing stuff, try the house */
@@ -143,7 +142,7 @@ bool borg_choose_shop(void)
                 borg_shops[borg.goal.shop].ware[borg.goal.ware].desc));
 
             /* Success */
-            return (true);
+            return true;
         }
     }
 
@@ -153,6 +152,13 @@ bool borg_choose_shop(void)
 
     /* Assume no important shop */
     borg.goal.shop = borg.goal.ware = borg.goal.item = -1;
+
+    /* If it is time to try to put on our best stuff, and we have free slots, go
+     * home */
+    if (borg.goal.do_best && !borg_home_full() && !borg_inventory_full()) {
+        borg.goal.shop = BORG_HOME;
+        return true;
+    }
 
     /* if the borg is scumming for cash for the human player and not himself,
      * we don't want him messing with the home inventory
@@ -168,13 +174,13 @@ bool borg_choose_shop(void)
                 f_info[stores[borg.goal.shop].feat].name));
 
             /* Success */
-            return (true);
+            return true;
         } else
-            return (false);
+            return false;
     }
 
     /* Step 1 -- Sell items to the home */
-    if (borg_think_home_sell_useful(false)) {
+    if (borg_think_home_sell_useful(&best_home_power)) {
         /* Message */
         if (borg.goal.item != -1)
             borg_note(format(
@@ -184,7 +190,7 @@ bool borg_choose_shop(void)
                 borg_shops[borg.goal.shop].ware[borg.goal.ware].desc));
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* Step 2 -- Sell items to the shops */
@@ -195,7 +201,7 @@ bool borg_choose_shop(void)
                 f_info[stores[borg.goal.shop].feat].name));
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* Step 3 -- Buy items from the shops (for the player) */
@@ -208,7 +214,7 @@ bool borg_choose_shop(void)
             f_info[stores[borg.goal.shop].feat].name));
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* Step 4 -- Buy items from the home (for the player) */
@@ -218,7 +224,7 @@ bool borg_choose_shop(void)
             borg_shops[borg.goal.shop].ware[borg.goal.ware].desc));
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* get rid of junk from home first.  That way the home is 'uncluttered' */
@@ -233,12 +239,12 @@ bool borg_choose_shop(void)
             borg_shops[borg.goal.shop].ware[borg.goal.ware].desc));
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* Do not Stock Up the home while money scumming */
     if (borg_cfg[BORG_MONEY_SCUM_AMOUNT])
-        return (false);
+        return false;
 
     /* Step 6 -- Buy items from the shops (for the home) */
     if (borg_think_shop_grab_interesting()) {
@@ -248,30 +254,30 @@ bool borg_choose_shop(void)
             f_info[stores[borg.goal.shop].feat].name));
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* Step 7A -- Buy weapons from the home (as a backup item) */
-    if (borg_cfg[BORG_USES_SWAPS] && borg_think_home_buy_swap_weapon()) {
+    if (borg_uses_swaps() && borg_think_home_buy_swap_weapon()) {
         /* Message */
         borg_note(format("# Buying '%s' from the home as a backup",
             borg_shops[borg.goal.shop].ware[borg.goal.ware].desc));
 
         /* Success */
-        return (true);
+        return true;
     }
     /* Step 7B -- Buy armour from the home (as a backup item) */
-    if (borg_cfg[BORG_USES_SWAPS] && borg_think_home_buy_swap_armour()) {
+    if (borg_uses_swaps() && borg_think_home_buy_swap_armour()) {
         /* Message */
         borg_note(format("# Buying '%s' from the home as a backup",
             borg_shops[borg.goal.shop].ware[borg.goal.ware].desc));
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* Failure */
-    return (false);
+    return false;
 }
 
 /*
@@ -279,9 +285,9 @@ bool borg_choose_shop(void)
  */
 bool borg_think_store(void)
 {
-    /* Hack -- prevent clock wrapping */
+    /* HACK: Prevent clock wrapping */
     if (borg_t >= 20000 && borg_t <= 20010) {
-        /* Clear Possible errors */
+        /* Clear Possible errors and leave the store */
         borg_keypress(ESCAPE);
         borg_keypress(ESCAPE);
         borg_keypress(ESCAPE);
@@ -290,6 +296,7 @@ bool borg_think_store(void)
         /* Re-examine inven and equip */
         borg_do_inven = true;
         borg_do_equip = true;
+        return true;
     }
 
     /* update all my equipment and swap items */
@@ -297,14 +304,10 @@ bool borg_think_store(void)
     borg_do_equip = true;
     borg_notice(true);
 
-#if 0
-    /* Stamp the shop with a time stamp */
-    borg_shops[shop_num].when = borg_t;
-#endif
 
     /* Wear "optimal" equipment */
     if (borg_best_stuff())
-        return (true);
+        return true;
 
     /* If using a digger, Wear "useful" equipment.
      * unless that digger is an artifact, then treat
@@ -312,7 +315,7 @@ bool borg_think_store(void)
      */
     if (borg_items[INVEN_WIELD].tval == TV_DIGGING
         && !borg_items[INVEN_WIELD].art_idx && borg_wear_stuff())
-        return (true);
+        return true;
 
     /* Choose a shop to visit.  Goal_shop indicates he is trying to sell
      * something somewhere. */
@@ -327,11 +330,11 @@ bool borg_think_store(void)
 
         /* Try to sell stuff */
         if (borg_think_shop_sell())
-            return (true);
+            return true;
 
         /* Try to buy stuff */
         if (borg_think_shop_buy())
-            return (true);
+            return true;
     }
 
     /* No shop */
@@ -344,7 +347,7 @@ bool borg_think_store(void)
     borg_keypress(ESCAPE);
 
     /* Done */
-    return (true);
+    return true;
 }
 
 #endif

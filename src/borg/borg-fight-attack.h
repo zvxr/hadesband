@@ -29,7 +29,7 @@
 
 /*
  * All of the various attacks or projections the borg can do.
- !FIX !TODO !AJG probably want to externalize this somehow.
+ !FIX !TODO probably want to externalize this somehow.
  */
 enum {
     BORG_ATTACK_MISSILE,
@@ -89,6 +89,8 @@ enum {
     BORG_ATTACK_AWAY_EVIL,
     BORG_ATTACK_TAP_UNLIFE,
     BORG_ATTACK_DRAIN_LIFE,
+    BORG_ATTACK_ELEC_STRIKE,
+    BORG_ATTACK_CURSE,
 };
 
 /*
@@ -248,7 +250,7 @@ enum {
     BF_DRAGON_POWER,
 
     BF_ACT_FIRE_BOLT,
-    BF_ACT_FIRE_BOLT72,
+    BF_ACT_FIRE_BALL72,
     BF_ACT_FIRE_BALL,
     BF_ACT_COLD_BOLT,
     BF_ACT_COLD_BALL50,
@@ -314,6 +316,7 @@ enum {
 };
 
 extern int successful_target;
+extern int target_closest;
 
 /*
  * Maintain a set of special grids used for Teleport Other

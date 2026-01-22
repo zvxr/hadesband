@@ -43,7 +43,7 @@ The Player
 
 The player is a global object containing information about, well, the player.
 All the information in the player is level-independent. This structure contains
-stats, any current effects, hunger status, sex/race/class, the player's
+stats, any current effects, hunger status, race/class, the player's
 inventory, and a grab-bag of other information. Although there is a global
 player object, many functions instead take a player object explicitly to make
 them easier to test.
@@ -97,12 +97,25 @@ the state of the game changed.
 The command queue
 -----------------
 
-TBD
+The command queue is a first-in, first-out queue that holds and processes commands
+from the player. It is implemented in ``cmd-core.c``. The UI frontends add commands
+to this queue, which are then read and processed by the main game loop in
+`game-world.c - process_player()`_. This decouples the game engine from the user
+interface, making it easier to support different frontends, :ref:`keymaps <keymaps>`,
+:ref:`repeat actions <command-counts>`, and automate certain behaviors (e.g., run
+or rest to full). The command queue stops processing when the player is interrupted
+by monsters or other significant events via the ``disturb()`` function, ensuring the
+player always has a chance to respond to danger.
 
 Events
 ------
 
-TBD
+Events notify the UI and message systems about changes in game state. The event
+system, in ``game-event.c`` and ``game-event.h``, lets the UI and other parts of the
+program register handlers for different event types and react when those events occur.
+This keeps the display and messages in sync with the game, and helps separate game
+logic from the UI. Some direct UI and sound calls are still used alongside the event
+system. The intent is to expand the event system in the future.
 
 Files
 =====
@@ -121,7 +134,16 @@ arrays (see `The Static Data`_).
 
 Pref Files
 ----------
-TBD
+
+Pref files (preference files) are simple text files used to customize the user
+interface and gameplay experience. Pref files are loaded at startup from both
+system and user locations, with user files overriding defaults. The loading of
+individual pref files is handled in ``ui-prefs.c``. The specific order in
+which global and character-specific files are applied is determined by the
+sequence of ``process_pref_file()`` calls in various parts of the code, such as
+``ui-init.c`` and ``ui-display.c``. For details on what can be customized, file
+locations on different platforms, and how to edit or create pref files, see
+:ref:`User Pref Files <user-pref-files>`.
 
 Savefiles
 ----------
@@ -207,7 +229,7 @@ or one step of the simulator. During each turn:
 * End-of-turn housekeeping is done
 
 mon-move.c - process_monsters()
-*********************************
+*******************************
 
 In Angband, creatures act in order of "energy", which roughly determines how
 many actions they can take per step through the simulation. The
@@ -311,8 +333,24 @@ using cavern_chunk() or labyrinth_chunk(), respectively, in gen-cave.c.
 Monster AI
 ----------
 
-TBD
+Monster AI determines how monsters act each turn. The logic is primarily
+implemented in ``mon-move.c``, ``mon-attack.c``, and ``cave-map.c``.
+`mon-move.c - process_monsters()`_ is called in the main game loop.
 
+On its turn, a monster will:
+
+1. Regenerate HP and recover from timed effects
+2. Attempt to multiply (if possible)
+3. Attempt to cast a spell or use a ranged attack
+4. Try to move towards the player
+
+Pathfinding uses a "flow" system implemented in ``cave-map.c``. Each grid
+stores a ``noise`` value (distance from the player) and a ``scent`` value
+(recentness of information). Monsters follow the lowest noise value towards
+the player, using scent to break ties. One set of flow information is used for
+all monsters. It is efficient but means that monsters that can't open or bash
+down doors, or otherwise deal with obstacles, will find it impossible to flow
+around them and find a different way to the player.
 
 Stats
 -----

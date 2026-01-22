@@ -43,13 +43,13 @@
  * movement turns, from a player's grid to other grids in the cave.
  */
 struct pfdistances {
-	/* This is height * width entries to store the distances. */
+	/** This is height * width entries to store the distances. */
 	int *buffer;
-	/* This is height pointers to the start of each row in buffer. */
+	/** This is height pointers to the start of each row in buffer. */
 	int **rows;
-	/* This is the grid from which the distances are computed. */
+	/** This is the grid from which the distances are computed. */
 	struct loc start;
-	/*
+	/**
 	 * These are the dimensions of the arrays, copied from the player's
 	 * view of the cave.
 	 */
@@ -235,7 +235,13 @@ static int compute_rubble_penalty(struct player *p)
 		}
 		p->body.slots[weapon_slot].obj = best_digger;
 		memcpy(&local_state, &p->state, sizeof(local_state));
-		calc_bonuses(p, &local_state, false, true);
+		/*
+		 * Avoid side effects from using update set to false with
+		 * calc_bonuses().
+		 */
+		local_state.stat_ind[STAT_STR] = 0;
+		local_state.stat_ind[STAT_DEX] = 0;
+		calc_bonuses(p, &local_state, false, false);
 		used_state = &local_state;
 	} else {
 		swapped_digger = false;
@@ -247,7 +253,6 @@ static int compute_rubble_penalty(struct player *p)
 			best_digger->number = num_digger;
 		}
 		p->body.slots[weapon_slot].obj = current_weapon;
-		calc_bonuses(p, &local_state, false, true);
 	}
 	if (digging_chances[DIGGING_RUBBLE] <= 0) {
 		/* Can not dig through rubble at all. */
@@ -1412,20 +1417,24 @@ int pathfind_direction_to(struct loc from, struct loc to)
  * grids on a given side is a wall, then that side is considered to
  * be "closed".  Both sides enclosed yields a hallway.
  *
+ * \verbatim
  *    LL                     @L
  *    @x      (normal)       RxL   (diagonal)
  *    RR      (east)          R    (south-east)
+ * \endverbatim
  *
  * In the diagram below, in which the player is running east along a
  * hallway, he will stop as indicated before attempting to enter the
  * intersection (marked 'x').  Starting a new run in any direction
  * will begin a new hallway run.
  *
- * #.#
+ * \verbatim
+ *  #.#
  * ##.##
  * o@x..
  * ##.##
- * #.#
+ *  #.#
+ * \endverbatim
  *
  * Note that a minor hack is inserted to make the angled corridor
  * entry (with one side blocked near and the other side blocked
@@ -1439,11 +1448,13 @@ int pathfind_direction_to(struct loc from, struct loc to)
  * Continuing the run to the south-east would result in a long run
  * stopping at the end of the hallway (marked '2').
  *
+ * \verbatim
  * ##################
  * o@x       1
  * ########### ######
  * #2          #
  * #############
+ * \endverbatim
  *
  * After each step, the surroundings are examined to determine if
  * the running should stop, and to determine if the running should
@@ -1455,9 +1466,11 @@ int pathfind_direction_to(struct loc from, struct loc to)
  * or five new grids (for straight and diagonal moves respectively)
  * to which you were not previously adjacent (marked as '!').
  *
+ * \verbatim
  *   ...!              ...
  *   .o@!  (normal)    .o.!  (diagonal)
  *   ...!  (east)      ..@!  (south east)
+ * \endverbatim
  *                      !!!
  *
  * If any of the newly adjacent grids are "interesting" (monsters,
@@ -1479,9 +1492,11 @@ int pathfind_direction_to(struct loc from, struct loc to)
  * to be open, then running stops.  Otherwise, as shown below, the
  * player has probably reached a "corner".
  *
+ * \verbatim
  *    ###             o##
  *    o@x  (normal)   #@!   (diagonal)
  *    ##!  (east)     ##x   (south east)
+ * \endverbatim
  *
  * In this situation, there will be two newly adjacent open grids,
  * one touching the player on a diagonal, and one directly adjacent.
@@ -1489,9 +1504,11 @@ int pathfind_direction_to(struct loc from, struct loc to)
  * We assign "option" to the straight-on grid, and "option2" to the
  * diagonal grid.
  *
+ * \verbatim
  *    ###s
  *    o@x?   (may be incorrect diagram!)
  *    ##!?
+ * \endverbatim
  *
  * If both "option" grids are closed, then there is no reason to enter
  * the corner, and so we can cut the corner, by moving into the other
@@ -1500,10 +1517,12 @@ int pathfind_direction_to(struct loc from, struct loc to)
  * Below, we avoid the obvious grid (marked 'x') and cut the corner
  * instead (marked 'n').
  *
+ * \verbatim
  *    ###:               o##
  *    o@x#   (normal)    #@n    (maybe?)
  *    ##n#   (east)      ##x#
  *                       ####
+ * \endverbatim
  *
  * If one of the "option" grids is open, then we may have a choice, so
  * we check to see whether it is a potential corner or an intersection
@@ -1512,9 +1531,11 @@ int pathfind_direction_to(struct loc from, struct loc to)
  * and we enter it if requested.  Otherwise, we stop, because it is
  * not a corner, and is instead an intersection or a room entrance.
  *
+ * \verbatim
  *    ###
  *    o@x
  *    ##!#
+ * \endverbatim
  *
  * I do not think this documentation is correct.
  */
@@ -1528,21 +1549,21 @@ static bool run_break_right;	/* Looking for a break (right) */
 static bool run_break_left;	/* Looking for a break (left) */
 
 /**
- * Hack -- allow quick "cycling" through the legal directions
+ * Allow quick "cycling" through the legal directions
  */
 static const uint8_t cycle[] =
 { 1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1 };
 
 
 /**
- * Hack -- map each direction into the "middle" of the "cycle[]" array
+ * Map each direction into the "middle" of the "cycle[]" array
  */
 static const uint8_t chome[] =
 { 0, 8, 9, 10, 7, 0, 11, 6, 5, 4 };
 
 
 /**
- * Hack -- Check for a "known wall" (see below)
+ * Check for a "known wall" (see below)
  */
 static bool see_wall(int dir, struct loc grid)
 {
@@ -1575,10 +1596,12 @@ static bool see_wall(int dir, struct loc grid)
  * we seem to be in a corridor, then force a turn into the side
  * corridor, must be moving straight into a corridor here. (?)
  *
+ * \verbatim
  * Diagonal Corridor    Blunt Corridor (?)
  *       # #                  #
  *       #x#                 @x#
  *       @p.                  p
+ * \endverbatim
  */
 static void run_init(int dir)
 {
@@ -1782,7 +1805,7 @@ static bool run_test(const struct player *p)
 
 	/* Looking for open area */
 	if (run_open_area) {
-		/* Hack -- look again */
+		/* Look again */
 		for (i = -max; i < 0; i++) {
 			new_dir = cycle[chome[prev_dir] + i];
 			grid = loc_sum(p->grid, ddgrid[new_dir]);
@@ -1801,7 +1824,7 @@ static bool run_test(const struct player *p)
 			}
 		}
 
-		/* Hack -- look again */
+		/* Look again */
 		for (i = max; i > 0; i--) {
 			new_dir = cycle[chome[prev_dir] + i];
 			grid = loc_sum(p->grid, ddgrid[new_dir]);
@@ -1833,7 +1856,7 @@ static bool run_test(const struct player *p)
 			/* Primary option */
 			run_cur_dir = option;
 
-			/* Hack -- allow curving */
+			/* Allow curving */
 			run_old_dir = option2;
 		}
 	}
@@ -1862,7 +1885,7 @@ void run_step(int dir)
 		/* Initialize */
 		run_init(dir);
 
-		/* Hack -- Set the run counter if no count given */
+		/* Set the run counter if no count given */
 		if (player->upkeep->running == 0)
 			player->upkeep->running = 9999;
 

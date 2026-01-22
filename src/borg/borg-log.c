@@ -54,7 +54,7 @@ void borg_log_death(void)
         return;
 
     /* Build path to location of the definition file */
-    path_build(buf, 1024, ANGBAND_DIR_USER, "borg-log.txt");
+    path_build(buf, 1024, ANGBAND_DIR_ARCHIVE, "borg-log.txt");
 
     /* Append to the file */
     borg_log_file = file_open(buf, MODE_APPEND, FTYPE_TEXT);
@@ -99,7 +99,7 @@ void borg_log_death_data(void)
     if (!borg_cfg[BORG_SAVE_DEATH])
         return;
 
-    path_build(buf, 1024, ANGBAND_DIR_USER, "borg.dat");
+    path_build(buf, 1024, ANGBAND_DIR_ARCHIVE, "borg.dat");
 
     /* Append to the file */
     borg_log_file = file_open(buf, MODE_APPEND, FTYPE_TEXT);
@@ -138,7 +138,8 @@ static char borg_index_to_label(int i)
  * Write a file with the current dungeon info (Borg)
  * and his equipment, inventory and home (Player)
  * and his swap armor, weapon (Borg)
- * From Dennis Van Es,  With an addition of last messages from me (APW)
+ * NOTE: this uses internal game data.  This is okay since we are just dumping 
+ * the information rather than using it.
  */
 void borg_write_map(bool ask)
 {
@@ -184,7 +185,7 @@ void borg_write_map(bool ask)
     buf[i++] = 'p';
     buf[i++] = '\0';
 
-    path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
+    path_build(buf2, 1024, ANGBAND_DIR_ARCHIVE, buf);
 
     /* XXX XXX XXX Get the name and open the map file */
     if (ask && get_string("Borg map File: ", buf2, 70)) {
@@ -276,7 +277,7 @@ void borg_write_map(bool ask)
 
         /* Note */
         file_putf(borg_map_file, "monster '%s' (%d) at (%d,%d) speed:%d \n",
-            (r_info[kill->r_idx].name), kill->r_idx, kill->pos.y, kill->pos.x,
+            borg_race_name(kill->r_idx), kill->r_idx, kill->pos.y, kill->pos.x,
             kill->speed);
     }
 
@@ -307,7 +308,7 @@ void borg_write_map(bool ask)
     file_putf(borg_map_file, "\n\n  [Character Quiver]\n\n");
     for (i = 0; i < z_info->quiver_size; i++) {
         struct object *obj = player->upkeep->quiver[i];
-        object_desc(o_name, sizeof(o_name), obj, ODESC_FULL, player);
+        object_desc(o_name, sizeof(o_name), obj, ODESC_PREFIX | ODESC_FULL, player);
         file_putf(borg_map_file, "%c) %s\n", borg_index_to_label(i), o_name);
     }
 
@@ -318,8 +319,15 @@ void borg_write_map(bool ask)
     for (i = 0; i < z_info->pack_size; i++) {
         item = &borg_items[i];
 
-        file_putf(
-            borg_map_file, "%c) %s\n", borg_index_to_label(i), item->desc);
+        if (item->iqty) {
+            if (item->iqty > 1) {
+                file_putf(borg_map_file, "%c) %d %s\n", borg_index_to_label(i),
+                    item->iqty, item->desc);
+            } else {
+                file_putf(borg_map_file, "%c) %s\n", borg_index_to_label(i),
+                    item->desc);
+            }
+        }
     }
     file_putf(borg_map_file, "\n\n");
 
@@ -329,7 +337,7 @@ void borg_write_map(bool ask)
         = mem_zalloc(sizeof(struct object *) * z_info->store_inven_max);
     store_stock_list(&stores[BORG_HOME], list, z_info->store_inven_max);
     for (i = 0; i < z_info->store_inven_max / 2; i++) {
-        object_desc(o_name, sizeof(o_name), list[i], ODESC_FULL, player);
+        object_desc(o_name, sizeof(o_name), list[i], ODESC_PREFIX | ODESC_FULL, player);
         file_putf(
             borg_map_file, "%c) %s\n", all_letters_nohjkl[i % 12], o_name);
     }
@@ -338,7 +346,7 @@ void borg_write_map(bool ask)
     /* Dump the Home (page 2) */
     file_putf(borg_map_file, "  [Home Inventory (page 2)]\n\n");
     for (i = z_info->store_inven_max / 2; i < z_info->store_inven_max; i++) {
-        object_desc(o_name, sizeof(o_name), list[i], ODESC_FULL, player);
+        object_desc(o_name, sizeof(o_name), list[i], ODESC_PREFIX | ODESC_FULL, player);
         file_putf(
             borg_map_file, "%c) %s\n", all_letters_nohjkl[i % 12], o_name);
     }
@@ -363,7 +371,7 @@ void borg_write_map(bool ask)
         }
         file_putf(borg_map_file, "\n\n");
     }
-    file_putf(borg_map_file, "   [Player State at Death] \n\n");
+    file_putf(borg_map_file, "  [Player State at Death] \n\n");
 
     /* Dump the player state */
     file_putf(borg_map_file, "Current speed: %d. \n", borg.trait[BI_SPEED]);
@@ -393,7 +401,7 @@ void borg_write_map(bool ask)
         file_putf(borg_map_file, "You aggravate monsters.\n");
     }
     if (player->timed[TMD_BLESSED]) {
-        file_putf(borg_map_file, "You feel rightous.\n");
+        file_putf(borg_map_file, "You feel righteous.\n");
     }
     if (player->timed[TMD_HERO]) {
         file_putf(borg_map_file, "You feel heroic.\n");
@@ -435,15 +443,16 @@ void borg_write_map(bool ask)
     file_putf(borg_map_file, "\n\n");
 
     /* Dump the Time Variables */
-    file_putf(borg_map_file, "Time on this panel; %d\n", borg.time_this_panel);
-    file_putf(borg_map_file, "Time on this level; %d\n", borg_t - borg_began);
-    file_putf(borg_map_file, "Time since left town; %d\n",
-        borg_time_town + (borg_t - borg_began));
-    file_putf(borg_map_file, "Food in town; %d\n", borg_food_onsale);
-    file_putf(borg_map_file, "Fuel in town; %d\n", borg_fuel_onsale);
-    file_putf(borg_map_file, "Borg_no_retreat; %d\n", borg.no_retreat);
-    file_putf(borg_map_file, "Breeder_level; %d\n", breeder_level);
-    file_putf(borg_map_file, "Unique_on_level; %d\n", unique_on_level);
+    file_putf(borg_map_file, "Time on this panel: %d\n", borg.time_this_panel);
+    file_putf(borg_map_file, "Time on this level: %ld\n",
+        (long int)(borg_t - borg_began));
+    file_putf(borg_map_file, "Time since left town: %ld\n",
+        (long int)(borg_time_town + (borg_t - borg_began)));
+    file_putf(borg_map_file, "Food in town: %d\n", borg_food_onsale);
+    file_putf(borg_map_file, "Fuel in town: %d\n", borg_fuel_onsale);
+    file_putf(borg_map_file, "Borg_no_retreat: %d\n", borg.no_retreat);
+    file_putf(borg_map_file, "Breeder_level: %d\n", breeder_level);
+    file_putf(borg_map_file, "Unique_on_level: %d\n", unique_on_level);
     if ((turn % (10L * z_info->day_length)) < ((10L * z_info->day_length) / 2))
         file_putf(borg_map_file, "It is daytime in town.\n");
     else
@@ -451,28 +460,26 @@ void borg_write_map(bool ask)
     file_putf(borg_map_file, "\n\n");
 
     file_putf(
-        borg_map_file, "borg_uses_swaps; %d\n", borg_cfg[BORG_USES_SWAPS]);
-    file_putf(borg_map_file, "borg_worships_damage; %d\n",
+        borg_map_file, "borg_uses_swaps: %d\n", borg_cfg[BORG_USES_SWAPS]);
+    file_putf(borg_map_file, "borg_worships_damage: %d\n",
         borg_cfg[BORG_WORSHIPS_DAMAGE]);
-    file_putf(borg_map_file, "borg_worships_speed; %d\n",
+    file_putf(borg_map_file, "borg_worships_speed: %d\n",
         borg_cfg[BORG_WORSHIPS_SPEED]);
     file_putf(
-        borg_map_file, "borg_worships_hp; %d\n", borg_cfg[BORG_WORSHIPS_HP]);
-    file_putf(borg_map_file, "borg_worships_mana; %d\n",
+        borg_map_file, "borg_worships_hp: %d\n", borg_cfg[BORG_WORSHIPS_HP]);
+    file_putf(borg_map_file, "borg_worships_mana: %d\n",
         borg_cfg[BORG_WORSHIPS_MANA]);
     file_putf(
-        borg_map_file, "borg_worships_ac; %d\n", borg_cfg[BORG_WORSHIPS_AC]);
-    file_putf(borg_map_file, "borg_worships_gold; %d\n",
+        borg_map_file, "borg_worships_ac: %d\n", borg_cfg[BORG_WORSHIPS_AC]);
+    file_putf(borg_map_file, "borg_worships_gold: %d\n",
         borg_cfg[BORG_WORSHIPS_GOLD]);
     file_putf(
-        borg_map_file, "borg_plays_risky; %d\n", borg_cfg[BORG_PLAYS_RISKY]);
-    file_putf(borg_map_file, "borg_slow_optimizehome; %d\n\n",
-        borg_cfg[BORG_SLOW_OPTIMIZEHOME]);
-    file_putf(borg_map_file, "prepping for big fight; %d\n\n", borg.trait[BI_PREP_BIG_FIGHT]);
+        borg_map_file, "borg_plays_risky: %d\n", borg_cfg[BORG_PLAYS_RISKY]);
+    file_putf(borg_map_file, "prepping for big fight: %d\n\n", borg.trait[BI_PREP_BIG_FIGHT]);
     file_putf(borg_map_file, "\n\n");
 
     /* Dump the spells */
-    if (player->class->magic.total_spells) {
+    if (borg_can_cast()) {
         file_putf(borg_map_file, "\n\n   [ Spells ] \n\n");
         file_putf(
             borg_map_file, "Name                           Legal Times cast\n");
@@ -488,8 +495,8 @@ void borg_write_map(bool ask)
                 file_putf(borg_map_file, "%-30s   %s   %ld   fail:%d \n",
                     as->name, legal, (long)as->times, failpercent);
             }
-            file_putf(borg_map_file, "\n");
         }
+        file_putf(borg_map_file, "\n");
     }
 
     /* Dump the borg.trait[] information */
@@ -570,7 +577,7 @@ void borg_write_map(bool ask)
     file_putf(borg_map_file, "\n\n");
 
 
-    /* Hack -- Build the artifact name */
+    /* Build the artifact name */
     file_putf(borg_map_file, "   [Artifact Info] \n\n");
 
     /* Scan the artifacts */
@@ -604,7 +611,7 @@ void borg_write_map(bool ask)
             object_desc_spoil(o_name, sizeof(o_name), i_ptr, false, 0);
         }
 
-        /* Hack -- Build the artifact name */
+        /* Build the artifact name */
         file_putf(borg_map_file, "The %s\n", o_name);
     }
 
@@ -640,7 +647,7 @@ void borg_write_map(bool ask)
     borg_sort(who, &why, n);
 
 
-    /* Hack -- Build the artifact name */
+    /* Build the unique name */
     file_putf(borg_map_file, "   [Unique Info] \n\n");
 
     /* Print the monsters */
@@ -707,8 +714,8 @@ void borg_display_item(struct object *item2, int n)
     /* Describe fully */
     prt(item->desc, 2, j);
 
-    prt(format("kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d",
-            item->kind, item->level, item->tval, item->sval),
+    prt(format("kind = %-5lu  level = %-4d  tval = %-5d  sval = %-5d",
+            (unsigned long)item->kind, item->level, item->tval, item->sval),
         4, j);
 
     prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
@@ -764,8 +771,8 @@ void borg_display_item(struct object *item2, int n)
         borg_prt_binary(f[2], 19, j + 32);
 }
 
-/* DVE's function for displaying the status of various info */
-/* Display what the borg is thinking DvE*/
+/* Function for displaying the status of various info */
+/* Display what the borg is thinking */
 void borg_status(void)
 {
     int j;
@@ -1082,12 +1089,12 @@ void borg_status(void)
             Term_putstr(60, 10, -1, COLOUR_WHITE, "Time:");
 
             Term_putstr(54, 11, -1, COLOUR_SLATE, "This Level         ");
-            Term_putstr(
-                65, 11, -1, COLOUR_WHITE, format("%d", borg_t - borg_began));
+            Term_putstr(65, 11, -1, COLOUR_WHITE,
+                format("%ld", (long int)(borg_t - borg_began)));
 
             Term_putstr(54, 12, -1, COLOUR_SLATE, "Since Town         ");
             Term_putstr(65, 12, -1, COLOUR_WHITE,
-                format("%d", borg_time_town + (borg_t - borg_began)));
+                format("%ld", (long int)(borg_time_town + (borg_t - borg_began))));
 
             Term_putstr(54, 13, -1, COLOUR_SLATE, "This Panel         ");
             Term_putstr(

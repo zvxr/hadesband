@@ -148,7 +148,7 @@ static bool option_toggle_handle(struct menu *m, const ui_event *event,
 	int page = option_type(oid);
 
 	if (event->type == EVT_SELECT) {
-		/* Hack -- birth options can not be toggled after birth */
+		/* Birth options can not be toggled after birth */
 		/* At birth, m->flags == MN_DBL_TAP. */
 		/* After birth, m->flags == MN_NO_TAGS */
 		if (!((page == OP_BIRTH) && (m->flags == MN_NO_TAGS))) {
@@ -353,10 +353,7 @@ static void option_toggle_menu(const char *name, int page)
 	m->title = name;
 
 	/* Find the number of valid entries */
-	for (i = 0; i < OPT_PAGE_PER; i++) {
-		if (option_page[page][i] == OPT_none)
-			break;
-	}
+	for (i = 0; option_page[page][i] != OPT_none; ++i) {}
 
 	/* Set the data to the player's options */
 	menu_setpriv(m, OPT_MAX, &player->opts.opt);
@@ -490,7 +487,7 @@ static void do_cmd_options_win(const char *name, int row)
 			/* Toggle */
 			else if (ke.key.code == '5' || ke.key.code == 't' ||
 					ke.key.code == KC_ENTER) {
-				/* Hack -- ignore the main window */
+				/* Ignore the main window */
 				if (x == 0)
 					bell();
 
@@ -559,7 +556,7 @@ static struct keypress keymap_get_trigger(void)
 	/* Convert to ascii */
 	keypress_to_text(tmp, sizeof(tmp), buf, false);
 
-	/* Hack -- display the trigger */
+	/* Display the trigger */
 	Term_addstr(-1, COLOUR_WHITE, tmp);
 
 	/* Flush */
@@ -882,7 +879,7 @@ static void colors_modify(const char *title, int row)
 	/* Prompt */
 	prt("Command: Modify colors", 8, 0);
 
-	/* Hack -- query until done */
+	/* Query until done */
 	while (1) {
 		const char *name;
 		char index;
@@ -970,10 +967,10 @@ static void colors_modify(const char *title, int row)
 			angband_color_table[a][3] =
 				(uint8_t)(angband_color_table[a][3] - 1);
 
-		/* Hack -- react to changes */
+		/* React to changes */
 		Term_xtra(TERM_XTRA_REACT, 0);
 
-		/* Hack -- redraw */
+		/* Redraw */
 		Term_redraw();
 	}
 }

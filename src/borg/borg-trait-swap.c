@@ -167,6 +167,7 @@ void borg_notice_weapon_swap(void)
     borg_item *item;
 
     weapon_swap = 0;
+    weapon_swap_value = -1;
 
     /*** Process the inventory ***/
     for (i = 0; i < z_info->pack_size; i++) {
@@ -181,18 +182,22 @@ void borg_notice_weapon_swap(void)
         if (!item->iqty)
             continue;
 
-        /* Hack -- skip un-aware items */
-        if (!item->kind)
+        /* Skip un-aware items */
+        if (!item->aware)
             continue;
 
         /* Skip non-wearable items */
-        if (borg_slot(item->tval, item->sval) == -1)
+        if (borg_wield_slot(item) == -1)
             continue;
 
         /* Don't carry swaps until dlevel 50.  They are heavy.
            Unless the item is a digger, then carry it */
         if (borg.trait[BI_MAXDEPTH] < 50 && item->tval != TV_DIGGING)
             continue;
+
+        /* borg option to not use swaps (again, except diggers) */
+        if (!borg_uses_swaps() && item->tval != TV_DIGGING)
+            return;
 
         /* Clear all the swap weapon flags as I look at each one. */
         weapon_swap_digger       = 0;
@@ -257,7 +262,7 @@ void borg_notice_weapon_swap(void)
                 /* Don't notice digger if we can turn stone to mud,
                  * or I am using one.
                  */
-                /* Hack -- ignore worthless ones (including cursed) */
+                /* Ignore worthless ones (including cursed) */
                 if (item->value <= 0)
                     break;
                 if (item->cursed)
@@ -750,9 +755,10 @@ void borg_notice_armour_swap(void)
     borg_item *item;
 
     armour_swap = 0;
+    armour_swap_value = -1;
 
     /* borg option to not use them */
-    if (!borg_cfg[BORG_USES_SWAPS])
+    if (!borg_uses_swaps())
         return;
 
     /*** Process the inventory ***/
@@ -768,12 +774,12 @@ void borg_notice_armour_swap(void)
         if (!item->iqty)
             continue;
 
-        /* Hack -- skip un-aware items */
-        if (!item->kind)
+        /* Skip un-aware items */
+        if (!item->aware)
             continue;
 
         /* Skip non-wearable items */
-        if (borg_slot(item->tval, item->sval) == -1)
+        if (borg_wield_slot(item) == -1)
             continue;
 
         /* Dont carry swaps until dlevel 50.  They are heavy */
@@ -1277,7 +1283,7 @@ void borg_notice_armour_swap(void)
     if (item->tval >= TV_LIGHT)
         return;
 
-    /* Hack -- enchant the swap equipment (armor) */
+    /* Enchant the swap equipment (armor) */
     /* Note need for enchantment */
     if (borg_spell_legal_fail(ENCHANT_ARMOUR, 65)
         || borg.trait[BI_AENCH_SARM] >= 1) {

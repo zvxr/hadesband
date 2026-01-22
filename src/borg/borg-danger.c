@@ -25,6 +25,7 @@
 #include "../player-calcs.h"
 
 #include "borg-cave-util.h"
+#include "borg-cave-view.h"
 #include "borg-cave.h"
 #include "borg-fight-attack.h"
 #include "borg-flow-glyph.h"
@@ -35,12 +36,12 @@
 #include "borg.h"
 
 /*
- * Hack -- extra fear per "region"
+ * Extra fear per "region"
  */
 uint16_t borg_fear_region[(AUTO_MAX_Y / 11) + 1][(AUTO_MAX_X / 11) + 1];
 
 /*
- * Hack -- extra fear per "region" induced from extra monsters.
+ * Extra fear per "region" induced from extra monsters.
  */
 uint16_t borg_fear_monsters[AUTO_MAX_Y + 1][AUTO_MAX_X + 1];
 
@@ -76,17 +77,17 @@ static int borg_danger_physical(int i, bool full_damage)
         ac += 50;
 
     /*  PFE gives a protection.  */
-    /* Hack -- Apply PROTECTION_FROM_EVIL */
+    /* Apply PROTECTION_FROM_EVIL */
     if ((borg.temp.prot_from_evil) && (rf_has(r_ptr->flags, RF_EVIL))
         && ((borg.trait[BI_CLEVEL]) >= r_ptr->level)) {
         pfe = 1;
     }
 
-    /* Mega-Hack -- unknown monsters */
+    /* Mega-Hack -- unknown monsters (or "player ghosts" */
     if (kill->r_idx == 0)
-        return (1000);
-    if (kill->r_idx >= z_info->r_max)
-        return (1000);
+        return 1000;
+    if (kill->r_idx >= z_info->r_max - 1)
+        return 1000;
 
     /* Analyze each physical attack */
     for (k = 0; k < z_info->mon_blows_max; k++) {
@@ -112,9 +113,10 @@ static int borg_danger_physical(int i, bool full_damage)
             if ((d_side < 3) && (z > d_dice * d_side)) {
                 n += 200;
             }
-            /* fudge- only mystics kick and they tend to KO.  Avoid close */
-            /* combat like the plague */
-            if (method->stun) {
+            /* fudge- some baddies kick and they tend to KO.  Avoid close */
+            /* combat like the plague.  10d2 is common but take any very low */
+            /* sides and high dice count as dangerous */
+            if (d_side < 3 && d_dice > 5) {
                 n += 400;
             }
             power = 60;
@@ -162,7 +164,7 @@ static int borg_danger_physical(int i, bool full_damage)
             if (borg.trait[BI_CLEVEL] < 5)
                 z += 50;
             power = 5;
-            if (100 <= adj_dex_safe[borg.stat_ind[STAT_DEX]]
+            if (100 <= adj_dex_safe[borg.trait[BI_DEX_INDEX]]
                            + borg.trait[BI_CLEVEL])
                 break;
             if (borg.trait[BI_GOLD] < 100)
@@ -178,7 +180,7 @@ static int borg_danger_physical(int i, bool full_damage)
         case MONBLOW_EAT_ITEM:
             z     = (d_dice * d_side);
             power = 5;
-            if (100 <= adj_dex_safe[borg.stat_ind[STAT_DEX]]
+            if (100 <= adj_dex_safe[borg.trait[BI_DEX_INDEX]]
                            + borg.trait[BI_CLEVEL])
                 break;
             /* Add fear for the effect */
@@ -201,7 +203,8 @@ static int borg_danger_physical(int i, bool full_damage)
         case MONBLOW_EAT_LIGHT:
             z     = (d_dice * d_side);
             power = 5;
-            if (borg.trait[BI_CURLITE] == 0)
+            if (!borg_items[INVEN_LIGHT].timeout
+                || of_has(borg_items[INVEN_LIGHT].flags, OF_NO_FUEL))
                 break;
             if (borg.trait[BI_AFUEL] > 5)
                 break;
@@ -321,7 +324,7 @@ static int borg_danger_physical(int i, bool full_damage)
             z = (d_dice * d_side);
             if (borg.trait[BI_SSTR])
                 break;
-            if (borg.stat_cur[STAT_STR] <= 3)
+            if (borg.trait[BI_CSTR] <= 3)
                 break;
             if (borg_spell_legal(RESTORATION))
                 break;
@@ -331,7 +334,7 @@ static int borg_danger_physical(int i, bool full_damage)
                 break;
             z += 150;
             /* extra scary to have str drain below 10 */
-            if (borg.stat_cur[STAT_STR] < 10)
+            if (borg.trait[BI_CSTR] < 10)
                 z += 100;
             if ((pfe) && !borg_attacking)
                 z /= 2;
@@ -341,7 +344,7 @@ static int borg_danger_physical(int i, bool full_damage)
             z = (d_dice * d_side);
             if (borg.trait[BI_SDEX])
                 break;
-            if (borg.stat_cur[STAT_DEX] <= 3)
+            if (borg.trait[BI_CDEX] <= 3)
                 break;
             if (borg_spell_legal(RESTORATION))
                 break;
@@ -349,7 +352,7 @@ static int borg_danger_physical(int i, bool full_damage)
                 break;
             z += 150;
             /* extra scary to have drain below 10 */
-            if (borg.stat_cur[STAT_DEX] < 10)
+            if (borg.trait[BI_CDEX] < 10)
                 z += 100;
             if ((pfe) && !borg_attacking)
                 z /= 2;
@@ -359,7 +362,7 @@ static int borg_danger_physical(int i, bool full_damage)
             z = (d_dice * d_side);
             if (borg.trait[BI_SCON])
                 break;
-            if (borg.stat_cur[STAT_CON] <= 3)
+            if (borg.trait[BI_CCON] <= 3)
                 break;
             if (borg_spell_legal(RESTORATION))
                 break;
@@ -370,7 +373,7 @@ static int borg_danger_physical(int i, bool full_damage)
             /* Add fear for the effect */
             z += 150;
             /* extra scary to have con drain below 8 */
-            if (borg.stat_cur[STAT_STR] < 8)
+            if (borg.trait[BI_CSTR] < 8)
                 z += 100;
             if ((pfe) && !borg_attacking)
                 z /= 2;
@@ -380,7 +383,7 @@ static int borg_danger_physical(int i, bool full_damage)
             z = (d_dice * d_side);
             if (borg.trait[BI_SINT])
                 break;
-            if (borg.stat_cur[STAT_INT] <= 3)
+            if (borg.trait[BI_CINT] <= 3)
                 break;
             if (borg_spell_legal(RESTORATION))
                 break;
@@ -400,7 +403,7 @@ static int borg_danger_physical(int i, bool full_damage)
             z = (d_dice * d_side);
             if (borg.trait[BI_SWIS])
                 break;
-            if (borg.stat_cur[STAT_WIS] <= 3)
+            if (borg.trait[BI_CWIS] <= 3)
                 break;
             if (borg_spell_legal(RESTORATION))
                 break;
@@ -417,7 +420,7 @@ static int borg_danger_physical(int i, bool full_damage)
         case MONBLOW_LOSE_ALL:
             z     = (d_dice * d_side);
             power = 2;
-            /* only morgoth. HACK to make it easier to fight him */
+            /* only morgoth to make it easier to fight him */
             break;
 
         case MONBLOW_SHATTER:
@@ -537,7 +540,7 @@ static int borg_danger_physical(int i, bool full_damage)
     }
 
     /* Danger */
-    return (n);
+    return n;
 }
 
 /*
@@ -551,7 +554,7 @@ static int borg_danger_physical(int i, bool full_damage)
  * We reduce the danger if the monster is immobile or not LOS
  */
 static int borg_danger_spell(
-    int i, int y, int x, int d, bool average, bool full_damage)
+    int i, int y, int x, int d, bool average)
 {
     int q, n = 0, pfe = 0, glyph = 0, glyph_check = 0;
 
@@ -568,7 +571,7 @@ static int borg_danger_spell(
     struct monster_race *r_ptr = &r_info[kill->r_idx];
 
     /*  PFE gives a protection.  */
-    /* Hack -- Apply PROTECTION_FROM_EVIL */
+    /* Apply PROTECTION_FROM_EVIL */
     if ((borg.temp.prot_from_evil) && (rf_has(r_ptr->flags, RF_EVIL))
         && ((borg.trait[BI_CLEVEL]) >= r_ptr->level)) {
         pfe = 1;
@@ -592,15 +595,15 @@ static int borg_danger_spell(
         }
     }
 
-    /* Mega-Hack -- unknown monsters */
+    /* Mega-Hack -- unknown monsters (or "player ghosts") */
     if (kill->r_idx == 0)
-        return (1000);
-    if (kill->r_idx >= z_info->r_max)
-        return (1000);
+        return 1000;
+    if (kill->r_idx >= z_info->r_max - 1)
+        return 1000;
 
     /* Paranoia -- Nothing to cast */
     if (!kill->ranged_attack)
-        return (0);
+        return 0;
 
     /* Extract hit-points */
     hp = kill->power;
@@ -2213,7 +2216,7 @@ static int borg_danger_spell(
     /* Average damage of all the spells & compare to most dangerous spell */
     av = total_dam / kill->ranged_attack;
 
-    /* If the most dangerous spell is alot bigger than the average,
+    /* If the most dangerous spell is a lot bigger than the average,
      * then return the dangerous one.
      *
      * There is a problem when dealing with defense maneuvers.
@@ -2256,7 +2259,7 @@ static int borg_danger_spell(
     if (!average)
         return (av);
     if (n >= av * 15 / 10 || n > borg.trait[BI_CURHP] * 8 / 10)
-        return (n);
+        return n;
     else
         /* Average Danger */
         return (av);
@@ -2306,17 +2309,21 @@ int borg_danger_one_kill(
 
     /* Paranoia */
     if (!kill->r_idx)
-        return (0);
+        return 0;
+
+    /* "player ghosts" */
+    if (kill->r_idx >= z_info->r_max - 1)
+        return 100;
 
     /* Skip certain monster indexes.
      * These have been listed mainly in Teleport Other
      * checks in borg6.c in the defense maneuvers.
      */
     if (borg_tp_other_n) {
-        for (ii = 1; ii <= borg_tp_other_n; ii++) {
+        for (ii = 0; ii <= borg_tp_other_n; ii++) {
             /* Is the current danger check same as a saved monster index? */
             if (i == borg_tp_other_index[ii]) {
-                return (0);
+                return 0;
             }
         }
     }
@@ -2334,7 +2341,7 @@ int borg_danger_one_kill(
 
     /* Minimal distance */
     if (d > 20)
-        return (0);
+        return 0;
 
     /* A very speedy borg will miscalculate danger of some monsters */
     if (borg.trait[BI_SPEED] >= 135)
@@ -2391,10 +2398,13 @@ int borg_danger_one_kill(
     /* Physical attacks */
     v1 = borg_danger_physical(i, full_damage);
 
-    /* Hack -- Under Stressful Situation.
+    /* If the Borg has been stuck on this panel for a long time, or if the
+     * total turn count is very high, reduce the danger value. This helps
+     * prevent the Borg from getting stuck due to overestimating danger and
+     * refusing to move in both this area of the dungeon and over the course
+     * of the game.
      */
     if (borg.time_this_panel > 1200 || borg_t > 25000) {
-        /* he might be stuck and could overflow */
         v1 = v1 / 5;
     }
 
@@ -2408,13 +2418,13 @@ int borg_danger_one_kill(
         v1 = 0;
     }
 
-    /* multipliers yeild some trouble when I am weak */
+    /* multipliers yield some trouble when I am weak */
     if ((rf_has(r_ptr->flags, RF_MULTIPLY))
         && (borg.trait[BI_CLEVEL] < 20)) { /* extra 50% */
         v1 = v1 + (v1 * 15 / 10);
     }
 
-    /* Friends yeild some trouble when I am weak */
+    /* Friends yield some trouble when I am weak */
     if ((r_ptr->friends || r_ptr->friends_base)
         && (borg.trait[BI_CLEVEL] < 20)) {
         if (borg.trait[BI_CLEVEL] < 15) {
@@ -2467,10 +2477,14 @@ int borg_danger_one_kill(
         }
     }
     if (borg_crush_spell) {
-        /* HACK for now, either it dies or it doesn't.  */
-        /* If we discover it isn't using this spell much, we can modify */
-        if ((kill->power * kill->injury) / 100 < borg.trait[BI_CLEVEL] * 4)
-            v1 = 0;
+        /* Either it dies or it doesn't.  For it to die it must have less */
+        /* than 4x the borgs leve in hp and be in view.  */
+        /* So power(total hp) times (100-injury(percent injured)) divided by 100 */
+        if ((kill->power * (100 - kill->injury)) / 100 < borg.trait[BI_CLEVEL] * 4) {
+            borg_grid *ag = &borg_grids[y9][x9];
+            if (ag->info & BORG_VIEW && borg_cave_floor_grid(ag))
+                v1 = 0;
+        }
     }
 
     /* Reduce danger from confused monsters */
@@ -2499,7 +2513,7 @@ int borg_danger_one_kill(
         v1 = 0;
     }
 
-    /* Hack -- Physical attacks require proximity
+    /* Physical attacks require proximity
      *
      * Note that we do try to consider a fast monster moving and attacking
      * in the same round.  We should consider monsters that have a speed 2 or 3
@@ -2579,26 +2593,26 @@ int borg_danger_one_kill(
     }
 
     /** Ranged Attacks **/
-    v2 = borg_danger_spell(i, y, x, d, average, full_damage);
+    v2 = borg_danger_spell(i, y, x, d, average);
 
     /* Never cast spells */
     if (!r_ptr->freq_innate && !r_ptr->freq_spell) {
         v2 = 0;
     }
 
-    /* Hack -- verify distance */
+    /* Verify distance */
     if (borg_distance(y9, x9, y, x) > z_info->max_range) {
         v2 = 0;
     }
 
-    /* Hack -- verify line of sight (both ways) for monsters who can only move 1
+    /* Verify line of sight (both ways) for monsters who can only move 1
      * grid. */
     if (q <= 10 && !borg_projectable(y9, x9, y, x)
         && !borg_projectable(y, x, y9, x9)) {
         v2 = 0;
     }
 
-    /* Hack -- verify line of sight (both ways) for monsters who can only move >
+    /* Verify line of sight (both ways) for monsters who can only move >
      *1 grid. Some fast monsters can take a move action and range attack in the
      *same round. Basically, we see how many grids the monster can move and
      *check LOS from each of those grids to determine the relative danger.  We
@@ -2675,10 +2689,13 @@ int borg_danger_one_kill(
         v2 = b_v2;
     }
 
-    /* Hack -- Under Stressful Situation.
+    /* If the Borg has been stuck on this panel for a long time, or if the
+     * total turn count is very high, reduce the danger value. This helps
+     * prevent the Borg from getting stuck due to overestimating danger and
+     * refusing to move in both this area of the dungeon and over the course
+     * of the game.
      */
     if (borg.time_this_panel > 1200 || borg_t > 25000) {
-        /* he might be stuck and could overflow */
         v2 = v2 / 5;
     }
 
@@ -2720,10 +2737,14 @@ int borg_danger_one_kill(
     }
 
     if (borg_crush_spell) {
-        /* HACK for now, either it dies or it doesn't.  */
-        /* If we discover it isn't using this spell much, we can modify */
-        if ((kill->power * kill->injury) / 100 < borg.trait[BI_CLEVEL] * 4)
-            v2 = 0;
+        /* Either it dies or it doesn't.  For it to die it must have less */
+        /* than 4x the borgs leve in hp and be in view.  */
+        /* So power(total hp) times (100 - injury(percent injured)) divided by 100 */
+        if ((kill->power * (100 - kill->injury)) / 100 < borg.trait[BI_CLEVEL] * 4) {
+            borg_grid* ag = &borg_grids[y9][x9];
+            if (ag->info & BORG_VIEW && borg_cave_floor_grid(ag))
+                v1 = 0;
+        }
     }
 
     /* Reduce danger from sleeping monsters with the sleep 1,3 spell*/
@@ -2781,7 +2802,7 @@ int borg_danger_one_kill(
 }
 
 /*
- * Hack -- Calculate the "danger" of the given grid.
+ * Calculate the "danger" of the given grid.
  *
  * Currently based on the physical power of nearby monsters, as well
  * as the spell power of monsters which can target the given grid.

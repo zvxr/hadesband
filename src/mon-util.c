@@ -421,7 +421,7 @@ void update_mon(struct monster *mon, struct chunk *c, bool full)
 			if (player->upkeep->health_who == mon)
 				player->upkeep->redraw |= (PR_HEALTH);
 
-			/* Hack -- Count "fresh" sightings */
+			/* Count "fresh" sightings */
 			if (lore->sights < SHRT_MAX)
 				lore->sights++;
 
@@ -1187,9 +1187,11 @@ static bool monster_scared_by_damage(struct monster *mon, int dam)
  * This is a helper for melee handlers. It is very similar to mon_take_hit(),
  * but eliminates the player-oriented stuff of that function.
  *
- * \param context is the project_m context.
- * \param hurt_msg is the message if the monster is hurt (if any).
- * \return true if the monster died, false if it is still alive.
+ * \param dam is the amount of damage to inflict
+ * \param t_mon is the monster to damage
+ * \param hurt_msg is the message, if any, to use when the monster is hurt
+ * \param die_msg is the message, if any to use when the monster dies
+ * \return true if the monster died, false if it is still alive
  */
 bool mon_take_nonplayer_hit(int dam, struct monster *t_mon,
 							enum mon_messages hurt_msg,
@@ -1215,6 +1217,11 @@ bool mon_take_nonplayer_hit(int dam, struct monster *t_mon,
 
 	/* Dead or damaged monster */
 	if (t_mon->hp < 0) {
+		/* Shapechanged monsters revert on death */
+		if (t_mon->original_race) {
+			monster_revert_shape(t_mon);
+		}
+
 		/* Death message */
 		add_monster_message(t_mon, die_msg, false);
 
@@ -1244,7 +1251,7 @@ bool mon_take_nonplayer_hit(int dam, struct monster *t_mon,
 /**
  * Decreases a monster's hit points by `dam` and handle monster death.
  *
- * Hack -- we "delay" fear messages by passing around a "fear" flag.
+ * We "delay" fear messages by passing around a "fear" flag.
  *
  * We announce monster death (using an optional "death message" (`note`)
  * if given, and a otherwise a generic killed/destroyed message).

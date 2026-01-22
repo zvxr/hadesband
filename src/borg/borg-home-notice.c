@@ -283,14 +283,14 @@ static void borg_notice_home_dupe(borg_item *item, bool check_sval, int i)
 {
     /* eventually check for power overlap... armor of resistance is same as weak
      * elvenkind.*/
-    /*  two armors of elvenkind that resist poison is a dupe.  AJG*/
+    /*  two armors of elvenkind that resist poison is a dupe. */
 
     int              dupe_count, x;
     borg_item       *item2;
     struct ego_item *e_ptr = &e_info[item->ego_idx];
 
     /* check for a duplicate.  */
-    /* be carefull about extra powers (elvenkind/magi) */
+    /* be careful about extra powers (elvenkind/magi) */
     if (borg_ego_has_random_power(e_ptr))
         return;
 
@@ -309,6 +309,10 @@ static void borg_notice_home_dupe(borg_item *item, bool check_sval, int i)
         else
             /* Check what the borg has on as well.*/
             item2 = &borg_items[((x - z_info->store_inven_max) + INVEN_WIELD)];
+
+        /* skip zero quantity or unknown items */
+        if (!item2->iqty || !item2->aware)
+            continue;
 
         /* if everything matches it is a duplicate item */
         /* Note that we only check sval on certain items.  This */
@@ -362,16 +366,16 @@ static void borg_notice_home_aux(borg_item *in_item, bool no_items)
             item = in_item;
 
         /* Skip empty items */
-        if (!item->iqty && (i < z_info->store_inven_max)) {
-            home_slot_free++;
+        if (!item->iqty) {
+           if (i < z_info->store_inven_max)
+                home_slot_free++;
             continue;
         }
 
-        /* Hack -- skip un-aware items */
-        if (!item->kind && (i < z_info->store_inven_max)) {
-            home_slot_free++;
+
+        /* Skip un-aware items */
+        if (!item->aware)
             continue;
-        }
 
         if (of_has(item->flags, OF_SLOW_DIGEST))
             num_slow_digest += item->iqty;
@@ -766,11 +770,12 @@ static void borg_notice_home_aux(borg_item *in_item, bool no_items)
         case TV_ARROW:
         case TV_BOLT:
 
-            /* Hack -- ignore invalid missiles */
+            /* Ignore invalid missiles */
+            /* !FIX !TODO: be willing to switch to a better weapon. */
             if (item->tval != borg.trait[BI_AMMO_TVAL])
                 break;
 
-            /* Hack -- ignore worthless missiles */
+            /* Ignore worthless missiles */
             if (item->value <= 0)
                 break;
 
@@ -833,7 +838,7 @@ static void borg_notice_home_aux(borg_item *in_item, bool no_items)
 
     /*** Process the Needs ***/
 
-    /* Hack -- No need for stat repair */
+    /* HACK: No need for stat repair */
     if (borg.trait[BI_SSTR])
         num_fix_stat[STAT_STR] += 1000;
     if (borg.trait[BI_SINT])

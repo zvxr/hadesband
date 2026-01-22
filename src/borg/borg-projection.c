@@ -75,11 +75,11 @@ bool borg_los(int y1, int x1, int y2, int x2)
 
     /* Handle adjacent (or identical) grids */
     if ((ax < 2) && (ay < 2))
-        return (true);
+        return true;
 
     /* Paranoia -- require "safe" origin */
     if (!square_in_bounds_fully(cave, loc(x1, y1)))
-        return (false);
+        return false;
 
     /* Directly South/North */
     if (!dx) {
@@ -87,7 +87,7 @@ bool borg_los(int y1, int x1, int y2, int x2)
         if (dy > 0) {
             for (ty = y1 + 1; ty < y2; ty++) {
                 if (!borg_cave_floor_bold(ty, x1))
-                    return (false);
+                    return false;
             }
         }
 
@@ -95,12 +95,12 @@ bool borg_los(int y1, int x1, int y2, int x2)
         else {
             for (ty = y1 - 1; ty > y2; ty--) {
                 if (!borg_cave_floor_bold(ty, x1))
-                    return (false);
+                    return false;
             }
         }
 
         /* Assume los */
-        return (true);
+        return true;
     }
 
     /* Directly East/West */
@@ -109,7 +109,7 @@ bool borg_los(int y1, int x1, int y2, int x2)
         if (dx > 0) {
             for (tx = x1 + 1; tx < x2; tx++) {
                 if (!borg_cave_floor_bold(y1, tx))
-                    return (false);
+                    return false;
             }
         }
 
@@ -117,12 +117,12 @@ bool borg_los(int y1, int x1, int y2, int x2)
         else {
             for (tx = x1 - 1; tx > x2; tx--) {
                 if (!borg_cave_floor_bold(y1, tx))
-                    return (false);
+                    return false;
             }
         }
 
         /* Assume los */
-        return (true);
+        return true;
     }
 
     /* Extract some signs */
@@ -133,7 +133,7 @@ bool borg_los(int y1, int x1, int y2, int x2)
     if (ax == 1) {
         if (ay == 2) {
             if (borg_cave_floor_bold(y1 + sy, x1))
-                return (true);
+                return true;
         }
     }
 
@@ -141,7 +141,7 @@ bool borg_los(int y1, int x1, int y2, int x2)
     else if (ay == 1) {
         if (ax == 2) {
             if (borg_cave_floor_bold(y1, x1 + sx))
-                return (true);
+                return true;
         }
     }
 
@@ -171,7 +171,7 @@ bool borg_los(int y1, int x1, int y2, int x2)
         /* the LOS exactly meets the corner of a tile. */
         while (x2 - tx) {
             if (!borg_cave_floor_bold(ty, tx))
-                return (false);
+                return false;
 
             qy += m;
 
@@ -180,7 +180,7 @@ bool borg_los(int y1, int x1, int y2, int x2)
             } else if (qy > f2) {
                 ty += sy;
                 if (!borg_cave_floor_bold(ty, tx))
-                    return (false);
+                    return false;
                 qy -= f1;
                 tx += sx;
             } else {
@@ -210,7 +210,7 @@ bool borg_los(int y1, int x1, int y2, int x2)
         /* the LOS exactly meets the corner of a tile. */
         while (y2 - ty) {
             if (!borg_cave_floor_bold(ty, tx))
-                return (false);
+                return false;
 
             qx += m;
 
@@ -219,7 +219,7 @@ bool borg_los(int y1, int x1, int y2, int x2)
             } else if (qx > f2) {
                 tx += sx;
                 if (!borg_cave_floor_bold(ty, tx))
-                    return (false);
+                    return false;
                 qx -= f1;
                 ty += sy;
             } else {
@@ -231,13 +231,13 @@ bool borg_los(int y1, int x1, int y2, int x2)
     }
 
     /* Assume los */
-    return (true);
+    return true;
 }
 
 /*
  * Check the projection from (x1,y1) to (x2,y2).
  * Assume that there is no monster in the way.
- * Hack -- we refuse to assume that unknown grids are floors
+ * HACK: We refuse to assume that unknown grids are floors
  * Adapted from "projectable()" in "spells1.c".
  */
 bool borg_projectable(int y1, int x1, int y2, int x2)
@@ -306,20 +306,20 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
 
         /* Check for arrival at "final target" */
         if ((x == x2) && (y == y2))
-            return (true);
+            return true;
 
         /* Calculate the new location */
         borg_inc_motion(&y, &x, y1, x1, y2, x2);
     }
 
     /* Assume obstruction */
-    return (false);
+    return false;
 }
 
 /*
  * Check the projection from (x1,y1) to (x2,y2).
  * Assume that there is no monster in the way.
- * Hack -- we refuse to assume that unknown grids are floors
+ * We refuse to assume that unknown grids are floors
  * Adapted from "projectable()" in "spells1.c".
  * This is used by borg_offset()
  */
@@ -352,20 +352,20 @@ bool borg_offset_projectable(int y1, int x1, int y2, int x2)
 
         /* Check for arrival at "final target" */
         if ((x == x2) && (y == y2))
-            return (true);
+            return true;
 
         /* Calculate the new location */
         borg_inc_motion(&y, &x, y1, x1, y2, x2);
     }
 
     /* Assume obstruction */
-    return (false);
+    return false;
 }
 
 /*
  * Check the projection from (x1,y1) to (x2,y2).
  * Assume that monsters in the way will stop the projection
- * Hack -- we refuse to assume that unknown grids are floors
+ * We refuse to assume that unknown grids are floors
  * In fact, we assume they are walls.
  * Adapted from "projectable()" in "spells1.c".
  */
@@ -383,7 +383,7 @@ bool borg_projectable_pure(int y1, int x1, int y2, int x2)
         /* Get the grid */
         ag = &borg_grids[y][x];
 
-        /* Hack -- assume unknown grids are walls */
+        /* Assume unknown grids are walls */
         if (dist && (ag->feat == FEAT_NONE))
             break;
 
@@ -393,7 +393,7 @@ bool borg_projectable_pure(int y1, int x1, int y2, int x2)
 
         /* Check for arrival at "final target" */
         if ((x == x2) && (y == y2))
-            return (true);
+            return true;
 
         /* Stop at monsters */
         if (ag->kill)
@@ -404,7 +404,7 @@ bool borg_projectable_pure(int y1, int x1, int y2, int x2)
     }
 
     /* Assume obstruction */
-    return (false);
+    return false;
 }
 
 /*
@@ -442,7 +442,7 @@ bool borg_projectable_dark(int y1, int x1, int y2, int x2)
 
         /* Check for arrival at "final target" */
         if ((x == x2) && (y == y2) && unknown >= 1)
-            return (true);
+            return true;
 
         /* Stop at monsters */
         if (ag->kill)
@@ -453,7 +453,7 @@ bool borg_projectable_dark(int y1, int x1, int y2, int x2)
     }
 
     /* Assume obstruction */
-    return (false);
+    return false;
 }
 
 /*
@@ -499,7 +499,7 @@ void borg_inc_motion(int *py, int *px, int y1, int x1, int y2, int x2)
         sx = 1;
     }
 
-    /* Paranoia -- Hack -- no motion */
+    /* Paranoia -- no motion */
     if (!dy && !dx)
         return;
 
@@ -661,7 +661,7 @@ int borg_distance(int y, int x, int y2, int x2)
  *
  * Warning -- This will only work for locations on the current panel
  */
-bool borg_target(struct loc t)
+bool borg_target(struct loc t, bool require_monster)
 {
     int x1, y1, x2, y2;
 
@@ -675,9 +675,9 @@ bool borg_target(struct loc t)
     /* Report a little bit */
     if (ag->kill) {
         borg_note(format("# Targeting %s who has %d Hit Points (%d,%d).",
-            (r_info[kill->r_idx].name), kill->power, t.y, t.x));
+            borg_race_name(kill->r_idx), kill->power, t.y, t.x));
     } else {
-        borg_note(format("# Targetting location (%d,%d)", t.y, t.x));
+        borg_note(format("# Targeting location (%d,%d)", t.y, t.x));
     }
 
     /* Target mode */
@@ -712,6 +712,9 @@ bool borg_target(struct loc t)
     for (; x1 > x2; x1--)
         borg_keypress('4');
 
+    if (require_monster)
+        borg_keypress('m');
+
     /* Select the target */
     borg_keypress('5');
 
@@ -722,7 +725,7 @@ bool borg_target(struct loc t)
     borg_target_loc.x = t.x;
 
     /* Success */
-    return (true);
+    return true;
 }
 
 /*

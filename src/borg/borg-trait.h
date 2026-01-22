@@ -75,6 +75,11 @@ enum {
     BI_CWIS,
     BI_CDEX,
     BI_CCON,
+    BI_STR_INDEX,
+    BI_INT_INDEX,
+    BI_WIS_INDEX,
+    BI_DEX_INDEX,
+    BI_CON_INDEX,
     BI_SSTR,
     BI_SINT,
     BI_SWIS,
@@ -93,7 +98,6 @@ enum {
     BI_CLEVEL,
     BI_MAXCLEVEL,
     BI_ESP,
-    BI_CURLITE,
     BI_RECALL,
     BI_FOOD,
     BI_FOOD_HI,
@@ -208,9 +212,6 @@ enum {
     BI_BLOWS,
     BI_EXTRA_BLOWS,
     BI_SHOTS,
-    BI_WMAXDAM,
-    BI_WBASEDAM,
-    BI_BMAXDAM,
     BI_HEAVYWEPON,
     BI_HEAVYBOW,
     BI_AMMO_COUNT,
@@ -238,6 +239,13 @@ enum {
     BI_CRSNOTEL,
     BI_CRSTWEP,
     BI_CRSAGRV,
+    BI_CRSVULN,
+    BI_CRSDULL,
+    BI_CRSSICK,
+    BI_CRSWEAK,
+    BI_CRSCLUM,
+    BI_CRSSLOW,
+    BI_CRSANNOY,
     BI_CRSHPIMP,
     BI_CRSMPIMP,
     BI_CRSSTEELSKIN,
@@ -326,6 +334,14 @@ enum {
     BI_MAX
 };
 
+struct borg_best
+{
+    bool    home;
+    uint8_t tval; /* Item type */
+    uint8_t sval; /* Item sub-type */
+    int16_t pval; /* Item extra-info */
+};
+
 struct goals {
     /* goals */
     int16_t type; /* Flowing (goal type) */
@@ -342,10 +358,14 @@ struct goals {
     bool less; /* return to, but don't use, the next up stairs */
 
     int recalling; /* waiting for recall, guessing turns left */
+    int descending; /* waiting for deep descent */
 
     int16_t shop; /* Next shop to visit */
     int16_t ware; /* Next item to buy there */
     int16_t item; /* Next item to sell there */
+
+    bool    do_best;
+    struct borg_best *best_item;
 };
 
 struct temp {
@@ -430,17 +450,16 @@ struct borg_struct {
     int16_t when_detect_obj; /* When we last detected objects */
     int16_t when_last_kill_mult; /* When a multiplier was last killed */
 
-    int16_t no_rest_prep; /* borg wont rest for a few turns */
+    int16_t no_rest_prep; /* borg won't rest for a few turns */
 
     int16_t times_twitch; /* how often twitchy on this level */
     int16_t escapes; /* how often teleported on this level */
 
+    /* trying an unknown potion wand rod scroll etc */
+    bool trying_unknown;
+
     /* goals */
     struct goals goal;
-
-    int16_t stat_max[STAT_MAX]; /* Current "maximal" stat values    */
-    int16_t stat_cur[STAT_MAX]; /* Current "natural" stat values    */
-    int16_t stat_ind[STAT_MAX]; /* Current "additions" to stat values   */
 
     /* number of books */
     int16_t amt_book[9];
@@ -484,6 +503,11 @@ extern const char *prefix_pref[];
 #define CLASS_BLACKGUARD  8
 
 #define MAX_CLASSES 9 /* Max # of classes 0 = warrior, 5 = Paladin */
+
+/*
+ * helper to determine if swaps are being used.
+ */
+extern bool borg_uses_swaps(void);
 
 /*
  * Utility to calculate the number of blows an item will get

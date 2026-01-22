@@ -427,7 +427,7 @@ void rune_set_note(size_t i, const char *inscription)
  * Check if a brand is known to the player
  *
  * \param p is the player
- * \param b is the brand
+ * \param i is the index of the brand
  */
 bool player_knows_brand(struct player *p, int i)
 {
@@ -438,7 +438,7 @@ bool player_knows_brand(struct player *p, int i)
  * Check if a slay is known to the player
  *
  * \param p is the player
- * \param s is the slay
+ * \param i is the index of the slay
  */
 bool player_knows_slay(struct player *p, int i)
 {
@@ -449,7 +449,7 @@ bool player_knows_slay(struct player *p, int i)
  * Check if a curse is known to the player
  *
  * \param p is the player
- * \param c is the curse
+ * \param index is the index of the curse
  */
 bool player_knows_curse(struct player *p, int index)
 {
@@ -462,10 +462,10 @@ bool player_knows_curse(struct player *p, int index)
  * \param p is the player
  * \param ego is the ego item type
  * \param obj may be NULL to test whether the player knows the ego in general;
- *     if obj is not NULL, the test is for whether the ego is know for that
+ *     if obj is not NULL, the test is for whether the ego is known for that
  *     specific object (allows for the ego to be known for the object in the
  *     case where an ego has range of at least two values, including zero, for
- *     a modifier, the player doesn't know that modifier,  and the object has
+ *     a modifier, the player doesn't know that modifier, and the object has
  *     zero for that modifier)
  */
 bool player_knows_ego(struct player *p, struct ego_item *ego,
@@ -1379,6 +1379,53 @@ void player_learn_flag(struct player *p, int flag)
 }
 
 /**
+ * Learn a slay.
+ */
+void player_learn_slay(struct player *p, int index)
+{
+	/* Learn about the slay */
+	if (!player_knows_slay(p, index)) {
+		int i;
+
+		/* Find the rune index */
+		for (i = 1; i < z_info->slay_max; i++) {
+			if (same_monsters_slain(i, index)) {
+				break;
+			}
+		}
+		assert(i < z_info->slay_max);
+
+		/* Learn the rune */
+		player_learn_rune(p, rune_index(RUNE_VAR_SLAY, i), true);
+		update_player_object_knowledge(p);
+	}
+}
+
+/**
+ * Learn a brand.
+ */
+void player_learn_brand(struct player *p, int index)
+{
+	/* Learn about the brand */
+	if (!player_knows_brand(p, index)) {
+		int i;
+
+		/* Find the rune index */
+		for (i = 1; i < z_info->brand_max; i++) {
+			if (streq(brands[i].name, brands[index].name)) {
+				break;
+			}
+		}
+		assert(i < z_info->brand_max);
+
+		/* Learn the rune */
+		player_learn_rune(p, rune_index(RUNE_VAR_BRAND, i), true);
+		update_player_object_knowledge(p);
+	}
+}
+
+
+/**
  * Learn a curse
  */
 void player_learn_curse(struct player *p, struct curse *curse)
@@ -1883,59 +1930,6 @@ void object_learn_on_use(struct player *p, struct object *obj)
 
 	p->upkeep->notice |= PN_IGNORE;
 }
-
-/**
- * Notice any slays on a particular object which affect a particular monster.
- *
- * \param obj is the object on which we are noticing slays
- * \param mon the monster we are trying to slay
- */
-void object_learn_slay(struct player *p, struct object *obj, int index)
-{
-	/* Learn about the slay */
-	if (!player_knows_slay(p, index)) {
-		int i;
-
-		/* Find the rune index */
-		for (i = 1; i < z_info->slay_max; i++) {
-			if (same_monsters_slain(i, index)) {
-				break;
-			}
-		}
-		assert(i < z_info->slay_max);
-
-		/* Learn the rune */
-		player_learn_rune(p, rune_index(RUNE_VAR_SLAY, i), true);
-		update_player_object_knowledge(p);
-	}
-}
-
-/**
- * Notice any brands on a particular object which affect a particular monster.
- *
- * \param obj is the object on which we are noticing brands
- * \param mon the monster we are trying to brand
- */
-void object_learn_brand(struct player *p, struct object *obj, int index)
-{
-	/* Learn about the brand */
-	if (!player_knows_brand(p, index)) {
-		int i;
-
-		/* Find the rune index */
-		for (i = 1; i < z_info->brand_max; i++) {
-			if (streq(brands[i].name, brands[index].name)) {
-				break;
-			}
-		}
-		assert(i < z_info->brand_max);
-
-		/* Learn the rune */
-		player_learn_rune(p, rune_index(RUNE_VAR_BRAND, i), true);
-		update_player_object_knowledge(p);
-	}
-}
-
 
 /**
  * Learn attack bonus on making a ranged attack.

@@ -101,7 +101,7 @@ static bool borg_think_dungeon_lunal(void)
     if (borg.trait[BI_CDEPTH] == 0 || borg.trait[BI_ISWEAK]) {
         borg_note("# Leaving Lunal Mode. (Town or Weak)");
         borg.lunal_mode = false;
-        return (false);
+        return false;
     }
 
     /* if borg is just starting on this level, he may not
@@ -150,14 +150,14 @@ static bool borg_think_dungeon_lunal(void)
     /* Act normal on 1 unless stairs are seen*/
     if (borg.trait[BI_CDEPTH] == 1 && track_more.num == 0) {
         borg.lunal_mode = false;
-        return (false);
+        return false;
     }
 
     /* If no down stair is known, act normal */
     if (track_more.num == 0 && track_less.num == 0) {
         borg_note("# Leaving Lunal Mode. (No Stairs seen)");
         borg.lunal_mode = false;
-        return (false);
+        return false;
     }
 
     /* If self scumming and getting closer to zone, act normal */
@@ -170,13 +170,13 @@ static bool borg_think_dungeon_lunal(void)
             borg.goal.fleeing       = false;
             borg.goal.fleeing_lunal = false;
             borg_note("# Self Lunal mode disengaged normally.");
-            return (false);
+            return false;
         }
     }
 
     /** First deal with staying alive **/
 
-    /* Hack -- require light */
+    /* Require light */
     need = borg_maintain_light();
     if (need == BORG_MET_NEED)
         return true;
@@ -184,46 +184,46 @@ static bool borg_think_dungeon_lunal(void)
         borg_note("# Lunal. (need fuel)");
 
     /* No Light at all */
-    if (borg.trait[BI_CURLITE] == 0 && borg_items[INVEN_LIGHT].tval == 0) {
+    if (borg.trait[BI_LIGHT] == 0 && borg_items[INVEN_LIGHT].tval == 0) {
         borg_note("# No Light at all.");
-        return (false);
+        return false;
     }
 
     /* Define if safe_place is true or not */
     safe_place = borg_check_rest(borg.c.y, borg.c.x);
 
     /* Light Room, looking for monsters */
-    /* if (safe_place && borg_check_LIGHT_only()) return (true); */
+    /* if (safe_place && borg_check_LIGHT_only()) return true; */
 
     /* Check for stairs and doors and such */
-    /* if (safe_place && borg_check_LIGHT()) return (true); */
+    /* if (safe_place && borg_check_LIGHT()) return true; */
 
     /* Recover from any nasty condition */
     if (safe_place && borg_recover())
-        return (true);
+        return true;
 
     /* Consume needed things */
     if (safe_place && borg_use_things())
-        return (true);
+        return true;
 
     /* Consume needed things */
     if (borg.trait[BI_ISHUNGRY] && borg_use_things())
-        return (true);
+        return true;
 
     /* Crush junk if convenient */
     if (safe_place && borg_drop_junk())
-        return (true);
+        return true;
 
     /** Track down some interesting gear **/
     /* XXX Should we allow him great flexibility in retrieving loot? (not always
      * safe?)*/
     /* Continue flowing towards objects */
     if (safe_place && borg_flow_old(GOAL_TAKE))
-        return (true);
+        return true;
 
     /* Find a (viewable) object */
     if (safe_place && borg_flow_take_lunal(true, 4))
-        return (true);
+        return true;
 
     /*leave level right away. */
     borg_note("# Fleeing level. Lunal Mode");
@@ -272,7 +272,7 @@ static bool borg_think_dungeon_lunal(void)
 
             /* Continue leaving the level */
             if (borg_flow_old(GOAL_FLEE))
-                return (true);
+                return true;
 
             /* Flow to UpStair */
             if (borg_flow_stair_less(GOAL_FLEE, false)) {
@@ -280,13 +280,13 @@ static bool borg_think_dungeon_lunal(void)
                     "# Looking for stairs. Lunal Mode (needing to sell).");
 
                 /* Success */
-                return (true);
+                return true;
             }
 
-            if (tmp_ag->feat == FEAT_LESS) {
+            if (tmp_ag->feat == FEAT_LESS && !OPT(player, birth_force_descend)) {
                 /* Take the Up Stair */
                 borg_keypress('<');
-                return (true);
+                return true;
             }
         }
     }
@@ -324,18 +324,18 @@ static bool borg_think_dungeon_lunal(void)
 
             /* Continue leaving the level */
             if (borg_flow_old(GOAL_FLEE))
-                return (true);
+                return true;
 
             /* Flow to DownStair */
             if (borg_flow_stair_more(GOAL_FLEE, true, false))
-                return (true);
+                return true;
 
             /* if standing on a stair */
             if (ag->feat == FEAT_MORE) {
                 /* Take the downstairs */
                 borg_keypress('>');
 
-                return (true);
+                return true;
             }
         }
     }
@@ -374,20 +374,20 @@ static bool borg_think_dungeon_lunal(void)
 
             /* Continue leaving the level */
             if (borg_flow_old(GOAL_FLEE))
-                return (true);
+                return true;
 
             /* Flow to UpStair */
             if (borg_flow_stair_less(GOAL_FLEE, false)) {
                 borg_note("# Looking for stairs. Lunal Mode.");
 
                 /* Success */
-                return (true);
+                return true;
             }
 
-            if (tmp_ag->feat == FEAT_LESS) {
+            if (tmp_ag->feat == FEAT_LESS && !OPT(player, birth_force_descend)) {
                 /* Take the Up Stair */
                 borg_keypress('<');
-                return (true);
+                return true;
             }
         }
     }
@@ -399,14 +399,14 @@ static bool borg_think_dungeon_lunal(void)
     if (borg.trait[BI_CDEPTH] >= 2) {
         /* Continue fleeing to stair */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Note */
         borg_note("# Lunal Mode.  Any Stair. ");
 
         /* Try to find some stairs */
         if (borg_flow_stair_both(GOAL_FLEE, true))
-            return (true);
+            return true;
     }
 
     /* Lunal Mode - Reached 99 */
@@ -423,7 +423,7 @@ static bool borg_think_dungeon_lunal(void)
     borg_note("Leaving Lunal Mode. (End of Lunal Mode)");
     borg.lunal_mode   = false;
     borg.goal.fleeing = borg.goal.fleeing_lunal = false;
-    return (false);
+    return false;
 }
 
 /* This is an exploitation function.  The borg will stair scum
@@ -456,7 +456,7 @@ static bool borg_think_dungeon_munchkin(void)
     if (borg.trait[BI_CDEPTH] == 0 || borg.trait[BI_ISWEAK]) {
         borg_note("# Leaving munchkin Mode. (Town or Weak)");
         borg.munchkin_mode = false;
-        return (false);
+        return false;
     }
 
     /* if borg is just starting on this level, he may not
@@ -505,19 +505,19 @@ static bool borg_think_dungeon_munchkin(void)
     /* Act normal on 1 unless stairs are seen*/
     if (borg.trait[BI_CDEPTH] == 1 && track_more.num == 0) {
         borg.munchkin_mode = false;
-        return (false);
+        return false;
     }
 
     /* If no down stair is known, act normal */
     if (track_more.num == 0 && track_less.num == 0) {
         borg_note("# Leaving Munchkin Mode. (No Stairs seen)");
         borg.munchkin_mode = false;
-        return (false);
+        return false;
     }
 
     /** First deal with staying alive **/
 
-    /* Hack -- require light */
+    /* Require light */
     need = borg_maintain_light();
     if (need == BORG_MET_NEED)
         return true;
@@ -525,7 +525,7 @@ static bool borg_think_dungeon_munchkin(void)
         borg_note("# Munchkin. (need fuel)");
 
     /* No Light at all */
-    if (borg.trait[BI_CURLITE] == 0) {
+    if (borg.trait[BI_LIGHT] == 0) {
         borg_note("# No Light at all.");
     }
 
@@ -534,49 +534,49 @@ static bool borg_think_dungeon_munchkin(void)
 
     /* Can do a little attacking. */
     if (borg_munchkin_mage())
-        return (true);
+        return true;
     if (borg_munchkin_melee())
-        return (true);
+        return true;
 
     /* Consume needed things */
     if (safe_place && borg_use_things())
-        return (true);
+        return true;
 
     /* Consume needed things */
     if (borg.trait[BI_ISHUNGRY] && borg_use_things())
-        return (true);
+        return true;
 
     /* Wear stuff and see if it's good */
     if (safe_place && borg_wear_stuff())
-        return (true);
+        return true;
 
     if (safe_place && borg_remove_stuff())
-        return (true);
+        return true;
 
     /* Crush junk if convenient */
     if (safe_place && borg_drop_junk())
-        return (true);
+        return true;
 
     /* Learn learn and test useful spells */
     if (safe_place && borg_play_magic(true))
-        return (true);
+        return true;
 
     /** Track down some interesting gear **/
     /* XXX Should we allow him great flexibility in retrieving loot? (not always
      * safe?)*/
     /* Continue flowing towards objects */
     if (borg_flow_old(GOAL_TAKE))
-        return (true);
+        return true;
 
     /* Borg may be off the stair and a monster showed up. */
 
     /* Find a (viewable) object */
     if (safe_place && borg_flow_take_lunal(true, 5))
-        return (true);
+        return true;
 
     /* Recover from any nasty condition */
     if (safe_place && borg_recover())
-        return (true);
+        return true;
 
     /*leave level right away. */
     borg_note("# Fleeing level. Munchkin Mode");
@@ -591,7 +591,7 @@ static bool borg_think_dungeon_munchkin(void)
     /* Full of Items - Going up */
     if (track_less.num && (borg_items[PACK_SLOTS - 2].iqty)
         && (safe_place || ag->feat == FEAT_LESS
-            || borg.trait[BI_CURLITE] == 0)) {
+            || borg.trait[BI_LIGHT] == 0)) {
         borg_grid *tmp_ag = &borg_grids[borg.c.y][borg.c.x];
 
         /* Check for an existing "up stairs" */
@@ -632,7 +632,7 @@ static bool borg_think_dungeon_munchkin(void)
 
             /* Continue leaving the level */
             if (borg_flow_old(GOAL_FLEE))
-                return (true);
+                return true;
 
             /* Flow to UpStair */
             if (borg_flow_stair_less(GOAL_FLEE, true)) {
@@ -640,13 +640,13 @@ static bool borg_think_dungeon_munchkin(void)
                     "# Looking for stairs. Munchkin Mode (needing to sell).");
 
                 /* Success */
-                return (true);
+                return true;
             }
 
-            if (tmp_ag->feat == FEAT_LESS) {
+            if (tmp_ag->feat == FEAT_LESS && !OPT(player, birth_force_descend)) {
                 /* Take the Up Stair */
                 borg_keypress('<');
-                return (true);
+                return true;
             }
         }
     }
@@ -694,20 +694,20 @@ static bool borg_think_dungeon_munchkin(void)
 
             /* Continue leaving the level */
             if (borg_flow_old(GOAL_FLEE))
-                return (true);
+                return true;
 
             /* Flow to UpStair */
             if (borg_flow_stair_less(GOAL_FLEE, true)) {
                 borg_note("# Looking for stairs. Munchkin Mode.");
 
                 /* Success */
-                return (true);
+                return true;
             }
 
-            if (tmp_ag->feat == FEAT_LESS) {
+            if (tmp_ag->feat == FEAT_LESS && !OPT(player, birth_force_descend)) {
                 /* Take the Up Stair */
                 borg_keypress('<');
-                return (true);
+                return true;
             }
         }
     }
@@ -750,18 +750,18 @@ static bool borg_think_dungeon_munchkin(void)
 
             /* Continue leaving the level */
             if (borg_flow_old(GOAL_FLEE))
-                return (true);
+                return true;
 
             /* Flow to DownStair */
             if (borg_flow_stair_more(GOAL_FLEE, true, false))
-                return (true);
+                return true;
 
             /* if standing on a stair */
             if (ag->feat == FEAT_MORE) {
                 /* Take the DownStair */
                 borg_keypress('>');
 
-                return (true);
+                return true;
             }
         }
     }
@@ -802,20 +802,20 @@ static bool borg_think_dungeon_munchkin(void)
 
             /* Continue leaving the level */
             if (borg_flow_old(GOAL_FLEE))
-                return (true);
+                return true;
 
             /* Flow to UpStair */
             if (borg_flow_stair_less(GOAL_FLEE, true)) {
                 borg_note("# Looking for stairs. Munchkin Mode.");
 
                 /* Success */
-                return (true);
+                return true;
             }
 
-            if (tmp_ag->feat == FEAT_LESS) {
+            if (tmp_ag->feat == FEAT_LESS && !OPT(player, birth_force_descend)) {
                 /* Take the Up Stair */
                 borg_keypress('<');
-                return (true);
+                return true;
             }
         }
     }
@@ -827,7 +827,7 @@ static bool borg_think_dungeon_munchkin(void)
     if (borg.trait[BI_CDEPTH] >= 2 || !safe_place) {
         /* Continue fleeing to stair */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Note */
         borg_note("# Munchkin Mode.  Any Stair. ");
@@ -890,27 +890,27 @@ static bool borg_think_dungeon_munchkin(void)
                 if (b_j <= 3) {
                     /* Try to find some stairs */
                     if (borg_flow_stair_both(GOAL_FLEE, false))
-                        return (true);
+                        return true;
                 } else {
                     /* Try to kill it */
                     if (borg_attack(false))
-                        return (true);
+                        return true;
                 }
             } /* Adjacent to kill */
         } /* Scanning neighboring grids */
 
         /* Try to find some stairs */
         if (borg_flow_stair_both(GOAL_FLEE, false))
-            return (true);
-        if (ag->feat == FEAT_LESS) {
+            return true;
+        if (ag->feat == FEAT_LESS && !OPT(player, birth_force_descend)) {
             /* Take the Up Stair */
             borg_keypress('<');
-            return (true);
+            return true;
         }
         if (ag->feat == FEAT_MORE) {
             /* Take the Stair */
             borg_keypress('>');
-            return (true);
+            return true;
         }
     }
 
@@ -918,11 +918,11 @@ static bool borg_think_dungeon_munchkin(void)
     borg_note("Leaving Munchkin Mode. (End of Mode)");
     borg.munchkin_mode = false;
     borg.goal.fleeing = borg.goal.fleeing_munchkin = false;
-    return (false);
+    return false;
 }
 
 /*
- * Hack -- perform an action in the dungeon under boosted bravery
+ * Perform an action in the dungeon under boosted bravery
  *
  * This function is a sub-set of the standard dungeon goals, and is
  * only executed when all of the standard dungeon goals fail, because
@@ -939,11 +939,11 @@ static bool borg_think_dungeon_brave(void)
 
     /* Attack monsters */
     if (borg_attack(true))
-        return (true);
+        return true;
 
     /* Cast a light beam to remove fear of an area */
     if (borg_light_beam(false))
-        return (true);
+        return true;
 
     /*** Flee (or leave) the level ***/
 
@@ -955,34 +955,37 @@ static bool borg_think_dungeon_brave(void)
         borg_keypress('>');
 
         /* Success */
-        return (true);
+        return true;
     }
 
     /* Return to Stairs, but not use them */
     if (borg.goal.less) {
         /* Continue fleeing to stair */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Try to find some stairs */
         if (scaryguy_on_level && !borg.trait[BI_CDEPTH]
             && borg_flow_stair_both(GOAL_FLEE, false))
-            return (true);
+            return true;
 
         /* Try to find some stairs up */
         if (borg_flow_stair_less(GOAL_FLEE, false)) {
             borg_note("# Looking for stairs. Goal_less, brave.");
-            return (true);
+            return true;
         }
     }
 
     /* Flee the level */
     if (borg.goal.fleeing || borg.goal.leaving || scaryguy_on_level) {
-        /* Hack -- Take the next stairs */
+        /* Take the next stairs */
         borg.stair_less = borg.goal.fleeing;
 
         if (borg.ready_morgoth == 0)
             borg.stair_less = true;
+
+        if (OPT(player, birth_force_descend))
+            borg.stair_less = false;
 
         if (borg.stair_less == true) {
             borg_note("# Fleeing and leaving the level. Brave Thinking.");
@@ -995,130 +998,130 @@ static bool borg_think_dungeon_brave(void)
 
         /* Continue fleeing the level */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Try to find some stairs up */
         if (borg.stair_less)
             if (borg_flow_stair_less(GOAL_FLEE, false)) {
                 borg_note("# Looking for stairs. Flee, brave.");
-                return (true);
+                return true;
             }
 
         /* Try to find some stairs down */
         if (borg.stair_more)
             if (borg_flow_stair_more(GOAL_FLEE, false, true))
-                return (true);
+                return true;
     }
 
     /* Do short looks on special levels */
     if (vault_on_level) {
         /* Continue flowing towards monsters */
         if (borg_flow_old(GOAL_KILL))
-            return (true);
+            return true;
 
         /* Find a (viewable) monster */
         if (borg_flow_kill(true, 35))
-            return (true);
+            return true;
 
         /* Continue flowing towards objects */
         if (borg_flow_old(GOAL_TAKE))
-            return (true);
+            return true;
 
         /* Find a (viewable) object */
         if (borg_flow_take(true, 35))
-            return (true);
+            return true;
         if (borg_flow_vein(true, 35))
-            return (true);
+            return true;
 
         /* Continue to dig out a vault */
         if (borg_flow_old(GOAL_VAULT))
-            return (true);
+            return true;
 
         /* Find a vault to excavate */
         if (borg_flow_vault(35))
-            return (true);
+            return true;
     }
 
     /* Continue flowing towards monsters */
     if (borg_flow_old(GOAL_KILL))
-        return (true);
+        return true;
 
     /* Find a (viewable) monster */
     if (borg_flow_kill(true, 250))
-        return (true);
+        return true;
 
     /* Continue flowing towards objects */
     if (borg_flow_old(GOAL_TAKE))
-        return (true);
+        return true;
 
     /* Find a (viewable) object */
     if (borg_flow_take(true, 250))
-        return (true);
+        return true;
     if (borg_flow_vein(true, 250))
-        return (true);
+        return true;
 
     /*** Exploration ***/
 
     /* Continue flowing (see below) */
     if (borg_flow_old(GOAL_MISC))
-        return (true);
+        return true;
 
     /* Continue flowing (see below) */
     if (borg_flow_old(GOAL_DARK))
-        return (true);
+        return true;
 
     /* Continue flowing (see below) */
     if (borg_flow_old(GOAL_XTRA))
-        return (true);
+        return true;
 
     /* Continue flowing (see below) */
     if (borg_flow_old(GOAL_BORE))
-        return (true);
+        return true;
 
     /*** Explore the dungeon ***/
 
     /* Explore interesting grids */
     if (borg_flow_dark(true))
-        return (true);
+        return true;
 
     /* Explore interesting grids */
     if (borg_flow_dark(false))
-        return (true);
+        return true;
 
     /* Search for secret door via spell before spastic */
     if (!borg.when_detect_doors || (borg_t - borg.when_detect_doors >= 500)) {
         if (borg_check_light())
-            return (true);
+            return true;
     }
 
     /*** Track down old stuff ***/
 
     /* Chase old objects */
     if (borg_flow_take(false, 250))
-        return (true);
+        return true;
     if (borg_flow_vein(false, 250))
-        return (true);
+        return true;
 
     /* Chase old monsters */
     if (borg_flow_kill(false, 250))
-        return (true);
+        return true;
 
     /* Search for secret door via spell before spastic */
     if (!borg.when_detect_doors || (borg_t - borg.when_detect_doors >= 500)) {
         if (borg_check_light())
-            return (true);
+            return true;
     }
 
     /* Attempt to leave the level */
     if (borg_leave_level(true))
-        return (true);
+        return true;
 
     /* Search for secret doors */
     if (borg_flow_spastic(true))
-        return (true);
+        return true;
 
     /* Nothing */
-    return (false);
+    return false;
 }
 
 /*
@@ -1172,22 +1175,7 @@ bool borg_think_dungeon(void)
         borg_oops("Money Scum complete.");
     }
 
-    /* Hack -- Stop the borg if money scumming and the shops are out of food. */
-    if (!borg.trait[BI_CDEPTH] && borg_cfg[BORG_MONEY_SCUM_AMOUNT] != 0
-        && (borg_food_onsale == 0 && borg.trait[BI_FOOD] < 5)) {
-        /* Town out of food.  If player initiated borg, stop here */
-        if (borg_cfg[BORG_SELF_SCUM] == false) {
-            borg_oops("Money Scum stopped.  No more food in shop.");
-            return (true);
-        } else
-        /* Borg doing it himself */
-        {
-            /* move money goal to 0 and leave the level */
-            borg_cfg[BORG_MONEY_SCUM_AMOUNT] = 0;
-        }
-    }
-
-    /* Hack -- prevent clock wrapping Step 1*/
+    /* HACK: Prevent clock wrapping Step 1 */
     if ((borg_t >= 12000 && borg_t <= 12025)
         || (borg_t >= 25000 && borg_t <= 25025)) {
         /* Clear Possible errors */
@@ -1207,14 +1195,17 @@ bool borg_think_dungeon(void)
         old_depth = 126;
 
         /* Continue on */
-        return (true);
+        return true;
     }
+
+    /* no longer trying an unknown object */
+    borg.trying_unknown = false;
 
     /* if standing on something valueless, destroy it */
     if (borg_destroy_floor())
         return true;
  
-    /* Hack -- prevent clock wrapping Step 2*/
+    /* Prevent clock wrapping Step 2 */
     if (borg_t >= 30000) {
         /* Panic */
         borg_oops("clock overflow");
@@ -1228,7 +1219,7 @@ bool borg_think_dungeon(void)
 #endif /* BABLOS */
 
         /* Oops */
-        return (true);
+        return true;
     }
 
     /* Allow respawning borgs to update their variables */
@@ -1239,7 +1230,7 @@ bool borg_think_dungeon(void)
         borg_keypress(ESCAPE);
         borg_keypress(ESCAPE);
         borg_respawning--;
-        return (true);
+        return true;
     }
 
     /* add a short pause to slow the borg down for viewing */
@@ -1285,8 +1276,8 @@ bool borg_think_dungeon(void)
     if (borg.trait[BI_CDEPTH] == 1 && borg.goal.fleeing_to_town) {
 
         /* Try to grab a close item while I'm down here */
-        if (borg_think_stair_scum(true))
-            return (true);
+        if (borg_think_stair_scum())
+            return true;
 
         /* Start leaving */
         if (!borg.goal.leaving) {
@@ -1381,7 +1372,7 @@ bool borg_think_dungeon(void)
         breeder_level = true;
     }
 
-    /* Hack -- caution from breeders*/
+    /* Caution from breeders */
     if ((j >= MIN(borg.trait[BI_CLEVEL] + 2, 5))
         && (borg.trait[BI_RECALL] <= 0 || borg.trait[BI_CLEVEL] < 35)) {
         /* Ignore monsters from caution */
@@ -1486,7 +1477,7 @@ bool borg_think_dungeon(void)
 
             /* Enter the Lunal scumming mode */
             if (borg.lunal_mode && borg_think_dungeon_lunal())
-                return (true);
+                return true;
         }
     }
 
@@ -1498,7 +1489,7 @@ bool borg_think_dungeon(void)
 
             /* Enter the Lunal scumming mode */
             if (borg_think_dungeon_munchkin())
-                return (true);
+                return true;
         }
 
         /* Must not be in munchkin mode then */
@@ -1515,9 +1506,10 @@ bool borg_think_dungeon(void)
         borg.goal.less = true;
 
         /* Take stairs */
-        if (borg_grids[borg.c.y][borg.c.x].feat == FEAT_LESS) {
+        if (borg_grids[borg.c.y][borg.c.x].feat == FEAT_LESS
+            && !OPT(player, birth_force_descend)) {
             borg_keypress('<');
-            return (true);
+            return true;
         }
     }
 
@@ -1528,94 +1520,98 @@ bool borg_think_dungeon(void)
 
     /* require light-- Special handle for being out of a light source.*/
     if (borg_think_dungeon_light())
-        return (true);
+        return true;
 
     /* Decrease the amount of time not allowed to retreat */
     if (borg.no_retreat > 0)
         borg.no_retreat--;
 
+    /* if we twitch a lot, time to leave */
+    if (borg.times_twitch > 20)
+        borg.goal.fleeing = true;
+
     /*** Important goals ***/
 
     /* Continue flowing towards good anti-summon grid */
     if (borg_flow_old(GOAL_DIGGING))
-        return (true);
+        return true;
 
     /* Try not to die */
     if (borg_caution())
-        return (true);
+        return true;
 
     /*** if returning from dungeon in bad shape...***/
-    if (borg.trait[BI_CURLITE] == 0 || borg.trait[BI_ISCUT]
+    if (borg.trait[BI_LIGHT] == 0 || borg.trait[BI_ISCUT]
         || borg.trait[BI_ISPOISONED] || borg.trait[BI_FOOD] == 0) {
         /* First try to wear something */
-        if (borg.trait[BI_CURLITE] == 0) {
+        if (borg.trait[BI_LIGHT] == 0) {
             /* attempt to refuel/swap */
             if (borg_maintain_light() == BORG_MET_NEED)
-                return (true);
+                return true;
 
             /* wear stuff and see if it glows */
             if (borg_wear_stuff())
-                return (true);
+                return true;
         }
 
         /* Recover from damage */
         if (borg_recover())
-            return (true);
+            return true;
 
-        /* If full of items, we wont be able to buy stuff, crush stuff */
+        /* If full of items, we won't be able to buy stuff, crush stuff */
         if (borg_items[PACK_SLOTS - 1].iqty && borg_drop_hole(false))
-            return (true);
+            return true;
 
         if (borg_choose_shop()) {
             /* Try and visit a shop, if so desired */
             if (borg_flow_shop_entry(borg.goal.shop))
-                return (true);
+                return true;
         }
     }
 
     /* if I must go to town without delay */
-    if ((char *)NULL != borg_restock(borg.trait[BI_CDEPTH])) {
+    if ((char *)NULL != borg_must_return_to_town()) {
         if (borg_leave_level(false))
-            return (true);
+            return true;
     }
 
     /* Learn useful spells immediately */
     if (borg_play_magic(false))
-        return (true);
+        return true;
 
     /* If using a digger, Wear "useful" equipment before fighting monsters */
     if (borg_items[INVEN_WIELD].tval == TV_DIGGING && borg_wear_stuff())
-        return (true);
+        return true;
 
     /* If not using anything, Wear "useful" equipment before fighting monsters
      */
     if (!borg_items[INVEN_WIELD].tval && borg_wear_stuff())
-        return (true);
+        return true;
 
     /* Dig an anti-summon corridor */
-    if (borg_flow_kill_corridor(true))
-        return (true);
+    if (borg_flow_kill_corridor())
+        return true;
 
     /* Attack monsters */
     if (borg_attack(false))
-        return (true);
+        return true;
 
     /* Wear things that need to be worn, but try to avoid swap loops */
-    /* if (borg_best_stuff()) return (true); */
+    /* if (borg_best_stuff()) return true; */
     if (borg_wear_stuff())
-        return (true);
+        return true;
     if (borg_swap_rings())
-        return (true);
+        return true;
     if (borg_wear_rings())
-        return (true);
+        return true;
 
     /* Continue flowing towards objects */
     if (borg_flow_old(GOAL_TAKE))
-        return (true);
+        return true;
 
     /* Find a really close object */
     if (borg_flow_take(true, 5))
-        return (true);
+        return true;
 
     /* Remove "backwards" rings */
     /* Only do this in Stores to avoid loops     if (borg_swap_rings()) return
@@ -1623,34 +1619,34 @@ bool borg_think_dungeon(void)
 
     /* Repair "backwards" rings */
     if (borg_wear_rings())
-        return (true);
+        return true;
 
     /* Remove stuff that is useless or detrimental */
     if (borg_remove_stuff())
-        return (true);
+        return true;
     if (borg_dump_quiver())
-        return (true);
+        return true;
 
     /* Check the light */
     if (borg_check_light())
-        return (true);
+        return true;
 
     /* Continue flowing to a safe grid on which I may recover */
     if (borg_flow_old(GOAL_RECOVER))
-        return (true);
+        return true;
 
     /* Recover from damage */
     if (borg_recover())
-        return (true);
+        return true;
 
     /* Attempt to find a grid which is safe and I can recover on it.  This
      * should work closely with borg_recover. */
-    if (borg_flow_recover(false, 50))
-        return (true);
+    if (borg_flow_recover(50))
+        return true;
 
     /* Perform "cool" perma spells */
     if (borg_perma_spell())
-        return (true);
+        return true;
 
     /* Try to stick close to stairs if weak */
     if (borg.trait[BI_CLEVEL] < 10 && borg.trait[BI_MAXSP]
@@ -1679,7 +1675,7 @@ bool borg_think_dungeon(void)
                     /* rest here a moment */
                     borg_note("# Resting on stair to gain Mana.");
                     borg_keypress(',');
-                    return (true);
+                    return true;
                 }
             }
         } else /* in town */
@@ -1702,19 +1698,19 @@ bool borg_think_dungeon(void)
                     /* rest here a moment */
                     borg_note("# Resting on town stair to gain Mana.");
                     borg_keypress(',');
-                    return (true);
+                    return true;
                 }
             }
         }
 
         /* In town, standing on stairs, sit tight */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Try to find some stairs up */
         if (borg_flow_stair_less(GOAL_FLEE, true)) {
             borg_note("# Looking for stairs. Stair hugging.");
-            return (true);
+            return true;
         }
     }
 
@@ -1728,11 +1724,11 @@ bool borg_think_dungeon(void)
 
         /* Continue fleeing the level */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Try to find some stairs down */
         if (borg_flow_stair_more(GOAL_FLEE, false, false))
-            return (true);
+            return true;
     }
 
     /*** Flee the level XXX XXX XXX ***/
@@ -1741,42 +1737,45 @@ bool borg_think_dungeon(void)
     if (borg.goal.less) {
         /* Continue fleeing to stair */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Try to find some stairs */
         if (scaryguy_on_level && borg_flow_stair_both(GOAL_FLEE, false))
-            return (true);
+            return true;
 
         /* Try to find some stairs up */
         if (borg_flow_stair_less(GOAL_FLEE, false)) {
             borg_note("# Looking for stairs. Goal_less, Fleeing.");
-            return (true);
+            return true;
         }
     }
 
     /* Flee the level */
     if (borg.goal.fleeing && !borg.goal.recalling) {
-        /* Hack -- Take the next stairs */
+        /* Take the next stairs */
         borg.stair_less = borg.stair_more = true;
+        if (OPT(player, birth_force_descend))
+            borg.stair_less = false;
+
         borg_note("# Fleeing and leaving the level. (Looking for any stair)");
 
         /* Continue fleeing the level */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Try to find some stairs */
         if (scaryguy_on_level && borg_flow_stair_both(GOAL_FLEE, false))
-            return (true);
+            return true;
 
         /* Try to find some stairs up */
         if (borg_flow_stair_less(GOAL_FLEE, false)) {
             borg_note("# Looking for stairs. Fleeing.");
-            return (true);
+            return true;
         }
 
         /* Try to find some stairs down */
         if (borg_flow_stair_more(GOAL_FLEE, false, false))
-            return (true);
+            return true;
     }
 
     /* Flee to a safe Morgoth grid if appropriate */
@@ -1785,99 +1784,99 @@ bool borg_think_dungeon(void)
             && (!borg.trait[BI_ISBLIND] && !borg.trait[BI_ISCONFUSED]))) {
         /* Continue flowing towards good morgoth grid */
         if (borg_flow_old(GOAL_MISC))
-            return (true);
+            return true;
 
         /* Attempt to locate a good Glyphed grid */
-        if (borg_flow_glyph(GOAL_MISC))
-            return (true);
+        if (borg_flow_glyph())
+            return true;
 
         /* Have the borg excavate the dungeon with Stone to Mud */
     }
 
     /* Continue flowing towards objects */
     if (borg_flow_old(GOAL_TAKE))
-        return (true);
+        return true;
 
     /* Find a really close object */
     if (borg_flow_take(false, 5))
-        return (true);
+        return true;
     if (borg_flow_vein(true, 5))
-        return (true);
+        return true;
 
     /* Continue flowing towards (the hopefully close) monsters */
     if (borg_flow_old(GOAL_KILL))
-        return (true);
+        return true;
 
     /* Find a really close monster */
     if (borg_flow_kill(true, 20))
-        return (true);
+        return true;
 
     /* Continue flowing towards objects */
     if (borg_flow_old(GOAL_TAKE))
-        return (true);
+        return true;
 
     /* Find a really close object */
     if (borg_flow_take(false, 10))
-        return (true);
+        return true;
     if (borg_flow_vein(false, 10))
-        return (true);
+        return true;
 
     /* Continue flowing towards monsters */
     if (borg_flow_old(GOAL_KILL))
-        return (true);
+        return true;
 
     /* Continue towards a vault */
     if (borg_flow_old(GOAL_VAULT))
-        return (true);
+        return true;
 
     /* Find a viewable monster and line up a shot on him */
     if (borg_flow_kill_aim(true))
-        return (true);
+        return true;
 
     /*** Deal with inventory objects ***/
 
     /* check for anything that should be inscribed */
-    /* if (borg_inscribe_food()) return (true); */
+    /* if (borg_inscribe_food()) return true; */
 
     /* Use things */
     if (borg_use_things())
-        return (true);
+        return true;
 
     /* Identify unknown things */
     if (borg_test_stuff())
-        return (true);
+        return true;
 
     /* Enchant things */
     if (borg_enchanting())
-        return (true);
+        return true;
 
     /* Recharge things */
     if (borg_recharging())
-        return (true);
+        return true;
 
     /* Drop junk */
     if (borg_drop_junk())
-        return (true);
+        return true;
 
     /* Drop items to make space */
     if (borg_drop_hole(false))
-        return (true);
+        return true;
 
     /* Drop items if we are slow */
     if (borg_drop_slow())
-        return (true);
+        return true;
 
     /*** Flow towards objects ***/
 
     /* Continue flowing towards objects */
     if (borg_flow_old(GOAL_TAKE))
-        return (true);
+        return true;
 
     /* Find a (viewable) object */
     if (borg_flow_take(true, 250))
-        return (true);
+        return true;
     if (borg_flow_vein(true, 250))
-        return (true);
+        return true;
 
     /*** Leave the level XXX XXX XXX ***/
 
@@ -1885,8 +1884,7 @@ bool borg_think_dungeon(void)
     if ((borg.goal.leaving && !borg.goal.recalling && !unique_on_level)
         || (borg.trait[BI_CDEPTH] && borg.trait[BI_CLEVEL] < 25
             && borg.trait[BI_GOLD] < 25000 && borg_count_sell() >= 13)) {
-        /* Hack -- Take the next stairs */
-        if (borg.ready_morgoth == 0) {
+        if (borg.ready_morgoth == 0 && !OPT(player, birth_force_descend)) {
             borg_note(
                 "# Fleeing and leaving the level (Looking for Up Stair).");
             borg.stair_less = true;
@@ -1898,14 +1896,14 @@ bool borg_think_dungeon(void)
 
         /* Continue leaving the level */
         if (borg_flow_old(GOAL_FLEE))
-            return (true);
+            return true;
 
         /* Try to find some stairs up */
         if (borg.stair_less) {
             if (borg_flow_stair_less(GOAL_FLEE, false)) {
                 borg_note("# Looking for stairs. Goal_Leaving.");
 
-                return (true);
+                return true;
             }
         }
 
@@ -1917,7 +1915,7 @@ bool borg_think_dungeon(void)
         /* Try to find some stairs down */
         if (borg.stair_more)
             if (borg_flow_stair_more(GOAL_FLEE, false, false))
-                return (true);
+                return true;
     }
 
     /* Power dive if I am playing too shallow
@@ -1933,7 +1931,7 @@ bool borg_think_dungeon(void)
 
         /* Continue leaving the level */
         if (borg_flow_old(GOAL_BORE))
-            return (true);
+            return true;
 
         /* No down if needing to sell */
         if (borg.trait[BI_CDEPTH] && borg.trait[BI_CLEVEL] < 25
@@ -1945,7 +1943,7 @@ bool borg_think_dungeon(void)
         if (borg.stair_more && borg_flow_stair_more(GOAL_BORE, true, false)) {
             /* Leave a note */
             borg_note("# Powerdiving.");
-            return (true);
+            return true;
         }
     }
 
@@ -1953,22 +1951,22 @@ bool borg_think_dungeon(void)
 
     /* Continue flowing (see below) */
     if (borg_flow_old(GOAL_MISC))
-        return (true);
+        return true;
 
     /* Continue flowing (see below) */
     if (borg_flow_old(GOAL_DARK))
-        return (true);
+        return true;
 
     /* Continue flowing (see below) */
     if (borg_flow_old(GOAL_XTRA))
-        return (true);
+        return true;
 
     /* Continue flowing (see below) */
     if (borg_flow_old(GOAL_BORE))
-        return (true);
+        return true;
 
     if (borg_flow_old(GOAL_VAULT))
-        return (true);
+        return true;
 
     /*** Explore the dungeon ***/
 
@@ -1976,40 +1974,40 @@ bool borg_think_dungeon(void)
 
         /* Chase close monsters */
         if (borg_flow_kill(false, z_info->max_range + 1))
-            return (true);
+            return true;
 
         /* Chase close objects */
         if (borg_flow_take(false, 35))
-            return (true);
+            return true;
         if (borg_flow_vein(false, 35))
-            return (true);
+            return true;
 
         /* Excavate a vault safely */
         if (borg_excavate_vault(z_info->max_range - 2))
-            return (true);
+            return true;
 
         /* Find a vault to excavate */
         if (borg_flow_vault(35))
-            return (true);
+            return true;
 
         /* Explore close interesting grids */
         if (borg_flow_dark(true))
-            return (true);
+            return true;
     }
 
     /* Chase old monsters */
     if (borg_flow_kill(false, 250))
-        return (true);
+        return true;
 
     /* Chase old objects */
     if (borg_flow_take(false, 250))
-        return (true);
+        return true;
     if (borg_flow_vein(false, 250))
-        return (true);
+        return true;
 
     /* Explore interesting grids */
     if (borg_flow_dark(true))
-        return (true);
+        return true;
 
     /* Leave the level (if needed) */
     if (borg.trait[BI_GOLD] < borg_cfg[BORG_MONEY_SCUM_AMOUNT]
@@ -2018,45 +2016,45 @@ bool borg_think_dungeon(void)
         /* Stay in town and scum for money after shopping */
     } else {
         if (borg_leave_level(false))
-            return (true);
+            return true;
     }
 
     /* Explore interesting grids */
     if (borg_flow_dark(false))
-        return (true);
+        return true;
 
     /*** Deal with shops ***/
 
-    /* Hack -- Visit the shops */
+    /* Visit the shops */
     if (borg_choose_shop()) {
         /* Try and visit a shop, if so desired */
         if (borg_flow_shop_entry(borg.goal.shop))
-            return (true);
+            return true;
     }
 
     /*** Leave the Level ***/
 
     /* Study/Test boring spells/prayers */
     if (!borg.goal.fleeing && borg_play_magic(true))
-        return (true);
+        return true;
 
     /* Search for secret door via spell before spastic */
     if (!borg.when_detect_doors || (borg_t - borg.when_detect_doors >= 500)) {
         if (borg_check_light())
-            return (true);
+            return true;
     }
 
     /* Search for secret doors */
     if (borg_flow_spastic(false))
-        return (true);
+        return true;
 
     /* Flow directly to a monster if not able to be spastic */
-    if (borg_flow_kill_direct(false, false))
-        return (true);
+    if (borg_flow_kill_direct(false))
+        return true;
 
     /* Recharge items before leaving the level */
     if (borg_wear_recharge())
-        return (true);
+        return true;
 
     /* Leave the level (if possible) */
     if (borg.trait[BI_GOLD] < borg_cfg[BORG_MONEY_SCUM_AMOUNT]
@@ -2066,25 +2064,25 @@ bool borg_think_dungeon(void)
     {
         /* Stay in town, scum for money now that shopping is done. */
         if (borg_money_scum())
-            return (true);
+            return true;
     } else {
         if (borg_leave_level(true))
-            return (true);
+            return true;
     }
 
     /* Search for secret door via spell before spastic */
     if (!borg.when_detect_doors || (borg_t - borg.when_detect_doors >= 500)) {
         if (borg_check_light())
-            return (true);
+            return true;
     }
 
     /* Search for secret doors */
     if (borg_flow_spastic(true))
-        return (true);
+        return true;
 
     /* Flow directly to a monster if not able to be spastic */
-    if (borg_flow_kill_direct(true, false))
-        return (true);
+    if (borg_flow_kill_direct(false))
+        return true;
 
     /*** Wait for recall ***/
 
@@ -2100,7 +2098,7 @@ bool borg_think_dungeon(void)
         borg_keypress(KC_ENTER);
 
         /* Done */
-        return (true);
+        return true;
     }
 
     /*** Nothing to do ***/
@@ -2125,7 +2123,7 @@ bool borg_think_dungeon(void)
         borg_note(format("# Boosting bravery (1) from %d to %d!", avoidance,
             borg.trait[BI_CURHP] * 2));
 
-        /* Hack -- ignore some danger */
+        /* Ignore some danger */
         avoidance = (borg.trait[BI_CURHP] * 2);
 
         /* Forget the danger fields */
@@ -2146,7 +2144,7 @@ bool borg_think_dungeon(void)
 
         /* Done */
         if (done)
-            return (true);
+            return true;
     }
 
     /* try phase before boosting bravery further and acting goofy */
@@ -2163,7 +2161,7 @@ bool borg_think_dungeon(void)
                 || borg_dimension_door(90) || borg_spell(TELEPORT_SELF)
                 || borg_spell(PORTAL) || borg_shadow_shift(90))) {
             /* Success */
-            return (true);
+            return true;
         }
     }
 
@@ -2179,7 +2177,7 @@ bool borg_think_dungeon(void)
         borg_note(format("# Boosting bravery (2) from %d to %d!", avoidance,
             borg.trait[BI_MAXHP] * 4));
 
-        /* Hack -- ignore some danger */
+        /* Ignore some danger */
         avoidance = (borg.trait[BI_MAXHP] * 4);
 
         /* Forget the danger fields */
@@ -2200,7 +2198,7 @@ bool borg_think_dungeon(void)
 
         /* Done */
         if (done)
-            return (true);
+            return true;
     }
 
     /* Boost a lot */
@@ -2211,7 +2209,7 @@ bool borg_think_dungeon(void)
         borg_note(
             format("# Boosting bravery (3) from %d to %d!", avoidance, 30000));
 
-        /* Hack -- ignore some danger */
+        /* Ignore some danger */
         avoidance = 30000;
 
         /* Forget the danger fields */
@@ -2227,7 +2225,7 @@ bool borg_think_dungeon(void)
         /* Forget goals */
         borg.goal.type = 0;
 
-        /* Hack -- cannot rise past town */
+        /* Cannot rise past town */
         if (!borg.trait[BI_CDEPTH])
             borg.goal.rising = false;
 
@@ -2269,7 +2267,7 @@ bool borg_think_dungeon(void)
 
         /* Done */
         if (done)
-            return (true);
+            return true;
     }
 
     /* try teleporting before acting goofy */
@@ -2287,17 +2285,20 @@ bool borg_think_dungeon(void)
                 || borg_activate_item(act_tele_level))) {
             /* Success */
             borg_note("# Teleport (twitchy)");
-            return (true);
+            return true;
         }
     }
 
     /* Recall to town */
-    if (borg.trait[BI_CDEPTH] && (borg_recall())) {
-        /* Note */
-        borg_note("# Recalling (twitchy)");
+    if (borg.trait[BI_CDEPTH]) {
+        if (borg_recall()) {
 
-        /* Success */
-        return (true);
+            /* Note */
+            borg_note("# Recalling (twitchy)");
+
+            /* Success */
+            return true;
+        }
     }
 
     /* Reset multiple factors to jumpstart the borg */
@@ -2315,20 +2316,16 @@ bool borg_think_dungeon(void)
     borg_kills_cnt = 0;
     borg_kills_nxt = 1;
 
-    /* if we twitch a lot, time to leave */
-    if (borg.times_twitch > 20)
-        borg.goal.fleeing = true;
-
     /* Attempt to dig to the center of the dungeon */
-    if (borg_flow_kill_direct(true, true))
-        return (true);
+    if (borg_flow_kill_direct(true))
+        return true;
 
     /* Twitch around */
     if (borg_twitchy())
-        return (true);
+        return true;
 
     /* Oops */
-    return (false);
+    return false;
 }
 
 #endif

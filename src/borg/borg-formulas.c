@@ -57,7 +57,7 @@ static const grouper value_type_names[] = {
     { VT_ACTIVATION, "activation" },
     { VT_CLASS, "class" },
 #define TV(a, b) { VT_##a, b },
-#include "list-tvals.h"
+#include "../list-tvals.h"
 #undef TV
 };
 
@@ -136,7 +136,7 @@ void borg_formula_error(const char *section, const char *full_line,
  *    depth(nnn)
  * this should return the nnn as a number and -1 if it fails
  */
-static int parse_depth(char *line, const char *full_line)
+static int parse_depth(char *line)
 {
     line = strchr(line, '(');
     if (!line)
@@ -625,7 +625,7 @@ static bool parse_depth_line(bool restock, char *line, const char *full_line)
 
     if (s_depth) {
         if (!fail) {
-            d->dlevel = parse_depth(s_depth, full_line);
+            d->dlevel = parse_depth(s_depth);
             if (d->dlevel < 0) {
                 borg_formula_error(start, full_line, "value",
                     "** depth section can't be parsed");
@@ -836,30 +836,31 @@ int32_t borg_power_dynamic(void)
     }
 
     /*** Penalize armor weight ***/
-    if (borg.stat_ind[STAT_STR] < 15) {
-        if (borg_items[INVEN_BODY].weight > 200)
-            total -= (borg_items[INVEN_BODY].weight - 200) * 15;
-        if (borg_items[INVEN_HEAD].weight > 30)
+    if (borg.trait[BI_STR_INDEX] < 15) {
+        if (borg_item_weight(&borg_items[INVEN_BODY]) > 200)
+            total -= (borg_item_weight(&borg_items[INVEN_BODY]) - 200) * 15;
+        if (borg_item_weight(&borg_items[INVEN_HEAD]) > 30)
             total -= 250;
-        if (borg_items[INVEN_ARM].weight > 10)
+        if (borg_item_weight(&borg_items[INVEN_ARM]) > 10)
             total -= 250;
-        if (borg_items[INVEN_FEET].weight > 50)
+        if (borg_item_weight(&borg_items[INVEN_FEET]) > 50)
             total -= 250;
     }
 
     /* Compute the total armor weight */
-    int cur_wgt = borg_items[INVEN_BODY].weight;
-    cur_wgt += borg_items[INVEN_HEAD].weight;
-    cur_wgt += borg_items[INVEN_ARM].weight;
-    cur_wgt += borg_items[INVEN_OUTER].weight;
-    cur_wgt += borg_items[INVEN_HANDS].weight;
-    cur_wgt += borg_items[INVEN_FEET].weight;
+    int cur_wgt = 0;
+    cur_wgt += borg_item_weight(&borg_items[INVEN_BODY]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_HEAD]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_ARM]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_OUTER]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_HANDS]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_FEET]);
 
     /* Determine the weight allowance */
     int max_wgt = player->class->magic.spell_weight;
 
-    /* Hack -- heavy armor hurts magic */
-    if (player->class->magic.total_spells && ((cur_wgt - max_wgt) / 10) > 0) {
+    /* HACK: Heavy armor hurts magic */
+    if (borg_can_cast() && ((cur_wgt - max_wgt) / 10) > 0) {
         /* max sp must be calculated in case it changed with the armor */
         int max_sp = borg.trait[BI_SP_ADJ] / 100 + 1;
         max_sp -= ((cur_wgt - max_wgt) / 10);
@@ -870,7 +871,7 @@ int32_t borg_power_dynamic(void)
             total -= (((cur_wgt - max_wgt) / 10) * 800L);
         if (max_sp >= 100 && max_sp <= 199)
             total -= (((cur_wgt - max_wgt) / 10) * 1600L);
-        if (max_sp >= 1 && max_sp <= 99)
+        if (max_sp <= 99)
             total -= (((cur_wgt - max_wgt) / 10) * 3200L);
     }
     /* END MAJOR HACK */
@@ -884,7 +885,7 @@ int32_t borg_power_dynamic(void)
         && borg.trait[BI_ADIGGER] == 1)
         total += 5000L;
 
-    /*** Hack -- books ***/
+    /*** HACK: Books ***/
     /*   Reward books    */
     for (int book = 0; book < 9; book++) {
         /* No copies */
@@ -932,7 +933,7 @@ int32_t borg_power_dynamic(void)
                 /* if (as->power < mana) mana = as->power; */
             }
 
-            /* Hack -- Ignore "difficult" normal books */
+            /* HACK: Ignore "difficult" normal books */
             if ((when > 5) && (when >= borg.trait[BI_MAXCLEVEL] + 2))
                 continue;
             /* if (mana > borg.trait[BI_MAXSP]) continue; */
@@ -947,7 +948,7 @@ int32_t borg_power_dynamic(void)
         }
     }
 
-    /*  Hack -- Apply "encumbrance" from weight */
+    /* HACK: Apply "encumbrance" from weight */
 
     /* XXX XXX XXX Apply "encumbrance" from weight */
     if (borg.trait[BI_WEIGHT] > borg.trait[BI_CARRY] / 2) {
@@ -964,7 +965,7 @@ int32_t borg_power_dynamic(void)
 
         /* Some items will be used immediately and should not contribute to
          * encumbrance */
-        if (item && item->iqty
+        if (item && item->iqty && item->aware
             && ((item->tval == TV_SCROLL
                     && ((item->sval == sv_scroll_enchant_armor
                             && borg.trait[BI_AENCH_ARM] < 1000

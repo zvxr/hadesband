@@ -55,7 +55,7 @@ static int32_t borg_power_equipment(void)
     borg_item *item;
 
     /* Obtain the "hold" value (weight limit for weapons) */
-    hold = adj_str_hold[borg.stat_ind[STAT_STR]];
+    hold = adj_str_hold[borg.trait[BI_STR_INDEX]];
 
     /*** Analyze weapon ***/
 
@@ -159,14 +159,9 @@ static int32_t borg_power_equipment(void)
     if (borg.trait[BI_W_IMPACT])
         value += 50L;
 
-    /* Hack -- It is hard to hold a heavy weapon */
+    /* It is hard to hold a heavy weapon */
     if (borg.trait[BI_HEAVYWEPON])
         value -= 500000L;
-
-    /* HACK -- Borg worships num_blow, even on broken swords. */
-    /* kind 47 is a broken sword usually 1d2 in damage */
-    /* if (item->kind == 47 || item->kind == 30 ||item->kind == 390 ) value
-     * -=90000L; */
 
     /* We want low level borgs to have high blows (dagger, whips) */
     if (borg.trait[BI_CLEVEL] <= 10)
@@ -207,13 +202,13 @@ static int32_t borg_power_equipment(void)
     /* slings force you to carry heavy ammo.  Penalty for that unless you have
      * lots of str  */
     if (item->sval == sv_sling && !item->art_idx
-        && borg.stat_ind[STAT_STR] < 9) {
+        && borg.trait[BI_STR] < 9) {
         value -= 5000L;
     }
 
     /* Bonus if level 1 to buy a sling, they are cheap ranged weapons */
     if (item->sval == sv_sling && borg.trait[BI_CLEVEL] == 1
-        && borg.stat_ind[STAT_STR] >= 9)
+        && borg.trait[BI_STR] >= 9)
         value += 8000;
 
     /* Reward "bonus to hit" */
@@ -229,22 +224,25 @@ static int32_t borg_power_equipment(void)
         && borg.trait[BI_AMMO_TVAL] == TV_ARROW)
         value += 30000L;
 
-    /* Hack -- It is hard to hold a heavy weapon */
+    /* It is hard to hold a heavy weapon */
     if (hold < item->weight / 10)
         value -= 500000L;
 
     /*** Reward various things ***/
 
-    /* Hack -- Reward light radius */
-    if (borg.trait[BI_CURLITE] <= 3)
-        value += (borg.trait[BI_CURLITE] * 10000L);
-    if (borg.trait[BI_CURLITE] > 3)
-        value += (30000L) + (borg.trait[BI_CURLITE] * 1000);
+    /* Reward light radius */
+    /* necromancers like the dark */
+    if (borg.trait[BI_CLASS] == CLASS_NECROMANCER)
+        value -= ((borg.trait[BI_LIGHT] - 1) * 10000L);
+    else if (borg.trait[BI_LIGHT] <= 3)
+        value += (borg.trait[BI_LIGHT] * 10000L);
+    else if (borg.trait[BI_LIGHT] > 3)
+        value += (30000L) + (borg.trait[BI_LIGHT] * 1000);
 
     value += borg.trait[BI_MOD_MOVES] * (3000L);
     value += borg.trait[BI_DAM_RED] * (10000L);
 
-    /* Hack -- Reward speed
+    /* Reward speed
      * see if speed can be a bonus if good speed; not +3.
      * reward higher for +10 than +50 speed (decreased return).
      */
@@ -304,60 +302,58 @@ static int32_t borg_power_equipment(void)
             value += (((borg.trait[BI_SPEED] - 110) * 2500L));
     }
 
-    /* Hack -- Reward strength bonus */
-    value += (borg.stat_ind[STAT_STR] * 100L);
+    /* Reward strength bonus */
+    value += (borg.trait[BI_STR_INDEX] * 100L);
 
-    /* Hack -- Reward spell stat bonus */
+    /* Reward spell stat bonus */
     int spell_stat = borg_spell_stat();
     if (spell_stat >= 0) {
-        if (borg.stat_ind[spell_stat] <= 37) {
-            value += (borg.stat_ind[spell_stat] * 500L);
+        value += (borg.trait[BI_STR_INDEX + spell_stat] * 500L);
 
-            /* Bonus for sp. */
-            if (borg_cfg[BORG_WORSHIPS_MANA]) {
-                value += (borg.trait[BI_SP_ADJ] / 2) * 255L;
-            } else {
-                value += (borg.trait[BI_SP_ADJ] / 2) * 155L;
-            }
+        /* Bonus for sp. */
+        if (borg_cfg[BORG_WORSHIPS_MANA]) {
+            value += (borg.trait[BI_SP_ADJ] / 2) * 255L;
+        } else {
+            value += (borg.trait[BI_SP_ADJ] / 2) * 155L;
+        }
 
-            /* bonus for low fail rate */
-            value += (100 - spell_chance(0)) * 100;
+        /* bonus for low fail rate */
+        value += (100 - spell_chance(0)) * 100;
 
-            /* should try to get min fail to 0 */
-            if (player_has(player, PF_ZERO_FAIL)) {
-                /* other fail rates */
-                if (spell_chance(0) < 1)
-                    value += 30000L;
-            }
+        /* should try to get min fail to 0 */
+        if (player_has(player, PF_ZERO_FAIL)) {
+            /* other fail rates */
+            if (spell_chance(0) < 1)
+                value += 30000L;
         }
     }
 
     /* Dexterity Bonus --good for attacking and ac*/
-    if (borg.stat_ind[STAT_DEX] <= 37) {
-        /* Hack -- Reward bonus */
-        value += (borg.stat_ind[STAT_DEX] * 120L);
+    if (borg.trait[BI_DEX_INDEX] <= 37) {
+        /* Reward bonus */
+        value += (borg.trait[BI_DEX_INDEX] * 120L);
     }
 
     /* Constitution Bonus */
-    if (borg.stat_ind[STAT_CON] <= 37) {
+    if (borg.trait[BI_CON_INDEX] <= 37) {
 
         if (borg_cfg[BORG_WORSHIPS_HP]) {
-            value += (borg.stat_ind[STAT_CON] * 250L);
-            /* Hack -- Reward hp bonus */
-            /*         This is a bit weird because we are not really giving */
-            /*         a bonus for what hp you have, but the 'bonus' */
-            /*         hp you get getting over 800hp is very important. */
+            value += (borg.trait[BI_CON_INDEX] * 250L);
+            /* Reward hp bonus */
+            /* This is a bit weird because we are not really giving */
+            /* a bonus for what hp you have, but the 'bonus' */
+            /* hp you get getting over 800hp is very important. */
             if (borg.trait[BI_HP_ADJ] < 800)
                 value += borg.trait[BI_HP_ADJ] * 450L;
             else
                 value += (borg.trait[BI_HP_ADJ] - 800) * 100L + (350L * 500);
         } else /*does not worship hp */
         {
-            value += (borg.stat_ind[STAT_CON] * 150L);
-            /* Hack -- Reward hp bonus */
-            /*         This is a bit weird because we are not really giving */
-            /*         a bonus for what hp you have, but the 'bonus' */
-            /*         hp you get getting over 500hp is very important. */
+            value += (borg.trait[BI_CON_INDEX] * 150L);
+            /* Reward hp bonus */
+            /* This is a bit weird because we are not really giving */
+            /* a bonus for what hp you have, but the 'bonus' */
+            /* hp you get getting over 500hp is very important. */
             if (borg.trait[BI_HP_ADJ] < 500)
                 value += borg.trait[BI_HP_ADJ] * 350L;
             else
@@ -374,7 +370,7 @@ static int32_t borg_power_equipment(void)
     for (i = 0; i < STAT_MAX; i++)
         value += borg.trait[BI_ASTR+i];
 
-    /* Hack -- tiny rewards */
+    /* Tiny rewards */
     value += (borg.trait[BI_DISP] * 2L);
     value += (borg.trait[BI_DISM] * 2L);
     value += (borg.trait[BI_DEV] * 25L);
@@ -732,7 +728,7 @@ static int32_t borg_power_equipment(void)
             activation_bonus += (500 + (96));
         else if (act_cold_ball100 == act)
             activation_bonus += (500 + (200));
-        else if (act_fire_bolt72 == act)
+        else if (act_fire_ball72 == act)
             activation_bonus += (500 + (72));
         else if (act_cold_bolt2 == act)
             activation_bonus += (500 + (12 * (8 + 1) / 2));
@@ -1078,29 +1074,29 @@ static int32_t borg_power_equipment(void)
     }
 
     /*** Penalize armor weight ***/
-    if (borg.stat_ind[STAT_STR] < 15) {
-        if (borg_items[INVEN_BODY].weight > 200)
-            value -= (borg_items[INVEN_BODY].weight - 200) * 15;
-        if (borg_items[INVEN_HEAD].weight > 30)
+    if (borg.trait[BI_STR_INDEX] < 15) {
+        if (borg_item_weight(&borg_items[INVEN_BODY]) > 200)
+            value -= (borg_item_weight(&borg_items[INVEN_BODY]) - 200) * 15;
+        if (borg_item_weight(&borg_items[INVEN_HEAD]) > 30)
             value -= 250;
-        if (borg_items[INVEN_ARM].weight > 10)
+        if (borg_item_weight(&borg_items[INVEN_ARM]) > 10)
             value -= 250;
-        if (borg_items[INVEN_FEET].weight > 50)
+        if (borg_item_weight(&borg_items[INVEN_FEET]) > 50)
             value -= 250;
     }
 
     /* Compute the total armor weight */
-    cur_wgt += borg_items[INVEN_BODY].weight;
-    cur_wgt += borg_items[INVEN_HEAD].weight;
-    cur_wgt += borg_items[INVEN_ARM].weight;
-    cur_wgt += borg_items[INVEN_OUTER].weight;
-    cur_wgt += borg_items[INVEN_HANDS].weight;
-    cur_wgt += borg_items[INVEN_FEET].weight;
+    cur_wgt += borg_item_weight(&borg_items[INVEN_BODY]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_HEAD]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_ARM]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_OUTER]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_HANDS]);
+    cur_wgt += borg_item_weight(&borg_items[INVEN_FEET]);
 
     /* Determine the weight allowance */
     max_wgt = player->class->magic.spell_weight;
 
-    /* Hack -- heavy armor hurts magic */
+    /* Heavy armor hurts magic */
     if (player->class->magic.total_spells && ((cur_wgt - max_wgt) / 10) > 0) {
         /* max sp must be calculated in case it changed with the armor */
         int max_sp = borg.trait[BI_SP_ADJ] / 100 + 1;
@@ -1112,7 +1108,7 @@ static int32_t borg_power_equipment(void)
             value -= (((cur_wgt - max_wgt) / 10) * 800L);
         if (max_sp >= 100 && max_sp <= 199)
             value -= (((cur_wgt - max_wgt) / 10) * 1600L);
-        if (max_sp >= 1 && max_sp <= 99)
+        if (max_sp <= 99)
             value -= (((cur_wgt - max_wgt) / 10) * 3200L);
     }
 
@@ -1347,7 +1343,7 @@ static int32_t borg_power_inventory(void)
     }
 
     /*** Healing ***/
-    /* !TODO !FIX !AJG make sure these numbers make sense for the new classes */
+    /* !TODO !FIX make sure these numbers make sense for the new classes */
     if (borg.trait[BI_CLASS] == CLASS_WARRIOR
         || borg.trait[BI_CLASS] == CLASS_ROGUE
         || borg.trait[BI_CLASS] == CLASS_BLACKGUARD) {
@@ -1564,9 +1560,11 @@ static int32_t borg_power_inventory(void)
         value += 4000L;
 
     /* Reward call lite */
-    k = 0;
-    for (; k < 1 && k < borg.trait[BI_ALITE]; k++)
-        value += 1000L;
+    if (borg.trait[BI_CLASS] != CLASS_NECROMANCER) {
+        k = 0;
+        for (; k < 1 && k < borg.trait[BI_ALITE]; k++)
+            value += 1000L;
+    }
 
     /* Genocide scrolls. Just scrolls, mainly used for Morgoth */
     if (borg.trait[BI_MAXDEPTH] >= 100) {
@@ -1598,14 +1596,14 @@ static int32_t borg_power_inventory(void)
         || borg.trait[BI_CLASS] == CLASS_WARRIOR) {
         k = 0;
         for (; k < 40 && k < borg.trait[BI_AMISSILES]; k++)
-            value += 1000L;
+            value += 100L;
         if (borg.trait[BI_STR] > 15 && borg.trait[BI_STR] <= 18) {
             for (; k < 80 && k < borg.trait[BI_AMISSILES]; k++)
-                value += 100L;
+                value += 10L;
         }
         if (borg.trait[BI_STR] > 18) {
             for (; k < 180 && k < borg.trait[BI_AMISSILES]; k++)
-                value += 80L;
+                value += 8L;
         }
 
         /* penalize use of too many quiver slots */
@@ -1615,10 +1613,10 @@ static int32_t borg_power_inventory(void)
     } else {
         k = 0;
         for (; k < 20 && k < borg.trait[BI_AMISSILES]; k++)
-            value += 1000L;
+            value += 100L;
         if (borg.trait[BI_STR] > 15) {
             for (; k < 50 && k < borg.trait[BI_AMISSILES]; k++)
-                value += 100L;
+                value += 10L;
         }
         /* Don't carry too many */
         if (borg.trait[BI_STR] <= 15 && borg.trait[BI_AMISSILES] > 20)
@@ -1685,7 +1683,7 @@ static int32_t borg_power_inventory(void)
     for (; k < 6 && k < borg.trait[BI_AROD2]; k++)
         value += 12000;
 
-    /* Hack -- Reward being at max stat */
+    /* Reward being at max stat */
     if (!borg.need_statgain[STAT_STR])
         value += 50000;
     if (!borg.need_statgain[STAT_INT])
@@ -1702,20 +1700,20 @@ static int32_t borg_power_inventory(void)
         if (!borg.need_statgain[spell_stat])
             value += 50000;
 
-    /* Hack -- Reward stat potions */
-    if (borg.amt_statgain[STAT_STR] && borg.stat_cur[STAT_STR] < (18 + 100))
+    /* Reward stat potions */
+    if (borg.amt_statgain[STAT_STR] && borg.trait[BI_CSTR] < (18 + 100))
         value += 550000;
-    if (borg.amt_statgain[STAT_INT] && borg.stat_cur[STAT_INT] < (18 + 100))
+    if (borg.amt_statgain[STAT_INT] && borg.trait[BI_CINT] < (18 + 100))
         value += 520000;
     if (spell_stat >= 0)
         if (borg.amt_statgain[spell_stat]
-            && borg.stat_cur[spell_stat] < (18 + 100))
+            && borg.trait[BI_CSTR + spell_stat] < (18 + 100))
             value += 575000;
-    if (borg.amt_statgain[STAT_WIS] && borg.stat_cur[STAT_WIS] < (18 + 100))
+    if (borg.amt_statgain[STAT_WIS] && borg.trait[BI_CWIS] < (18 + 100))
         value += 520000;
-    if (borg.amt_statgain[STAT_DEX] && borg.stat_cur[STAT_DEX] < (18 + 100))
+    if (borg.amt_statgain[STAT_DEX] && borg.trait[BI_CDEX] < (18 + 100))
         value += 550000;
-    if (borg.amt_statgain[STAT_CON] && borg.stat_cur[STAT_CON] < (18 + 100))
+    if (borg.amt_statgain[STAT_CON] && borg.trait[BI_CCON] < (18 + 100))
         value += 550000;
 
     /* Reward Remove Curse */
@@ -1726,7 +1724,7 @@ static int32_t borg_power_inventory(void)
             value += 90000;
     }
 
-    /* Hack -- Restore experience */
+    /* Restore experience */
     if (borg.trait[BI_HASFIXEXP])
         value += 50000;
 
@@ -1753,9 +1751,12 @@ static int32_t borg_power_inventory(void)
         value += 5000L;
 
     /* Reward empty slots (up to 6) */
-    k = 0;
-    for (; k < 6 && k < borg.trait[BI_EMPTY]; k++)
+    for (k = 1; k < 6 && k < borg.trait[BI_EMPTY]; k++)
         value += 40L;
+
+    /* first empty slot is highly rewarded */
+    if (borg.trait[BI_EMPTY])
+        value += 4000L;
 
     /* Reward carrying a shovel if low level */
     if (borg.trait[BI_MAXDEPTH] <= 40 && borg.trait[BI_MAXDEPTH] >= 25
@@ -1764,7 +1765,7 @@ static int32_t borg_power_inventory(void)
         && borg.trait[BI_ADIGGER] == 1)
         value += 5000L;
 
-    /*** Hack -- books ***/
+    /*** Books ***/
     /*   Reward books    */
     for (book = 0; book < 9; book++) {
         /* No copies */
@@ -1812,7 +1813,7 @@ static int32_t borg_power_inventory(void)
                 /* if (as->power < mana) mana = as->power; */
             }
 
-            /* Hack -- Ignore "difficult" normal books */
+            /* Ignore "difficult" normal books */
             if ((when > 5) && (when >= borg.trait[BI_MAXCLEVEL] + 2))
                 continue;
             /* if (mana > borg.trait[BI_MAXSP]) continue; */
@@ -1827,7 +1828,7 @@ static int32_t borg_power_inventory(void)
         }
     }
 
-    /*  Hack -- Apply "encumbrance" from weight */
+    /* Apply "encumbrance" from weight */
 
     /* XXX XXX XXX Apply "encumbrance" from weight */
     if (borg.trait[BI_WEIGHT] > borg.trait[BI_CARRY] / 2) {
@@ -1843,7 +1844,7 @@ static int32_t borg_power_inventory(void)
 
         /* Some items will be used immediately and should not contribute to
          * encumbrance */
-        if (item && item->iqty
+        if (item && item->iqty && item->aware
             && ((item->tval == TV_SCROLL
                     && ((item->sval == sv_scroll_enchant_armor
                             && borg.trait[BI_AENCH_ARM] < 1000

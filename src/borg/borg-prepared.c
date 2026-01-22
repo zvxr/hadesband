@@ -37,8 +37,8 @@ static char borg_prepared_buffer[MAX_REASON];
 
 /* Track how many uniques are around at your depth */
 int          borg_numb_live_unique;
-unsigned int borg_living_unique_index;
-int          borg_unique_depth;
+unsigned int borg_first_living_unique;
+int          borg_depth_hunted_unique;
 
 /*
  * Determine if the Borg meets the "minimum" requirements for a level
@@ -59,7 +59,7 @@ static const char *borg_prepared_aux(int depth)
     /*** Essential Items for Level 1 ***/
 
     /* Require lite (any) */
-    if (borg.trait[BI_CURLITE] < 1)
+    if (borg.trait[BI_LIGHT] < 1)
         return ("1 Lite");
 
     /* Require food */
@@ -209,8 +209,9 @@ static const char *borg_prepared_aux(int depth)
 
     /*** Essential Items for Level 10 to 19 ***/
 
-    /* Require light (radius 2) */
-    if (borg.trait[BI_CURLITE] < 2)
+    /* Require light (radius 2) */    /* necromancers like the dark */
+    if (borg.trait[BI_LIGHT] < 2
+        && (borg.trait[BI_CLASS] != CLASS_NECROMANCER))
         return "2 light radius";
 
     /* Escape or Teleport */
@@ -287,17 +288,17 @@ static const char *borg_prepared_aux(int depth)
             return ("2 basic resists");
     }
     /* have some minimal stats */
-    if (borg.stat_cur[STAT_STR] < 7)
+    if (borg.trait[BI_STR] < 7)
         return ("low STR");
 
     int spell_stat = borg_spell_stat();
     if (spell_stat != -1) {
-        if (borg.stat_cur[spell_stat] < 7)
+        if (borg.trait[BI_STR + spell_stat] < 7)
             return ("low spell stat");
     }
-    if (borg.stat_cur[STAT_DEX] < 7)
+    if (borg.trait[BI_DEX] < 7)
         return ("low DEX");
-    if (borg.stat_cur[STAT_CON] < 7)
+    if (borg.trait[BI_CON] < 7)
         return ("low CON");
 
     if (!borg_cfg[BORG_PLAYS_RISKY]) {
@@ -387,16 +388,16 @@ static const char *borg_prepared_aux(int depth)
     if (!borg.trait[BI_SRCONF])
         return ("resist conf");
 
-    if (borg.stat_cur[STAT_STR] < 16)
+    if (borg.trait[BI_STR] < 16)
         return ("STR < 16");
 
     if (spell_stat != -1) {
-        if (borg.stat_cur[spell_stat] < 16)
+        if (borg.trait[BI_STR + spell_stat] < 16)
             return ("spell stat < 16");
     }
-    if (borg.stat_cur[STAT_DEX] < 16)
+    if (borg.trait[BI_DEX] < 16)
         return ("dex < 16");
-    if (borg.stat_cur[STAT_CON] < 16)
+    if (borg.trait[BI_CON] < 16)
         return ("con < 16");
 
     /* Ok to continue */
@@ -420,16 +421,16 @@ static const char *borg_prepared_aux(int depth)
     }
 
     /* High stats XXX XXX XXX */
-    if (borg.stat_cur[STAT_STR] < 18 + 40)
+    if (borg.trait[BI_STR] < 18 + 40)
         return ("str < 18(40)");
 
     if (spell_stat != -1) {
-        if (borg.stat_cur[spell_stat] < 18 + 100)
+        if (borg.trait[BI_STR + spell_stat] < 18 + 100)
             return ("spell stat needs to be max");
     }
-    if (borg.stat_cur[STAT_DEX] < 18 + 60)
+    if (borg.trait[BI_DEX] < 18 + 60)
         return ("dex < 18 (60)");
-    if (borg.stat_cur[STAT_CON] < 18 + 60)
+    if (borg.trait[BI_CON] < 18 + 60)
         return ("con < 18 (60)");
 
     /* Hold Life */
@@ -506,8 +507,8 @@ static const char *borg_prepared_aux(int depth)
             return ("5 Heal");
 
         /* must have lots of ez-heal */
-        if (borg.trait[BI_AEZHEAL] < 15)
-            return ("15 *heal*");
+        if ((borg.trait[BI_AEZHEAL] + borg.trait[BI_ALIFE]) < 15)
+            return ("15 *heal* or life");
 
         /* must have lots of speed */
         if (borg.trait[BI_ASPEED] < 10)
@@ -584,7 +585,9 @@ const char *borg_prepared(int depth)
         return (reason);
 
     /* Scum on depth 80-81 for some *heal* potions */
-    if (depth >= 82 && (num_ezheal < 10 && borg.trait[BI_AEZHEAL] < 10)) {
+    if (depth >= 82
+        && ((num_ezheal + num_life) < 10
+            && (borg.trait[BI_AEZHEAL] + borg.trait[BI_ALIFE]) < 10)) {
         /* Must know exact number of Potions  in home */
         borg_notice_home(NULL, false);
 
@@ -599,22 +602,22 @@ const char *borg_prepared(int depth)
         borg_notice_home(NULL, false);
 
         /* Scum for 30*/
-        if (num_ezheal_true + borg.trait[BI_AEZHEAL] < 30) {
+        int heals = num_ezheal_true + borg.trait[BI_AEZHEAL] + num_life_true
+                    + borg.trait[BI_ALIFE];
+        if (heals < 30) {
             strnfmt(borg_prepared_buffer, MAX_REASON,
                 "Scumming *Heal* potions (%d to go).",
-                30 - (num_ezheal_true + borg.trait[BI_AEZHEAL]));
+                30 - heals);
             return (borg_prepared_buffer);
         }
 
-        /* Return to town to get your stock from the home*/
-        if (num_ezheal_true + borg.trait[BI_AEZHEAL] >= 30
-            && /* Enough combined EZ_HEALS */
-            num_ezheal_true >= 1
-            && borg.trait[BI_MAXDEPTH]
-                   >= 99) /* Still some sitting in the house */
+        /* Return to town to get your stock from the home */
+        if ((borg.trait[BI_AEZHEAL] + borg.trait[BI_ALIFE]) < 30 && heals >= 30
+            && num_ezheal_true >= 1 && borg.trait[BI_MAXDEPTH] >= 99)
         {
             strnfmt(borg_prepared_buffer, MAX_REASON,
-                "Collect from house (%d potions).", num_ezheal_true);
+                "Collect from house (%d potions).",
+                num_ezheal_true + num_life_true);
             return (borg_prepared_buffer);
         }
     }
@@ -622,37 +625,41 @@ const char *borg_prepared(int depth)
     /* Check to make sure the borg does not go below where 3 living */
     /* uniques are. */
     if (borg.trait[BI_MAXDEPTH] <= 98) {
-        struct monster_race *r_ptr = &r_info[borg_living_unique_index];
+        struct monster_race *r_ptr;
+
+        /* don't check how many uniques are alive */
+        if (borg_cfg[BORG_KILLS_UNIQUES] == false)
+            return ((char *)NULL);
 
         /* are too many uniques alive */
-        if (borg_numb_live_unique < 3 || borg_cfg[BORG_PLAYS_RISKY]
-            || borg.trait[BI_CLEVEL] == 50
-            || borg_cfg[BORG_KILLS_UNIQUES] == false)
+        if (borg_numb_live_unique < 3)
             return ((char *)NULL);
 
         /* Check for the dlevel of the unique */
-        if (depth < borg_unique_depth)
+        if (depth <= borg_depth_hunted_unique)
             return ((char *)NULL);
 
         /* To avoid double calls to format() */
         /* Reset our description for not diving */
+        r_ptr = &r_info[borg_first_living_unique];
         strnfmt(borg_prepared_buffer, MAX_REASON, "Must kill %s.", r_ptr->name);
         return (borg_prepared_buffer);
 
-    } else if (borg.trait[BI_MAXDEPTH] >= 98 || depth >= 98)
+    } else if (borg.trait[BI_MAXDEPTH] >= 98 && depth >= 98)
     /* check to make sure the borg does not go to level 100 */
     /* unless all the uniques are dead. */
     {
         struct monster_race *r_ptr;
 
         /* Access the living unique obtained from borg_update() */
-        r_ptr = &r_info[borg_living_unique_index];
+        r_ptr = &r_info[borg_first_living_unique];
 
         /* -1 is unknown. */
         borg.ready_morgoth = -1;
 
+        /* is only Morgoth alive? */
         if (borg_numb_live_unique < 1
-            || borg_living_unique_index == borg_morgoth_id) /* Morgoth */
+            || borg_first_living_unique == borg_morgoth_id)
         {
             if (depth >= 99)
                 borg.ready_morgoth = 1;
@@ -691,25 +698,13 @@ const char *borg_restock(int depth)
     if (-1 == borg.ready_morgoth)
         borg.ready_morgoth = 0;
 
-    /* Always ready for the town */
-    if (!depth)
-        return ((char *)NULL);
-
-    /* Always Ready to leave town */
-    if (borg.trait[BI_CDEPTH] == 0)
-        return ((char *)NULL);
-
-    /* Always spend time on a level unless 100*/
-    if (borg_t - borg_began < 100 && borg.trait[BI_CDEPTH] != 100)
-        return ((char *)NULL);
-
     if (borg_cfg[BORG_USES_DYNAMIC_CALCS]) 
         return borg_restock_dynamic(depth);
 
     /*** Level 1 ***/
 
     /* Must have some lite */
-    if (borg.trait[BI_CURLITE] < 1)
+    if (borg.trait[BI_LIGHT] < 1)
         return ("restock light radius < 1");
 
     /* Must have "fuel" */
@@ -760,7 +755,8 @@ const char *borg_restock(int depth)
     /*** Level 10 - 19  ***/
 
     /* Must have good light */
-    if (borg.trait[BI_CURLITE] < 2)
+    if (borg.trait[BI_LIGHT] < 2
+        && (borg.trait[BI_CLASS] != CLASS_NECROMANCER))
         return "2 light radius";
 
     /* Must have "cure" */
@@ -795,7 +791,7 @@ const char *borg_restock(int depth)
 
     /* Must have Scroll of Teleport (or good 2nd choice) */
     if (borg.trait[BI_ATELEPORT] + borg.trait[BI_ATELEPORTLVL] < 2)
-        return ("restock teleport + teleport level");
+        return ("restock teleport + teleport level scrolls");
 
     /* Assume happy at level 44 */
     if (depth <= 45)
@@ -828,5 +824,21 @@ const char *borg_restock(int depth)
     /* Assume happy */
     return ((char *)NULL);
 }
+
+extern const char *borg_must_return_to_town(void)
+{
+    /* don't need to go to town if in town */
+    if (borg.trait[BI_CDEPTH] == 0)
+        return ((char *)NULL);
+
+    /* Always spend time on a level unless 100*/
+    if (borg_t - borg_began < 100 && borg.trait[BI_CDEPTH] != 100)
+        return ((char *)NULL);
+
+    /* need to return to town if restock is needed */
+    return borg_restock(borg.trait[BI_CDEPTH]);
+}
+
+
 
 #endif

@@ -128,7 +128,7 @@ struct monster *monster_target_monster(effect_handler_context_t *context)
  *     3) if a player is moving, it does not have player traps
  *     4) if a monster is moving, it does not have a glyph of warding
  * There's some discussion here,
- * http://angband.oook.cz/forum/showthread.php?t=11066
+ * https://angband.live/forums/forum/angband/vanilla/10323-the-evil-eye-commands-you-to-return-or-not .
  */
 static bool has_teleport_destination_prereqs(struct chunk *c, struct loc grid,
 		bool is_player_moving)
@@ -166,12 +166,12 @@ static bool item_tester_uncursable(const struct object *obj)
 	if (c) {
 		size_t i;
 		for (i = 1; i < z_info->curse_max; i++) {
-			if (c[i].power < 100) {
+			if (c[i].power > 0 && c[i].power < 100) {
 				return true;
 			}
 		}
 	}
-    return false;
+	return false;
 }
 
 /**
@@ -1130,7 +1130,8 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 			/* Tactical-angband: always recall to same depth, not max */
 			player->recall_depth = player->depth;
 			/*
-			if (player->depth != player->max_depth) {
+			if (player->depth != player->max_depth
+					&& !OPT(player, birth_levels_persist)) {
 				if (get_check("Set recall depth to current depth? ")) {
 					player->recall_depth = player->max_depth = player->depth;
 				}
@@ -1167,18 +1168,10 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 
 bool effect_handler_DEEP_DESCENT(effect_handler_context_t *context)
 {
-	int i;
-
 	/* Calculate target depth */
 	int target_increment = (4 / player->opts.stair_skip) + 1;
 	int target_depth = dungeon_get_next_level(player, player->max_depth,
 		target_increment);
-	for (i = 5; i > 0; i--) {
-		if (is_quest(player, target_depth)) break;
-		if (target_depth >= z_info->max_depth - 1) break;
-
-		target_depth++;
-	}
 
 	if (target_depth > player->depth) {
 		msgt(MSG_TPLEVEL, "The air around you starts to swirl...");
@@ -2417,7 +2410,7 @@ bool effect_handler_BANISH(effect_handler_context_t *context)
 		/* Paranoia -- Skip dead monsters */
 		if (!mon->race) continue;
 
-		/* Hack -- Skip Unique Monsters */
+		/* Skip Unique Monsters */
 		if (monster_is_unique(mon)) continue;
 
 		/*
@@ -2441,7 +2434,7 @@ bool effect_handler_BANISH(effect_handler_context_t *context)
 	/* Hurt the player */
 	dam = player_apply_damage_reduction(player, dam);
 	if (dam > 0 && OPT(player, show_damage)) {
-		msg("You take %d damage.\n", dam);
+		msg("You take %d damage.", dam);
 	}
 	take_hit(player, dam, "the strain of casting Banishment");
 
@@ -2477,7 +2470,7 @@ bool effect_handler_MASS_BANISH(effect_handler_context_t *context)
 		/* Paranoia -- Skip dead monsters */
 		if (!mon->race) continue;
 
-		/* Hack -- Skip unique monsters */
+		/* Skip unique monsters */
 		if (monster_is_unique(mon)) continue;
 
 		/* Skip distant monsters */
@@ -2493,7 +2486,7 @@ bool effect_handler_MASS_BANISH(effect_handler_context_t *context)
 	/* Hurt the player */
 	dam = player_apply_damage_reduction(player, dam);
 	if (dam > 0 && OPT(player, show_damage)) {
-		msg("You take %d damage.\n", dam);
+		msg("You take %d damage.", dam);
 	}
 	take_hit(player, dam, "the strain of casting Mass Banishment");
 
@@ -2836,6 +2829,11 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 		/* Monster being teleported */
 		start = t_mon->grid;
 	} else if (context->subtype) {
+		if (!mon) {
+			msg("Bug: TELEPORT_TO:SELF effect used that is not "
+				"cast by a monster.");
+			return true;
+		}
 		/* Monster teleporting to the player */
 		start = mon->grid;
 	} else {
@@ -3307,7 +3305,7 @@ bool effect_handler_CURSE_WEAPON(effect_handler_context_t *context)
 		obj->to_d = 0 - randint1(3);
 
 		/* Curse it */
-		while (num) {
+		while (num && max_tries) {
 			int pick = randint1(z_info->curse_max - 1);
 			int power = 10 * m_bonus(9, player->depth);
 			if (!curses[pick].poss[obj->tval]) {
@@ -3703,7 +3701,8 @@ bool effect_handler_COMMAND(effect_handler_context_t *context)
 		char m_name[80];
 		monster_desc(m_name, sizeof(m_name), mon, MDESC_STANDARD);
 		msg("%s resists your command!", m_name);
-		return false;
+		/* Take a turn and deduct mana when the monster resists. */
+		return true;
 	}
 
 	/* Player is commanding */

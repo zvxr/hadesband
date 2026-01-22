@@ -710,7 +710,7 @@ static void display_group_member(struct menu *menu, int oid,
 		uint8_t a = *o_funcs->xattr(oid);
 		char buf[12];
 
-		strnfmt(buf, sizeof(buf), "%d/%d", a, c);
+		strnfmt(buf, sizeof(buf), "%d/%ld", a, (long int)c);
 		c_put_str(attr, buf, row, 64 - (int) strlen(buf));
 	}
 }
@@ -1561,7 +1561,7 @@ static void desc_art_fake(int a_idx)
 			object_copy(known_obj, obj);
 	}
 
-	/* Hack -- Handle stuff */
+	/*Handle stuff */
 	handle_stuff(player);
 
 	tb = object_info(obj, OINFO_NONE);
@@ -1775,6 +1775,7 @@ static void do_cmd_knowledge_ego_items(const char *name, int row)
 			/* Note the tvals which are possible for this ego */
 			for (poss = ego->poss_items; poss; poss = poss->next) {
 				struct object_kind *kind = &k_info[poss->kidx];
+				assert(obj_group_order[kind->tval] >= 0);
 				tval[obj_group_order[kind->tval]]++;
 			}
 
@@ -1782,12 +1783,15 @@ static void do_cmd_knowledge_ego_items(const char *name, int row)
 			for (j = 0; j < TV_MAX; j++) {
 				int gid = obj_group_order[j];
 
+				/* Skip if nothing in this group */
+				if (gid < 0) continue;
+
 				/* Ignore duplicates */
-				if ((j > 0) && (gid == default_join[e_count - 1].gid)
+				if ((e_count > 0) && (gid == default_join[e_count - 1].gid)
 					&& (i == default_join[e_count - 1].oid))
 					continue;
 
-				if (tval[obj_group_order[j]]) {
+				if (tval[gid]) {
 					egoitems[e_count] = e_count;
 					default_join[e_count].oid = i;
 					default_join[e_count++].gid = gid;
@@ -1879,7 +1883,7 @@ static void desc_obj_fake(int k_idx)
 		object_copy(known_obj, obj);
 	obj->known = known_obj;
 
-	/* Hack -- Handle stuff */
+	/* Handle stuff */
 	handle_stuff(player);
 
 	tb = object_info(obj, OINFO_FAKE);
@@ -4053,7 +4057,7 @@ void do_cmd_quiver(void)
 void do_cmd_look(void)
 {
 	/* Look around */
-	if (target_set_interactive(TARGET_LOOK, -1, -1))
+	if (target_set_interactive(TARGET_LOOK, -1, -1, true))
 	{
 		msg("Target Selected.");
 	}
@@ -4210,10 +4214,16 @@ int cmp_monsters(const void *a, const void *b)
  *
  * Todo: Should this take the user's pref files into account?
  */
-static void lookup_symbol(char sym, char *buf, size_t max)
+static void lookup_symbol(keycode_t key, char *buf, size_t max)
 {
+	char key_utf8[5];
 	int i;
 	struct monster_base *race;
+
+	if (!utf32_to_utf8(key_utf8, sizeof(key_utf8), &key, 1, NULL)) {
+		key_utf8[0] = '?';
+		key_utf8[1] = '\0';
+	}
 
 	/* Look through items */
 	/* Note: We currently look through all items, and grab the tval when we
@@ -4221,8 +4231,9 @@ static void lookup_symbol(char sym, char *buf, size_t max)
 	 * It would make more sense to loop through tvals, but then we need to
 	 * associate a display character with each tval. */
 	for (i = 0; i < z_info->k_max; i++) {
-		if (char_matches_key(k_info[i].d_char, sym)) {
-			strnfmt(buf, max, "%c - %s.", sym, tval_find_name(k_info[i].tval));
+		if (char_matches_key(k_info[i].d_char, key)) {
+			strnfmt(buf, max, "%s - %s.", key_utf8,
+				tval_find_name(k_info[i].tval));
 			return;
 		}
 	}
@@ -4231,8 +4242,8 @@ static void lookup_symbol(char sym, char *buf, size_t max)
 	/* Note: We need a better way of doing this. Currently '#' matches secret
 	 * door, and '^' matches trap door (instead of the more generic "trap"). */
 	for (i = 1; i < FEAT_MAX; i++) {
-		if (char_matches_key(f_info[i].d_char, sym)) {
-			strnfmt(buf, max, "%c - %s.", sym, f_info[i].name);
+		if (char_matches_key(f_info[i].d_char, key)) {
+			strnfmt(buf, max, "%s - %s.", key_utf8, f_info[i].name);
 			return;
 		}
 	}
@@ -4241,15 +4252,15 @@ static void lookup_symbol(char sym, char *buf, size_t max)
 	for (race = rb_info; race; race = race->next) {
 		/* Slight hack - P appears twice */
 		if (streq(race->name, "Morgoth")) continue;
-		if (char_matches_key(race->d_char, sym)) {
-			strnfmt(buf, max, "%c - %s.", sym, race->text);
+		if (char_matches_key(race->d_char, key)) {
+			strnfmt(buf, max, "%s - %s.", key_utf8, race->text);
 			return;
 		}
 	}
 
 	/* No matches */
-        if (isprint(sym)) {
-			strnfmt(buf, max, "%c - Unknown Symbol.", sym);
+        if (utf32_isprint(key)) {
+			strnfmt(buf, max, "%s - Unknown Symbol.", key_utf8);
         } else {
 			strnfmt(buf, max, "? - Unknown Symbol.");
         }
@@ -4274,7 +4285,7 @@ void do_cmd_query_symbol(void)
 	int idx, num;
 	char buf[128];
 
-	char sym;
+	ui_event sym;
 	struct keypress query;
 
 	bool all = false;
@@ -4286,21 +4297,23 @@ void do_cmd_query_symbol(void)
 	uint16_t *who;
 
 	/* Get a character, or abort */
-	if (!get_com("Enter character to be identified, or control+[ANU]: ", &sym))
+	if (!get_com_ex("Enter character to be identified, or control+[ANU]: ",
+			&sym) || sym.type == EVT_MOUSE) {
 		return;
+	}
 
 	/* Describe */
-	if (sym == KTRL('A')) {
+	if (sym.key.code == KTRL('A')) {
 		all = true;
 		my_strcpy(buf, "Full monster list.", sizeof(buf));
-	} else if (sym == KTRL('U')) {
+	} else if (sym.key.code == KTRL('U')) {
 		all = uniq = true;
 		my_strcpy(buf, "Unique monster list.", sizeof(buf));
-	} else if (sym == KTRL('N')) {
+	} else if (sym.key.code == KTRL('N')) {
 		all = norm = true;
 		my_strcpy(buf, "Non-unique monster list.", sizeof(buf));
 	} else {
-		lookup_symbol(sym, buf, sizeof(buf));
+		lookup_symbol(sym.key.code, buf, sizeof(buf));
 	}
 
 	/* Display the result */
@@ -4325,7 +4338,9 @@ void do_cmd_query_symbol(void)
 		if (uniq && !rf_has(race->flags, RF_UNIQUE)) continue;
 
 		/* Collect "appropriate" monsters */
-		if (all || char_matches_key(race->d_char, sym)) who[num++] = idx;
+		if (all || char_matches_key(race->d_char, sym.key.code)) {
+			who[num++] = idx;
+		}
 	}
 
 	/* No monsters to recall */
