@@ -1,16 +1,23 @@
 MKPATH=mk/
+ifneq ($(MAKECMDGOALS),build)
 include $(MKPATH)buildsys.mk
+endif
 
 SUBDIRS = src lib
 CLEAN = *.dll *.exe
 DISTCLEAN = config.status config.log docs/.deps \
 	mk/buildsys.mk mk/extra.mk
 REPOCLEAN = aclocal.m4 autom4te.cache configure src/autoconf.h.in version
+MACOS_ARCHS ?= $(shell uname -m)
 
-.PHONY: check tests manual manual-optional dist
+.PHONY: check tests build manual manual-optional dist
 check: tests
 tests:
 	$(MAKE) -C src tests
+
+build:
+	$(MAKE) -C src -f Makefile.osx clean ARCHS="$(MACOS_ARCHS)"
+	$(MAKE) -C src -f Makefile.osx install ARCHS="$(MACOS_ARCHS)"
 
 TAG = angband-`cd scripts && ./version.sh`
 OUT = $(TAG).tar.gz

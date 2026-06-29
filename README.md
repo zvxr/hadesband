@@ -1,4 +1,4 @@
-# Tactical Angband
+# Thangband
 
 <p align="center">
   <img src="screenshots/game.png" width="425"/>
@@ -6,12 +6,29 @@
 
 ## What??
 
-Tactical Angband is a variant of the classic roguelike game Angband.
-Tactical Angband reduces the grind and increases the tactical depth,
-while maintaining the feel of Angband.
+Thangband is a variant of the classic roguelike game Angband.  It uses
+Tactical Angband as its base, preserving that variant's shorter, more tactical
+dungeon while adding changes inspired by Hengband's broader race and character
+variety.
 
-The following is a (possibly incomplete) list of changes made to Tactical
-Angband relative to (Vanilla) Angband 4.2.5 (commit 0a0a197).
+The current goal is to keep Tactical Angband's lower-grind pacing while opening
+up more distinct character builds in the spirit of Hengband.  Early additions
+include new races such as Barbarian, Half-Giant, Nibelung, and Fae.
+
+## Building on macOS
+
+From the repository root, run:
+
+```sh
+make build
+```
+
+This cleans the macOS build artifacts and creates `Thangband.app`.
+
+## Tactical Angband base
+
+The following is a (possibly incomplete) list of changes inherited from
+Tactical Angband relative to (Vanilla) Angband 4.2.5 (commit 0a0a197).
 
 ## Dungeon
 

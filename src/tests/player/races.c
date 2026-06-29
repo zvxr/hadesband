@@ -1,0 +1,155 @@
+/* player/races */
+/* Check the custom player races. */
+
+#include "unit-test.h"
+#include "test-utils.h"
+
+#include "init.h"
+#include "object.h"
+#include "player.h"
+#include "player-birth.h"
+#include "player-calcs.h"
+
+struct expected_race {
+	const char *name;
+	int stats[STAT_MAX];
+	int hitdie;
+	int exp;
+	int infra;
+	int melee;
+	int device;
+	int flag;
+	int elem1;
+	int elem2;
+};
+
+static const struct expected_race expected[] = {
+	{
+		"Barbarian",
+		{ 3, -2, -1, 0, 3 },
+		12, 130, 0, 14, -10,
+		OF_PROT_FEAR, -1, -1
+	},
+	{
+		"Half-Giant",
+		{ 5, -3, -2, -2, 4 },
+		13, 150, 3, 24, -10,
+		-1, ELEM_SHARD, ELEM_GRAVITY
+	},
+	{
+		"Nibelung",
+		{ 1, -1, 2, 0, 2 },
+		11, 140, 5, 9, 8,
+		-1, ELEM_DARK, ELEM_DISEN
+	},
+	{
+		"Fae",
+		{ -3, 3, 1, 4, -2 },
+		6, 125, 4, -12, 16,
+		OF_TRAP_IMMUNE, -1, -1
+	}
+};
+
+static struct player_race *find_race(const char *name)
+{
+	struct player_race *race;
+
+	for (race = races; race; race = race->next) {
+		if (streq(race->name, name)) {
+			return race;
+		}
+	}
+
+	return NULL;
+}
+
+static int require_race_record(const struct expected_race *e,
+		struct player_race **race)
+{
+	int i;
+
+	*race = find_race(e->name);
+	require(*race);
+
+	for (i = 0; i < STAT_MAX; i++) {
+		eq((*race)->r_adj[i], e->stats[i]);
+	}
+	eq((*race)->r_mhp, e->hitdie);
+	eq((*race)->r_exp, e->exp);
+	eq((*race)->infra, e->infra);
+	eq((*race)->r_skills[SKILL_TO_HIT_MELEE], e->melee);
+	eq((*race)->r_skills[SKILL_DEVICE], e->device);
+
+	if (e->flag >= 0) {
+		require(of_has((*race)->flags, e->flag));
+	}
+	if (e->elem1 >= 0) {
+		eq((*race)->el_info[e->elem1].res_level, 1);
+	}
+	if (e->elem2 >= 0) {
+		eq((*race)->el_info[e->elem2].res_level, 1);
+	}
+
+	ok;
+}
+
+int setup_tests(void **state)
+{
+	set_file_paths();
+	if (!init_angband()) {
+		return 1;
+	}
+	return 0;
+}
+
+int teardown_tests(void *state)
+{
+	cleanup_angband();
+	return 0;
+}
+
+static int test_records0(void *state)
+{
+	size_t i;
+
+	for (i = 0; i < N_ELEMENTS(expected); i++) {
+		struct player_race *race = NULL;
+
+		eq(require_race_record(&expected[i], &race), 0);
+	}
+
+	ok;
+}
+
+static int test_bonuses0(void *data)
+{
+	struct player_state calc_state;
+
+	eq(player_make_simple("Barbarian", "Warrior", "Tester"), true);
+	calc_bonuses(player, &calc_state, false, false);
+	require(of_has(calc_state.flags, OF_PROT_FEAR));
+
+	eq(player_make_simple("Half-Giant", "Warrior", "Tester"), true);
+	calc_bonuses(player, &calc_state, false, false);
+	eq(calc_state.el_info[ELEM_SHARD].res_level, 1);
+	eq(calc_state.el_info[ELEM_GRAVITY].res_level, 1);
+
+	eq(player_make_simple("Nibelung", "Warrior", "Tester"), true);
+	calc_bonuses(player, &calc_state, false, false);
+	eq(calc_state.el_info[ELEM_DARK].res_level, 1);
+	eq(calc_state.el_info[ELEM_DISEN].res_level, 1);
+
+	eq(player_make_simple("Fae", "Warrior", "Tester"), true);
+	calc_bonuses(player, &calc_state, false, false);
+	require(of_has(calc_state.flags, OF_FEATHER));
+	require(of_has(calc_state.flags, OF_TRAP_IMMUNE));
+
+	ok;
+}
+
+const char *suite_name = "player/races";
+struct test tests[] = {
+	{ "records0", test_records0 },
+	{ "bonuses0", test_bonuses0 },
+	{ NULL, NULL }
+};

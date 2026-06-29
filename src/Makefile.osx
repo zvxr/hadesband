@@ -11,7 +11,7 @@ LD = ld
 OPT ?= -O2
 
 # for consistency with older versions, use a lower case bundle ID
-BUNDLE_IDENTIFIER = org.rephial.angband
+BUNDLE_IDENTIFIER = org.thangband.thangband
 
 ARCHS = x86_64 arm64
 ARCHFLAGS = $(addprefix -arch ,$(ARCHS))
@@ -120,9 +120,9 @@ APPRES = $(APPCONT)/Resources
 # exception of 8x8.png for Vanilla.  Make sure setting dpi to 72, *not*
 # preserving the actual size of image.  When you have them ready, put them in
 # the subdirectories of lib/tiles and rebuild.
-PLIST = cocoa/$(NAME)-Cocoa.xml
+PLIST = cocoa/Tactical-Angband-Cocoa.xml
 
-ICONFILES = cocoa/$(NAME)_Icons.icns cocoa/Save.icns cocoa/Edit.icns cocoa/Data.icns
+ICONFILES = cocoa/Tactical-Angband_Icons.icns cocoa/Save.icns cocoa/Edit.icns cocoa/Data.icns
 
 LIBFILES = \
   ../lib/gamedata/*.txt \

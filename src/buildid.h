@@ -19,7 +19,7 @@
 #ifndef BUILDID
 #define BUILDID
 
-#define VERSION_NAME	"Tactical Angband"
+#define VERSION_NAME	"Thangband"
 
 extern const char *buildid;
 extern const char *buildver;

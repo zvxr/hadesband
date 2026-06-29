@@ -20,15 +20,18 @@
 # 'phrase' lines are the actual chart entries which make up the history.
 
 # Chart progression by race:
-#   Human/Dunadan -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
+#   Human/Dunadan/Barbarian
+#                 -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Half-Elf      -->  4 -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
-#   Elf           -->  5 -->  6 -->  9 --> 54 --> 55 --> 56
+#   Elf/Fae       -->  5 -->  6 -->  9 --> 54 --> 55 --> 56
 #   High-Elf      -->  7 -->  8 -->  9 --> 54 --> 55 --> 56
 #   Hobbit        --> 10 --> 11 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Gnome         --> 13 --> 14 -->  3 --> 50 --> 51 --> 52 --> 53
-#   Dwarf         --> 16 --> 17 --> 18 --> 57 --> 58 --> 59 --> 60 --> 61
+#   Dwarf/Nibelung
+#                 --> 16 --> 17 --> 18 --> 57 --> 58 --> 59 --> 60 --> 61
 #   Half-Orc      --> 19 --> 20 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
-#   Half-Troll    --> 21 --> 22 --> 62 --> 63 --> 64 --> 65 --> 66
+#   Half-Troll/Half-Giant
+#                 --> 21 --> 22 --> 62 --> 63 --> 64 --> 65 --> 66
 #   Kobold        --> 23 --> 24 --> 25 --> 26 --> 67 --> 68 --> 69
 
 # This table *must* be correct or the history may look very silly.
@@ -410,4 +413,3 @@ chart:69:0:90
 phrase:and small, sharp teeth.
 chart:69:0:100
 phrase:and large, sharp teeth.
-

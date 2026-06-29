@@ -1,3 +1,16 @@
+# Thangband Changelog
+
+## 0.9.0
+
+* Renamed the fork to Thangband.
+* Added four races: Barbarian, Half-Giant, Nibelung, and Fae.
+* Added focused race tests and birth smoke fixtures.
+* Added a root `make build` command for clean macOS app builds.
+* Updated ignore rules for Thangband build outputs.
+* Updated the default subwindow setup.
+
+# Tactical Angband Changelog (Preserved)
+
 ## 0.8.1
 
 * Fixed a bug that caused some spells to do no damage (particularly mage).
