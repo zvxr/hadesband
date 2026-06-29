@@ -10,6 +10,7 @@
 * Updated the default subwindow setup.
 * Updated default macOS window sizes and placement.
 * Separated Thangband macOS window autosave keys from old Angband keys.
+* Added three mushrooms: Stability, Visions, Madness.
 
 # Tactical Angband Changelog (Preserved)
 

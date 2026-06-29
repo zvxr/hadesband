@@ -657,6 +657,72 @@ effect:TIMED_INC:STEALTH
 dice:10+d10
 desc:It makes you very stealthy for a short while.
 
+name:Stability
+type:mushroom
+graphics:,:d
+level:0
+weight:1
+cost:300
+alloc:10:10 to 80
+pile:70:1d4
+power:10
+effect:HEAL_HP
+dice:80
+effect:TIMED_INC:OPP_CHAOS
+dice:50+7d7
+effect:TIMED_INC:HOLD_LIFE
+dice:50+7d7
+effect:TIMED_INC:OPP_DISEN
+dice:50+7d7
+effect:TIMED_INC:OPP_SOUND
+dice:50+7d7
+effect:NOURISH:INC_BY
+dice:5
+
+name:Visions
+type:mushroom
+graphics:,:d
+level:0
+weight:1
+cost:2500
+alloc:5:20 to 80
+pile:40:1d2
+power:25
+msg:Strange insight floods your mind.
+effect:RESTORE_STAT:WIS
+effect:GAIN_STAT:WIS
+effect:LOSE_RANDOM_STAT:WIS
+effect:SET_VALUE
+dice:100+10d10
+effect:TIMED_INC:IMAGE
+effect:CLEAR_VALUE
+effect:GAIN_EXP
+dice:5+5d100
+effect:NOURISH:INC_BY
+dice:5
+
+name:Madness
+type:mushroom
+graphics:,:d
+level:0
+weight:1
+cost:2500
+alloc:5:20 to 80
+pile:40:1d2
+power:25
+msg:Violence floods your mind.
+effect:RESTORE_STAT:STR
+effect:GAIN_STAT:STR
+effect:LOSE_RANDOM_STAT:STR
+effect:SET_VALUE
+dice:100+10d10
+effect:TIMED_INC:IMAGE
+effect:CLEAR_VALUE
+effect:GAIN_EXP
+dice:5+5d100
+effect:NOURISH:INC_BY
+dice:5
+
 
 ##### Weapons #####
 
@@ -5447,4 +5513,3 @@ curse:anti-teleportation:100
 values:MOVES[1] | RES_NEXUS[1]
 
 #The "Special Artifacts" are now automatically generated from artifact.txt
-
