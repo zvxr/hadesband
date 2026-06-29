@@ -470,7 +470,7 @@ level:0
 weight:1
 cost:200
 alloc:10:5 to 100
-pile:70:1d4
+pile:70:2d4
 power:10
 effect:CURE:BLIND
 effect:TIMED_INC:TELEPATHY
@@ -485,7 +485,7 @@ level:0
 weight:1
 cost:200
 alloc:10:5 to 40
-pile:70:1d4
+pile:70:2d4
 power:7
 effect:HEAL_HP
 dice:30
@@ -503,7 +503,7 @@ level:0
 weight:1
 cost:200
 alloc:25:20 to 100
-pile:13:1d3
+pile:13:2d3
 power:15
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:INT
@@ -520,7 +520,7 @@ level:0
 weight:1
 cost:200
 alloc:10:5 to 40
-pile:70:1d4
+pile:70:2d4
 power:8
 effect:RESTORE_MANA
 dice:20
@@ -539,7 +539,7 @@ level:0
 weight:1
 cost:60
 alloc:10:5 to 100
-pile:70:1d4
+pile:70:2d4
 power:7
 effect:SET_VALUE
 dice:25+5d5
@@ -559,7 +559,7 @@ level:0
 weight:1
 cost:60
 alloc:10:5 to 40
-pile:70:1d4
+pile:70:2d4
 power:5
 effect:TIMED_SET:TERROR
 dice:25+5d5
@@ -574,24 +574,13 @@ level:0
 weight:1
 cost:60
 alloc:10:10 to 40
-pile:70:1d4
+pile:70:2d4
 power:5
 effect:TIMED_SET:STONESKIN
 dice:50+7d7
 effect:NOURISH:INC_BY
 dice:5
 desc:Its poison turns your skin to stone, albeit briefly.
-
-name:Turbulence
-type:mushroom
-graphics:,:d
-level:0
-weight:1
-cost:60
-#alloc:10:5 to 100
-pile:70:1d4
-#E:SHROOM_TURB
-pval:500
 
 name:Debility
 type:mushroom
@@ -600,7 +589,7 @@ level:0
 weight:1
 cost:20
 alloc:10:10 to 40
-pile:70:1d4
+pile:70:2d4
 power:5
 effect:RESTORE_MANA
 effect:NOURISH:INC_BY
@@ -617,7 +606,7 @@ level:0
 weight:1
 cost:100
 alloc:1:15 to 100
-pile:70:1d4
+pile:70:2d4
 power:5
 effect:TIMED_INC:SPRINT
 dice:100
@@ -632,7 +621,7 @@ level:0
 weight:1
 cost:60
 alloc:1:15 to 100
-pile:70:1d4
+pile:70:2d4
 power:5
 msg:Your stomach heaves.
 effect:NOURISH:SET_TO
@@ -649,7 +638,7 @@ level:0
 weight:1
 cost:300
 alloc:20:50 to 100
-pile:70:1d4
+pile:70:2d4
 power:9
 effect:NOURISH:INC_BY
 dice:5
@@ -664,7 +653,7 @@ level:0
 weight:1
 cost:300
 alloc:10:10 to 80
-pile:70:1d4
+pile:70:2d4
 power:10
 effect:HEAL_HP
 dice:80
@@ -678,6 +667,7 @@ effect:TIMED_INC:OPP_SOUND
 dice:50+7d7
 effect:NOURISH:INC_BY
 dice:5
+desc:It protects you from some exotic effects.
 
 name:Visions
 type:mushroom
@@ -695,11 +685,13 @@ effect:LOSE_RANDOM_STAT:WIS
 effect:SET_VALUE
 dice:100+10d10
 effect:TIMED_INC:IMAGE
+effect:TIMED_INC:AFRAID
 effect:CLEAR_VALUE
 effect:GAIN_EXP
 dice:5+5d100
 effect:NOURISH:INC_BY
 dice:5
+desc:It trades a random stat for wisdom and experience.
 
 name:Madness
 type:mushroom
@@ -717,11 +709,13 @@ effect:LOSE_RANDOM_STAT:STR
 effect:SET_VALUE
 dice:100+10d10
 effect:TIMED_INC:IMAGE
+effect:TIMED_INC:CONFUSED
 effect:CLEAR_VALUE
 effect:GAIN_EXP
 dice:5+5d100
 effect:NOURISH:INC_BY
 dice:5
+desc:It trades a random stat for strength and experience.
 
 
 ##### Weapons #####

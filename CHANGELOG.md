@@ -4,13 +4,10 @@
 
 * Renamed the fork to Thangband.
 * Added four races: Barbarian, Half-Giant, Nibelung, and Fae.
-* Added focused race tests and birth smoke fixtures.
 * Added a root `make build` command for clean macOS app builds.
-* Updated ignore rules for Thangband build outputs.
-* Updated the default subwindow setup.
-* Updated default macOS window sizes and placement.
-* Separated Thangband macOS window autosave keys from old Angband keys.
+* Updated the default subwindow setup with macOS size/placement.
 * Added three mushrooms: Stability, Visions, Madness.
+* Doubled mushroom piles.
 
 # Tactical Angband Changelog (Preserved)
 
