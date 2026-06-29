@@ -8,6 +8,8 @@
 * Added a root `make build` command for clean macOS app builds.
 * Updated ignore rules for Thangband build outputs.
 * Updated the default subwindow setup.
+* Updated default macOS window sizes and placement.
+* Separated Thangband macOS window autosave keys from old Angband keys.
 
 # Tactical Angband Changelog (Preserved)
 
