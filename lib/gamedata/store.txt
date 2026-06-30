@@ -232,6 +232,8 @@ owner:0:Your home
 owner:0:Your home
 owner:0:Your home
 
+## Dungeon Stores
+
 # Dungeon Organics
 store:STORE_DUNGEON
 owner:30000:Twyla (Fae)
@@ -251,6 +253,8 @@ sometimes:90:potion:Healing
 sometimes:90:potion:Restore Mana
 sometimes:90:potion:Speed
 sometimes:50:scroll:Teleportation
+sometimes:60:amulet:Brilliance
+sometimes:50:amulet:Teleportation
 
 buy:mushroom
 buy:potion

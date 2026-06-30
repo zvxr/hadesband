@@ -2545,17 +2545,31 @@ cost:600
 alloc:20:10 to 40
 values:SEARCH[d5M5]
 
+name:Brilliance
+type:amulet
+graphics:":d
+level:10
+weight:3
+cost:400
+alloc:20:10 to 60
+values:LIGHT[2]
+desc:It glows with a steady inner radiance.
+
 ### Powers ###
 
 name:Teleportation
 type:amulet
 graphics:":d
-level:10
+level:30
 weight:3
-cost:10
-alloc:20:10 to 40
+cost:3000
+alloc:20:10 to 70
 flags:EASY_KNOW
-curse:teleportation:100
+power:6
+effect:TELEPORT
+dice:M60
+time:200
+desc:It can be activated to teleport the wearer.
 
 name:Slow Digestion
 type:amulet

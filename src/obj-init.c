@@ -3477,4 +3477,3 @@ struct file_parser object_property_parser = {
 	finish_parse_object_property,
 	cleanup_object_property
 };
-

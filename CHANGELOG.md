@@ -8,8 +8,9 @@
 * Updated the default subwindow setup with macOS size/placement.
 * Added three mushrooms: Stability, Visions, Madness.
 * Doubled mushroom piles.
-* Added a rare Dungeon Organics dungeon store room.
-* Updated default interface and birth options for quicker testing.
+* Added Dungeon Organics dungeon store room.
+* Added Amulet of Brilliance.
+* Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
 
 # Tactical Angband Changelog (Preserved)
 
