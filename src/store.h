@@ -31,6 +31,12 @@ struct object_buy {
 	size_t flag;
 };
 
+struct object_stock {
+	struct object_stock *next;
+	struct object_kind *kind;
+	unsigned int chance;
+};
+
 struct owner {
 	unsigned int oidx;
 	struct owner *next;
@@ -57,6 +63,9 @@ struct store {
 	size_t normal_size;
 	size_t normal_num;
 	struct object_kind **normal_table;
+
+	/* Chance to stock these items */
+	struct object_stock *sometimes;
 
 	/* Buy these items */
 	struct object_buy *buy;

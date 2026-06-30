@@ -13,6 +13,8 @@
 # slots: min : max                     - number of 'normal' slots to keep stocked
 # normal: type name : item name        - for the normal stocking list
 # always: type name : ?item name       - for things to always stock
+# sometimes: percent : type name : item name
+#                                      - percent chance to stock an exact item
 # buy: type name                       - base types the store will buy
 # buy-flag: flag : type name           - types to buy if the flag is present
 
@@ -229,3 +231,28 @@ owner:0:Your home
 owner:0:Your home
 owner:0:Your home
 owner:0:Your home
+
+# Dungeon Organics
+store:STORE_DUNGEON
+owner:30000:Twyla (Fae)
+owner:15000:Gertrude the Cursed (Demon)
+owner:10000:Princess the Quiet (Barbarian)
+owner:5000:Clockarella the Timely (Gnome)
+slots:0:0
+turnover:9
+sometimes:80:mushroom:Second Sight
+sometimes:80:mushroom:Fast Recovery
+sometimes:80:mushroom:Clear Mind
+sometimes:80:mushroom:Sprinting
+sometimes:60:mushroom:Stability
+sometimes:25:mushroom:Visions
+sometimes:25:mushroom:Madness
+sometimes:90:potion:Healing
+sometimes:90:potion:Restore Mana
+sometimes:90:potion:Speed
+sometimes:50:scroll:Teleportation
+
+buy:mushroom
+buy:potion
+buy:scroll
+buy:amulet

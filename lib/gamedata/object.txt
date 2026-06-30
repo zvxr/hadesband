@@ -653,7 +653,7 @@ level:0
 weight:1
 cost:300
 alloc:10:10 to 80
-pile:70:2d4
+pile:70:1d4
 power:10
 effect:HEAL_HP
 dice:80

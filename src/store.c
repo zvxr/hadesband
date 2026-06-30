@@ -90,6 +90,7 @@ static void cleanup_stores(void)
 {
 	struct owner *o, *o_next;
 	struct object_buy *buy, *buy_next;
+	struct object_stock *stock, *stock_next;
 	int i;
 
 	if (!stores)
@@ -115,6 +116,10 @@ static void cleanup_stores(void)
 		for (buy = store->buy; buy; buy = buy_next) {
 			buy_next = buy->next;
 			mem_free(buy);
+		}
+		for (stock = store->sometimes; stock; stock = stock_next) {
+			stock_next = stock->next;
+			mem_free(stock);
 		}
 	}
 	mem_free(stores);
@@ -233,6 +238,30 @@ static enum parser_error parse_always(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_sometimes(struct parser *p) {
+	struct store *s = parser_priv(p);
+	struct object_stock *stock;
+	unsigned int chance = parser_getuint(p, "chance");
+	int tval = tval_find_idx(parser_getsym(p, "tval"));
+	int sval = lookup_sval(tval, parser_getsym(p, "sval"));
+	struct object_kind *kind = lookup_kind(tval, sval);
+
+	if (!s)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (chance > 100)
+		return PARSE_ERROR_INVALID_VALUE;
+	if (!kind)
+		return PARSE_ERROR_UNRECOGNISED_SVAL;
+
+	stock = mem_zalloc(sizeof(*stock));
+	stock->kind = kind;
+	stock->chance = chance;
+	stock->next = s->sometimes;
+	s->sometimes = stock;
+
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_owner(struct parser *p) {
 	struct store *s = parser_priv(p);
 	unsigned int maxcost = parser_getuint(p, "purse");
@@ -297,6 +326,7 @@ struct parser *init_parse_stores(void) {
 	parser_reg(p, "turnover uint turnover", parse_turnover);
 	parser_reg(p, "normal sym tval sym sval", parse_normal);
 	parser_reg(p, "always sym tval ?sym sval", parse_always);
+	parser_reg(p, "sometimes uint chance sym tval sym sval", parse_sometimes);
 	parser_reg(p, "buy str base", parse_buy);
 	parser_reg(p, "buy-flag sym flag str base", parse_buy_flag);
 	/*
@@ -421,6 +451,11 @@ static bool store_sale_should_reduce_stock(struct store *store,
 
 /* Randomly select one of the entries in an array */
 #define ONE_OF(x)	x[randint0(N_ELEMENTS(x))]
+
+static bool store_uses_black_market_price(const struct store *store)
+{
+	return store->feat == FEAT_STORE_BLACK || store->feat == FEAT_STORE_DUNGEON;
+}
 
 
 /**
@@ -613,8 +648,8 @@ int price_item(struct store *store, const struct object *obj,
 		return (store_buying) ? 0 : qty;
 	}
 
-	/* The black market is always a worse deal */
-	if (store->feat == FEAT_STORE_BLACK)
+	/* The black market and dungeon store are always a worse deal */
+	if (store_uses_black_market_price(store))
 		adjust = 150;
 
 	/* Shop is buying */
@@ -628,8 +663,8 @@ int price_item(struct store *store, const struct object *obj,
 		/* Shops now pay 2/3 of true value */
 		price = price * 2 / 3;
 
-		/* Black market sucks */
-		if (store->feat == FEAT_STORE_BLACK) {
+		/* These stores are especially costly to trade with */
+		if (store_uses_black_market_price(store)) {
 			price = price / 2;
 		}
 
@@ -645,8 +680,8 @@ int price_item(struct store *store, const struct object *obj,
 			price = object_value_real(obj, 1);
 		}
 
-		/* Black market sucks */
-		if (store->feat == FEAT_STORE_BLACK) {
+		/* These stores are especially costly to trade with */
+		if (store_uses_black_market_price(store)) {
 			price = price * 2;
 		}
 	}
@@ -1117,9 +1152,10 @@ static bool black_market_ok(const struct object *obj)
 	for (i = 0; i < z_info->store_max; i++) {
 		struct object *stock_obj;
 
-		/* Skip home and black market */
+		/* Skip home and stores with special stock generation */
 		if (stores[i].feat == FEAT_STORE_BLACK
-				|| stores[i].feat == FEAT_HOME)
+				|| stores[i].feat == FEAT_HOME
+				|| stores[i].feat == FEAT_STORE_DUNGEON)
 			continue;
 
 		/* Check every object in the store */
@@ -1167,7 +1203,7 @@ static bool store_create_random(struct store *store)
 	if (min_level > 55) min_level = 55;
 	if (max_level > 70) max_level = 70;
 
-	/* Consider up to six items */
+	/* Consider a few items. */
 	for (tries = 0; tries < 6; tries++) {
 		struct object_kind *kind;
 		struct object *obj, *known_obj;
@@ -1175,11 +1211,13 @@ static bool store_create_random(struct store *store)
 		/* Work out the level for objects to be generated at */
 		level = rand_range(min_level, max_level);
 
-		/* Black Markets have a random object, of a given level */
+		/* Special stores have a random object, of a given level */
 		if (store->feat == FEAT_STORE_BLACK)
 			kind = get_obj_num(level, false, 0);
 		else
 			kind = store_get_choice(store);
+
+		if (!kind) continue;
 
 		/*** Pre-generation filters ***/
 
@@ -1274,6 +1312,9 @@ static struct object *store_create_item(struct store *store,
 	player_know_object(player, obj);
 	obj->origin = ORIGIN_NONE;
 
+	/* Use normal store pile sizing for exact-stocked items. */
+	mass_produce(obj);
+
 	/* Attempt to carry the object */
 	carried = store_carry(store, obj);
 	if (!carried) {
@@ -1282,6 +1323,25 @@ static struct object *store_create_item(struct store *store,
 		object_delete(NULL, NULL, &obj);
 	}
 	return carried;
+}
+
+/**
+ * Maintain chance-stocked items defined by the store data.
+ */
+static void store_maint_sometimes(struct store *s)
+{
+	struct object_stock *stock;
+
+	for (stock = s->sometimes; stock; stock = stock->next) {
+		struct object *obj = store_find_kind(s, stock->kind,
+			store_sale_should_reduce_stock);
+
+		if ((unsigned int) randint0(100) < stock->chance) {
+			if (!obj) store_create_item(s, stock->kind);
+		} else if (obj) {
+			store_delete(s, obj, obj->number);
+		}
+	}
 }
 
 /**
@@ -1381,7 +1441,11 @@ static void store_maint(struct store *s)
 		}
 	}
 
-	if (s->turnover) {
+	if (s->sometimes) {
+		store_maint_sometimes(s);
+	}
+
+	if (s->turnover && s->normal_stock_max > 0) {
 		int restock_attempts = 100000;
 		int stock = s->stock_num + randint1(s->turnover);
 
