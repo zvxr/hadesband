@@ -246,15 +246,16 @@ sometimes:80:mushroom:Second Sight
 sometimes:80:mushroom:Fast Recovery
 sometimes:80:mushroom:Clear Mind
 sometimes:80:mushroom:Sprinting
-sometimes:60:mushroom:Stability
+sometimes:80:mushroom:Stability
 sometimes:25:mushroom:Visions
 sometimes:25:mushroom:Madness
-sometimes:90:potion:Healing
-sometimes:90:potion:Restore Mana
-sometimes:90:potion:Speed
+sometimes:75:potion:Healing
+sometimes:75:potion:Restore Mana
+sometimes:75:potion:Speed
 sometimes:50:scroll:Teleportation
-sometimes:60:amulet:Brilliance
-sometimes:50:amulet:Teleportation
+sometimes:33:amulet:Brilliance
+sometimes:33:amulet:Teleportation
+sometimes:33:amulet:Resist Confusion
 
 buy:mushroom
 buy:potion

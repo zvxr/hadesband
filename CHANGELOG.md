@@ -8,9 +8,10 @@
 * Updated the default subwindow setup with macOS size/placement.
 * Added three mushrooms: Stability, Visions, Madness.
 * Doubled mushroom piles.
-* Added Dungeon Organics dungeon store room.
-* Added Amulet of Brilliance.
+* Added Dungeon Organics dungeon store room (20% chance on every 5th floor).
+* Added Amulet of Brilliance, Resist Confusion.
 * Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
+* Removed Amulet of Inertia.
 
 # Tactical Angband Changelog (Preserved)
 

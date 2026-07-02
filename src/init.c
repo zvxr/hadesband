@@ -2197,6 +2197,25 @@ static enum parser_error parse_feat_look_in_preposition(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_feat_spawn(struct parser *p) {
+	struct feature *f = parser_priv(p);
+	unsigned int chance = parser_getuint(p, "chance");
+	unsigned int floor_mod = parser_getuint(p, "floor-mod");
+
+	if (!f) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	if (chance > 100) {
+		return PARSE_ERROR_OUT_OF_BOUNDS;
+	}
+	if (floor_mod > 255) {
+		return PARSE_ERROR_OUT_OF_BOUNDS;
+	}
+	f->spawn_chance = chance;
+	f->spawn_floor_mod = floor_mod;
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_feat_resist_flag(struct parser *p) {
 	struct feature *f = parser_priv(p);
 	int flag = lookup_flag(mon_race_flags, parser_getsym(p, "flag"));
@@ -2230,6 +2249,7 @@ static struct parser *init_parse_feat(void) {
 	parser_reg(p, "confused-msg str text", parse_feat_confused_msg);
 	parser_reg(p, "look-prefix str text", parse_feat_look_prefix);
 	parser_reg(p, "look-in-preposition str text", parse_feat_look_in_preposition);
+	parser_reg(p, "spawn uint chance uint floor-mod", parse_feat_spawn);
 	parser_reg(p, "resist-flag sym flag", parse_feat_resist_flag);
 
 	/*

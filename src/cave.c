@@ -339,6 +339,23 @@ const char *get_feat_code_name(int idx)
 }
 
 /**
+ * Check whether a dungeon room feature should be placed at the given depth.
+ * \param fidx is the feature index.
+ * \param depth is the dungeon depth (0 is never eligible).
+ */
+bool feat_spawns_at_depth(int fidx, int depth)
+{
+	const struct feature *f = &f_info[fidx];
+
+	if (!f->spawn_chance) return false;
+	if (!depth) return false;
+	if (f->spawn_floor_mod && depth % f->spawn_floor_mod != 0) {
+		return false;
+	}
+	return (randint0(100) < f->spawn_chance);
+}
+
+/**
  * Allocate a new chunk of the world
  */
 struct chunk *cave_new(int height, int width) {
