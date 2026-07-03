@@ -134,6 +134,12 @@ dungeon features by walk distance from the player.
 * Banish Evil is replaced by Holy Terror, which causes irresistible
   fear in evil non-unique creatures.
 
+### Red Mage
+
+* New hybrid class that generalizes in magic and is decent in melee.
+* Can cast all low/mid-level spells, with slightly lower fail rate.
+* Can steal mana.
+
 ### Necromancer
 
 * Shadow Shift now has the same range as Phase Door.

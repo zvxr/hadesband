@@ -12,6 +12,8 @@
 * Added Amulet of Brilliance, Resist Confusion.
 * Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
 * Removed Amulet of Inertia.
+* Added Red Mage. Spell generalist that can steal mana.
+* Increased starting gold by 400.
 
 # Tactical Angband Changelog (Preserved)
 

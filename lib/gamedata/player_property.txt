@@ -140,6 +140,11 @@ code:ASSASSIN
 name:Assassin
 desc:Your melee attacks on sleeping enemies are silent and accurate.
 
+type:player
+code:MANA_STEAL
+name:Mana Steal
+desc:You can steal mana from adjacent spellcasting monsters.
+
 
 # Object flags
 
