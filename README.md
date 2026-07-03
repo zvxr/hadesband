@@ -8,12 +8,13 @@
 
 Thangband is a variant of the classic roguelike game Angband.  It uses
 Tactical Angband as its base, preserving that variant's shorter, more tactical
-dungeon while adding changes inspired by Hengband's broader race and character
-variety.
+dungeon while adding changes, many inspired by Hengband.
 
-The current goal is to keep Tactical Angband's lower-grind pacing while opening
-up more distinct character builds in the spirit of Hengband.  Early additions
-include new races such as Barbarian, Half-Giant, Nibelung, and Fae.
+### Concepts
+
+- Shorter variant that considers different core game set-ups.
+- New races, classes, items, and mechanics to provide fresh gameplay.
+- Emphasis and better access to utility aspects of the game.
 
 ## Building on macOS
 
