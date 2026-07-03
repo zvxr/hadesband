@@ -9,6 +9,7 @@
 *.out
 *.rej
 *.sublime*
+*.sw[nop]
 *~
 .cproject
 .dep
