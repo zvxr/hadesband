@@ -1710,13 +1710,13 @@ desc:Shoots a radius-2 fire ball.
 
 book:prayer book:town:[Novice's Handbook]:5:divine
 
-spell:Detect Evil:3:3:25:4
+spell:Detect Evil:3:3:15:4
 effect:DETECT_EVIL
 effect-yx:20:20
 desc:Detects all evil monsters in the immediate area,
 desc: for one turn only.
 
-spell:Minor Healing:4:4:25:4
+spell:Minor Healing:4:4:15:4
 effect:HEAL_HP
 dice:$B+m$M
 expr:B:PLAYER_LEVEL:+ 10
@@ -1728,7 +1728,7 @@ dice:20
 desc:Heals a level-dependent amount or percentage of hitpoints, and
 desc: cures 20 points worth of cuts and of stunning.
 
-spell:Bless:5:4:30:4
+spell:Bless:5:4:20:4
 effect:TIMED_INC:BLESSED
 dice:$B+d$S
 expr:B:PLAYER_LEVEL:+ 10
@@ -1736,12 +1736,12 @@ expr:S:PLAYER_LEVEL:+ 10
 desc:Blesses you, giving a bonus of +5 to AC and +10 to-hit, for a
 desc: level-dependent number of turns.
 
-spell:Sense Invisible:8:6:35:4
+spell:Sense Invisible:8:6:25:4
 effect:TIMED_INC:SINVIS
 dice:24+d24
 desc:Enables you to see invisible monsters for 24+1d24 turns.
 
-spell:Heroism:10:6:40:5
+spell:Heroism:10:6:30:5
 effect:HEAL_HP
 dice:10
 effect:CURE:AFRAID
@@ -1755,27 +1755,27 @@ desc: for a level-dependent duration.
 
 book:nature book:town:[Lesser Charms]:5:nature
 
-spell:Detect Life:4:3:30:2
+spell:Detect Life:4:3:20:2
 effect:DETECT_LIVING_MONSTERS
 effect-yx:20:20
 desc:Detects all living monsters in the immediate area, for one turn only.
 
-spell:Remove Hunger:6:4:35:2
+spell:Remove Hunger:6:4:25:2
 effect:NOURISH:INC_TO
 dice:50
 desc:Magically renders you comfortably fed (but not satiated).
 
-spell:Cure Poison:8:6:20:4
+spell:Cure Poison:8:6:10:4
 effect:CURE:POISONED
 desc:Neutralizes poison.
 
-spell:Confuse Monster:10:6:45:5
+spell:Confuse Monster:10:6:35:5
 effect:BOLT_AWARE:MON_CONF
 dice:5+d$S
 expr:S:PLAYER_LEVEL:- 5
 desc:Confuse a single monster; more effective against animals.
 
-spell:Slow Monster:12:7:45:5
+spell:Slow Monster:12:7:35:5
 effect:BOLT_STATUS:MON_SLOW
 dice:5+d$S
 expr:S:PLAYER_LEVEL:- 5
@@ -1850,25 +1850,25 @@ desc:Detects all monsters in the immediate area, for one turn only.
 
 book:nature book:town:[Gifts of Nature]:4:nature
 
-spell:Resist Poison:14:10:40:5
+spell:Resist Poison:14:10:30:5
 effect:TIMED_INC:OPP_POIS
 dice:20+d20
 desc:Grants you resistance to poison for 20+1d20 turns.
 
-spell:Turn Stone to Mud:16:7:35:5
+spell:Turn Stone to Mud:16:7:25:5
 effect:LINE:KILL_WALL
 dice:20+1d30
 desc:Produces a beam that destroys the first section of wall it hits,
 desc: unless it is a permanent wall.  Each monster caught in the beam that
 desc: is susceptible to rock remover takes 20+1d30 points of damage.
 
-spell:Sense Surroundings:18:10:45:6
+spell:Sense Surroundings:18:10:35:6
 effect:TIMED_INC:SENSE_SURROUNDINGS:0:0
 dice:100+d$B
 expr:B:PLAYER_LEVEL:* 2
 desc:Senses the rock and earth around you for a level-dependent duration.
 
-spell:Lightning Strike:24:14:55:8
+spell:Lightning Strike:24:14:45:8
 effect:NOISY
 effect:STRIKE:ELEC:0
 dice:$Dd4
