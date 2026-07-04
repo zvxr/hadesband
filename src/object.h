@@ -121,6 +121,27 @@ struct curse {
 	char *desc;
 };
 
+struct sentient_event {
+	struct sentient_event *next;
+	struct effect *effect;
+	char *effect_msg;
+	random_value time;
+	int chance;
+};
+
+struct sentient {
+	struct sentient *next;
+	char *name;
+	bool *poss;
+	struct object *obj;
+	char *desc;
+	int alloc_prob;
+	uint8_t alloc_min;
+	uint8_t alloc_max;
+	int event_count;
+	struct sentient_event *events;
+};
+
 enum {
 	EL_INFO_HATES = 0x01,
 	EL_INFO_IGNORE = 0x02,
@@ -393,6 +414,11 @@ struct curse_data {
 	int timeout;
 };
 
+struct sentient_data {
+	uint8_t index;
+	uint16_t *timeouts;
+};
+
 /**
  * Object information, for a specific object.
  *
@@ -452,6 +478,7 @@ struct object {
 	bool *brands;			/**< Flag absence/presence of each brand */
 	bool *slays;			/**< Flag absence/presence of each slay */
 	struct curse_data *curses;	/**< Array of curse powers and timeouts */
+	struct sentient_data *sentient;	/**< Sentient personality, if any */
 
 	struct effect *effect;	/**< Effect this item produces (effects.c) */
 	char *effect_msg;		/**< Message on use */

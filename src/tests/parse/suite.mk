@@ -31,6 +31,7 @@ TESTPROGS += parse/a-info \
 	parse/readstore \
 	parse/realm \
 	parse/shape \
+	parse/sentient \
 	parse/slay \
 	parse/ui_knowledge \
 	parse/v-info \

@@ -220,6 +220,7 @@ ANGFILES0 = \
 	obj-power.o \
 	obj-properties.o \
 	obj-randart.o \
+	obj-sentient.o \
 	obj-slays.o \
 	obj-tval.o \
 	obj-util.o \

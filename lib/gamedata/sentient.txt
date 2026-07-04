@@ -1,0 +1,350 @@
+# File: sentient.txt
+
+# name: sentient personality name
+# alloc: commonness : min " to " max
+# type: valid object base
+# weight: adjustment amount or scale factor, as for curses
+# combat: to_hit : to_dam : to_ac
+# flags: flag | flag | etc.
+# values: label[value] | label[value] | etc.
+# event: percent chance when timeout expires : timeout random value
+# effect: effect name : ? parameter : ? parameter : ? parameter
+# dice:dice string
+# expr:dice expression
+# msg: text
+# desc: description. "It is possessed with __"
+
+# type (wearables)
+#type:bow
+#type:digger
+#type:hafted
+#type:polearm
+#type:sword
+#type:boots
+#type:gloves
+#type:helm
+#type:crown
+#type:shield
+#type:cloak
+#type:soft armor
+#type:hard armor
+#type:dragon armor
+#type:light
+#type:amulet
+#type:ring
+
+# Basic stat tradeoffs (Common)
+name:Mighty
+alloc:50:1 to 60
+type:digger
+type:hafted
+type:polearm
+type:sword
+type:boots
+type:gloves
+type:helm
+type:crown
+type:shield
+type:soft armor
+type:hard armor
+type:dragon armor
+values:STR[3] | DEX[-2]
+desc:overbearing power
+
+name:Clever
+alloc:50:1 to 60
+type:bow
+type:hafted
+type:polearm
+type:sword
+type:boots
+type:helm
+type:cloak
+type:soft armor
+type:hard armor
+type:dragon armor
+type:amulet
+type:ring
+values:DEX[3] | INT[-2]
+desc:a quick and rash mind
+
+name:Hardy
+alloc:50:1 to 60
+type:bow
+type:digger
+type:hafted
+type:polearm
+type:sword
+type:gloves
+type:helm
+type:crown
+type:shield
+type:hard armor
+type:dragon armor
+type:ring
+values:CON[3] | STR[-2]
+desc:a will to persist
+
+name:Visionary
+alloc:50:1 to 60
+type:bow
+type:boots
+type:gloves
+type:helm
+type:crown
+type:shield
+type:cloak
+type:soft armor
+type:hard armor
+type:dragon armor
+type:amulet
+type:ring
+values:INT[3] | WIS[-2]
+desc:brilliance without practical judgement
+
+name:Enlightened
+alloc:50:1 to 60
+type:digger
+type:hafted
+type:polearm
+type:sword
+type:boots
+type:gloves
+type:helm
+type:shield
+type:cloak
+type:soft armor
+type:light
+type:amulet
+values:WIS[3] | CON[-2]
+desc:spiritual centeredness
+
+# Tradeoff effects (Uncommon)
+
+name:Dreadful
+alloc:10:5 to 100
+type:hafted
+type:polearm
+type:sword
+type:helm
+type:crown
+type:shield
+type:cloak
+type:soft armor
+type:hard armor
+type:dragon armor
+type:light
+type:amulet
+type:ring
+desc:horrible visions
+event:20:1d500
+effect:DETECT_EVIL
+msg:Horrible visions reveal nearby evil.
+event:12:1d350
+effect:TIMED_INC:AFRAID
+dice:10+1d20
+msg:Horrible visions shake your courage.
+
+name:Bloodthirsty
+alloc:10:5 to 100
+type:bow
+type:digger
+type:hafted
+type:polearm
+type:sword
+type:gloves
+type:helm
+type:shield
+type:hard armor
+type:dragon armor
+desc:bloodlust
+event:35:1d300
+effect:WAKE
+msg:A pulse of bloodlust stirs nearby foes.
+event:8:1d700
+effect:TIMED_INC:HERO
+dice:20+1d20
+msg:Bloodlust steels your heart.
+
+name:Jealous
+alloc:10:5 to 100
+type:bow
+type:digger
+type:hafted
+type:polearm
+type:sword
+type:gloves
+type:shield
+type:soft armor
+type:hard armor
+type:dragon armor
+desc:jealous hunger
+event:18:1d450
+effect:HEAL_HP
+dice:50
+msg:Jealous hunger knits your wounds.
+event:3:1d1200
+effect:CURSE_ARMOR
+msg:Jealous hunger turns against your armor.
+
+name:Mercurial
+alloc:10:5 to 100
+type:bow
+type:digger
+type:boots
+type:gloves
+type:helm
+type:crown
+type:cloak
+type:light
+type:amulet
+type:ring
+desc:mild chaos
+event:18:1d500
+effect:DETECT_VISIBLE_MONSTERS
+msg:Mild chaos briefly clarifies the shapes around you.
+event:14:1d450
+effect:TIMED_INC:IMAGE
+dice:10+1d20
+msg:Mild chaos bends your sight.
+
+name:Whispering
+alloc:10:5 to 100
+type:bow
+type:polearm
+type:boots
+type:helm
+type:crown
+type:cloak
+type:light
+type:amulet
+type:ring
+desc:urgent whispers
+event:20:1d500
+effect:DETECT_INVISIBLE_MONSTERS
+msg:Urgent whispers expose the unseen.
+event:5:1d1000
+effect:TIMED_INC:AMNESIA
+dice:20+1d20
+msg:Urgent whispers scatter your thoughts.
+
+name:Feverish
+alloc:10:5 to 100
+type:digger
+type:hafted
+type:sword
+type:boots
+type:gloves
+type:soft armor
+type:hard armor
+type:dragon armor
+type:amulet
+desc:burning fever
+event:12:1d700
+effect:TIMED_INC:FAST
+dice:10+1d15
+msg:Burning fever quickens your limbs.
+event:18:1d500
+effect:TIMED_INC:CONFUSED
+dice:10+1d20
+msg:Burning fever clouds your thoughts.
+
+name:Gleaming
+alloc:10:5 to 100
+type:bow
+type:digger
+type:boots
+type:helm
+type:crown
+type:shield
+type:cloak
+type:soft armor
+type:hard armor
+type:dragon armor
+type:light
+desc:unsteady radiance
+event:20:1d500
+effect:LIGHT_AREA
+msg:Unsteady radiance pours into the dark.
+event:10:1d650
+effect:DRAIN_LIGHT
+msg:Unsteady radiance gutters and fades.
+
+name:Watchful
+alloc:10:5 to 100
+type:bow
+type:boots
+type:gloves
+type:helm
+type:crown
+type:shield
+type:cloak
+type:light
+type:amulet
+type:ring
+desc:restless vigilance
+event:25:1d400
+effect:DETECT_VISIBLE_MONSTERS
+msg:Restless vigilance marks nearby movement.
+event:30:1d300
+effect:WAKE
+msg:Restless vigilance sets the dungeon stirring.
+
+name:Sanguine
+alloc:10:5 to 100
+type:digger
+type:hafted
+type:polearm
+type:sword
+type:gloves
+type:shield
+type:soft armor
+type:hard armor
+type:dragon armor
+type:ring
+desc:warmth in spilled blood
+event:20:1d450
+effect:HEAL_HP
+dice:40
+msg:Warmth in spilled blood mends your flesh.
+event:10:1d700
+effect:DRAIN_MANA
+msg:Warmth in spilled blood drinks your focus.
+
+name:Dreaming
+alloc:10:5 to 100
+type:hafted
+type:polearm
+type:sword
+type:boots
+type:crown
+type:cloak
+type:soft armor
+type:light
+type:amulet
+type:ring
+desc:half-remembered dreams
+event:12:1d800
+effect:MAP_AREA
+msg:Half-remembered dreams sketch the world around you.
+event:18:1d500
+effect:TIMED_INC:IMAGE
+dice:20+1d30
+msg:Half-remembered dreams overtake your senses.
+
+
+# Archetypes (Rare)
+name:The Oracle
+alloc:2:35 to 100
+type:helm
+type:crown
+type:amulet
+values:WIS[2] | INT[1] | DEX[-1]
+flags:SUST_WIS | TELEPATHY
+desc:haunted by a whispering oracle
+event:15:1d250
+effect:DETECT_INVISIBLE_MONSTERS
+msg:The Oracle reveals unseen presences.
+event:5:1d500
+effect:DRAIN_MANA
+msg:The Oracle drinks deeply from your thoughts.

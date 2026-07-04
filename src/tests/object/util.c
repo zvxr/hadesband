@@ -7,6 +7,7 @@
 #include "obj-curse.h"
 #include "obj-make.h"
 #include "obj-pile.h"
+#include "obj-sentient.h"
 #include "obj-util.h"
 
 static struct curse_data *obj_curse_data = NULL;
@@ -38,6 +39,14 @@ int setup_tests(void **state) {
 	of_on(curses[4].obj->flags, OF_MULTIPLY_WEIGHT);
 	obj_curse_data =
 		mem_zalloc(z_info->curse_max * sizeof(*obj_curse_data));
+	z_info->sentient_max = 2;
+	sentients = mem_zalloc(z_info->sentient_max * sizeof(*sentients));
+	sentients[1].name = string_make("Nimble");
+	sentients[1].poss = mem_zalloc(TV_MAX * sizeof(bool));
+	sentients[1].poss[TV_BOOTS] = true;
+	sentients[1].obj = mem_zalloc(sizeof(*sentients[1].obj));
+	sentients[1].obj->modifiers[OBJ_MOD_DEX] = 2;
+	sentients[1].obj->modifiers[OBJ_MOD_STR] = -1;
 	quarks_init();
 	return 0;
 }
@@ -51,6 +60,12 @@ int teardown_tests(void *state) {
 		mem_free(curses[i].obj);
 	}
 	mem_free(curses);
+	for (i = 0; i < z_info->sentient_max; ++i) {
+		string_free(sentients[i].name);
+		mem_free(sentients[i].poss);
+		mem_free(sentients[i].obj);
+	}
+	mem_free(sentients);
 	mem_free(z_info);
 	return 0;
 }
@@ -324,10 +339,29 @@ static int test_object_weight_one(void *state) {
 	ok;
 }
 
+static int test_append_object_sentient(void *state) {
+	struct object obj = { 0 };
+
+	obj.tval = TV_BOOTS;
+	eq(append_object_sentient(&obj, 1), true);
+	notnull(obj.sentient);
+	eq(obj.sentient->index, 1);
+	eq(obj.modifiers[OBJ_MOD_DEX], 2);
+	eq(obj.modifiers[OBJ_MOD_STR], -1);
+	free_object_sentient(&obj);
+
+	obj.curses = obj_curse_data;
+	eq(append_object_sentient(&obj, 1), false);
+	null(obj.sentient);
+	obj.curses = NULL;
+	ok;
+}
+
 const char *suite_name = "object/util";
 struct test tests[] = {
 	{ "obj_can_refill", test_obj_can_refill },
 	{ "basic_check_for_inscrip_with_uint", test_basic_check_for_inscrip_with_int },
 	{ "object_weight_one", test_object_weight_one },
+	{ "append_object_sentient", test_append_object_sentient },
 	{ NULL, NULL }
 };

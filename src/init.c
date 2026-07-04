@@ -4383,6 +4383,7 @@ static struct {
 	{ "monster bases", &mon_base_parser },
 	{ "summons", &summon_parser },
 	{ "curses", &curse_parser },
+	{ "sentient personalities", &sentient_parser },
 	{ "player shapes", &shape_parser },
 	{ "objects", &object_parser },
 	{ "activations", &act_parser },

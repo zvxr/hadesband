@@ -31,6 +31,7 @@
 #include "obj-knowledge.h"
 #include "obj-make.h"
 #include "obj-pile.h"
+#include "obj-sentient.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
@@ -132,6 +133,22 @@ static bool describe_curses(textblock *tb, const struct object *obj,
 		}
 	}
 
+	return true;
+}
+
+/**
+ * Describe an item's sentient personality.
+ */
+static bool describe_sentient(textblock *tb, const struct object *obj)
+{
+	struct sentient_data *sentient = obj->known->sentient;
+
+	if (!sentient)
+		return false;
+
+	textblock_append(tb, "It is possessed with ");
+	textblock_append_c(tb, COLOUR_L_BLUE, "%s", sentients[sentient->index].desc);
+	textblock_append(tb, ".\n");
 	return true;
 }
 
@@ -2333,6 +2350,7 @@ static textblock *object_info_out(const struct object *obj, int mode)
 	}
 
 	if (describe_curses(tb, obj, flags)) something = true;
+	if (describe_sentient(tb, obj)) something = true;
 	if (describe_stats(tb, obj, mode)) something = true;
 	if (describe_slays(tb, obj)) something = true;
 	if (describe_brands(tb, obj)) something = true;
