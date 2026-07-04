@@ -142,6 +142,7 @@ static bool describe_curses(textblock *tb, const struct object *obj,
 static bool describe_sentient(textblock *tb, const struct object *obj)
 {
 	struct sentient_data *sentient = obj->known->sentient;
+	const struct sentient_event *event;
 
 	if (!sentient)
 		return false;
@@ -149,6 +150,22 @@ static bool describe_sentient(textblock *tb, const struct object *obj)
 	textblock_append(tb, "It is possessed with ");
 	textblock_append_c(tb, COLOUR_L_BLUE, "%s", sentients[sentient->index].desc);
 	textblock_append(tb, ".\n");
+
+	for (event = sentients[sentient->index].events; event; event = event->next) {
+		textblock *tbe;
+
+		if (!event->effect)
+			continue;
+
+		tbe = effect_describe(event->effect, "Every so often, it ", 0, false);
+		if (!tbe)
+			continue;
+
+		textblock_append_textblock(tb, tbe);
+		textblock_append(tb, ".\n");
+		textblock_free(tbe);
+	}
+
 	return true;
 }
 
