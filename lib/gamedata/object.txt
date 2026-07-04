@@ -332,20 +332,22 @@ desc:A grey-looking piece of dried flesh of you dare not guess what creature.
 desc:  You would have to be desperate to eat this.
 
 
-name:& Slice~ of Meat
+name:& Moon-cured Pork~
 type:food
 graphics:,:W
 level:0
 weight:10
-cost:3
+cost:15
 alloc:30:10 to 50
 pile:50:1d3
-power:0
+power:2
 msg:That tastes good.
 effect:NOURISH:INC_BY
 dice:40
-desc:A thick slice of pork, salted to keep it from spoiling.  It is very
-desc: filling.
+effect:TIMED_INC:SINFRA
+dice:150+4d25
+desc:A thick slice of pork, salted with sharp herbs to keep it from spoiling.
+desc:  It is very filling, and leaves your eyes faintly tingling.
 
 name:& Honey-cake~
 type:food
