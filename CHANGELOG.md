@@ -9,6 +9,7 @@
 * Added two amulets: Amulet of Brilliance, Resist Confusion.
 * Increased starting gold by 400.
 * Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
+* Changed Slice of Meat to Moon-Cured Pork (temporary infravision buff).
 * Updated lower level mushroom piles (double amount).
 * Updated Scroll of Detect Invisible (grants short sense invisible period).
 * Updated Shadow Shift spell, further distance but more damage.
