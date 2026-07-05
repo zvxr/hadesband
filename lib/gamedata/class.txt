@@ -1659,7 +1659,7 @@ title:Magus
 title:Red Wizard
 title:Crimson Sage
 
-magic:1:450:6
+magic:3:450:6
 
 # Higher spell level, cost, fail rate
 # lv - spell
