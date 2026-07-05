@@ -12,9 +12,13 @@
 # turnover: turnover                   - how many items the store turns over
 # slots: min : max                     - number of 'normal' slots to keep stocked
 # normal: type name : item name        - for the normal stocking list
-# always: type name : ?item name       - for things to always stock
-# sometimes: percent : type name : item name
-#                                      - percent chance to stock an exact item
+# always: type name : ?item name : ?quantity
+#                                      - for things to always stock; quantity
+#                                        defaults to the type's maximum stack
+# sometimes: percent : type name : item name : ?quantity
+#                                      - percent chance to stock an exact item;
+#                                        quantity defaults to normal store pile
+#                                        sizing
 # buy: type name                       - base types the store will buy
 # buy-flag: flag : type name           - types to buy if the flag is present
 
@@ -243,22 +247,29 @@ owner:10000:Princess the Quiet (Barbarian)
 owner:5000:Clockarella the Timely (Gnome)
 slots:0:0
 turnover:9
-sometimes:80:mushroom:Second Sight
-sometimes:80:mushroom:Fast Recovery
-sometimes:80:mushroom:Clear Mind
-sometimes:80:mushroom:Sprinting
-sometimes:80:mushroom:Stability
+always:food:Apple:3d4
+always:food:Honey-cake:2d4
+sometimes:50:food:Moon-cured Pork
+sometimes:50:food:Piece of Elvish Waybread
+sometimes:80:mushroom:Second Sight:2d4
+sometimes:80:mushroom:Fast Recovery:2d4
+sometimes:80:mushroom:Clear Mind:2d4
+sometimes:80:mushroom:Sprinting:2d4
 sometimes:25:mushroom:Visions
 sometimes:25:mushroom:Madness
-sometimes:75:potion:Healing
-sometimes:75:potion:Restore Mana
-sometimes:75:potion:Speed
-sometimes:50:scroll:Teleportation
+sometimes:75:potion:Healing:1d3
+sometimes:75:potion:Restore Mana:2
+sometimes:75:potion:Restore Life Levels:2
+sometimes:50:scroll:Identify Rune:3d6
+sometimes:50:scroll:Recharging:2d3
+sometimes:33:amulet:Wisdom
 sometimes:33:amulet:Brilliance
-sometimes:33:amulet:Teleportation
 sometimes:33:amulet:Resist Confusion
-
 buy:mushroom
 buy:potion
 buy:scroll
 buy:amulet
+buy:magic book
+buy:prayer book
+buy:nature book
+buy:shadow book

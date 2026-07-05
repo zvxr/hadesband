@@ -35,6 +35,7 @@ struct object_stock {
 	struct object_stock *next;
 	struct object_kind *kind;
 	unsigned int chance;
+	random_value quantity;
 };
 
 struct owner {
@@ -58,6 +59,7 @@ struct store {
 	size_t always_size;
 	size_t always_num;
 	struct object_kind **always_table;
+	random_value *always_quantity;
 
 	/* Select a number of these items to stock */
 	size_t normal_size;

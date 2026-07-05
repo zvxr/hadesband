@@ -105,6 +105,7 @@ static void cleanup_stores(void)
 		object_pile_free(NULL, NULL, store->stock_k);
 		object_pile_free(NULL, NULL, store->stock);
 		mem_free(store->always_table);
+		mem_free(store->always_quantity);
 		mem_free(store->normal_table);
 
 		for (o = store->owners; o; o = o_next) {
@@ -191,6 +192,13 @@ static enum parser_error parse_always(struct parser *p) {
 	struct store *s = parser_priv(p);
 	int tval = tval_find_idx(parser_getsym(p, "tval"));
 	struct object_kind *kind = NULL;
+	random_value quantity = { 0, 0, 0, 0 };
+
+	if (parser_hasval(p, "quantity")) {
+		quantity = parser_getrand(p, "quantity");
+		if (randcalc(quantity, 0, MINIMISE) < 1)
+			return PARSE_ERROR_INVALID_VALUE;
+	}
 
 	/* Mostly svals are given, but special handling is needed for books */
 	if (parser_hasval(p, "sval")) {
@@ -204,11 +212,15 @@ static enum parser_error parse_always(struct parser *p) {
 		if (!s->always_num) {
 			s->always_size = 8;
 			s->always_table = mem_zalloc(s->always_size * sizeof *s->always_table);
+			s->always_quantity = mem_zalloc(s->always_size * sizeof *s->always_quantity);
 		} else if (s->always_num >= s->always_size) {
 			s->always_size += 8;
 			s->always_table = mem_realloc(s->always_table, s->always_size * sizeof *s->always_table);
+			s->always_quantity = mem_realloc(s->always_quantity,
+				s->always_size * sizeof *s->always_quantity);
 		}
 
+		s->always_quantity[s->always_num] = quantity;
 		s->always_table[s->always_num++] = kind;
 	} else {
 		/* Books */
@@ -225,11 +237,15 @@ static enum parser_error parse_always(struct parser *p) {
 				if (!s->always_num) {
 					s->always_size = 8;
 					s->always_table = mem_zalloc(s->always_size * sizeof *s->always_table);
+					s->always_quantity = mem_zalloc(s->always_size * sizeof *s->always_quantity);
 				} else if (s->always_num >= s->always_size) {
 					s->always_size += 8;
 					s->always_table = mem_realloc(s->always_table, s->always_size * sizeof *s->always_table);
+					s->always_quantity = mem_realloc(s->always_quantity,
+						s->always_size * sizeof *s->always_quantity);
 				}
 
+				s->always_quantity[s->always_num] = quantity;
 				s->always_table[s->always_num++] = kind;
 			}
 		}
@@ -245,6 +261,7 @@ static enum parser_error parse_sometimes(struct parser *p) {
 	int tval = tval_find_idx(parser_getsym(p, "tval"));
 	int sval = lookup_sval(tval, parser_getsym(p, "sval"));
 	struct object_kind *kind = lookup_kind(tval, sval);
+	random_value quantity = { 0, 0, 0, 0 };
 
 	if (!s)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
@@ -252,10 +269,16 @@ static enum parser_error parse_sometimes(struct parser *p) {
 		return PARSE_ERROR_INVALID_VALUE;
 	if (!kind)
 		return PARSE_ERROR_UNRECOGNISED_SVAL;
+	if (parser_hasval(p, "quantity")) {
+		quantity = parser_getrand(p, "quantity");
+		if (randcalc(quantity, 0, MINIMISE) < 1)
+			return PARSE_ERROR_INVALID_VALUE;
+	}
 
 	stock = mem_zalloc(sizeof(*stock));
 	stock->kind = kind;
 	stock->chance = chance;
+	stock->quantity = quantity;
 	stock->next = s->sometimes;
 	s->sometimes = stock;
 
@@ -325,8 +348,8 @@ struct parser *init_parse_stores(void) {
 	parser_reg(p, "slots uint min uint max", parse_slots);
 	parser_reg(p, "turnover uint turnover", parse_turnover);
 	parser_reg(p, "normal sym tval sym sval", parse_normal);
-	parser_reg(p, "always sym tval ?sym sval", parse_always);
-	parser_reg(p, "sometimes uint chance sym tval sym sval", parse_sometimes);
+	parser_reg(p, "always sym tval ?sym sval ?rand quantity", parse_always);
+	parser_reg(p, "sometimes uint chance sym tval sym sval ?rand quantity", parse_sometimes);
 	parser_reg(p, "buy str base", parse_buy);
 	parser_reg(p, "buy-flag sym flag str base", parse_buy_flag);
 	/*
@@ -1294,7 +1317,8 @@ static bool store_create_random(struct store *store)
  * store st.  Return the item in the inventory.
  */
 static struct object *store_create_item(struct store *store,
-										struct object_kind *kind)
+										struct object_kind *kind,
+										random_value quantity)
 {
 	struct object *obj = object_new();
 	struct object *known_obj = object_new();
@@ -1314,6 +1338,11 @@ static struct object *store_create_item(struct store *store,
 
 	/* Use normal store pile sizing for exact-stocked items. */
 	mass_produce(obj);
+	if (randcalc(quantity, 0, MAXIMISE) > 0) {
+		obj->number = MIN(randcalc(quantity, 0, RANDOMISE),
+			obj->kind->base->max_stack);
+		known_obj->number = obj->number;
+	}
 
 	/* Attempt to carry the object */
 	carried = store_carry(store, obj);
@@ -1337,7 +1366,7 @@ static void store_maint_sometimes(struct store *s)
 			store_sale_should_reduce_stock);
 
 		if ((unsigned int) randint0(100) < stock->chance) {
-			if (!obj) store_create_item(s, stock->kind);
+			if (!obj) store_create_item(s, stock->kind, stock->quantity);
 		} else if (obj) {
 			store_delete(s, obj, obj->number);
 		}
@@ -1426,18 +1455,25 @@ static void store_maint(struct store *s)
 		size_t i;
 		for (i = 0; i < s->always_num; i++) {
 			struct object_kind *kind = s->always_table[i];
+			random_value quantity = s->always_quantity[i];
 			struct object *obj = store_find_kind(s, kind,
 				store_sale_should_reduce_stock);
 
 			/* Create the item if it doesn't exist */
 			if (!obj) {
-				obj = store_create_item(s, kind);
+				obj = store_create_item(s, kind, quantity);
 				if (!obj) continue;
 			}
 
 			/* Ensure a full stack */
-			obj->number = obj->kind->base->max_stack;
-			obj->known->number = obj->kind->base->max_stack;
+			if (randcalc(quantity, 0, MAXIMISE) > 0) {
+				obj->number = MIN(randcalc(quantity, 0, RANDOMISE),
+					obj->kind->base->max_stack);
+				obj->known->number = obj->number;
+			} else {
+				obj->number = obj->kind->base->max_stack;
+				obj->known->number = obj->kind->base->max_stack;
+			}
 		}
 	}
 

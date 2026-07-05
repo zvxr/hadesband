@@ -40,6 +40,8 @@ int teardown_tests(void *state) {
 		stock = stock_next;
 	}
 	mem_free(s->normal_table);
+	mem_free(s->always_table);
+	mem_free(s->always_quantity);
 	mem_free(stores);
 	parser_destroy(state);
 	mem_free(k_info);
@@ -122,8 +124,23 @@ static int test_i0(void *state) {
 	ok;
 }
 
+static int test_always0(void *state) {
+	enum parser_error r = parser_parse(state, "always:3:5:2d3");
+	struct store *s;
+
+	eq(r, PARSE_ERROR_NONE);
+	s = parser_priv(state);
+	require(s);
+	require(s->always_table[0] && s->always_table[0]->tval == 3
+		&& s->always_table[0]->sval == 5);
+	eq(s->always_quantity[0].base, 0);
+	eq(s->always_quantity[0].dice, 2);
+	eq(s->always_quantity[0].sides, 3);
+	ok;
+}
+
 static int test_sometimes0(void *state) {
-	enum parser_error r = parser_parse(state, "sometimes:30:3:5");
+	enum parser_error r = parser_parse(state, "sometimes:30:3:5:1d2");
 	struct store *s;
 
 	eq(r, PARSE_ERROR_NONE);
@@ -133,6 +150,9 @@ static int test_sometimes0(void *state) {
 	eq(s->sometimes->chance, 30);
 	require(s->sometimes->kind && s->sometimes->kind->tval == 3
 		&& s->sometimes->kind->sval == 5);
+	eq(s->sometimes->quantity.base, 0);
+	eq(s->sometimes->quantity.dice, 1);
+	eq(s->sometimes->quantity.sides, 2);
 	ok;
 }
 
@@ -144,6 +164,7 @@ struct test tests[] = {
 	{ "slots0", test_slots0 },
 	{ "owner0", test_owner0 },
 	{ "i0", test_i0 },
+	{ "always0", test_always0 },
 	{ "sometimes0", test_sometimes0 },
 	{ NULL, NULL }
 };
