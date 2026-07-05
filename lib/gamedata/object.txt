@@ -331,7 +331,6 @@ dice:5+1d4
 desc:A grey-looking piece of dried flesh of you dare not guess what creature.
 desc:  You would have to be desperate to eat this.
 
-
 name:& Moon-cured Pork~
 type:food
 graphics:,:W
@@ -660,10 +659,6 @@ power:10
 effect:HEAL_HP
 dice:80
 effect:TIMED_INC:OPP_CHAOS
-dice:50+7d7
-effect:TIMED_INC:HOLD_LIFE
-dice:50+7d7
-effect:TIMED_INC:OPP_DISEN
 dice:50+7d7
 effect:TIMED_INC:OPP_SOUND
 dice:50+7d7
@@ -2591,7 +2586,7 @@ flags:EASY_KNOW
 power:6
 effect:TELEPORT
 dice:M60
-time:200
+time:400
 desc:It can be activated to teleport the wearer.
 
 name:Slow Digestion
@@ -2703,7 +2698,7 @@ level:1
 weight:5
 cost:200
 alloc:50:5 to 100
-pile:70:1d4
+pile:70:2d4
 power:6
 effect:IDENTIFY
 
