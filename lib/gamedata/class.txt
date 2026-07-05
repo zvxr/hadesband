@@ -1085,9 +1085,9 @@ desc:  Monsters that resist confusion are not affected.
 
 spell:Shadow Shift:15:10:50:10
 effect:TELEPORT
-dice:5
+dice:8
 effect:DAMAGE
-dice:2d5
+dice:4d5
 effect-msg:shadow shifting
 desc:Displaces your spirit a short distance, hurting your body as it is
 desc: dragged along.
@@ -1682,13 +1682,13 @@ magic:1:450:6
 # 10 - Heroism
 # 11 - Slow Monster
 # 12 - Fireball
-# 13 - Turn Stone to Mud
 # 14 - Resist Poison
-# 15 - Sense Surroundings
 # 16 - Treasure Detection
+# 17 - Turn Stone to Mud
 # 18 - Frost Bolt
 # 18 - Shadow Shift
 # 20 - Frighten
+# 21 - Sense Surroundings
 # 22 - Reveal Monsters
 # 24 - Lightning Strike
 
@@ -1834,9 +1834,9 @@ desc: character level.
 
 spell:Shadow Shift:18:14:50:10
 effect:TELEPORT
-dice:5
+dice:8
 effect:DAMAGE
-dice:2d5
+dice:5d5
 effect-msg:shadow shifting
 desc:Displaces your spirit a short distance, hurting your body as it is
 desc: dragged along.
@@ -1887,14 +1887,14 @@ effect:TIMED_INC:OPP_POIS
 dice:20+d20
 desc:Grants you resistance to poison for 20+1d20 turns.
 
-spell:Turn Stone to Mud:13:5:30:5
+spell:Turn Stone to Mud:17:5:30:5
 effect:LINE:KILL_WALL
 dice:20+1d30
 desc:Produces a beam that destroys the first section of wall it hits,
 desc: unless it is a permanent wall.  Each monster caught in the beam that
 desc: is susceptible to rock remover takes 20+1d30 points of damage.
 
-spell:Sense Surroundings:15:8:40:6
+spell:Sense Surroundings:21:8:40:6
 effect:TIMED_INC:SENSE_SURROUNDINGS:0:0
 dice:100+d$B
 expr:B:PLAYER_LEVEL:* 2

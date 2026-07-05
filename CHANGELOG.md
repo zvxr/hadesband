@@ -2,18 +2,21 @@
 
 ## 0.9.0
 
+* Added Dungeon Organics dungeon store room (30% chance on every 5th floor).
+* Added four races: Barbarian, Half-Giant, Nibelung, Fae.
+* Added one class: Red Mage. Spell generalist that can steal mana.
+* Added three mushrooms: Stability, Visions, Madness.
+* Added two amulets: Amulet of Brilliance, Resist Confusion.
+* Increased starting gold by 400.
+* Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
+* Updated lower level mushroom piles (double amount).
+* Updated Scroll of Detect Invisible (grants short sense invisible period).
+* Updated Shadow Shift spell, further distance but more damage.
+* Removed Amulet of Inertia.
+
 * Renamed the fork to Thangband.
-* Added four races: Barbarian, Half-Giant, Nibelung, and Fae.
 * Added a root `make build` command for clean macOS app builds.
 * Updated the default subwindow setup with macOS size/placement.
-* Added three mushrooms: Stability, Visions, Madness.
-* Doubled mushroom piles.
-* Added Dungeon Organics dungeon store room (20% chance on every 5th floor).
-* Added Amulet of Brilliance, Resist Confusion.
-* Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
-* Removed Amulet of Inertia.
-* Added Red Mage. Spell generalist that can steal mana.
-* Increased starting gold by 400.
 
 # Tactical Angband Changelog (Preserved)
 

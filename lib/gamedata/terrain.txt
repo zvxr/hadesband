@@ -249,13 +249,12 @@ look-in-preposition:at
 desc:Your safe piece of Middle Earth, and the only place you can store goods
 desc: apart from on your person.
 
-# TODO change spawn rate from 90% down to ~20%.
 code:STORE_DUNGEON
 name:Dungeon Organics
 graphics:9:g
 priority:20
 flags:SHOP | LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY | DUNGEON_ROOM
-spawn:90:10
+spawn:30:10
 look-prefix:the entrance to
 look-in-preposition:at
 desc:A strange underground trader of mushrooms, potions, scrolls, and amulets.

@@ -2693,6 +2693,8 @@ pile:70:1d3
 power:6
 effect:DETECT_INVISIBLE_MONSTERS
 effect-yx:20:20
+effect:TIMED_INC:SINVIS
+dice:3d3
 
 name:Identify Rune
 type:scroll
