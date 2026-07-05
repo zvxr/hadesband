@@ -161,6 +161,7 @@ slots:6:10
 turnover:9
 always:scroll:Word of Recall
 always:scroll:Remove Curse
+always:scroll:Identify Rune
 always:potion:Cure Light Wounds
 normal:scroll:Phase Door
 normal:scroll:Monster Confusion
