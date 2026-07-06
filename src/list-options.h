@@ -18,7 +18,7 @@ INTERFACE, false)
 OP(use_sound,             "Use sound",
 INTERFACE, false)
 OP(show_damage,           "Show damage player deals to monsters",
-INTERFACE, false)
+INTERFACE, true)
 OP(use_old_target,        "Use old target by default",
 INTERFACE, false)
 OP(pickup_always,         "Always pickup items",
@@ -26,7 +26,7 @@ INTERFACE, false)
 OP(pickup_inven,          "Always pickup items matching inventory",
 INTERFACE, true)
 OP(show_flavors,          "Show flavors in object descriptions",
-INTERFACE, false)
+INTERFACE, true)
 OP(show_target,           "Highlight target with cursor",
 INTERFACE, true)
 OP(highlight_player,      "Highlight player with cursor between turns",
@@ -34,17 +34,17 @@ INTERFACE, false)
 OP(disturb_near,          "Disturb whenever viewable monster moves",
 INTERFACE, true)
 OP(solid_walls,           "Show walls as solid blocks",
-INTERFACE, false)
+INTERFACE, true)
 OP(hybrid_walls,          "Show walls with shaded background",
-INTERFACE, false)
+INTERFACE, true)
 OP(view_yellow_light,     "Color: Illuminate torchlight in yellow",
-INTERFACE, false)
+INTERFACE, true)
 OP(animate_flicker,       "Color: Shimmer multi-colored things",
-INTERFACE, false)
+INTERFACE, true)
 OP(center_player,         "Center map continuously",
 INTERFACE, false)
 OP(purple_uniques,        "Color: Show unique monsters in purple",
-INTERFACE, false)
+INTERFACE, true)
 OP(auto_more,             "Automatically clear '-more-' prompts",
 INTERFACE, false)
 OP(hp_changes_color,      "Color: Player color indicates % hit points",
@@ -52,9 +52,9 @@ INTERFACE, true)
 OP(mouse_movement,        "Allow mouse clicks to move the player",
 INTERFACE, true)
 OP(notify_recharge,       "Notify on object recharge",
-INTERFACE, false)
+INTERFACE, true)
 OP(effective_speed,       "Show effective speed as multiplier",
-INTERFACE, false)
+INTERFACE, true)
 OP(cheat_hear,            "Cheat: Peek into monster creation",
 CHEAT, false)
 OP(score_hear,            "Score: Peek into monster creation",
@@ -88,17 +88,16 @@ BIRTH, false)
 OP(birth_feelings,        "Show level feelings",
 BIRTH, true)
 OP(birth_no_selling,      "Increase gold drops but disable selling",
-BIRTH, true)
+BIRTH, false)
 OP(birth_start_kit,       "Start with a kit of useful gear",
 BIRTH, true)
 OP(birth_ai_learn,        "Monsters learn from their mistakes",
-BIRTH, true)
+BIRTH, false)
 OP(birth_know_runes,      "Know all runes on birth",
-BIRTH, false)
+BIRTH, true)
 OP(birth_know_flavors,    "Know all flavors on birth",
-BIRTH, false)
+BIRTH, true)
 OP(birth_levels_persist,  "Persistent levels (experimental)",
 BIRTH, false)
 OP(birth_percent_damage,  "To-damage is a percentage of dice (experimental)",
 BIRTH, false)
-

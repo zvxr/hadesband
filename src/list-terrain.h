@@ -25,6 +25,7 @@ FEAT(STORE_ALCHEMY)
 FEAT(STORE_MAGIC)
 FEAT(STORE_BLACK)
 FEAT(HOME)
+FEAT(STORE_DUNGEON)
 FEAT(SECRET) /* secret door */
 FEAT(RUBBLE) /* impassable rubble */
 FEAT(MAGMA) /* magma vein wall */

@@ -588,3 +588,31 @@ desc:magical healing
 grade:B:10000:Heal:Healing energies course through you!
 on-end:The healing energies subside.
 flags:DURATION_IN_PLAYER_TURNS
+
+name:OPP_CHAOS
+desc:chaos resistance
+grade:v:10000:RChaos:You feel resistant to chaos!
+on-end:You are no longer resistant to chaos.
+on-increase:You feel more resistant to chaos!
+resist:CHAOS
+
+name:OPP_DISEN
+desc:disenchantment resistance
+grade:u:10000:RDisen:You feel resistant to disenchantment!
+on-end:You are no longer resistant to disenchantment.
+on-increase:You feel more resistant to disenchantment!
+resist:DISEN
+
+name:OPP_SOUND
+desc:sound resistance
+grade:y:10000:RSound:You feel resistant to sound!
+on-end:You are no longer resistant to sound.
+on-increase:You feel more resistant to sound!
+resist:SOUND
+
+name:HOLD_LIFE
+desc:hold life
+grade:w:10000:HLife:You feel anchored to life!
+on-end:Your grip on life loosens.
+on-increase:Your grip on life strengthens.
+flag-synonym:HOLD_LIFE:1

@@ -73,6 +73,8 @@ static int test_missing_header_record0(void *state) {
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "resist-flag:IM_FIRE");
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
+	r = parser_parse(p, "spawn:20:5");
+	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	ok;
 }
 
@@ -110,6 +112,8 @@ static int test_code0(void *state) {
 	null(f->look_prefix);
 	null(f->look_in_preposition);
 	eq(f->resist_flag, 0);
+	eq(f->spawn_chance, 0);
+	eq(f->spawn_floor_mod, 0);
 	ok;
 }
 
@@ -429,6 +433,27 @@ static int test_resist_flag_bad0(void *state) {
 	ok;
 }
 
+static int test_spawn0(void *state) {
+	struct parser *p = (struct parser*) state;
+	enum parser_error r = parser_parse(p, "spawn:20:5");
+	struct feature *f;
+
+	eq(r, PARSE_ERROR_NONE);
+	f = (struct feature*) parser_priv(p);
+	notnull(f);
+	eq(f->spawn_chance, 20);
+	eq(f->spawn_floor_mod, 5);
+	ok;
+}
+
+static int test_spawn_bad0(void *state) {
+	struct parser *p = (struct parser*) state;
+	enum parser_error r = parser_parse(p, "spawn:101:5");
+
+	eq(r, PARSE_ERROR_OUT_OF_BOUNDS);
+	ok;
+}
+
 const char *suite_name = "parse/f-info";
 /*
  * test_missing_header_record0() and test_code_bad0() have to be before
@@ -458,5 +483,7 @@ struct test tests[] = {
 	{ "look_in_preposition0", test_look_in_preposition0 },
 	{ "resist_flag0", test_resist_flag0 },
 	{ "resist_flag_bad0", test_resist_flag_bad0 },
+	{ "spawn0", test_spawn0 },
+	{ "spawn_bad0", test_spawn_bad0 },
 	{ NULL, NULL }
 };

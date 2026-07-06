@@ -142,6 +142,70 @@ static void build_streamer(struct chunk *c, int feat, int chance)
 	}
 }
 
+/**
+ * Try to add a small dungeon store room.
+ */
+static bool build_dungeon_store_room(struct chunk *c)
+{
+	int attempt;
+	const struct feature *feat = &f_info[FEAT_STORE_DUNGEON];
+
+	if (!tf_has(feat->flags, TF_DUNGEON_ROOM)) return false;
+	if (!feat_spawns_at_depth(FEAT_STORE_DUNGEON, c->depth)) return false;
+
+	for (attempt = 0; attempt < 200; attempt++) {
+		int y, x;
+		int y1, x1, y2, x2;
+		struct loc centre;
+		struct loc entrance;
+		bool blocked = false;
+
+		centre = loc(rand_range(8, c->width - 9),
+			rand_range(7, c->height - 8));
+		y1 = centre.y - 3;
+		y2 = centre.y + 3;
+		x1 = centre.x - 4;
+		x2 = centre.x + 4;
+		entrance = loc(centre.x, centre.y + 1);
+
+		for (y = y1 - 1; y <= y2 + 1 && !blocked; y++) {
+			for (x = x1 - 1; x <= x2 + 1; x++) {
+				struct loc grid = loc(x, y);
+
+				if (!square_in_bounds_fully(c, grid) ||
+						square_isperm(c, grid) ||
+						square_isshop(c, grid) ||
+						square_isstairs(c, grid)) {
+					blocked = true;
+					break;
+				}
+			}
+		}
+		if (blocked) continue;
+
+		/* Build the surrounding chamber. */
+		fill_rectangle(c, y1, x1, y2, x2, FEAT_FLOOR, SQUARE_ROOM);
+		draw_rectangle(c, y1 - 1, x1 - 1, y2 + 1, x2 + 1,
+			FEAT_GRANITE, SQUARE_WALL_OUTER, true);
+
+		/* Build the shop as a permanent structure within the chamber. */
+		fill_rectangle(c, centre.y - 1, centre.x - 2,
+			centre.y + 1, centre.x + 2, FEAT_PERM, SQUARE_NONE);
+		square_set_feat(c, entrance, FEAT_STORE_DUNGEON);
+		sqinfo_on(square(c, entrance)->info, SQUARE_ROOM);
+
+		if (dun->cent_n < z_info->level_room_max) {
+			dun->cent[dun->cent_n] = loc(centre.x, centre.y + 2);
+			dun->cent_n++;
+		}
+
+		ROOM_LOG("Dungeon Organics");
+		return true;
+	}
+
+	return false;
+}
+
 
 /**
  * Reset entrance data for rooms in global dun.
@@ -1246,6 +1310,8 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width,
 			}
 		}
 	}
+
+	build_dungeon_store_room(c);
 
 	for (i = 0; i < dun->row_blocks; i++){
 		mem_free(blocks_tried[i]);
@@ -2587,6 +2653,9 @@ static void town_gen_layout(struct chunk *c, struct player *p)
 		for (n = 0; n < z_info->store_max; n++) {
 			struct loc store_lot;
 			bool found_spot = false;
+
+			if (stores[n].feat == FEAT_STORE_DUNGEON) continue;
+
 			while (!found_spot && num_attempts < max_attempts) {
 				num_attempts++;
 				if (randint0(2)) {
@@ -2821,6 +2890,8 @@ static struct chunk *modified_chunk(struct player *p, int depth, int height,
 			if (room_build(c, by, bx, profile, true)) break;
 		}
 	}
+
+	build_dungeon_store_room(c);
 
 	for (i = 0; i < dun->row_blocks; i++)
 		mem_free(dun->room_map[i]);
@@ -3072,6 +3143,8 @@ static struct chunk *moria_chunk(struct player *p, int depth, int height,
 			if (room_build(c, by, bx, profile, true)) break;
 		}
 	}
+
+	build_dungeon_store_room(c);
 
 	for (i = 0; i < dun->row_blocks; i++)
 		mem_free(dun->room_map[i]);

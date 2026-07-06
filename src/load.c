@@ -36,6 +36,7 @@
 #include "obj-make.h"
 #include "obj-pile.h"
 #include "obj-randart.h"
+#include "obj-sentient.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
@@ -207,6 +208,31 @@ static struct object *rd_item(void)
 			obj->curses[i].power = tmp8u;
 			rd_u16b(&tmp16u);
 			obj->curses[i].timeout = tmp16u;
+		}
+	}
+
+	if (ver >= 6) {
+		rd_byte(&tmp8u);
+		if (tmp8u) {
+			int sentient_idx;
+
+			rd_string(buf, sizeof(buf));
+			sentient_idx = lookup_sentient(buf);
+			if (!sentient_idx) {
+				note(format("Couldn't find sentient personality %s!", buf));
+				return NULL;
+			}
+			obj->sentient = mem_zalloc(sizeof(*obj->sentient));
+			obj->sentient->index = sentient_idx;
+			if (sentients[sentient_idx].event_count) {
+				obj->sentient->timeouts = mem_zalloc(
+					sentients[sentient_idx].event_count *
+					sizeof(*obj->sentient->timeouts));
+			}
+			for (i = 0; i < (size_t) sentients[sentient_idx].event_count; i++) {
+				rd_u16b(&tmp16u);
+				obj->sentient->timeouts[i] = tmp16u;
+			}
 		}
 	}
 

@@ -30,6 +30,7 @@
 #include "obj-pile.h"
 #include "obj-gear.h"
 #include "obj-ignore.h"
+#include "obj-sentient.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "option.h"
@@ -166,6 +167,21 @@ static void wr_item(const struct object *obj)
 		for (i = 0; i < z_info->curse_max; i++) {
 			wr_byte(obj->curses[i].power);
 			wr_u16b(obj->curses[i].timeout);
+		}
+	} else {
+		wr_byte(0);
+	}
+
+	/* Write sentient personality if any */
+	if (obj->sentient) {
+		const struct sentient *sentient = &sentients[obj->sentient->index];
+		int i;
+
+		wr_byte(1);
+		wr_string(sentient->name);
+		for (i = 0; i < sentient->event_count; i++) {
+			wr_u16b(obj->sentient->timeouts ?
+				obj->sentient->timeouts[i] : 0);
 		}
 	} else {
 		wr_byte(0);

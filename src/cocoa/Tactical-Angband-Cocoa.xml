@@ -11,7 +11,7 @@
 	<key>CFBundleName</key>
 	<string>$NAME$</string>
 	<key>CFBundleIconFile</key>
-	<string>$NAME$_Icons</string>
+	<string>Tactical-Angband_Icons</string>
 	<key>CFBundleIdentifier</key>
 	<string>$BUNDLE_IDENTIFIER$</string>
 	<key>CFBundleInfoDictionaryVersion</key>

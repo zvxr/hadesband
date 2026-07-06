@@ -1,4 +1,4 @@
-# Tactical Angband
+# Thangband
 
 <p align="center">
   <img src="screenshots/game.png" width="425"/>
@@ -6,12 +6,30 @@
 
 ## What??
 
-Tactical Angband is a variant of the classic roguelike game Angband.
-Tactical Angband reduces the grind and increases the tactical depth,
-while maintaining the feel of Angband.
+Thangband is a variant of the classic roguelike game Angband.  It uses
+Tactical Angband as its base, preserving that variant's shorter, more tactical
+dungeon while adding changes, many inspired by Hengband.
 
-The following is a (possibly incomplete) list of changes made to Tactical
-Angband relative to (Vanilla) Angband 4.2.5 (commit 0a0a197).
+### Concepts
+
+- Shorter variant that considers different core game set-ups.
+- New races, classes, items, and mechanics to provide fresh gameplay.
+- Emphasis and better access to utility aspects of the game.
+
+## Building on macOS
+
+From the repository root, run:
+
+```sh
+make build
+```
+
+This cleans the macOS build artifacts and creates `Thangband.app`.
+
+## Tactical Angband base
+
+The following is a (possibly incomplete) list of changes inherited from
+Tactical Angband relative to (Vanilla) Angband 4.2.5 (commit 0a0a197).
 
 ## Dungeon
 
@@ -116,6 +134,12 @@ dungeon features by walk distance from the player.
 * Portal now has the same range as Phase Door.
 * Banish Evil is replaced by Holy Terror, which causes irresistible
   fear in evil non-unique creatures.
+
+### Red Mage
+
+* New hybrid class that generalizes in magic and is decent in melee.
+* Can cast all low/mid-level spells, with slightly lower fail rate.
+* Can steal mana.
 
 ### Necromancer
 

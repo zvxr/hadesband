@@ -36,6 +36,7 @@
 #include "obj-pile.h"
 #include "obj-power.h"
 #include "obj-randart.h"
+#include "obj-sentient.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
@@ -192,6 +193,29 @@ static void write_curse_kinds(void)
 		curses[i].obj->known->sval = sval;
 		/* Mark it as touched so it can be fully known. */
 		curse->obj->known->notice |= OBJ_NOTICE_ASSESSED;
+	}
+}
+
+/**
+ * Fill in sentient object info now that curse_object_kind is defined.
+ * Sentient personalities reuse the internal object kind used for curse-like
+ * modifier containers.
+ */
+static void write_sentient_kinds(void)
+{
+	int i;
+	int sval = lookup_sval(tval_find_idx("none"), "<curse object>");
+
+	for (i = 1; i < z_info->sentient_max; i++) {
+		struct sentient *sentient = &sentients[i];
+		sentient->obj->kind = curse_object_kind;
+		sentient->obj->sval = sval;
+		if (!sentient->obj->known) {
+			sentient->obj->known = object_new();
+		}
+		sentient->obj->known->kind = curse_object_kind;
+		sentient->obj->known->sval = sval;
+		sentient->obj->known->notice |= OBJ_NOTICE_ASSESSED;
 	}
 }
 
@@ -1424,6 +1448,400 @@ struct file_parser curse_parser = {
 	run_parse_curse,
 	finish_parse_curse,
 	cleanup_curse
+};
+
+/**
+ * ------------------------------------------------------------------------
+ * Initialize object sentient personalities
+ * ------------------------------------------------------------------------ */
+
+static enum parser_error parse_sentient_name(struct parser *p) {
+	const char *name = parser_getstr(p, "name");
+	struct sentient *h = parser_priv(p);
+	struct sentient *sentient = mem_zalloc(sizeof *sentient);
+
+	sentient->obj = mem_zalloc(sizeof(struct object));
+	sentient->next = h;
+	sentient->name = string_make(name);
+	sentient->poss = mem_zalloc(TV_MAX * sizeof(bool));
+	parser_setpriv(p, sentient);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_alloc(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	const char *tmp = parser_getstr(p, "minmax");
+	int amin, amax;
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	sentient->alloc_prob = parser_getint(p, "common");
+	if (grab_int_range(&amin, &amax, tmp, "to")) {
+		return PARSE_ERROR_INVALID_ALLOCATION;
+	}
+	if (amin > 255 || amax > 255 || amin < 0 || amax < 0) {
+		return PARSE_ERROR_OUT_OF_BOUNDS;
+	}
+	sentient->alloc_min = amin;
+	sentient->alloc_max = amax;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_type(struct parser *p) {
+	int tval = tval_find_idx(parser_getsym(p, "tval"));
+	struct sentient *sentient = parser_priv(p);
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	if ((tval < 0) || (tval >= TV_MAX)) {
+		return PARSE_ERROR_UNRECOGNISED_TVAL;
+	}
+	sentient->poss[tval] = true;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_weight(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	int adjustment = parser_getint(p, "adj");
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	if (adjustment < -32768 || adjustment > 32767) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
+	sentient->obj->weight = adjustment;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_combat(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	sentient->obj->to_h = parser_getint(p, "to-h");
+	sentient->obj->to_d = parser_getint(p, "to-d");
+	sentient->obj->to_a = parser_getint(p, "to-a");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_flags(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	char *s, *t;
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	s = string_make(parser_getstr(p, "flags"));
+	t = strtok(s, " |");
+	while (t) {
+		bool found = false;
+		if (!grab_flag(sentient->obj->flags, OF_SIZE, obj_flags, t)) {
+			found = true;
+		}
+		if (grab_element_flag(sentient->obj->el_info, t)) {
+			found = true;
+		}
+		if (!found) {
+			break;
+		}
+		t = strtok(NULL, " |");
+	}
+	string_free(s);
+	return t ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_values(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	char *s, *t;
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	s = string_make(parser_getstr(p, "values"));
+	t = strtok(s, " |");
+
+	while (t) {
+		int value = 0;
+		int index = 0;
+		bool found = false;
+		if (!grab_index_and_int(&value, &index, obj_mods, "", t)) {
+			found = true;
+			sentient->obj->modifiers[index] = value;
+		}
+		if (!grab_index_and_int(&value, &index, element_names, "RES_", t)) {
+			found = true;
+			sentient->obj->el_info[index].res_level = value;
+		}
+		if (!found) {
+			break;
+		}
+		t = strtok(NULL, " |");
+	}
+
+	string_free(s);
+	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_event(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	struct sentient_event *event, *new_event;
+	int chance = parser_getint(p, "chance");
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	if (chance < 1 || chance > 100) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
+
+	new_event = mem_zalloc(sizeof(*new_event));
+	new_event->time = parser_getrand(p, "time");
+	new_event->chance = chance;
+	if (sentient->events) {
+		event = sentient->events;
+		while (event->next) event = event->next;
+		event->next = new_event;
+	} else {
+		sentient->events = new_event;
+	}
+	sentient->event_count++;
+	return PARSE_ERROR_NONE;
+}
+
+static struct sentient_event *sentient_current_event(struct sentient *sentient)
+{
+	struct sentient_event *event = sentient ? sentient->events : NULL;
+
+	if (!event) return NULL;
+	while (event->next) event = event->next;
+	return event;
+}
+
+static enum parser_error parse_sentient_effect(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	struct sentient_event *event;
+	struct effect *effect, *new_effect;
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	event = sentient_current_event(sentient);
+	if (!event) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	new_effect = mem_zalloc(sizeof(*new_effect));
+	if (event->effect) {
+		effect = event->effect;
+		while (effect->next) effect = effect->next;
+		effect->next = new_effect;
+	} else {
+		event->effect = new_effect;
+	}
+	return grab_effect_data(p, new_effect);
+}
+
+static enum parser_error parse_sentient_dice(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	struct sentient_event *event;
+	struct effect *effect;
+	dice_t *dice;
+	const char *string;
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	event = sentient_current_event(sentient);
+	if (!event || !event->effect) {
+		return PARSE_ERROR_NONE;
+	}
+	effect = event->effect;
+	while (effect->next) effect = effect->next;
+	dice = dice_new();
+	if (dice == NULL) {
+		return PARSE_ERROR_INVALID_DICE;
+	}
+
+	string = parser_getstr(p, "dice");
+	if (dice_parse_string(dice, string)) {
+		dice_free(effect->dice);
+		effect->dice = dice;
+	} else {
+		dice_free(dice);
+		return PARSE_ERROR_INVALID_DICE;
+	}
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_msg(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	struct sentient_event *event;
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	event = sentient_current_event(sentient);
+	if (!event) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	event->effect_msg = string_append(event->effect_msg,
+		parser_getstr(p, "text"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_expr(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+	struct sentient_event *event;
+	struct effect *effect;
+	expression_t *expression;
+	expression_base_value_f function;
+	const char *name;
+	const char *base;
+	const char *expr;
+	enum parser_error result;
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	event = sentient_current_event(sentient);
+	if (!event || !event->effect) {
+		return PARSE_ERROR_NONE;
+	}
+	effect = event->effect;
+	while (effect->next) effect = effect->next;
+	if (effect->dice == NULL) {
+		return PARSE_ERROR_NONE;
+	}
+
+	name = parser_getsym(p, "name");
+	base = parser_getsym(p, "base");
+	expr = parser_getstr(p, "expr");
+	expression = expression_new();
+	if (expression == NULL) {
+		return PARSE_ERROR_INVALID_EXPRESSION;
+	}
+	function = effect_value_base_by_name(base);
+	expression_set_base_value(expression, function);
+	if (expression_add_operations_string(expression, expr) < 0) {
+		result = PARSE_ERROR_BAD_EXPRESSION_STRING;
+	} else if (dice_bind_expression(effect->dice, name, expression) < 0) {
+		result = PARSE_ERROR_UNBOUND_EXPRESSION;
+	} else {
+		result = PARSE_ERROR_NONE;
+	}
+	expression_free(expression);
+	return result;
+}
+
+static enum parser_error parse_sentient_desc(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	sentient->desc = string_append(sentient->desc, parser_getstr(p, "desc"));
+	return PARSE_ERROR_NONE;
+}
+
+static struct parser *init_parse_sentient(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+	parser_reg(p, "name str name", parse_sentient_name);
+	parser_reg(p, "alloc int common str minmax", parse_sentient_alloc);
+	parser_reg(p, "type sym tval", parse_sentient_type);
+	parser_reg(p, "weight int adj", parse_sentient_weight);
+	parser_reg(p, "combat int to-h int to-d int to-a", parse_sentient_combat);
+	parser_reg(p, "flags str flags", parse_sentient_flags);
+	parser_reg(p, "values str values", parse_sentient_values);
+	parser_reg(p, "event int chance rand time", parse_sentient_event);
+	parser_reg(p, "effect sym eff ?sym type ?int radius ?int other", parse_sentient_effect);
+	parser_reg(p, "dice str dice", parse_sentient_dice);
+	parser_reg(p, "expr sym name sym base str expr", parse_sentient_expr);
+	parser_reg(p, "msg str text", parse_sentient_msg);
+	parser_reg(p, "desc str desc", parse_sentient_desc);
+	return p;
+}
+
+static errr run_parse_sentient(struct parser *p) {
+	return parse_file_quit_not_found(p, "sentient");
+}
+
+static errr finish_parse_sentient(struct parser *p) {
+	struct sentient *sentient, *next = NULL;
+	int count = 1;
+	errr result = PARSE_ERROR_NONE;
+
+	z_info->sentient_max = 0;
+	sentient = parser_priv(p);
+	while (sentient) {
+		if (z_info->sentient_max >= 254) {
+			result = PARSE_ERROR_TOO_MANY_ENTRIES;
+			break;
+		}
+		z_info->sentient_max++;
+		sentient = sentient->next;
+	}
+
+	sentients = mem_zalloc((z_info->sentient_max + 1) * sizeof(*sentient));
+	for (sentient = parser_priv(p); sentient; sentient = next, count++) {
+		next = sentient->next;
+		if (sentient->obj->weight < 0 && of_has(sentient->obj->flags,
+				OF_MULTIPLY_WEIGHT)) {
+			plog_fmt("Sentient '%s' uses MULTIPLY_WEIGHT and has"
+				" a negative weight adjustment", sentient->name);
+			if (result == PARSE_ERROR_NONE) {
+				result = PARSE_ERROR_INVALID_VALUE;
+			}
+		}
+		if (count <= z_info->sentient_max) {
+			memcpy(&sentients[count], sentient, sizeof(*sentient));
+			sentients[count].next = NULL;
+		}
+		mem_free(sentient);
+	}
+	z_info->sentient_max += 1;
+
+	parser_destroy(p);
+	return result;
+}
+
+static void cleanup_sentient(void)
+{
+	int idx;
+
+	for (idx = 0; idx < z_info->sentient_max; idx++) {
+		struct sentient_event *event, *next;
+
+		string_free(sentients[idx].name);
+		mem_free(sentients[idx].desc);
+		event = sentients[idx].events;
+		while (event) {
+			next = event->next;
+			free_effect(event->effect);
+			mem_free(event->effect_msg);
+			mem_free(event);
+			event = next;
+		}
+		if (sentients[idx].obj) {
+			if (sentients[idx].obj->known) {
+				object_free(sentients[idx].obj->known);
+			}
+			object_free(sentients[idx].obj);
+		}
+		mem_free(sentients[idx].poss);
+	}
+	mem_free(sentients);
+}
+
+struct file_parser sentient_parser = {
+	"sentient",
+	init_parse_sentient,
+	run_parse_sentient,
+	finish_parse_sentient,
+	cleanup_sentient
 };
 
 /**
@@ -3089,6 +3507,7 @@ static errr finish_parse_artifact(struct parser *p) {
 	pile_kind = lookup_kind(none, lookup_sval(none, "<pile>"));
 	curse_object_kind = lookup_kind(none, lookup_sval(none, "<curse object>"));
 	write_curse_kinds();
+	write_sentient_kinds();
 	parser_destroy(p);
 	return 0;
 }
@@ -3477,4 +3896,3 @@ struct file_parser object_property_parser = {
 	finish_parse_object_property,
 	cleanup_object_property
 };
-

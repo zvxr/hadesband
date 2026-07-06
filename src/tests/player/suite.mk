@@ -8,5 +8,6 @@ TESTPROGS += player/birth \
              player/pathfind \
              player/playerstat \
              player/pscore \
+             player/races \
              player/timed \
              player/util

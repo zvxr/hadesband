@@ -130,6 +130,8 @@ struct feature {
 	char *look_prefix; /**< Prefix for name in look result */
 	char *look_in_preposition; /**< Preposition in look result when on the terrain */
 	int resist_flag;/**< Monster resist flag for entering feature */
+	uint8_t spawn_chance;	/**< Percent chance to spawn as a dungeon room */
+	uint8_t spawn_floor_mod;/**< Spawn only when depth is a multiple of this */
 };
 
 extern struct feature *f_info;
@@ -430,6 +432,7 @@ struct loc next_grid(struct loc grid, int dir);
 int lookup_feat(const char *name);
 int lookup_feat_code(const char *code);
 const char *get_feat_code_name(int idx);
+bool feat_spawns_at_depth(int fidx, int depth);
 struct chunk *cave_new(int height, int width);
 void cave_connectors_free(struct connector *join);
 void cave_free(struct chunk *c);

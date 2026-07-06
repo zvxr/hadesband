@@ -94,7 +94,7 @@ void textui_init(void)
 	if (ANGBAND_TERM_MAX > 1) default_window_flag[1] = (PW_MESSAGE);
 	if (ANGBAND_TERM_MAX > 2) default_window_flag[2] = (PW_INVEN);
 	if (ANGBAND_TERM_MAX > 3) default_window_flag[3] = (PW_MONLIST);
-	if (ANGBAND_TERM_MAX > 4) default_window_flag[4] = (PW_ITEMLIST);
+	if (ANGBAND_TERM_MAX > 4) default_window_flag[4] = (PW_EQUIP);
 	if (ANGBAND_TERM_MAX > 5) default_window_flag[5] = (PW_MONSTER | PW_OBJECT);
 	if (ANGBAND_TERM_MAX > 6) default_window_flag[6] = (PW_OVERHEAD);
 	if (ANGBAND_TERM_MAX > 7) default_window_flag[7] = (PW_PLAYER_2);

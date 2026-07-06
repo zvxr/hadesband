@@ -213,6 +213,9 @@ flavor:66:0x87:0x8D
 # Mother-of-Pearl amulet
 flavor:67:0x87:0x81
 
+# Lapis amulet
+flavor:313:0x87:0x8D
+
 # Aspen staff
 flavor:68:0x87:0x90
 

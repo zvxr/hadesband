@@ -4040,7 +4040,7 @@ static void Term_init_cocoa(term *t)
 	    if (angband_term[termIdx] == t)
 	    {
 		autosaveName =
-		    [NSString stringWithFormat:@"AngbandTerm-%d", termIdx];
+		    [NSString stringWithFormat:@"ThangbandTerm-%d", termIdx];
 		break;
 	    }
 	}
@@ -4147,69 +4147,82 @@ static void Term_init_cocoa(term *t)
 	}
 
 	/* default window placement */ {
-	    static NSRect overallBoundingRect;
-
-	    if( termIdx == 0 )
-	    {
-		/*
-		 * This is a bit of a trick to allow us to display multiple
-		 * windows in the "standard default" window position in OS X:
-		 * the upper center of the screen.  The term sizes set in
-		 * load_prefs() are based on a 5-wide by 3-high grid, with the
-		 * main term being 4/5 wide by 2/3 high (hence the scaling to
-		 * find what the containing rect would be).
-		 */
-		NSRect originalMainTermFrame = [window frame];
-		NSRect scaledFrame = originalMainTermFrame;
-		scaledFrame.size.width *= 5.0 / 4.0;
-		scaledFrame.size.height *= 3.0 / 2.0;
-		scaledFrame.size.width += 1.0; /* spacing between window columns */
-		scaledFrame.size.height += 1.0; /* spacing between window rows */
-		[window setFrame: scaledFrame  display: NO];
-		[window center];
-		overallBoundingRect = [window frame];
-		[window setFrame: originalMainTermFrame display: NO];
-	    }
-
 	    static NSRect mainTermBaseRect;
+	    static NSRect bottomLeftRect;
+	    static NSRect bottomMiddleRect;
+	    static NSRect rightTopRect;
+	    static NSRect rightMiddleRect;
+	    static NSRect rightBottomRect;
 	    NSRect windowFrame = [window frame];
 
 	    if( termIdx == 0 )
 	    {
-		windowFrame.origin.x = NSMinX( overallBoundingRect );
-		windowFrame.origin.y =
-		    NSMaxY( overallBoundingRect ) - NSHeight( windowFrame );
-		mainTermBaseRect = windowFrame;
+		const CGFloat gap = 1.0;
+		NSScreen *screen = [window screen] ?: [NSScreen mainScreen];
+		NSRect visibleFrame = [screen visibleFrame];
+		CGFloat rightColumnWidth = floor(NSWidth(visibleFrame) / 3.0);
+		CGFloat mainColumnWidth = NSWidth(visibleFrame) - rightColumnWidth - gap;
+		CGFloat bottomRowHeight = floor(NSHeight(visibleFrame) * 0.28);
+		CGFloat mainAreaHeight = NSHeight(visibleFrame) - bottomRowHeight - gap;
+		CGFloat bottomLeftWidth = floor(mainColumnWidth * 0.44);
+		CGFloat rightTopHeight = floor(NSHeight(visibleFrame) * 0.43);
+		CGFloat rightMiddleHeight = floor(NSHeight(visibleFrame) * 0.22);
+
+		mainTermBaseRect = NSMakeRect(
+		    NSMinX(visibleFrame),
+		    NSMinY(visibleFrame) + bottomRowHeight + gap,
+		    mainColumnWidth,
+		    mainAreaHeight);
+		bottomLeftRect = NSMakeRect(
+		    NSMinX(visibleFrame),
+		    NSMinY(visibleFrame),
+		    bottomLeftWidth,
+		    bottomRowHeight);
+		bottomMiddleRect = NSMakeRect(
+		    NSMaxX(bottomLeftRect) + gap,
+		    NSMinY(visibleFrame),
+		    mainColumnWidth - bottomLeftWidth - gap,
+		    bottomRowHeight);
+		rightTopRect = NSMakeRect(
+		    NSMaxX(mainTermBaseRect) + gap,
+		    NSMaxY(visibleFrame) - rightTopHeight,
+		    rightColumnWidth,
+		    rightTopHeight);
+		rightMiddleRect = NSMakeRect(
+		    NSMaxX(mainTermBaseRect) + gap,
+		    NSMinY(rightTopRect) - gap - rightMiddleHeight,
+		    rightColumnWidth,
+		    rightMiddleHeight);
+		rightBottomRect = NSMakeRect(
+		    NSMaxX(mainTermBaseRect) + gap,
+		    NSMinY(visibleFrame),
+		    rightColumnWidth,
+		    NSMinY(rightMiddleRect) - NSMinY(visibleFrame) - gap);
+	    }
+
+	    if( termIdx == 0 )
+	    {
+		windowFrame = mainTermBaseRect;
 	    }
 	    else if( termIdx == 1 )
 	    {
-		windowFrame.origin.x = NSMinX( mainTermBaseRect );
-		windowFrame.origin.y =
-		    NSMinY( mainTermBaseRect ) - NSHeight( windowFrame ) - 1.0;
+		windowFrame = bottomLeftRect;
 	    }
 	    else if( termIdx == 2 )
 	    {
-		windowFrame.origin.x = NSMaxX( mainTermBaseRect ) + 1.0;
-		windowFrame.origin.y =
-		    NSMaxY( mainTermBaseRect ) - NSHeight( windowFrame );
+		windowFrame = rightTopRect;
 	    }
 	    else if( termIdx == 3 )
 	    {
-		windowFrame.origin.x = NSMaxX( mainTermBaseRect ) + 1.0;
-		windowFrame.origin.y =
-		    NSMinY( mainTermBaseRect ) - NSHeight( windowFrame ) - 1.0;
+		windowFrame = bottomMiddleRect;
 	    }
 	    else if( termIdx == 4 )
 	    {
-		windowFrame.origin.x = NSMaxX( mainTermBaseRect ) + 1.0;
-		windowFrame.origin.y = NSMinY( mainTermBaseRect );
+		windowFrame = rightMiddleRect;
 	    }
 	    else if( termIdx == 5 )
 	    {
-		windowFrame.origin.x =
-		    NSMinX( mainTermBaseRect ) + NSWidth( windowFrame ) + 1.0;
-		windowFrame.origin.y =
-		    NSMinY( mainTermBaseRect ) - NSHeight( windowFrame ) - 1.0;
+		windowFrame = rightBottomRect;
 	    }
 
 	    [window setFrame: windowFrame display: NO];
@@ -4222,8 +4235,9 @@ static void Term_init_cocoa(term *t)
 	if (autosaveName) [window setFrameAutosaveName:autosaveName];
 
 	/*
-	 * Tell it about its term. Do this after we've sized it so that the
-	 * sizing doesn't trigger redrawing and such.
+	 * Tell it about its term after sizing the window.  Do not resize the
+	 * terminal here; doing that during term initialization can reenter redraw
+	 * paths before all Cocoa terms are ready.
 	 */
 	[context setTerm:t];
 

@@ -124,6 +124,7 @@ flavor:64:Light Green:Adamant
 flavor:65:Slate:Flint Stone
 flavor:66:Light Blue:Sea Shell
 flavor:67:Light Slate:Mother-of-Pearl
+flavor:313:Light Blue:Lapis
 
 # Azure
 # Bead

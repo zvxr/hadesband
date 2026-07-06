@@ -22,6 +22,7 @@
 #include "obj-gear.h"
 #include "obj-ignore.h"
 #include "obj-knowledge.h"
+#include "obj-sentient.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 
@@ -532,6 +533,8 @@ static size_t obj_desc_inscrip(const struct object *obj, char *buf,
 	/* Note curses */
 	if (obj->known->curses)
 		u[n++] = "cursed";
+	if (obj->known->sentient)
+		u[n++] = "sentient";
 
 	/* Note ignore */
 	if (p && ignore_item_ok(p, obj))
@@ -571,6 +574,8 @@ static size_t obj_desc_aware(const struct object *obj, char *buf, size_t max,
 		strnfcat(buf, max, &end, " {??}");
 	} else if (obj->known->curses) {
 		strnfcat(buf, max, &end, " {cursed}");
+	} else if (obj->known->sentient) {
+		strnfcat(buf, max, &end, " {sentient}");
 	}
 
 	return end;

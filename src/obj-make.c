@@ -28,6 +28,7 @@
 #include "obj-make.h"
 #include "obj-pile.h"
 #include "obj-power.h"
+#include "obj-sentient.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
@@ -910,6 +911,45 @@ static int apply_curse(struct object *obj, int lev)
 }
 
 /**
+ * Attempt to apply a sentient personality to an object.
+ */
+static bool apply_sentient(struct object *obj, int lev)
+{
+	int i;
+	long total = 0L;
+
+	if (obj->curses || obj->sentient || !tval_is_wearable(obj)) return false;
+
+	for (i = 1; i < z_info->sentient_max; i++) {
+		struct sentient *sentient = &sentients[i];
+
+		if (!sentient->alloc_prob) continue;
+		if (!sentient->poss[obj->tval]) continue;
+		if (lev < sentient->alloc_min || lev > sentient->alloc_max) continue;
+		total += sentient->alloc_prob;
+	}
+
+	if (total) {
+		long value = randint0(total);
+
+		for (i = 1; i < z_info->sentient_max; i++) {
+			struct sentient *sentient = &sentients[i];
+
+			if (!sentient->alloc_prob) continue;
+			if (!sentient->poss[obj->tval]) continue;
+			if (lev < sentient->alloc_min || lev > sentient->alloc_max) continue;
+
+			if (value < sentient->alloc_prob) {
+				return append_object_sentient(obj, i);
+			}
+			value -= sentient->alloc_prob;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Applying magic to an object, which includes creating ego-items, and applying
  * random bonuses,
  *
@@ -978,6 +1018,9 @@ int apply_magic(struct object *obj, int lev, bool allow_artifacts, bool good,
 	/* Give it a chance to be cursed */
 	if (one_in_(20) && tval_is_wearable(obj)) {
 		lev = apply_curse(obj, lev);
+	}
+	if (!obj->curses && one_in_(40) && tval_is_wearable(obj)) {
+		apply_sentient(obj, lev);
 	}
 
 	/* Apply magic */

@@ -35,6 +35,7 @@
 #include "obj-knowledge.h"
 #include "obj-make.h"
 #include "obj-pile.h"
+#include "obj-sentient.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
@@ -296,6 +297,7 @@ void object_free(struct object *obj)
 	mem_free(obj->slays);
 	mem_free(obj->brands);
 	mem_free(obj->curses);
+	free_object_sentient(obj);
 	mem_free(obj);
 }
 
@@ -701,6 +703,7 @@ void object_wipe(struct object *obj)
 	mem_free(obj->slays);
 	mem_free(obj->brands);
 	mem_free(obj->curses);
+	free_object_sentient(obj);
 
 	/* Wipe the structure */
 	memset(obj, 0, sizeof(*obj));
@@ -727,6 +730,21 @@ void object_copy(struct object *dest, const struct object *src)
 		size_t array_size = z_info->curse_max * sizeof(struct curse_data);
 		dest->curses = mem_zalloc(array_size);
 		memcpy(dest->curses, src->curses, array_size);
+	}
+	if (src->sentient) {
+		int event_count = sentients[src->sentient->index].event_count;
+
+		dest->sentient = mem_zalloc(sizeof(*dest->sentient));
+		dest->sentient->index = src->sentient->index;
+		if (event_count) {
+			size_t array_size = event_count *
+				sizeof(*dest->sentient->timeouts);
+			dest->sentient->timeouts = mem_zalloc(array_size);
+			if (src->sentient->timeouts) {
+				memcpy(dest->sentient->timeouts, src->sentient->timeouts,
+					array_size);
+			}
+		}
 	}
 
 	/* Detach from any pile */

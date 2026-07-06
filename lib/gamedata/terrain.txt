@@ -102,6 +102,11 @@
 # 'resist-flag' is the race flag a monster must have to be able to enter
 # damaging terrain
 
+# 'spawn' controls random placement of dungeon room features that have the
+# DUNGEON_ROOM flag.  The first value is the percent chance to place the
+# feature; the second is a floor modulus (depth must be a non-zero multiple).
+# For spawn:20:5, the feature has a 20% chance on floors 5, 10, 15, ...
+
 # 'desc' is for description. As many desc: lines may be used as are needed
 # to describe the terrain. Note that lines will need spaces at their
 # ends or the beginning of the next line to prevent words from running
@@ -244,6 +249,16 @@ look-in-preposition:at
 desc:Your safe piece of Middle Earth, and the only place you can store goods
 desc: apart from on your person.
 
+code:STORE_DUNGEON
+name:Dungeon Organics
+graphics:9:g
+priority:20
+flags:SHOP | LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY | DUNGEON_ROOM
+spawn:30:10
+look-prefix:the entrance to
+look-in-preposition:at
+desc:A strange underground trader of mushrooms, potions, scrolls, and amulets.
+
 code:SECRET
 name:secret door
 graphics:#:w
@@ -352,4 +367,3 @@ digging:1
 desc:Ends LOS, stops missiles, bolts, and beams, and reduces the radius of ball
 desc: spells.  May dissolve or be tunnelled to normal floor, and can be walked
 desc: through by the player and monsters.
-

@@ -1,3 +1,27 @@
+# Thangband Changelog
+
+## 0.9.0
+
+* Added Dungeon Organics dungeon store room (30% chance on every 5th floor).
+* Added four races: Barbarian, Half-Giant, Nibelung, Fae.
+* Added one class: Red Mage. Spell generalist that can steal mana.
+* Added three mushrooms: Stability, Visions, Madness.
+* Added two amulets: Amulet of Brilliance, Resist Confusion.
+* Increased starting gold by 400.
+* Increased Identify accessibility (cheaper, always in town, larger piles).
+* Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
+* Changed Slice of Meat to Moon-Cured Pork (temporary infravision buff).
+* Updated lower level mushroom piles (double amount).
+* Updated Scroll of Detect Invisible (grants short sense invisible period).
+* Updated Shadow Shift spell, further distance but more damage.
+* Removed Amulet of Inertia.
+
+* Renamed the fork to Thangband.
+* Added a root `make build` command for clean macOS app builds.
+* Updated the default subwindow setup with macOS size/placement.
+
+# Tactical Angband Changelog (Preserved)
+
 ## 0.8.1
 
 * Fixed a bug that caused some spells to do no damage (particularly mage).

@@ -26,6 +26,7 @@
 #include "mon-move.h"
 #include "mon-util.h"
 #include "obj-curse.h"
+#include "obj-sentient.h"
 #include "obj-desc.h"
 #include "obj-gear.h"
 #include "obj-knowledge.h"
@@ -376,6 +377,28 @@ static void decrease_timeouts_measured_in_speed0_turns(void)
 						}
 						curse[j].timeout = randcalc(c->obj->time, 0, RANDOMISE);
 					}
+				}
+			}
+		}
+		if (player->body.slots[i].obj->sentient) {
+			struct object *obj = player->body.slots[i].obj;
+			struct sentient *sentient = &sentients[obj->sentient->index];
+			int j;
+
+			for (j = 0; j < sentient->event_count; j++) {
+				const struct sentient_event *event =
+					sentient_event_by_index(sentient, j);
+
+				if (!event || !obj->sentient->timeouts) continue;
+				if (obj->sentient->timeouts[j] > 0) {
+					obj->sentient->timeouts[j]--;
+				}
+				if (!obj->sentient->timeouts[j]) {
+					if (randint1(100) <= event->chance) {
+						do_sentient_effect(j, obj);
+					}
+					obj->sentient->timeouts[j] =
+						randcalc(event->time, 0, RANDOMISE);
 				}
 			}
 		}

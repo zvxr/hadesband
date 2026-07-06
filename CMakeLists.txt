@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7...3.26 FATAL_ERROR)
-project(Angband LANGUAGES C)
+project(Thangband LANGUAGES C)
 string(TOLOWER ${PROJECT_NAME} OUR_EXECUTABLE_NAME)
 
 # Append the custom modules to the search path.
@@ -227,6 +227,7 @@ add_library(OurCoreLib OBJECT
         src/obj-power.c
         src/obj-properties.c
         src/obj-randart.c
+        src/obj-sentient.c
         src/obj-slays.c
         src/obj-tval.c
         src/obj-util.c
@@ -887,6 +888,7 @@ set(ANGBAND_TEST_CASE_SOURCES
     parse/readstore.c
     parse/realm.c
     parse/shape.c
+    parse/sentient.c
     parse/slay.c
     parse/ui_knowledge.c
     parse/v-info.c

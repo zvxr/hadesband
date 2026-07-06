@@ -26,6 +26,7 @@
 #include "obj-knowledge.h"
 #include "obj-pile.h"
 #include "obj-properties.h"
+#include "obj-sentient.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
@@ -736,6 +737,9 @@ bool object_runes_known(const struct object *obj)
 	if (!curses_are_equal(obj, obj->known)) {
 		return false;
 	}
+	if (!sentients_are_equal(obj, obj->known)) {
+		return false;
+	}
 
 	/* Answer is now the same as for non-curse runes */
 	return object_non_curse_runes_known(obj);
@@ -1146,6 +1150,19 @@ void player_know_object(struct player *p, struct object *obj)
 	} else if (obj->known->curses) {
 		mem_free(obj->known->curses);
 		obj->known->curses = NULL;
+	}
+
+	if (obj->sentient) {
+		if (obj->known->sentient &&
+				obj->known->sentient->index != obj->sentient->index) {
+			free_object_sentient(obj->known);
+		}
+		if (!obj->known->sentient) {
+			obj->known->sentient = mem_zalloc(sizeof(*obj->known->sentient));
+		}
+		obj->known->sentient->index = obj->sentient->index;
+	} else if (obj->known->sentient) {
+		free_object_sentient(obj->known);
 	}
 
 	/* Set ego type, jewellery type if known */

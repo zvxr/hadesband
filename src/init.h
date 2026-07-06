@@ -60,6 +60,7 @@ struct angband_constants
 	uint16_t pit_max;	/**< Maximum number of monster pit types */
 	uint16_t act_max;	/**< Maximum number of activations for randarts */
 	uint8_t curse_max;	/**< Maximum number of curses */
+	uint8_t sentient_max;	/**< Maximum number of sentient personalities */
 	uint8_t slay_max;	/**< Maximum number of slays */
 	uint8_t brand_max;	/**< Maximum number of brands */
 	uint16_t mon_blows_max;	/**< Maximum number of monster blows */
