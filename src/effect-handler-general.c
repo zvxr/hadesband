@@ -2307,7 +2307,7 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 
 		/* Continue summoning until we reach the current dungeon level */
 
-		/* Tactical-Angband: summon depth is strictly summoner 2*level/3,
+		/* Tactical Angband: summon depth is strictly summoner 2*level/3,
 		 * except for summon ringwraiths, which is special! */
 		if (summon_type == summon_name_to_idx("WRAITH")) {
 			rlev = mon->race->level;

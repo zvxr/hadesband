@@ -4040,7 +4040,7 @@ static void Term_init_cocoa(term *t)
 	    if (angband_term[termIdx] == t)
 	    {
 		autosaveName =
-		    [NSString stringWithFormat:@"ThangbandTerm-%d", termIdx];
+		    [NSString stringWithFormat:@"HadesbandTerm-%d", termIdx];
 		break;
 	    }
 	}

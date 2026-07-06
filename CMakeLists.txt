@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7...3.26 FATAL_ERROR)
-project(Thangband LANGUAGES C)
+project(Hadesband LANGUAGES C)
 string(TOLOWER ${PROJECT_NAME} OUR_EXECUTABLE_NAME)
 
 # Append the custom modules to the search path.

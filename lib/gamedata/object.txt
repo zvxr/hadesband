@@ -5386,7 +5386,7 @@ attack:1d1:0:0
 armor:0:0
 flags:INSTA_ART | QUEST_ART
 
-## Tactical-Angband objects
+## Tactical Angband objects
 
 name:Running
 type:potion

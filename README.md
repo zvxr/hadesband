@@ -1,4 +1,4 @@
-# Thangband
+# Hadesband
 
 <p align="center">
   <img src="screenshots/game.png" width="425"/>
@@ -6,7 +6,7 @@
 
 ## What??
 
-Thangband is a variant of the classic roguelike game Angband.  It uses
+Hadesband is a variant of the classic roguelike game Angband.  It uses
 Tactical Angband as its base, preserving that variant's shorter, more tactical
 dungeon while adding changes, many inspired by Hengband.
 
@@ -24,7 +24,7 @@ From the repository root, run:
 make build
 ```
 
-This cleans the macOS build artifacts and creates `Thangband.app`.
+This cleans the macOS build artifacts and creates `Hadesband.app`.
 
 ## Tactical Angband base
 

@@ -26,7 +26,7 @@ angband
 angband.3dsx
 angband.nds
 angband.smdh
-thangband
+hadesband
 autom4te.cache/
 cmake-build-debug/
 config.log
@@ -66,7 +66,7 @@ src/.deps
 src/3ds-build
 src/angband
 src/angband-master
-src/thangband
+src/hadesband
 src/autoconf.h
 src/autoconf.h.in
 src/config

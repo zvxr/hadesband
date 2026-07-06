@@ -1167,7 +1167,7 @@ type:dragon armor
 values:SPEED[d5]
 min-values:SPEED[0]
 
-# TacticalAngband additions
+# Hadesband additions
 
 name:of Running
 info:10000:20

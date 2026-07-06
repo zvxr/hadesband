@@ -1,7 +1,8 @@
-# Thangband Changelog
+# Hadesband Changelog
 
 ## 0.9.0
 
+* Rename project to Hadesband.
 * Added Dungeon Organics dungeon store room (30% chance on every 5th floor).
 * Added four races: Barbarian, Half-Giant, Nibelung, Fae.
 * Added one class: Red Mage. Spell generalist that can steal mana.
@@ -16,7 +17,7 @@
 * Updated Shadow Shift spell, further distance but more damage.
 * Removed Amulet of Inertia.
 
-* Renamed the fork to Thangband.
+* Renamed the fork to Hadesband.
 * Added a root `make build` command for clean macOS app builds.
 * Updated the default subwindow setup with macOS size/placement.
 
