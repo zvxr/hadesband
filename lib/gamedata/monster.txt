@@ -1058,7 +1058,7 @@ blow:HIT:HURT:1d5
 flags:DROP_60
 desc:A small goat-legged reveler with bright eyes and nimble hands.
 
-name:Grip, Farmer Maggot's Dog
+name:Argos, Odysseus' Faithful Dog
 base:canine
 color:y
 speed:120
@@ -1073,10 +1073,10 @@ experience:30
 blow:BITE:HURT:1d4
 flags:UNIQUE | NAME_COMMA
 flags:RAND_25 | BASH_DOOR
-desc:A rather vicious dog belonging to Farmer Maggot.  It thinks you are
-desc: stealing mushrooms.
+desc:Odysseus' faithful hound, still swift, strong, and impossible to shake
+desc: once he has found your trail.
 
-name:Fang, Farmer Maggot's Dog
+name:Maera, Hound of Erigone
 base:canine
 color:y
 speed:120
@@ -1091,8 +1091,7 @@ experience:30
 blow:BITE:HURT:1d4
 flags:UNIQUE | NAME_COMMA
 flags:RAND_25 | BASH_DOOR
-desc:A rather vicious dog belonging to Farmer Maggot.  It thinks you are
-desc: stealing mushrooms.
+desc:The loyal hound of Erigone, keen-nosed and grieving, rushes to bite.
 
 name:green worm mass
 base:worm
@@ -3359,7 +3358,7 @@ flags:UNIQUE | NAME_COMMA
 flags:DROP_2 | DROP_GOOD | ONLY_ITEM
 flags:IM_COLD | IM_ELEC | IM_FIRE | IM_POIS
 friends:50:4d4:snaga:servant
-friends:80:2d7:Warg
+friends:80:2d7:spartan war dog
 friends:100:5d4:cave orc:servant
 friends:100:1d1:Bullroarer the Hobbit
 friends:100:1d1:Grishnákh, the Hill Orc
@@ -3855,7 +3854,7 @@ blow:HIT:HURT:1d6
 flags:BASH_DOOR
 desc:A shambling humanoid monster with long scars.
 
-name:warg
+name:spartan war dog
 base:canine
 color:s
 speed:120
@@ -3871,7 +3870,7 @@ blow:BITE:HURT:1d8
 flags:EVIL | GROUP_AI
 flags:RAND_25 | BASH_DOOR
 friends:100:2d7:Same
-desc:It is a large wolf with eyes full of cunning.
+desc:It is a hardened war dog, trained to fight in disciplined packs.
 
 name:lurker
 base:lurker
@@ -4045,7 +4044,7 @@ blow:HIT:HURT:3d4
 flags:DROP_20
 innate-freq:10
 spells:ARROW
-friends:50:2d4:Warg
+friends:50:2d4:spartan war dog
 friends:50:1d2:orc tracker
 friends:100:4d4:Same
 desc:He is a hideous deformed cross-breed with man and orc, combining man's
@@ -4321,7 +4320,7 @@ flags:DROP_20
 innate-freq:9
 spells:ARROW | WHIP
 friends:40:1d4:Half-orc
-friends:80:2d5:Warg
+friends:80:2d5:spartan war dog
 friends:50:1d2:orc tracker
 friends:50:1d2:orc archer
 friends:100:3d3:Same
@@ -4547,7 +4546,7 @@ flags:DROP_60
 innate-freq:9
 spells:ARROW
 friends:50:1d5:Wolf
-friends:50:1d5:Warg
+friends:50:1d5:spartan war dog
 friends:80:1d2:orc tracker:servant
 friends:80:1d4:orc archer:servant
 friends-base:50:1d5:orc:servant
@@ -4951,7 +4950,7 @@ blow:HIT:HURT:3d6
 flags:UNIQUE | NAME_COMMA | MOVE_BODY
 flags:DROP_2 | DROP_GOOD | ONLY_ITEM
 friends:50:3d4:cave orc:servant
-friends:80:2d7:Warg
+friends:80:2d7:spartan war dog
 friends:100:2d2:orc tracker
 friends:100:4d2:orc archer
 friends:100:4d4:Uruk:bodyguard
@@ -5262,7 +5261,7 @@ blow:HIT:HURT:3d5
 flags:UNIQUE | NAME_COMMA
 flags:DROP_1 | DROP_GOOD | ONLY_ITEM
 friends:50:3d4:Half-orc:servant
-friends:80:2d7:Warg
+friends:80:2d7:spartan war dog
 friends:50:1d3:Orc captain
 friends:100:4d4:Uruk:servant
 desc:A large and powerful orc, captain of one of Saruman's orcish regiments.
@@ -5431,7 +5430,7 @@ flags:UNIQUE | NAME_COMMA | MOVE_BODY
 flags:DROP_1 | DROP_GOOD | ONLY_ITEM
 flags:IM_COLD | IM_FIRE | IM_POIS | NO_CONF | NO_HOLD
 friends:50:2d4:Half-orc:servant
-friends:80:2d5:Warg
+friends:80:2d5:spartan war dog
 friends:100:4d4:Uruk:bodyguard
 friends:80:1d3:Orc captain:servant
 friends:100:1d1:Lugdush, the Uruk:servant
@@ -5604,7 +5603,7 @@ blow:HIT:HURT:5d5
 flags:UNIQUE | NAME_COMMA | MOVE_BODY
 flags:DROP_2 | DROP_GOOD | ONLY_ITEM
 friends:50:3d4:cave orc:servant
-friends:80:2d7:Warg
+friends:80:2d7:spartan war dog
 friends:100:2d2:orc tracker
 friends:100:4d2:orc archer
 friends:100:4d4:Uruk:bodyguard
@@ -6217,7 +6216,7 @@ flags:IM_DISEN
 flags:ATTR_MULTI | FORCE_SLEEP
 desc:A giant bat which feeds on raw magical energy.
 
-name:wolf chieftain
+name:alpha wolf
 base:canine
 color:D
 speed:120
@@ -6241,10 +6240,10 @@ spells:DARKNESS
 message-invis:DARKNESS:Something howls.
 friends:100:2d4:Wolf:servant
 friends:60:2d4:White wolf:servant
-friends:60:2d4:Warg:servant
+friends:60:2d4:spartan war dog:servant
 friends:60:1d4:Werewolf:servant
-desc:A great wolf-chieftain whose pack is in the service of the Dark Lord, and
-desc: whose howls strike fear into even the boldest heart.
+desc:A great wolf whose pack follows every movement, and whose howls strike
+desc: fear into even the boldest heart.
 
 name:ghoul
 base:zombie
@@ -11402,7 +11401,7 @@ spells:SHAPECHANGE
 spells:S_HOUND
 shape:ranger chieftain
 shape:giant
-shape:Huan, Wolfhound of the Valar
+shape:Golden Dog, Guardian of Zeus
 desc:A servant of Oromë, hunter of monsters and fell beasts.
 
 name:ancient hamadryad
@@ -12338,8 +12337,8 @@ desc: be the greatest dragon still surviving into the Third Age.
 
 ### Dungeon level 63 ###
 
-name:werewolf of Sauron
-plural:werewolves of Sauron
+name:guard dog of Hephaestus
+plural:guard dogs of Hephaestus
 base:canine
 color:G
 speed:120
@@ -12362,11 +12361,11 @@ innate-freq:6
 spell-freq:7
 spells:BR_NETH | BR_DARK
 spells:S_HOUND
-friends:50:2d4:warg:servant
+friends:50:2d4:spartan war dog:servant
 friends:50:2d3:hellhound:servant
 friends:100:2d3:werewolf:servant
-desc:A massive wolf, appearing like a mighty shadow.  Its glowing red eyes
-desc: glare malevolently as it defends its evil master's fortress.
+desc:A sacred temple guardian from Mount Etna, forged for the service of
+desc: Hephaestus and still burning with infernal craft.
 
 name:spider of Gorgoroth
 plural:spiders of Gorgoroth
@@ -14176,7 +14175,7 @@ spells:S_UNDEAD | S_WRAITH
 desc:A Ringwraith powerful in fell sorcery, he yearns for the life he has lost
 desc: for an unlife of everlasting torment.
 
-name:Draugluin, Sire of All Werewolves
+name:Laelaps, the Inescapable Hound
 base:canine
 color:m
 speed:130
@@ -14192,7 +14191,7 @@ blow:CLAW:HURT:6d8
 blow:CLAW:HURT:6d8
 blow:BITE:POISON:6d6
 blow:BITE:POISON:6d6
-flags:UNIQUE | MALE | NAME_COMMA | EVIL
+flags:UNIQUE | FEMALE | NAME_COMMA | EVIL
 flags:DROP_1 | DROP_GOOD | ONLY_ITEM
 flags:RAND_25 | OPEN_DOOR | BASH_DOOR | MOVE_BODY | TAKE_ITEM
 flags:IM_POIS
@@ -14201,9 +14200,9 @@ spell-freq:3
 spells:SCARE
 spells:S_HOUND | S_MONSTERS
 friends:100:3d5:Werewolf:servant
-friends:100:2d4:Wolf Chieftain:servant
-desc:Draugluin provides Sauron with a fearsome personal guard.  He is an
-desc: enormous wolf inhabited with a human spirit.  He is chief of all his kind.
+friends:100:2d4:alpha wolf:servant
+desc:Laelaps is the hound destined always to catch her prey.  Her pack runs
+desc: behind her, but nothing escapes her pursuit.
 
 ### Dungeon level 84 ###
 
@@ -14467,7 +14466,7 @@ desc: the heat of his body.
 
 ### Dungeon level 90 ###
 
-name:Huan, Wolfhound of the Valar
+name:Golden Dog, Guardian of Zeus
 base:canine
 color:W
 speed:130
@@ -14490,12 +14489,10 @@ flags:IM_ACID | IM_COLD | IM_ELEC | NO_FEAR | NO_CONF | NO_SLEEP | NO_HOLD | NO_
 flags:FORCE_SLEEP
 innate-freq:5
 spells:BR_COLD | BR_LIGHT | BR_SHAR | BR_SOUN
-desc:The wolfhound of the Valar, Huan has served many masters in his time, from
-desc: Celegorm son of Fëanor to Beren son of Barahir: but now he runs wild and
-desc: acknowledges no master save himself, as he hunts alone for his nemesis -
-desc: Carcharoth, the terrible wolf of Angband.
+desc:The golden hound that guarded infant Zeus now runs wild through the deep,
+desc: shining with divine cold and the memory of thunder.
 
-name:Carcharoth, the Jaws of Thirst
+name:Cerberus, Hound of Hades
 base:canine
 color:p
 speed:130
@@ -14508,10 +14505,10 @@ sleepiness:10
 depth:90
 rarity:1
 experience:40000
-blow:CLAW:FIRE:9d12
-blow:CLAW:FIRE:9d12
-blow:BITE:FIRE:9d12
-blow:BITE:FIRE:9d12
+blow:BITE:FIRE:10d12
+blow:BITE:FIRE:10d12
+blow:BITE:FIRE:10d12
+blow:WAIL:TERRIFY
 flags:UNIQUE | MALE | NAME_COMMA | EVIL | SMART | ATTR_FLICKER
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:OPEN_DOOR | BASH_DOOR | MOVE_BODY
@@ -14521,9 +14518,8 @@ innate-freq:3
 spell-freq:15
 spells:BR_DARK | BR_FIRE | BR_NETH | BR_POIS
 spells:S_HOUND
-desc:The first guard of Angband, Carcharoth, also known as 'The Red Maw', is the
-desc: greatest wolf to ever walk the earth.  He is highly intelligent and a
-desc: deadly opponent in combat.
+desc:The three-headed hound of Hades guards the gates below.  Each burning maw
+desc: snaps in turn, and his howl promises that none shall pass back alive.
 
 ### Dungeon level 92 ###
 

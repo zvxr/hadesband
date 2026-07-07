@@ -189,10 +189,9 @@ msg:MON_MOAN
 act:wants his mushrooms back
 act:tells {target} to get off his land
 act:looks for his dogs
-act:says 'Did you kill my Fang?'
+act:says 'Did you kill my Maera?'
 act:asks 'Do you want to buy any mushrooms?'
 act:seems sad about something
 act:asks if {target} {has} seen his dogs
 act:mumbles something about mushrooms
 desc:moan
-

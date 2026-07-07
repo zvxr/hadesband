@@ -1385,7 +1385,7 @@ bool borg_caution(void)
                     safe = false;
             }
 
-            /* Don't run from Grip or Fang */
+            /* Don't run from Argos or Maera */
             if ((borg.trait[BI_CDEPTH] <= 5 && borg.trait[BI_CDEPTH] != 0
                     && borg_fighting_unique)
                 || !safe) {

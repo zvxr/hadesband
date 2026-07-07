@@ -1150,7 +1150,7 @@ static void borg_parse_aux(char *msg, int len)
 
     /* Be aware and concerned of busted doors */
     if (prefix(msg, "You hear a door burst open!")) {
-        /* on level 1 and 2 be concerned.  Could be Grip or Fang */
+        /* on level 1 and 2 be concerned.  Could be Argos or Maera */
         if (borg.trait[BI_CDEPTH] <= 3 && borg.trait[BI_CLEVEL] <= 5)
             scaryguy_on_level = true;
     }

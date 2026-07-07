@@ -1129,9 +1129,9 @@ dice:2d$S
 expr:S:PLAYER_LEVEL:* 2
 desc:Fires a beam of darkness.
 
-spell:Warg Form:28:20:60:80
-effect:SHAPECHANGE:warg
-desc:Changes you into the form of a warg, and gives you temporary berserk
+spell:Spartan War Dog Form:28:20:60:80
+effect:SHAPECHANGE:spartan war dog
+desc:Changes you into the form of a spartan war dog, and gives you temporary berserk
 desc: strength, at the cost of some hitpoints.
 
 

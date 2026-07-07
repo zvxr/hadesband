@@ -234,13 +234,13 @@ static int test_missing_header_record0(void *state) {
 }
 
 static int test_name0(void *state) {
-	enum parser_error r = parser_parse(state, "name:Carcharoth, the Jaws of Thirst");
+	enum parser_error r = parser_parse(state, "name:Cerberus, Hound of Hades");
 	struct monster_race *mr;
 
 	eq(r, PARSE_ERROR_NONE);
 	mr = parser_priv(state);
 	require(mr);
-	require(streq(mr->name, "Carcharoth, the Jaws of Thirst"));
+	require(streq(mr->name, "Cerberus, Hound of Hades"));
 	ok;
 }
 

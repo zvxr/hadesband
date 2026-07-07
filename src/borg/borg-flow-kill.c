@@ -2736,7 +2736,7 @@ void borg_near_monster_type(int dist)
 
         /* run from certain dungeon scaries */
         if (borg.trait[BI_CLEVEL] <= 5
-            && (strstr(r_ptr->name, "Grip") || strstr(r_ptr->name, "Fang")
+            && (strstr(r_ptr->name, "Argos") || strstr(r_ptr->name, "Maera")
                 || strstr(r_ptr->name, "Small kobold")))
             scaryguy_on_level = true;
 

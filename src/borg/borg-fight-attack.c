@@ -5200,9 +5200,9 @@ bool borg_attack(bool boosted_bravery)
 
         /* no attacking most scaryguys, try to get off the level */
         if (scaryguy_on_level) {
-            /* probably Grip or Fang. */
-            if (strstr(r_ptr->name, "Grip") || strstr(r_ptr->name, "Fang")) {
-                /* Try to fight Grip and Fang. */
+            /* probably Argos or Maera. */
+            if (strstr(r_ptr->name, "Argos") || strstr(r_ptr->name, "Maera")) {
+                /* Try to fight Argos and Maera. */
             } else if (borg.trait[BI_CDEPTH] <= 5 && borg.trait[BI_CDEPTH] != 0
                        && (rf_has(r_info[kill->r_idx].flags, RF_MULTIPLY))) {
                 /* Try to fight single worms and mice. */

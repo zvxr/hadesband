@@ -152,7 +152,7 @@ static borg_spell_rating borg_spell_ratings_NECROMANCER[] =
     { "Vampire Strike", 75, VAMPIRE_STRIKE },
     { "Dispel Life", 65, DISPEL_LIFE },
     { "Dark Spear", 65, DARK_SPEAR },
-    { "Warg Form", 5, WARG_FORM }, // !FIX !TODO shapechange
+    { "Spartan War Dog Form", 5, WARG_FORM }, // !FIX !TODO shapechange
     { "Banish Spirits", 65, BANISH_SPIRITS },
     { "Annihilate", 95, ANNIHILATE },
     { "Grond's Blow", 85, GRONDS_BLOW },

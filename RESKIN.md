@@ -103,6 +103,7 @@
 - Possible rename/family fit: `naga` can absorb Lamia/Echidna/Gorgon-like serpent-women; current gorgon already uses `naga`.
 - Implemented: `tree`/`l` now means Living Wood; old tree/ent names became dryad, Daphne, greater dryad, blighted dryad, and ancient hamadryad.
 - Implemented: `satyr`/`y` replaces yeeks; satyrs trade inherited acid immunity for confusion immunity, and Pan moves to depth 20 as a stronger trickster unique.
+- Implemented: canine pass renamed Tolkien dogs/wolves to Argos, Maera, Spartan war dog, alpha wolf, guard dog of Hephaestus, Laelaps, Golden Dog, and Cerberus; generic wolves/werewolves/hellhounds remain.
 - Implemented: giant uniques `Gilim` and `Nan` became Typhon and Antiphates; generic giants stay unchanged on `P`.
 - Possible future fit: centaurs and fauns probably use `hybrid`, `humanoid`, or `person` rather than new bases.
 
@@ -110,11 +111,11 @@
 | --- | --- | --- |
 | `ancient dragon` | `D` | Pending |
 | `ainu` | `A` | Old divine/spirit base; keep for now |
-| `god` | `G` | Started; Zeus/Ares/Hecate moved |
+| `god` | `G` | Done for initial pass; Zeus/Ares/Hecate moved |
 | `ant` | `a` | Pending |
 | `bat` | `b` | Pending |
-| `bird` | `B` | Pending |
-| `canine` | `C` | Pending |
+| `bird` | `B` | Done for initial pass; Greek bird reskins complete |
+| `canine` | `C` | Done for initial pass; Greek dog/wolf reskins complete |
 | `centipede` | `c` | Pending |
 | `creeping coins` | `$` | Pending |
 | `dragon` | `d` | Pending |
@@ -123,12 +124,12 @@
 | `elemental` | `E` | Pending |
 | `feline` | `f` | Pending |
 | `ghost` | `G` | Untouched; conflicts with new god glyph |
-| `giant` | `P` | Pending |
+| `giant` | `P` | Done for initial unique pass; generics retained |
 | `golem` | `g` | Pending |
 | `humanoid` | `h` | Pending |
-| `hybrid` | `H` | Started; harpies remain here |
-| `monstrous` | `M` | Started; major composite beasts moved here |
-| `hydra` | `H` | Started; base retained, glyph changed from `M` |
+| `hybrid` | `H` | Done for current pass; harpies remain here |
+| `monstrous` | `M` | Done for current pass; major composite beasts moved here |
+| `hydra` | `H` | Done for current pass; base retained, glyph changed from `M` |
 | `icky thing` | `i` | Pending |
 | `insect` | `I` | Pending |
 | `jelly` | `j` | Pending |
@@ -153,14 +154,14 @@
 | `snake` | `J` | Pending |
 | `spider` | `S` | Pending |
 | `townsfolk` | `t` | Pending |
-| `tree` | `l` | Started; Living Wood/dryad pass complete |
+| `tree` | `l` | Done for initial pass; Living Wood/dryads complete |
 | `troll` | `T` | Pending |
 | `vampire` | `V` | Pending |
 | `vortex` | `v` | Pending |
 | `worm` | `w` | Pending |
 | `wraith` | `W` | Pending; candidate home for some spirits |
 | `xorn` | `X` | Pending; likely replacement candidate |
-| `satyr` | `y` | Started; yeeks replaced with satyrs and Pan |
+| `satyr` | `y` | Done for initial pass; yeeks replaced with satyrs and Pan |
 | `yeti` | `Y` | Pending |
 | `zephyr hound` | `Z` | Pending |
 | `zombie` | `z` | Pending |

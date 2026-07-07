@@ -2008,8 +2008,8 @@ attack:1d1:-12:-12
 armor:3:0
 flags:FREE_ACT | DRAIN_EXP | AGGRAVATE
 values:STR[-3] | DEX[-3] | RES_FIRE[1] | RES_DISEN[1]
-desc:A pair of weakening gauntlets, named after Beren, who returned to Thingol
-desc: having lost to Carcharoth the hand that clasped a Silmaril.
+desc:A pair of weakening gauntlets, named for a doomed hand lost to a ravenous
+desc: hound at the edge of the underworld.
 
 name:of Eöl
 base-object:gloves:Set of Gauntlets

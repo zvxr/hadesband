@@ -792,8 +792,8 @@ monster:Giant black ant:0x91:0x81
 monster:Salamander:0x93:0x8D
 monster:White harpy:0x93:0x8A
 monster:satyr:0x8F:0xBA
-monster:Grip, Farmer Maggot's dog:0x8F:0xC9
-monster:Fang, Farmer Maggot's dog:0x8F:0xCB
+monster:Argos, Odysseus' Faithful Dog:0x8F:0xC9
+monster:Maera, Hound of Erigone:0x8F:0xCB
 monster:Green worm mass:0x91:0x91
 monster:serpent of chaos:0x9F:0x8D
 monster:Cave spider:0x8F:0xB8
@@ -926,7 +926,7 @@ monster:Giant white dragon fly:0x91:0xB8
 monster:Blue icky thing:0x8E:0xD4
 monster:Hill giant:0x9D:0x94
 monster:Flesh golem:0x92:0x80
-monster:Warg:0x8F:0xD2
+monster:spartan war dog:0x8F:0xD2
 monster:Giant black louse:0x8F:0xAD
 monster:Lurker:0x8E:0xE1
 monster:Wererat:0x8D:0x9B
@@ -1278,10 +1278,10 @@ monster:Pazuzu, Lord of Air:0x9F:0xFB
 monster:Cantoras, the Skeletal Lord:0x9F:0xD7
 monster:The Tarrasque:0x9F:0xFD
 monster:Lungorthin, the Balrog of White Fire:0x9F:0xE3
-monster:Draugluin, Sire of All Werewolves:0x9F:0xFA
+monster:Laelaps, the Inescapable Hound:0x9F:0xFA
 monster:Vecna, the Emperor Lich:0x9F:0xFC
-monster:Huan, Wolfhound of the Valar:0x9D:0xF8
-monster:Carcharoth, the Jaws of Thirst:0x9D:0xF7
+monster:Golden Dog, Guardian of Zeus:0x9D:0xF8
+monster:Cerberus, Hound of Hades:0x9D:0xF7
 monster:Gothmog, the High Captain of Balrogs:0x9F:0xE2
 monster:Zeus, God of the Sky:0x9F:0xC2
 monster:Hades, Lord of the Underworld:0x9F:0xE1
@@ -1361,7 +1361,7 @@ monster:greater dryad:0x9F:0x84
 monster:ancient hamadryad:0x9F:0x85
 monster:Daphne, the Rooted Nymph:0x9F:0x86
 monster:blighted dryad:0x9F:0x87
-monster:werewolf of Sauron:0x9F:0x92
+monster:guard dog of Hephaestus:0x9F:0x92
 monster:Fëanorian raider:0x9B:0xFA
 monster:Wiruin, the Maelstrom:0x9F:0x91
 monster:Wolf-Sauron:0x9B:0xFD
