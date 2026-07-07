@@ -6832,13 +6832,12 @@ spells:SHAPECHANGE
 friends:100:2d3:Cave bear
 friends:100:2d3:Grizzly bear
 friends:100:2d3:Werebear
-shape:Beorn, the Mountain Bear
-desc:Beorn is only occasionally seen in human form these days, preferring to
-desc: appear in the shape of a giant black bear: he also prefers the company of
-desc: beasts to that of humans.  He has never taken kindly to strangers, even
-desc: in human form.
+shape:Ayula, Queen Among Bears
+desc:This cursed bear sometimes recalls a mortal shape, but the memory never
+desc: lasts.  It prefers the company of beasts to that of humans, and has never
+desc: taken kindly to strangers.
 
-name:Beorn, the Mountain Bear
+name:Ayula, Queen Among Bears
 base:quadruped
 color:p
 speed:120
@@ -6853,11 +6852,11 @@ blow:CLAW:HURT:2d10
 blow:CLAW:HURT:2d10
 blow:BITE:HURT:4d8
 blow:CRUSH:HURT:3d6
-flags:UNIQUE | MALE | NAME_COMMA | ANIMAL | SMART | SPIRIT
+flags:UNIQUE | FEMALE | NAME_COMMA | ANIMAL | SMART | SPIRIT
 flags:MOVE_BODY
-desc:Beorn in his form as a great black bear of the mountains, grown to
-desc: giant-size in wrath.  The roar of his voice is like drums, and no weapon
-desc: seems to bite upon him.
+desc:Ayula is fabulous, sparkling, and terrible in her wrath: a great black
+desc: bear of the mountains, grown to giant-size.  The roar of her voice is
+desc: like drums, and no weapon seems to bite upon her.
 
 ### Dungeon level 29 ###
 
@@ -6927,10 +6926,10 @@ flags:IM_ACID | IM_POIS
 desc:It is a massive worm form, many feet in length.  Its vast maw drips acid
 desc: and poison.
 
-name:catoblepas
-plural:catoblepones
+name:sacred deer
+plural:sacred deer
 base:quadruped
-color:g
+color:y
 speed:110
 hit-points:165
 hearing:15
@@ -6947,8 +6946,9 @@ blow:BITE:HURT:2d12
 flags:ANIMAL
 flags:DROP_2 | ONLY_GOLD
 flags:IM_POIS
-desc:A strange ox-like form with a huge head but a thin, weak neck, it looks
-desc: like the creation of some deranged alchemist.
+desc:A golden-horned deer sacred to Artemis.  It moves with immortal grace,
+desc: but its gaze is fierce enough to blind or terrify hunters who forget
+desc: themselves.
 
 name:ring mimic
 base:mimic
@@ -8155,7 +8155,7 @@ flags:DROP_2 | DROP_GOOD | ONLY_ITEM
 flags:OPEN_DOOR | TAKE_ITEM
 spell-freq:10
 spells:S_KIN
-friends:60:1d3:Mûmak
+friends:60:1d3:odontotyrannos
 friends:100:3d3:Easterling champion:bodyguard
 friends:100:1d1:Ulfast, Son of Ulfang
 friends:100:1d1:Ulwarth, Son of Ulfang
@@ -8421,8 +8421,8 @@ desc:A deep brown shape is visible before you, its canine form strikes you with
 desc: an almost physical force.  The dungeon floor buckles as if struck by a
 desc: powerful blow as it stalks towards you.
 
-name:mûmak
-plural:mûmakil
+name:odontotyrannos
+plural:odontotyrannoi
 base:quadruped
 color:s
 speed:110
@@ -8439,7 +8439,8 @@ blow:BUTT:HURT:4d6
 blow:CRUSH:HURT:4d4
 flags:ANIMAL
 friends:100:4d4:Same
-desc:A massive elephantine form with eyes twisted by madness.
+desc:A massive beast larger than an elephant, with a black horse-like head and
+desc: three horns jutting from its brow.
 
 name:giant fire ant
 base:ant
@@ -8804,7 +8805,7 @@ flags:FORCE_SLEEP
 spell-freq:4
 spells:TELE_TO
 spells:S_MONSTERS
-friends:50:1d3:Mûmak
+friends:50:1d3:odontotyrannos
 friends:100:2d5:Easterling champion:bodyguard
 desc:A mighty warrior from the east, Lorgan hates everything that he cannot
 desc: control.
@@ -9441,7 +9442,7 @@ spells:BR_POIS
 desc:A 5-headed hydra which seems to have an extra head, if you could just see
 desc: it properly.
 
-name:night mare
+name:Stygian mare
 base:quadruped
 color:G
 speed:120
@@ -9461,8 +9462,8 @@ flags:UNDEAD | EVIL | COLD_BLOOD
 flags:DROP_2 | ONLY_GOLD
 flags:OPEN_DOOR
 flags:IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN
-desc:A fearsome skeletal horse with glowing eyes, that watch you with little
-desc: more than a hatred of all that lives.
+desc:A fearsome skeletal horse from the Stygian dark, with glowing eyes that
+desc: watch you with little more than a hatred of all that lives.
 
 
 
@@ -14553,7 +14554,7 @@ spells:BO_MANA
 spells:S_HI_DEMON | S_HI_UNDEAD | S_KIN | S_MONSTERS
 friends:50:1d3:mummified chieftain:servant
 friends:50:1d3:Skeleton etten:servant
-friends:50:1d3:Night mare:servant
+friends:50:1d3:Stygian mare:servant
 friends:30:1d2:Dreadlord:servant
 friends:40:1d2:Archlich:servant
 friends:30:1d2:Nightwing:servant

@@ -150,7 +150,7 @@
 | `ogre` | `O` | Pending |
 | `orc` | `o` | Done for current pass; generic orcs kept, uniques reskinned |
 | `person` | `p` | Pending |
-| `quadruped` | `q` | Pending |
+| `quadruped` | `q` | Done for current pass; Ayula, sacred deer, odontotyrannos, and Stygian mare renamed |
 | `quylthulg` | `Q` | Pending |
 | `reptile` | `R` | Done for current pass; The Tarrasque became Cetus, the Sea Beast |
 | `rodent` | `r` | Done; keep existing names, glyph, and mechanics |
