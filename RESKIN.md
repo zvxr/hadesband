@@ -156,7 +156,7 @@
 | `rodent` | `r` | Pending |
 | `skeleton` | `s` | Pending |
 | `snake` | `J` | Done for current pass; python, Pythian serpent, Stygian crawler, and Ophion serpent renamed |
-| `spider` | `S` | Pending |
+| `spider` | `S` | Done for current pass; Tolkien names replaced, glyph/web/summon mechanics retained |
 | `townsfolk` | `t` | Pending |
 | `tree` | `l` | Done for initial pass; Living Wood/dryads complete |
 | `troll` | `T` | Pending |

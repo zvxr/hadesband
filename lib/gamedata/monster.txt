@@ -4914,7 +4914,7 @@ flags:NO_FEAR
 desc:A blood-red war bird, its razor beak and talons descending with the fury
 desc: of the battlefield.
 
-name:Mirkwood spider
+name:forest spider
 base:spider
 color:g
 speed:120
@@ -4933,7 +4933,7 @@ flags:IM_POIS | GROUP_AI
 innate-freq:10
 spells:WEAVE
 friends:100:2d7:Same
-desc:A strong and powerful spider from Mirkwood forest.  Cunning and evil, it
+desc:A strong and powerful spider from the deep woods.  Cunning and evil, it
 desc: seeks to taste your juicy insides.
 
 name:Ronarian Foehammer
@@ -10777,7 +10777,7 @@ desc: evil surrounds it.  Luckily for you, it can't move.
 
 ### Dungeon level 48 ###
 
-name:ancient spider
+name:fate-weaver spider
 base:spider
 color:r
 speed:120
@@ -10802,7 +10802,7 @@ spells:WOUND | DRAIN_MANA | HEAL | HOLD | SLOW
 spells:BR_DARK
 spells:S_KIN | S_SPIDER
 friends:100:4d4:spider
-desc:A foul creature of spider form, older even than the pits of Angband.
+desc:A foul creature of spider form, old enough to read a mortal's thread.
 
 name:siren
 plural:sirens
@@ -11700,7 +11700,7 @@ desc: you, a coldness saps your soul.
 
 ### Dungeon level 55 ###
 
-name:Shelob, Spider of Darkness
+name:Arachne, the Weaver
 base:spider
 color:D
 speed:120
@@ -11727,11 +11727,10 @@ spells:SLOW | WEAVE
 spells:BR_DARK | BR_POIS
 spells:S_KIN
 friends:80:4d4:uruk
-friends:100:3d7:mirkwood spider
-desc:Shelob is an enormous bloated spider, the last daughter of Ungoliant the
-desc: Unlight.  Her poison is legendary, as is her ego.  She normally guards the
-desc: pass through Cirith Ungol, but occasionally goes out foraging for food to
-desc: feed her voracious appetite.
+friends:100:3d7:forest spider
+desc:Arachne is an enormous, bloated spider whose skill at weaving still carries
+desc: the pride of her mortal life.  Her poison is legendary, as is her ego.
+desc: She spins her webs in darkness and waits for fresh admirers.
 
 name:dracolich
 plural:dracoliches
@@ -12372,8 +12371,8 @@ friends:100:2d3:werewolf:servant
 desc:A sacred temple guardian from Mount Etna, forged for the service of
 desc: Hephaestus and still burning with infernal craft.
 
-name:spider of Gorgoroth
-plural:spiders of Gorgoroth
+name:spider of Tartarus
+plural:spiders of Tartarus
 base:spider
 color:P
 speed:120
@@ -12400,8 +12399,8 @@ spells:SLOW | WEAVE
 spells:BR_DARK | BR_POIS
 spells:S_KIN
 friends:100:2d4:spider
-desc:One of the hideous brood of Ungoliant, spawned in the endless shadow of
-desc: Nan Dungortheb beneath the mountains of Ered Gorgoroth.
+desc:One of the hideous brood that nests in Tartarus, spawned in darkness and
+desc: glutted on venom.
 
 ### Dungeon level 64 ###
 
@@ -13503,7 +13502,7 @@ desc: and despises all other life.  It sees all who do not obey it as mere
 desc: insects to be crushed underfoot.
 
 
-name:Ungoliant, the Unlight
+name:Ananke, the Black Spinner
 base:spider
 color:D
 speed:130
@@ -13529,10 +13528,10 @@ spells:BLIND | CONF | HEAL | SCARE | WEAVE
 spells:BA_DARK
 spells:BR_DARK | BR_POIS
 spells:S_KIN
-desc:This enormous, hideous spirit of void is in the form of a spider of immense
-desc: proportions.  She is surrounded by a cloud of Unlight as she sucks in all
-desc: living light into her bloated body, and breathes out the blackest of
-desc: darkness.  She is always ravenously hungry and would even eat herself to
+desc:This enormous, hideous spirit of necessity is in the form of a spider of
+desc: immense proportions.  She is surrounded by a cloud of blackness as she
+desc: gathers every thread into her bloated body, and breathes out the darkest
+desc: shadow.  She is always ravenously hungry and would even eat herself to
 desc: avoid starvation.
 
 name:bronze golem
