@@ -4205,7 +4205,7 @@ flags:BASH_DOOR | KILL_WALL
 desc:This bizarre creature has glaring eyes and large mandibles capable of
 desc: slicing through rock.
 
-name:gelatinous cube
+name:Euclidian cube
 base:jelly
 color:G
 speed:110
@@ -5539,7 +5539,7 @@ friends:100:2d7:Same
 desc:A spider that never seems quite there.  Everywhere you look it is just
 desc: half-seen in the corner of one eye.
 
-name:black ooze
+name:Stygian ooze
 base:jelly
 color:D
 speed:90

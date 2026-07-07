@@ -132,7 +132,7 @@
 | `hydra` | `H` | Done for current pass; base retained, glyph changed from `M` |
 | `icky thing` | `i` | Pending |
 | `insect` | `I` | Pending |
-| `jelly` | `j` | Pending |
+| `jelly` | `j` | Done for current pass; kept generic, black ooze became Stygian ooze |
 | `killer beetle` | `K` | Pending |
 | `kobold` | `k` | Pending |
 | `lich` | `L` | Pending |
