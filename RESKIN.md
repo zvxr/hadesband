@@ -101,6 +101,7 @@
 - Implemented: bird pass renamed Tolkien/dark flyers to swan of Apollo, strix, bird of Ares, eagle of Zeus, and siren; Phoenix remains unchanged.
 - Low-hanging fit: air/water/earth/fire spirits already use `elemental`; keep elemental spirits there unless we create a separate shade/ghost `spirit` base.
 - Possible rename/family fit: `naga` can absorb Lamia/Echidna/Gorgon-like serpent-women; current gorgon already uses `naga`.
+- Naga note: Medusa would fit here as a future unique, but is deferred beyond the initial reskin pass.
 - Implemented: `tree`/`l` now means Living Wood; old tree/ent names became dryad, Daphne, greater dryad, blighted dryad, and ancient hamadryad.
 - Implemented: `satyr`/`y` replaces yeeks; satyrs trade inherited acid immunity for confusion immunity, and Pan moves to depth 20 as a stronger trickster unique.
 - Implemented: canine pass renamed Tolkien dogs/wolves to Argos, Maera, Spartan war dog, alpha wolf, guard dog of Hephaestus, Laelaps, Golden Dog, and Cerberus; generic wolves/werewolves/hellhounds remain.
@@ -142,7 +143,7 @@
 | `minor demon` | `u` | Pending |
 | `mold` | `m` | Pending |
 | `mushroom` | `,` | Pending |
-| `naga` | `n` | Pending |
+| `naga` | `n` | Done for current pass; temple naga and lamia renamed, gorgon retained |
 | `ogre` | `O` | Pending |
 | `orc` | `o` | Pending |
 | `person` | `p` | Pending |

@@ -3962,7 +3962,7 @@ message-invis:DARKNESS:Something hums softly.
 message-invis:SLOW:Something hums softly.
 desc:Yum!  It looks quite tasty.  It seems to glow with an unusual light.
 
-name:guardian naga
+name:temple naga
 base:naga
 color:B
 speed:110
@@ -6525,7 +6525,7 @@ friends:60:1d7:Cold Hound
 friends:80:1d3:Same
 desc:A twelve foot tall giant covered in furs.
 
-name:spirit naga
+name:lamia
 base:naga
 color:w
 speed:110
