@@ -4512,11 +4512,12 @@ desc:A whirling form of sentient rock.
 
 ### Dungeon level 18 ###
 
-name:hummerhorn
+name:pyrausta
 base:insect
-color:y
+color:o
 speed:120
 hit-points:3
+light:1
 hearing:8
 armor-class:16
 sleepiness:10
@@ -4525,7 +4526,9 @@ rarity:4
 experience:4
 blow:BITE:CONFUSE:2d2
 flags:MOVE_BODY
-desc:A giant buzzing wasp, its stinger drips venom.
+flags:IM_FIRE
+desc:A filmy-winged insect born from flame.  It flickers like a coal in the
+desc: air, and its feverish bite makes the room swim.
 
 name:orc captain
 base:orc
@@ -5392,7 +5395,7 @@ desc:It is an orcish figure covered in wrappings.
 
 ### Dungeon level 22 ###
 
-name:neekerbreeker
+name:gadfly
 base:insect
 color:U
 speed:120
@@ -5407,10 +5410,8 @@ blow:BITE:POISON:2d2
 flags:EVIL
 innate-freq:12
 spells:SHRIEK
-desc:Believed to be an evil relative of the cricket, this creature gets its name
-desc: from its incessant squeaking, which can best be described as "neek-breek,
-desc: neek-breek".  The noise can drive people frantic, and worse still, can be
-desc: heard for quite some distance, alerting other monsters to your presence.
+desc:A divine nuisance sent to sting the cruel.  Unfortunately, it is not very
+desc: careful about checking its target.
 
 name:Kerwyn Foehammer
 base:orc
@@ -6086,8 +6087,8 @@ flags:HURT_LIGHT | NO_FEAR | COLD_BLOOD | INVISIBLE
 desc:A writhing wormlike shimmer of blackness, large as your arm.  It squirms
 desc: through air and walls with equal facility, leaving void in its wake.
 
-name:giant firefly
-plural:giant fireflies
+name:Elysian firefly
+plural:Elysian fireflies
 base:insect
 color:r
 speed:120
@@ -6100,8 +6101,8 @@ depth:26
 rarity:4
 experience:4
 blow:BITE:BLIND:1d2
-desc:Clouds of these monsters light up the dungeon - so brightly that you can
-desc: barely see through them.
+desc:Clouds of these blessed lights drift through the dungeon, bright enough
+desc: to blind the living.
 
 name:giant grey ant
 base:ant

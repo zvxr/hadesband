@@ -135,7 +135,7 @@
 | `monstrous` | `M` | Done for current pass; major composite beasts moved here |
 | `hydra` | `H` | Done for current pass; base retained, glyph changed from `M` |
 | `icky thing` | `i` | Pending |
-| `insect` | `I` | Pending |
+| `insect` | `I` | Done for current pass; pyrausta, gadfly, and Elysian firefly renamed |
 | `jelly` | `j` | Done for current pass; kept generic, black ooze became Stygian ooze |
 | `killer beetle` | `K` | Pending |
 | `kobold` | `k` | Pending |
