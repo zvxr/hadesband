@@ -336,7 +336,8 @@ static int borg_defend_aux_speed(int p1)
                 r_info[unique_on_level].name, "Wormtongue, Agent of Saruman")
             || streq(r_info[unique_on_level].name, "Lagduf, the Snaga")
             || streq(r_info[unique_on_level].name, "Brodda, the Easterling")
-            || streq(r_info[unique_on_level].name, "Orfax, Son of Boldor"))) {
+            || streq(r_info[unique_on_level].name,
+                "Marsyas, the Defiant Piper"))) {
         p2 = p2 * 6 / 10;
     }
 

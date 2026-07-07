@@ -182,8 +182,8 @@ mcat-include-base:worm
 monster-category:Xorns/Xarens
 mcat-include-base:xorn
 
-monster-category:Yeeks
-mcat-include-base:yeek
+monster-category:Satyrs
+mcat-include-base:satyr
 
 monster-category:Yeti
 mcat-include-base:yeti

@@ -81,7 +81,7 @@
 - Planning: avoid over-splitting mythic taxonomy; prefer fitting myths into existing bases unless kin/summon behavior needs a distinct family.
 - Planning: Cyclopes can likely use `giant`; demigods can use `person` for heroic mortals or `god` for divine-tier beings.
 - Planning: demi-humans can usually use `humanoid`, `hybrid`, or specific creature bases; only create a new base if a repeatable summon/kin family emerges.
-- Planning: centaurs, satyrs, fauns, harpies, gorgons, and nymphs are candidates to map onto existing `hybrid`, `person`, `bird`, `snake`, `feline`, `tree`, or `elemental` buckets before adding new bases.
+- Planning: centaurs, fauns, harpies, gorgons, and nymphs are candidates to map onto existing `hybrid`, `person`, `bird`, `snake`, `feline`, `tree`, or `elemental` buckets before adding new bases.
 - Potential new bases: `spirit` for ghosts/shades if `wraith` is too narrow; `construct`/`automaton` for bronze guardians; `earthborn` for xorn-style stone/earth monsters.
 - Low-hanging fit: harpies already use `hybrid`/`H`; this is a good model for winged demi-human monsters.
 - Low-hanging fit: minotaur and manticore already use `hybrid`; keep unless a broader hybrid split becomes necessary.
@@ -102,7 +102,8 @@
 - Low-hanging fit: air/water/earth/fire spirits already use `elemental`; keep elemental spirits there unless we create a separate shade/ghost `spirit` base.
 - Possible rename/family fit: `naga` can absorb Lamia/Echidna/Gorgon-like serpent-women; current gorgon already uses `naga`.
 - Implemented: `tree`/`l` now means Living Wood; old tree/ent names became dryad, Daphne, greater dryad, blighted dryad, and ancient hamadryad.
-- Possible future fit: centaurs, satyrs, fauns, and sirens probably use `hybrid`, `humanoid`, `bird`, or `person` rather than new bases.
+- Implemented: `satyr`/`y` replaces yeeks; satyrs trade inherited acid immunity for confusion immunity, and Pan moves to depth 20 as a stronger trickster unique.
+- Possible future fit: centaurs, fauns, and sirens probably use `hybrid`, `humanoid`, `bird`, or `person` rather than new bases.
 
 | Base | Glyph | Migration Status |
 | --- | --- | --- |
@@ -158,7 +159,7 @@
 | `worm` | `w` | Pending |
 | `wraith` | `W` | Pending; candidate home for some spirits |
 | `xorn` | `X` | Pending; likely replacement candidate |
-| `yeek` | `y` | Pending |
+| `satyr` | `y` | Started; yeeks replaced with satyrs and Pan |
 | `yeti` | `Y` | Pending |
 | `zephyr hound` | `Z` | Pending |
 | `zombie` | `z` | Pending |

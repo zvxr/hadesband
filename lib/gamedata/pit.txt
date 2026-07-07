@@ -363,7 +363,7 @@ mon-base:reptile
 name:Cave dwellers
 room:3
 alloc:1:25
-mon-base:yeek
+mon-base:satyr
 mon-base:kobold
 mon-base:orc
 mon-base:troll

@@ -1042,8 +1042,8 @@ flags:FEMALE | EVIL | ANIMAL
 flags:RAND_50
 desc:A flying, screeching bird with a woman's face.
 
-name:blue yeek
-base:yeek
+name:satyr
+base:satyr
 color:b
 speed:110
 hit-points:7
@@ -1056,7 +1056,7 @@ rarity:1
 experience:4
 blow:HIT:HURT:1d5
 flags:DROP_60
-desc:A small humanoid figure.
+desc:A small goat-legged reveler with bright eyes and nimble hands.
 
 name:Grip, Farmer Maggot's Dog
 base:canine
@@ -2379,8 +2379,8 @@ friends:100:5d4:snaga:servant
 desc:A captain of a regiment of weaker orcs, Lagduf keeps his troop in order
 desc: with displays of excessive violence.
 
-name:terrified yeek
-base:yeek
+name:frenzied satyr
+base:satyr
 color:u
 speed:110
 hit-points:18
@@ -2394,7 +2394,7 @@ experience:11
 flags:DROP_40 | FRIGHTENED | NEVER_BLOW
 innate-freq:9
 spells:SHRIEK
-desc:It is a strange small humanoid in a constant state of extreme terror.
+desc:It leaps and shrieks in a wild panic, stirring the dungeon with every cry.
 
 name:giant salamander
 base:reptile
@@ -2878,8 +2878,8 @@ drop-base:magic book:10:1:1
 desc:A corrupted dwarf from the east, dressed in black mail, hurling spells
 desc: at you.
 
-name:Orfax, Son of Boldor
-base:yeek
+name:Marsyas, the Defiant Piper
+base:satyr
 color:B
 speed:120
 hit-points:120
@@ -2898,13 +2898,12 @@ flags:UNIQUE | MALE | NAME_COMMA | EVIL | SMART
 flags:DROP_1 | DROP_GOOD | ONLY_ITEM
 flags:FORCE_SLEEP
 spell-freq:4
-spells:BLINK | CONF | HEAL | SLOW | TELE_TO
+spells:BLINK | CONF | HEAL | SCARE | SLOW | TELE_TO
 spells:S_MONSTER
-friends:50:2d5:terrified yeek:servant
-friends:100:2d5:Blue yeek:servant
-friends:50:1d3:Master yeek:servant
-desc:He's just like his daddy!  He knows mighty spells, but fortunately he is a
-desc: yeek.
+friends:50:2d5:frenzied satyr:servant
+friends:100:2d5:satyr:servant
+friends:50:1d3:satyr elder:servant
+desc:A proud piper whose defiant song twists courage into confusion.
 
 name:stonefoot warrior
 base:humanoid
@@ -3367,8 +3366,8 @@ friends:100:1d1:Bullroarer the Hobbit
 friends:100:1d1:Grishnákh, the Hill Orc
 desc:A leader of a band of raiding orcs, he picks on hobbits.
 
-name:master yeek
-base:yeek
+name:satyr elder
+base:satyr
 color:U
 speed:110
 hit-points:60
@@ -3384,7 +3383,7 @@ flags:EVIL
 flags:DROP_40
 flags:FORCE_SLEEP
 spell-freq:4
-spells:BLIND | BLINK | SLOW | TPORT
+spells:BLIND | BLINK | CONF | SCARE | SLOW | TPORT
 spells:BA_POIS
 spells:S_MONSTER
 drop-base:magic book:5:1:1
@@ -3633,32 +3632,33 @@ flags:IM_ACID | IM_POIS | HURT_COLD | NO_CONF | NO_SLEEP
 desc:A fast moving highly acidic jelly thing, that is eating away the floor it
 desc: rests on.
 
-name:Boldor, King of the Yeeks
-base:yeek
+name:Pan, Lord of the Wild
+base:satyr
 color:P
 speed:120
-hit-points:180
+hit-points:350
 hearing:18
 smell:20
-armor-class:28
+armor-class:45
 sleepiness:10
-depth:13
+depth:20
 rarity:3
-experience:200
-blow:HIT:HURT:1d9
-blow:HIT:HURT:1d9
-blow:HIT:HURT:1d8
+experience:650
+blow:HIT:HURT:2d6
+blow:HIT:HURT:2d6
+blow:HIT:HURT:2d5
 flags:UNIQUE | MALE | NAME_COMMA | EVIL | SMART
 flags:DROP_60 | DROP_1 | DROP_GOOD | ONLY_ITEM
 flags:FORCE_SLEEP
 spell-freq:3
-spells:BLIND | BLINK | HEAL | SLOW | TPORT
+spells:BLIND | BLINK | CONF | HEAL | SCARE | SLOW | TELE_TO | TPORT
 spells:S_KIN | S_MONSTER
-friends:50:2d6:terrified yeek:servant
-friends:100:2d6:Blue yeek:servant
-friends:100:2d4:Master yeek:servant
-friends:100:1d1:Orfax, Son of Boldor
-desc:A great yeek, powerful in magic and sorcery, but a yeek all the same.
+friends:50:2d6:frenzied satyr:servant
+friends:100:2d6:satyr:servant
+friends:100:2d4:satyr elder:servant
+friends:100:1d1:Marsyas, the Defiant Piper
+desc:The wild god's music rises into a terrifying revel, drawing every nearby
+desc: satyr into his dance.
 
 name:ogre
 base:ogre
