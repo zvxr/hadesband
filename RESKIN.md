@@ -112,14 +112,14 @@
 | `ancient dragon` | `D` | Pending |
 | `ainu` | `A` | Old divine/spirit base; keep for now |
 | `god` | `G` | Done for initial pass; Zeus/Ares/Hecate moved |
-| `ant` | `a` | Pending |
+| `ant` | `a` | Done for current pass; myrmidon ant and Queen of the Myrmekes |
 | `bat` | `b` | Pending |
 | `bird` | `B` | Done for initial pass; Greek bird reskins complete |
 | `canine` | `C` | Done for initial pass; Greek dog/wolf reskins complete |
 | `centipede` | `c` | Pending |
 | `creeping coins` | `$` | Pending |
 | `dragon` | `d` | Pending |
-| `dragon fly` | `F` | Pending |
+| `dragonfly` | `F` | Done for current pass; spelling normalized, mechanics unchanged |
 | `eye` | `e` | Pending |
 | `elemental` | `E` | Pending |
 | `feline` | `f` | Pending |

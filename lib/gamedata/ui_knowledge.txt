@@ -107,7 +107,7 @@ monster-category:Icky Things
 mcat-include-base:icky thing
 
 monster-category:Insects
-mcat-include-base:dragon fly
+mcat-include-base:dragonfly
 mcat-include-base:insect
 
 monster-category:Jellies

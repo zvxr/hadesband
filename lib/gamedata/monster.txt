@@ -1880,9 +1880,9 @@ flags:RAND_50
 flags:IM_POIS
 desc:It has a copper head and sharp venomous fangs.
 
-name:giant white dragon fly
-plural:giant white dragon flies
-base:dragon fly
+name:giant white dragonfly
+plural:giant white dragonflies
+base:dragonfly
 color:w
 speed:110
 hit-points:14
@@ -1898,9 +1898,9 @@ innate-freq:10
 spells:BR_COLD
 desc:It is a large fly that drips frost.
 
-name:giant green dragon fly
-plural:giant green dragon flies
-base:dragon fly
+name:giant green dragonfly
+plural:giant green dragonflies
+base:dragonfly
 color:g
 speed:110
 hit-points:14
@@ -2042,9 +2042,9 @@ flags:IM_POIS
 desc:It is recognized by the hard-scaled end of its body that is often rattled
 desc: to frighten its prey.
 
-name:giant black dragon fly
-plural:giant black dragon flies
-base:dragon fly
+name:giant black dragonfly
+plural:giant black dragonflies
+base:dragonfly
 color:s
 speed:120
 hit-points:14
@@ -2060,9 +2060,9 @@ innate-freq:10
 spells:BR_ACID
 desc:The size of a large bird, this fly drips caustic acid.
 
-name:giant gold dragon fly
-plural:giant gold dragon flies
-base:dragon fly
+name:giant gold dragonfly
+plural:giant gold dragonflies
+base:dragonfly
 color:y
 speed:120
 hit-points:14
@@ -7179,7 +7179,7 @@ spells:SPIT
 friends:100:4d4:Same
 desc:It is a giant ant that crackles with energy.
 
-name:giant army ant
+name:myrmidon ant
 base:ant
 color:o
 speed:120
@@ -7195,8 +7195,8 @@ blow:BITE:HURT:2d12
 blow:BITE:HURT:2d12
 flags:RAND_25 | KILL_BODY | GROUP_AI
 friends:100:4d4:Same
-desc:An armoured form moving with purpose.  Powerful on its own, flee when
-desc: hordes of them march.
+desc:An armoured ant-warrior moving with disciplined purpose.  Powerful on its
+desc: own, flee when hordes of them march.
 
 name:grave wight
 base:wraith
@@ -10088,7 +10088,7 @@ spells:DARKNESS | SCARE | BLIND
 desc:A dryad whose grove has curdled into rot and malice.  Her roots drink
 desc: shadow, and her voice carries panic through the leaves.
 
-name:The Queen Ant
+name:Queen of the Myrmekes
 base:ant
 color:v
 speed:120
@@ -10116,8 +10116,9 @@ friends:60:2d3:Giant silver ant:servant
 friends:60:2d3:Giant grey ant:servant
 friends:60:2d3:Giant blue ant:servant
 friends:60:2d3:Giant fire ant:servant
-friends:100:3d3:Giant army ant:bodyguard
-desc:She's upset because you hurt her children.
+friends:100:3d3:myrmidon ant:bodyguard
+desc:She rules the gold-guarding Myrmekes from a hidden hill of treasure.
+desc: Her children swarm at her command, mandibles bright as hammered metal.
 
 name:Rogrog the Black Troll
 base:troll

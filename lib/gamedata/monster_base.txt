@@ -126,13 +126,13 @@ flags:FORCE_SLEEP | CLEAR_WEB
 desc:Dragon
 
 # Early, weak breathers which move quickly and erratically
-name:dragon fly
+name:dragonfly
 glyph:F
 pain:7
 flags:ANIMAL | WEIRD_MIND
 flags:RAND_50 | BASH_DOOR
 flags:FORCE_SLEEP
-desc:Dragon Fly
+desc:Dragonfly
 
 # These come in two stages:
 # 1. Motionless creatures which cause bad effects if you stand next to them
