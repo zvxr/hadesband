@@ -98,13 +98,13 @@
 - Hydra color gaps for future variants include white, slate, blue, light umber, purple, violet, mud, light yellow, magenta-pink, blue slate, and deep light blue; avoid black unless intentional because it blends into the background.
 - Graphics note: tile prefs can map `monster:<exact name>` or `monster-base:<base>`; exact monster mappings override the visual impact of glyph/base changes in graphics mode.
 - Graphics note: stale exact monster names in tile prefs are parser hazards after renames; missing mappings generally fall back to the monster's default attr/char.
-- Low-hanging fit: giant roc already uses `bird`; keep for legendary birds.
+- Implemented: bird pass renamed Tolkien/dark flyers to swan of Apollo, strix, bird of Ares, eagle of Zeus, and siren; Phoenix remains unchanged.
 - Low-hanging fit: air/water/earth/fire spirits already use `elemental`; keep elemental spirits there unless we create a separate shade/ghost `spirit` base.
 - Possible rename/family fit: `naga` can absorb Lamia/Echidna/Gorgon-like serpent-women; current gorgon already uses `naga`.
 - Implemented: `tree`/`l` now means Living Wood; old tree/ent names became dryad, Daphne, greater dryad, blighted dryad, and ancient hamadryad.
 - Implemented: `satyr`/`y` replaces yeeks; satyrs trade inherited acid immunity for confusion immunity, and Pan moves to depth 20 as a stronger trickster unique.
 - Implemented: giant uniques `Gilim` and `Nan` became Typhon and Antiphates; generic giants stay unchanged on `P`.
-- Possible future fit: centaurs, fauns, and sirens probably use `hybrid`, `humanoid`, `bird`, or `person` rather than new bases.
+- Possible future fit: centaurs and fauns probably use `hybrid`, `humanoid`, or `person` rather than new bases.
 
 | Base | Glyph | Migration Status |
 | --- | --- | --- |

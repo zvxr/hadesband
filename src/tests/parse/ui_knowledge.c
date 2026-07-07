@@ -6,11 +6,11 @@
 
 static char dummy_bat[16] = "bat";
 static char dummy_lizard[16] = "lizard";
-static char dummy_horror[16] = "winged horror";
+static char dummy_siren[16] = "siren";
 static struct monster_base dummy_mon_bases[] = {
 	{ .name = dummy_bat, .next = NULL },
 	{ .name = dummy_lizard, .next = NULL },
-	{ .name = dummy_horror, .next = NULL },
+	{ .name = dummy_siren, .next = NULL },
 };
 
 int setup_tests(void **state) {
@@ -80,7 +80,7 @@ static int test_include_base0(void *state) {
 	r = parser_parse(p, "mcat-include-base:bat");
 	eq(r, PARSE_ERROR_NONE);
 	/* Try adding another base. */
-	r = parser_parse(p, "mcat-include-base:winged horror");
+	r = parser_parse(p, "mcat-include-base:siren");
 	eq(r, PARSE_ERROR_NONE);
 	eq(s->categories->n_inc_bases, n_old + 2);
 	notnull(s->categories->inc_bases);
@@ -93,7 +93,7 @@ static int test_include_base0(void *state) {
 	notnull(s->categories->inc_bases[s->categories->n_inc_bases - 1]->name);
 	require(streq(
             s->categories->inc_bases[s->categories->n_inc_bases - 1]->name,
-            "winged horror"));
+            "siren"));
 	ok;
 }
 

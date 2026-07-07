@@ -2083,10 +2083,10 @@ desc: pervades the air.
 
 ### Dungeon level 7 ###
 
-name:crow of Durthang
-plural:crows of Durthang
+name:swan of Apollo
+plural:swans of Apollo
 base:bird
-color:D
+color:w
 speed:120
 hit-points:12
 hearing:40
@@ -2100,10 +2100,9 @@ blow:BITE:HURT:1d2
 spell-freq:9
 spell-power:4
 spells:WOUND
-message-vis:WOUND:{name} caws three times.
-message-invis:WOUND:Something caws three times.
-desc:A crook-beaked bird with bedraggled black feathers.  It mocks you, and you
-desc: realise that its scorn can kill.
+message-vis:WOUND:{name} sings a clear, piercing note.
+message-invis:WOUND:Something sings a clear, piercing note.
+desc:A white swan whose sacred song carries Apollo's distant judgment.
 
 name:cave orc
 base:orc
@@ -4347,8 +4346,8 @@ blow:CRUSH:HURT:1d10
 flags:ANIMAL
 desc:A huge, beastly bear, more savage than most of its kind.
 
-name:craban
-plural:crebain
+name:strix
+plural:striges
 base:bird
 color:D
 speed:120
@@ -4365,9 +4364,8 @@ innate-freq:8
 spells:SHRIEK
 flags:GROUP_AI
 friends:100:3d3:Same
-desc:A type of crow, specially bred by the forces of evil as spies; their
-desc: rudimentary intelligence guided by an evil mind has tracked you down, and
-desc: now they seek to alert other evil creatures to your presence.
+desc:A night-haunting bird of ill omen, shrieking to betray your presence to
+desc: every hungry thing nearby.
 
 ### Dungeon level 17 ###
 
@@ -4892,7 +4890,8 @@ desc: fast beneath the leaves.
 
 ### Dungeon level 20 ###
 
-name:blood falcon
+name:bird of Ares
+plural:birds of Ares
 base:bird
 color:R
 speed:140
@@ -4908,9 +4907,8 @@ blow:CLAW:HURT:2d10
 blow:CLAW:HURT:2d10
 blow:BITE:HURT:3d8
 flags:NO_FEAR
-desc:A blinding whirlwind of fear and feathers.  Its razor sharp beak and
-desc: talons fill its foes with terror as it seeks to rend flesh from bone
-desc: with unbridled ferocity.
+desc:A blood-red war bird, its razor beak and talons descending with the fury
+desc: of the battlefield.
 
 name:Mirkwood spider
 base:spider
@@ -9668,9 +9666,10 @@ flags:PASS_WALL | KILL_ITEM
 flags:IM_COLD | IM_ELEC | IM_FIRE
 desc:It is a tougher relative of the Xorn.  Its hide glitters with metal ores.
 
-name:giant roc
+name:eagle of Zeus
+plural:eagles of Zeus
 base:bird
-color:u
+color:w
 speed:110
 hit-points:560
 hearing:20
@@ -9684,9 +9683,8 @@ blow:CRUSH:HURT:8d12
 blow:HIT:ELEC:12d12
 flags:BASH_DOOR
 flags:IM_ELEC
-desc:A vast legendary bird, its iron talons rake the most impenetrable of
-desc: surfaces and its screech echoes through the many winding dungeon
-desc: corridors.
+desc:A vast white eagle sacred to Zeus, its iron talons crackling with the
+desc: thunder of Olympus.
 
 name:minotaur
 base:monstrous
@@ -10802,9 +10800,10 @@ spells:S_KIN | S_SPIDER
 friends:100:4d4:spider
 desc:A foul creature of spider form, older even than the pits of Angband.
 
-name:winged horror
+name:siren
+plural:sirens
 base:bird
-color:p
+color:T
 speed:120
 hit-points:1013
 hearing:30
@@ -10820,10 +10819,8 @@ blow:BITE:EXP_40:4d6
 flags:IM_COLD | IM_POIS | IM_NETHER
 innate-freq:6
 spells:BR_DARK | BR_NETH | BR_POIS
-desc:A terrifying sight: a winged creature greater than any bird you have ever
-desc: seen, and with no feathers on its horrid black leathery wings.  Descended
-desc: from a creature of an older world perhaps, bred by Sauron to be a winged
-desc: steed for his Ringwraiths.
+desc:A sea-green winged temptress whose song draws the living toward ruin,
+desc: poison, darkness, and the hungry gates below.
 
 name:gorgon
 base:naga
@@ -14118,7 +14115,7 @@ spells:MIND_BLAST
 spells:BA_ELEC
 spells:BO_ELEC | BO_MANA
 spells:S_HI_DEMON
-friends:100:2d3:Giant roc:servant
+friends:100:2d3:eagle of Zeus:servant
 desc:A winged humanoid demon, Pazuzu grins inhumanely at you as he decides
 desc: your fate.
 
@@ -14327,7 +14324,7 @@ spells:BLIND | BRAIN_SMASH | WOUND | HOLD | SCARE | TELE_AWAY
 spells:BA_NETH
 spells:BO_MANA
 spells:S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_KIN | S_MONSTERS | S_WRAITH
-friends:50:1d1:Winged Horror
+friends:50:1d1:siren
 desc:Hecate is a dread goddess of witchcraft, crossroads, and restless shades.
 desc: Her spells are lethal and her combat blows crushingly hard.  She moves
 desc: at speed, and commands legions of the dead and damned to do her bidding.
