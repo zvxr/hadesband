@@ -3458,7 +3458,7 @@ flags:RAND_25 | RAND_50 | BASH_DOOR
 flags:IM_ELEC
 desc:A whirlwind of sentient air.
 
-name:skeleton human
+name:skeleton satyr
 base:skeleton
 color:w
 speed:110
@@ -3472,7 +3472,8 @@ experience:38
 blow:HIT:HURT:1d8
 flags:EMPTY_MIND
 flags:OPEN_DOOR | BASH_DOOR
-desc:It is an animated human skeleton.
+desc:It is an animated satyr skeleton, its hollow frame still bent as if ready
+desc: to dance, mock, or strike.
 
 name:zombified human
 base:zombie
@@ -7821,7 +7822,7 @@ spells:WOUND | DARKNESS | HOLD | SCARE
 friends:100:4d4:Same
 desc:It is a ghostly nightmare of an entity.
 
-name:skeleton etten
+name:skeleton sphinx
 base:skeleton
 color:w
 speed:110
@@ -7838,7 +7839,8 @@ blow:BITE:HURT:1d5
 blow:BITE:HURT:1d5
 flags:TROLL | EMPTY_MIND | REGENERATE
 flags:OPEN_DOOR | BASH_DOOR
-desc:It is the animated form of a massive two-headed troll.
+desc:It is the animated form of a massive two-headed sphinx, all bone, riddles,
+desc: and hunger.
 
 name:chaos drake
 base:dragon
@@ -14242,7 +14244,7 @@ desc:A brutal god of battle, Ares brings panic, ruin, and bloodshed wherever
 desc: he walks.  His skill in combat is awesome, and his presence twists the
 desc: courage of mortal warriors into terror.
 
-name:Cantoras, the Skeletal Lord
+name:Minos, the Skeletal Judge
 base:skeleton
 color:W
 speed:140
@@ -14269,8 +14271,8 @@ spells:BA_NETH | BA_WATE
 spells:BO_ICE | BO_MANA
 spells:S_HI_UNDEAD
 desc:A legion of evil undead druj animating the skeleton of a once mighty
-desc: sorcerer.  His power is devastating and his speed unmatched in the
-desc: underworld.  Flee his wrath!
+desc: judge of the dead.  His power is devastating and his speed unmatched in
+desc: the underworld.  Flee his wrath!
 
 ### Dungeon level 85 ###
 
@@ -14553,7 +14555,7 @@ spells:BA_FIRE | BA_MANA | BA_NETH
 spells:BO_MANA
 spells:S_HI_DEMON | S_HI_UNDEAD | S_KIN | S_MONSTERS
 friends:50:1d3:mummified chieftain:servant
-friends:50:1d3:Skeleton etten:servant
+friends:50:1d3:Skeleton sphinx:servant
 friends:50:1d3:Stygian mare:servant
 friends:30:1d2:Dreadlord:servant
 friends:40:1d2:Archlich:servant

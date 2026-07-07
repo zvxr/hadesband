@@ -154,7 +154,7 @@
 | `quylthulg` | `Q` | Pending |
 | `reptile` | `R` | Done for current pass; The Tarrasque became Cetus, the Sea Beast |
 | `rodent` | `r` | Done; keep existing names, glyph, and mechanics |
-| `skeleton` | `s` | Pending |
+| `skeleton` | `s` | Done for current pass; Minos renamed, other skeletons retained |
 | `snake` | `J` | Done for current pass; python, Pythian serpent, Stygian crawler, and Ophion serpent renamed |
 | `spider` | `S` | Done for current pass; Tolkien names replaced, glyph/web/summon mechanics retained |
 | `townsfolk` | `t` | Pending |
