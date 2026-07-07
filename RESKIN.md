@@ -78,6 +78,30 @@
 - Open: decide whether future god summons use `S_GOD`/`SUM_GOD` or keep old summon hooks until more gods exist.
 - Open: decide whether ghosts move into `wraith`, a new `spirit` base, or another bucket.
 - Open: decide replacement direction for `xorn`/`X`, likely a mythic earth/stone family.
+- Planning: avoid over-splitting mythic taxonomy; prefer fitting myths into existing bases unless kin/summon behavior needs a distinct family.
+- Planning: Cyclopes can likely use `giant`; demigods can use `person` for heroic mortals or `god` for divine-tier beings.
+- Planning: demi-humans can usually use `humanoid`, `hybrid`, or specific creature bases; only create a new base if a repeatable summon/kin family emerges.
+- Planning: centaurs, satyrs, fauns, harpies, gorgons, and nymphs are candidates to map onto existing `hybrid`, `person`, `bird`, `snake`, `feline`, `tree`, or `elemental` buckets before adding new bases.
+- Potential new bases: `spirit` for ghosts/shades if `wraith` is too narrow; `construct`/`automaton` for bronze guardians; `earthborn` for xorn-style stone/earth monsters.
+- Low-hanging fit: harpies already use `hybrid`/`H`; this is a good model for winged demi-human monsters.
+- Low-hanging fit: minotaur and manticore already use `hybrid`; keep unless a broader hybrid split becomes necessary.
+- Current `hybrid` roster: white harpy, black harpy, hippogriff, griffon, chimaera, gorgimaera, manticore, minotaur, Baphomet the Minotaur Lord, jabberwock.
+- Low-hanging fit: cyclops, lesser titan, and greater titan already use `giant`; keep Greco-Roman giants/titans there for now.
+- Low-hanging fit: hydras already have a dedicated `hydra` base; keep.
+- Open: consider expanding glyph `M` from `hydra` to broader `monstrous`/`monster` usage for minotaur, manticore, chimaera, etc.
+- Caution: hydras have dedicated `HYDRA` summon, Hydra pit, and Serpents pit hooks; changing glyph only is low-risk, but merging hydras into `hybrid` would change summon/pit behavior unless those hooks are updated.
+- Verified: duplicate glyphs are allowed; `base:hydra` could use glyph `H` while retaining `HYDRA` summon, hydra pits, and hydra kin behavior.
+- Implemented: hydras keep `base:hydra` but now use glyph `H`; `HYDRA` summons, hydra pits, and hydra kin behavior remain base-driven.
+- Implemented: `monstrous` exists with glyph `M`; hippogriff, griffon, chimaera, gorgimaera, manticore, minotaur, Baphomet, and jabberwock moved there.
+- Implemented: harpies remain `base:hybrid` with glyph `H`.
+- Hydra colors currently used: umber, orange, yellow, green, light green, red, light red, light purple.
+- Hydra color gaps for future variants include white, slate, blue, light umber, purple, violet, mud, light yellow, magenta-pink, blue slate, and deep light blue; avoid black unless intentional because it blends into the background.
+- Graphics note: tile prefs can map `monster:<exact name>` or `monster-base:<base>`; exact monster mappings override the visual impact of glyph/base changes in graphics mode.
+- Graphics note: stale exact monster names in tile prefs are parser hazards after renames; missing mappings generally fall back to the monster's default attr/char.
+- Low-hanging fit: giant roc already uses `bird`; keep for legendary birds.
+- Low-hanging fit: air/water/earth/fire spirits already use `elemental`; keep elemental spirits there unless we create a separate shade/ghost `spirit` base.
+- Possible rename/family fit: `naga` can absorb Lamia/Echidna/Gorgon-like serpent-women; current gorgon already uses `naga`.
+- Possible future fit: centaurs, satyrs, fauns, sirens, and nymphs probably use `hybrid`, `humanoid`, `bird`, `person`, `tree`, or `elemental` rather than new bases.
 
 | Base | Glyph | Migration Status |
 | --- | --- | --- |
@@ -99,8 +123,9 @@
 | `giant` | `P` | Pending |
 | `golem` | `g` | Pending |
 | `humanoid` | `h` | Pending |
-| `hybrid` | `H` | Pending |
-| `hydra` | `M` | Pending |
+| `hybrid` | `H` | Started; harpies remain here |
+| `monstrous` | `M` | Started; major composite beasts moved here |
+| `hydra` | `H` | Started; base retained, glyph changed from `M` |
 | `icky thing` | `i` | Pending |
 | `insect` | `I` | Pending |
 | `jelly` | `j` | Pending |

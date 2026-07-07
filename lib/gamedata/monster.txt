@@ -3182,7 +3182,7 @@ desc:This hatchling dragon is still soft, its eyes unaccustomed to light and its
 desc: scales shimmering with hints of many different colours.
 
 name:hippogriff
-base:hybrid
+base:monstrous
 color:U
 speed:110
 hit-points:100
@@ -4090,7 +4090,7 @@ flags:ATTR_CLEAR
 desc:It is about four feet long and carnivorous.
 
 name:griffon
-base:hybrid
+base:monstrous
 color:u
 speed:110
 hit-points:135
@@ -5077,7 +5077,7 @@ desc:Liquid footprints follow this hound as it pads around the dungeon.  An
 desc: acrid smell of acid rises from the dog's pelt.
 
 name:chimaera
-base:hybrid
+base:monstrous
 color:r
 speed:110
 hit-points:160
@@ -6438,7 +6438,7 @@ desc:It is a humanoid with an aura of power.  You notice a sharp set of front
 desc: teeth.
 
 name:gorgimaera
-base:hybrid
+base:monstrous
 color:o
 speed:110
 hit-points:263
@@ -7140,7 +7140,7 @@ flags:OPEN_DOOR | BASH_DOOR
 desc:It is a troll skeleton animated by dark dweomers.
 
 name:manticore
-base:hybrid
+base:monstrous
 color:y
 speed:120
 hit-points:220
@@ -9689,7 +9689,7 @@ desc: surfaces and its screech echoes through the many winding dungeon
 desc: corridors.
 
 name:minotaur
-base:hybrid
+base:monstrous
 color:s
 speed:130
 hit-points:550
@@ -11959,7 +11959,7 @@ desc: grows new heads as fast as you chop them off.
 ### Dungeon level 58 ###
 
 name:Baphomet the Minotaur Lord
-base:hybrid
+base:monstrous
 color:v
 speed:130
 hit-points:4700
@@ -12737,7 +12737,7 @@ desc: whenever she wishes.
 ### Dungeon level 68 ###
 
 name:jabberwock
-base:hybrid
+base:monstrous
 color:v
 speed:130
 hit-points:2816

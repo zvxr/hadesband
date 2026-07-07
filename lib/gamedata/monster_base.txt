@@ -202,10 +202,19 @@ pain:1
 flags:CLEAR_WEB
 desc:Hybrid
 
+# Monstrous creatures are legendary composite beasts and maze-things: larger
+# and more individually dangerous than ordinary hybrids, but not a summon
+# family unless explicitly moved there later.
+name:monstrous
+glyph:M
+pain:1
+flags:CLEAR_WEB
+desc:Monstrous Hybrid
+
 # Quick monsters with strong melee, the higher level ones getting fire and/or
 # poison attacks
 name:hydra
-glyph:M
+glyph:H
 pain:4
 flags:ANIMAL
 flags:ONLY_GOLD

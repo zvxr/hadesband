@@ -94,6 +94,9 @@ mcat-include-base:golem
 monster-category:Harpies/Hybrids
 mcat-include-base:hybrid
 
+monster-category:Monstrous Hybrids
+mcat-include-base:monstrous
+
 monster-category:Hominids (Elves, Dwarves)
 mcat-include-base:humanoid
 
