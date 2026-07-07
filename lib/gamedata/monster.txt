@@ -6068,7 +6068,7 @@ desc:It is a giant beetle with poisonous mandibles.
 
 ### Dungeon level 26 ###
 
-name:abyss worm mass
+name:Stygian worm mass
 base:worm
 color:D
 speed:100
@@ -6084,8 +6084,9 @@ blow:CRAWL:EXP_10:1d5
 flags:EVIL | WEIRD_MIND | MULTIPLY | STUPID
 flags:RAND_25 | RAND_50 | BASH_DOOR | KILL_WALL
 flags:HURT_LIGHT | NO_FEAR | COLD_BLOOD | INVISIBLE
-desc:A writhing wormlike shimmer of blackness, large as your arm.  It squirms
-desc: through air and walls with equal facility, leaving void in its wake.
+desc:A writhing wormlike shimmer of Stygian blackness, large as your arm.  It
+desc: squirms through air and walls with equal facility, leaving void in its
+desc: wake.
 
 name:Elysian firefly
 plural:Elysian fireflies
@@ -7295,7 +7296,7 @@ friends:100:4d4:Ghoul
 desc:This vile abomination is a relative of ghouls, and often leads packs of
 desc: them.  It smells foul, and its bite carries a rotting disease.
 
-name:Bert the Stone Troll
+name:Brontes the Stone Troll
 base:troll
 color:s
 speed:120
@@ -7316,12 +7317,12 @@ flags:MOVE_BODY | TAKE_ITEM
 flags:HURT_ROCK | HURT_LIGHT | IM_COLD
 innate-freq:7
 spells:BOULDER
-friends:100:1d1:Tom the Stone Troll
-friends:100:1d1:Bill the Stone Troll
-desc:Big, brawny, powerful and with a taste for hobbit.  He has friends called
-desc: Bill and Tom.
+friends:100:1d1:Arges the Stone Troll
+friends:100:1d1:Steropes the Stone Troll
+desc:Big, brawny, powerful and hard as broken rock.  He has brothers called
+desc: Steropes and Arges.
 
-name:Bill the Stone Troll
+name:Steropes the Stone Troll
 base:troll
 color:s
 speed:120
@@ -7342,12 +7343,12 @@ flags:MOVE_BODY | TAKE_ITEM
 flags:HURT_ROCK | HURT_LIGHT | IM_COLD
 innate-freq:7
 spells:BOULDER
-friends:100:1d1:Bert the Stone Troll
-friends:100:1d1:Tom the Stone Troll
-desc:Big, brawny, powerful and with a taste for hobbit.  He has friends called
-desc: Bert and Tom.
+friends:100:1d1:Brontes the Stone Troll
+friends:100:1d1:Arges the Stone Troll
+desc:Big, brawny, powerful and hard as broken rock.  He has brothers called
+desc: Brontes and Arges.
 
-name:Tom the Stone Troll
+name:Arges the Stone Troll
 base:troll
 color:s
 speed:120
@@ -7368,10 +7369,10 @@ flags:MOVE_BODY | TAKE_ITEM
 flags:HURT_ROCK | HURT_LIGHT | IM_COLD
 innate-freq:7
 spells:BOULDER
-friends:100:1d1:Bert the Stone Troll
-friends:100:1d1:Bill the Stone Troll
-desc:Big, brawny, powerful and with a taste for hobbit.  He has friends called
-desc: Bert and Bill.
+friends:100:1d1:Brontes the Stone Troll
+friends:100:1d1:Steropes the Stone Troll
+desc:Big, brawny, powerful and hard as broken rock.  He has brothers called
+desc: Brontes and Steropes.
 
 ### Dungeon level 31 ###
 
@@ -8059,7 +8060,7 @@ desc: Morgoth or faces you in combat for some other reason is not clear; all
 desc: you know is that it stands before you, its eyes ablaze as it prepares its
 desc: next volley of spells.
 
-name:troll blackguard
+name:underworld troll
 base:troll
 color:U
 speed:110
@@ -8080,8 +8081,8 @@ flags:DROP_20 | ONLY_ITEM
 spell-freq:6
 spells:HASTE | SCARE | DARKNESS
 friends-base:100:3d4:troll
-desc:A half-smart, vicious troll with some rudimentary magic and a love of
-desc: violence.
+desc:A half-smart, vicious troll from the sunless roads below.  It knows a few
+desc: cruel charms and uses them only to close for the kill.
 
 name:shade
 base:ghost
@@ -10124,7 +10125,7 @@ friends:100:3d3:myrmidon ant:bodyguard
 desc:She rules the gold-guarding Myrmekes from a hidden hill of treasure.
 desc: Her children swarm at her command, mandibles bright as hammered metal.
 
-name:Rogrog the Black Troll
+name:Cacus the Black Troll
 base:troll
 color:D
 speed:120
@@ -10151,8 +10152,8 @@ friends:60:2d3:cave troll:servant
 friends:40:2d3:hill troll:servant
 friends:30:1d2:mountain troll:servant
 friends:100:4d4:olog:bodyguard
-desc:A massive and cruel troll of great power, drool slides caustically down his
-desc: muscular frame.  Despite his bulk, he strikes with stunning speed.
+desc:A massive and cruel troll of great power, with caustic drool sliding down
+desc: his muscular frame.  Despite his bulk, he strikes with stunning speed.
 
 ### Dungeon level 43 ###
 

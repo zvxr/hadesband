@@ -153,20 +153,20 @@
 | `quadruped` | `q` | Pending |
 | `quylthulg` | `Q` | Pending |
 | `reptile` | `R` | Done for current pass; The Tarrasque became Cetus, the Sea Beast |
-| `rodent` | `r` | Pending |
+| `rodent` | `r` | Done; keep existing names, glyph, and mechanics |
 | `skeleton` | `s` | Pending |
 | `snake` | `J` | Done for current pass; python, Pythian serpent, Stygian crawler, and Ophion serpent renamed |
 | `spider` | `S` | Done for current pass; Tolkien names replaced, glyph/web/summon mechanics retained |
 | `townsfolk` | `t` | Pending |
 | `tree` | `l` | Done for initial pass; Living Wood/dryads complete |
-| `troll` | `T` | Pending |
+| `troll` | `T` | Done for current pass; generics retained, uniques and underworld troll renamed |
 | `vampire` | `V` | Pending |
 | `vortex` | `v` | Pending |
-| `worm` | `w` | Pending |
+| `worm` | `w` | Done for current pass; Stygian worm mass renamed, other worms retained |
 | `wraith` | `W` | Pending; candidate home for some spirits |
 | `xorn` | `X` | Pending; likely replacement candidate |
 | `satyr` | `y` | Done for initial pass; yeeks replaced with satyrs and Pan |
-| `yeti` | `Y` | Pending |
+| `yeti` | `Y` | Done; keep existing names, glyph, and mechanics |
 | `zephyr hound` | `Z` | Pending |
 | `zombie` | `z` | Pending |
 | `player` | `@` | Out of scope |

@@ -440,7 +440,7 @@ desc:Living Wood
 
 # Trolls are evil, larger than human-size humanoids. They have strong melee
 # combat, and many are hurt by light.  They fall roughly between ogres and
-# giants in Morgoth's humanoid soldiery.
+# giants among the dungeon's brute humanoids.
 name:troll
 glyph:T
 pain:1
