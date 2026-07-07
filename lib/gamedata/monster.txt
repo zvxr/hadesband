@@ -2025,7 +2025,7 @@ friends:100:2d9:Same
 desc:He is one of the many weaker 'slave' orcs, often mistakenly known as a
 desc: goblin.
 
-name:rattlesnake
+name:python
 base:snake
 color:r
 speed:110
@@ -2039,8 +2039,7 @@ experience:20
 blow:BITE:POISON:2d5
 flags:RAND_50
 flags:IM_POIS
-desc:It is recognized by the hard-scaled end of its body that is often rattled
-desc: to frighten its prey.
+desc:It is a thick-bodied serpent with mottled scales and a patient stare.
 
 name:giant black dragonfly
 plural:giant black dragonflies
@@ -7508,8 +7507,8 @@ desc: grove darkens as she advances.
 
 ### Dungeon level 32 ###
 
-name:serpent of the brownlands
-plural:serpents of the brownlands
+name:Pythian serpent
+plural:Pythian serpents
 base:snake
 color:u
 speed:120
@@ -12875,7 +12874,7 @@ spells:S_MONSTERS
 desc:The cannibal king of the Laestrygonians towers above you, his massive
 desc: hands ready to crush ships, walls, and wanderers alike.
 
-name:nightcrawler
+name:Stygian crawler
 base:snake
 color:D
 speed:120
@@ -13730,8 +13729,8 @@ desc: to taste your blood.
 
 ### Dungeon level 78 ###
 
-name:serpent of chaos
-plural:serpents of chaos
+name:Ophion serpent
+plural:Ophion serpents
 base:snake
 color:y
 speed:130
@@ -14553,7 +14552,7 @@ friends:50:1d3:Night mare:servant
 friends:30:1d2:Dreadlord:servant
 friends:40:1d2:Archlich:servant
 friends:30:1d2:Nightwing:servant
-friends:30:1d2:Nightcrawler:servant
+friends:30:1d2:Stygian crawler:servant
 friends:20:1d2:Nightwalker:servant
 friends:20:1d2:Bone golem:servant
 friends:20:1d2:Black reaver:servant

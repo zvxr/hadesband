@@ -154,7 +154,7 @@
 | `reptile` | `R` | Pending |
 | `rodent` | `r` | Pending |
 | `skeleton` | `s` | Pending |
-| `snake` | `J` | Pending |
+| `snake` | `J` | Done for current pass; python, Pythian serpent, Stygian crawler, and Ophion serpent renamed |
 | `spider` | `S` | Pending |
 | `townsfolk` | `t` | Pending |
 | `tree` | `l` | Done for initial pass; Living Wood/dryads complete |
