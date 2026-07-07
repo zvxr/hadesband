@@ -101,7 +101,8 @@
 - Low-hanging fit: giant roc already uses `bird`; keep for legendary birds.
 - Low-hanging fit: air/water/earth/fire spirits already use `elemental`; keep elemental spirits there unless we create a separate shade/ghost `spirit` base.
 - Possible rename/family fit: `naga` can absorb Lamia/Echidna/Gorgon-like serpent-women; current gorgon already uses `naga`.
-- Possible future fit: centaurs, satyrs, fauns, sirens, and nymphs probably use `hybrid`, `humanoid`, `bird`, `person`, `tree`, or `elemental` rather than new bases.
+- Implemented: `tree`/`l` now means Living Wood; old tree/ent names became dryad, Daphne, greater dryad, blighted dryad, and ancient hamadryad.
+- Possible future fit: centaurs, satyrs, fauns, and sirens probably use `hybrid`, `humanoid`, `bird`, or `person` rather than new bases.
 
 | Base | Glyph | Migration Status |
 | --- | --- | --- |
@@ -150,7 +151,7 @@
 | `snake` | `J` | Pending |
 | `spider` | `S` | Pending |
 | `townsfolk` | `t` | Pending |
-| `tree` | `l` | Pending |
+| `tree` | `l` | Started; Living Wood/dryad pass complete |
 | `troll` | `T` | Pending |
 | `vampire` | `V` | Pending |
 | `vortex` | `v` | Pending |
@@ -210,3 +211,4 @@
 - Changed Zeus's direct `BA_FIRE` spell to `BA_ELEC`; deferred shape-form changes.
 - User smoke-tested the four unique rename pass successfully.
 - Added `god` monster base, moved Zeus/Ares/Hecate to it, and added Gods to monster knowledge.
+- Reframed `tree` monsters as Living Wood: dryads, Daphne, blighted dryad, and ancient hamadryad.

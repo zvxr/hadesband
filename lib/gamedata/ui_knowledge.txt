@@ -164,7 +164,7 @@ mcat-include-base:skeleton
 monster-category:Snakes
 mcat-include-base:snake
 
-monster-category:Trees/Ents
+monster-category:Living Wood
 mcat-include-base:tree
 
 monster-category:Trolls

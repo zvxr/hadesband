@@ -430,13 +430,13 @@ pain:4
 flags:SPIRIT | CLEAR_WEB
 desc:Townsfolk
 
-# High hitpoints and armor class
+# Living wood: dryads, hamadryads, and tree-bound spirits.
 name:tree
 glyph:l
 pain:9
 flags:CLEAR_WEB | COLD_BLOOD | REGENERATE
 flags:NO_FEAR | NO_CONF | HURT_FIRE | IM_WATER
-desc:Tree/Ent
+desc:Living Wood
 
 # Trolls are evil, larger than human-size humanoids. They have strong melee
 # combat, and many are hurt by light.  They fall roughly between ogres and
