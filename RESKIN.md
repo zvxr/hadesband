@@ -147,7 +147,7 @@
 | `mold` | `m` | Done; keep existing names, glyph, and mechanics |
 | `mushroom` | `,` | Done for current pass; light lotus descriptors added |
 | `naga` | `n` | Done for current pass; temple naga and lamia renamed, gorgon retained |
-| `ogre` | `O` | Pending |
+| `ogre` | `O` | Done for current pass; Polyphemus renamed, generic ogres retained |
 | `orc` | `o` | Done for current pass; generic orcs kept, uniques reskinned |
 | `person` | `p` | Pending |
 | `quadruped` | `q` | Done for current pass; Ayula, sacred deer, odontotyrannos, and Stygian mare renamed |

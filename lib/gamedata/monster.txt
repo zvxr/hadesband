@@ -8278,7 +8278,7 @@ flags:IM_ACID
 desc:A huge wormlike shape dripping acid, twisted by evil sorcery into a foul
 desc: monster that breeds on death.
 
-name:Lokkak, the Ogre Chieftain
+name:Polyphemus, the Ogre Chieftain
 base:ogre
 color:v
 speed:120
@@ -8301,8 +8301,8 @@ friends:100:3d3:Cave ogre:bodyguard
 friends:80:1d2:Ogre mage:servant
 friends:80:1d2:Ogre shaman:servant
 friends:50:1d2:Ogre chieftain:servant
-desc:An ogre renowned for acts of surpassing cruelty, Lokkak quickly became the
-desc: leader of a large band of violent ogres.
+desc:An ogre renowned for acts of surpassing cruelty, Polyphemus quickly became
+desc: the leader of a large band of violent ogres.
 
 name:hill troll
 base:troll
