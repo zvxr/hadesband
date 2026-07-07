@@ -108,6 +108,7 @@
 - Implemented: `satyr`/`y` replaces yeeks; satyrs trade inherited acid immunity for confusion immunity, and Pan moves to depth 20 as a stronger trickster unique.
 - Implemented: canine pass renamed Tolkien dogs/wolves to Argos, Maera, Spartan war dog, alpha wolf, guard dog of Hephaestus, Laelaps, Golden Dog, and Cerberus; generic wolves/werewolves/hellhounds remain.
 - Implemented: giant uniques `Gilim` and `Nan` became Typhon and Antiphates; generic giants stay unchanged on `P`.
+- Orc note: generic orcs remain unchanged; unique orcs are seeded with Dimension 20 easter-egg names.
 - Possible future fit: centaurs and fauns probably use `hybrid`, `humanoid`, or `person` rather than new bases.
 
 | Base | Glyph | Migration Status |
@@ -147,7 +148,7 @@
 | `mushroom` | `,` | Done for current pass; light lotus descriptors added |
 | `naga` | `n` | Done for current pass; temple naga and lamia renamed, gorgon retained |
 | `ogre` | `O` | Pending |
-| `orc` | `o` | Pending |
+| `orc` | `o` | Done for current pass; generic orcs kept, uniques reskinned |
 | `person` | `p` | Pending |
 | `quadruped` | `q` | Pending |
 | `quylthulg` | `Q` | Pending |

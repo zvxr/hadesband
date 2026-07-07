@@ -1397,7 +1397,7 @@ slay:DRAGON_3
 desc:A mighty Dwarven mattock, as good for hewing orc-necks as for hewing
 desc: stone.  Náin, King of the Iron Hills, brought his mattock-wielding
 desc: warriors to the Battle of Azanulbizar, and no Orc could withstand them,
-desc: although Náin himself fell before their lord Azog.
+desc: although Náin himself fell before their warlord.
 
 
 ### Boots ###
