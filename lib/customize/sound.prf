@@ -319,7 +319,7 @@ sound:KILL:mco_howl_croak mco_howl_deep mco_howl_distressed mco_howl_high mco_ho
 # A unique is killed.
 sound:KILL_UNIQUE:sum_ghost_wail
 
-# Morgoth, Lord of Darkness is killed.
+# Hades, Lord of the Underworld is killed.
 sound:KILL_KING:amb_guitar_chord
 
 # Attack - hit

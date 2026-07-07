@@ -38,8 +38,8 @@
 - Initial Zeus spell target: change `BA_FIRE` to `BA_ELEC`; consider changing shape-form `BR_FIRE` to `BR_ELEC`.
 - Sauron's shapechange maps well to Zeus mythos, but exact form names and mechanics should wait until a broader shapechange review.
 - Sauron's current servant/friend uniques are Tolkien-specific; Khamûl and the Witch-King should be considered next.
-- Khamûl is a depth 84 wraith warrior-king; `Ares, God of War` is a strong candidate if using recognizable gods.
-- The Witch-King is a depth 85 wraith sorcerer/summoner; `Hecate, Goddess of Witchcraft` or `Thanatos, God of Death` are strong candidates, with Hecate best matching the magic role.
+- Khamûl should become `Ares, God of War`.
+- The Witch-King should become `Hecate, Goddess of Witchcraft`; changing `MALE` to `FEMALE` is acceptable.
 - Need decide whether final floor text, quests, victory messages, and death text mention Hades explicitly.
 
 ## Races
@@ -61,6 +61,83 @@
 - Replace Tolkien uniques with mythic, heroic, divine, or underworld figures.
 - Consider `G` for Gods; relocate Ghosts if needed.
 - Respect display letters where practical.
+- Monster `base` affects `friends-base` and `S_KIN`; monster base `glyph` affects ASCII/default display.
+- Current `G` is `ghost`; current `W` is `wraith`; current `X` is `xorn`.
+- Likely strategy: free `G` for `god`, move ghosts/spirits into `W` or another undead/spirit bucket, and eventually replace `xorn`/`X` with a more mythic earth/stone creature family.
+- Existing `ainu` base and `S_AINU` summon/pit hooks are likely the safest migration path for a future `god` base and `S_GOD` naming.
+- Added `god` as a new monster base with glyph `G`; old bases remain available during migration.
+- Zeus, Ares, and Hecate now use `base:god`; Hades remains on the special final-boss base for now.
+- Hecate's `S_KIN` now targets `base:god`; this is currently mostly inert until non-unique gods exist, but she still has other summoning spells.
+
+## Monster Base/Glyph Migration
+- Purpose: track monster family/glyph work separately from individual unique renames.
+- Rule: create new bases first, then move monsters one by one; leave old bases available until their roster is intentionally migrated.
+- Status: `god` exists with glyph `G`; Zeus, Ares, and Hecate use it.
+- Status: `ghost` still exists with glyph `G`; existing ghosts/spirits have not been migrated.
+- Status: `Morgoth` still exists with glyph `P`; Hades remains there for final-boss handling.
+- Open: decide whether future god summons use `S_GOD`/`SUM_GOD` or keep old summon hooks until more gods exist.
+- Open: decide whether ghosts move into `wraith`, a new `spirit` base, or another bucket.
+- Open: decide replacement direction for `xorn`/`X`, likely a mythic earth/stone family.
+
+| Base | Glyph | Migration Status |
+| --- | --- | --- |
+| `ancient dragon` | `D` | Pending |
+| `ainu` | `A` | Old divine/spirit base; keep for now |
+| `god` | `G` | Started; Zeus/Ares/Hecate moved |
+| `ant` | `a` | Pending |
+| `bat` | `b` | Pending |
+| `bird` | `B` | Pending |
+| `canine` | `C` | Pending |
+| `centipede` | `c` | Pending |
+| `creeping coins` | `$` | Pending |
+| `dragon` | `d` | Pending |
+| `dragon fly` | `F` | Pending |
+| `eye` | `e` | Pending |
+| `elemental` | `E` | Pending |
+| `feline` | `f` | Pending |
+| `ghost` | `G` | Untouched; conflicts with new god glyph |
+| `giant` | `P` | Pending |
+| `golem` | `g` | Pending |
+| `humanoid` | `h` | Pending |
+| `hybrid` | `H` | Pending |
+| `hydra` | `M` | Pending |
+| `icky thing` | `i` | Pending |
+| `insect` | `I` | Pending |
+| `jelly` | `j` | Pending |
+| `killer beetle` | `K` | Pending |
+| `kobold` | `k` | Pending |
+| `lich` | `L` | Pending |
+| `lurker` | `x` | Pending |
+| `major demon` | `U` | Pending |
+| `mimic` | `?` | Pending |
+| `minor demon` | `u` | Pending |
+| `mold` | `m` | Pending |
+| `mushroom` | `,` | Pending |
+| `naga` | `n` | Pending |
+| `ogre` | `O` | Pending |
+| `orc` | `o` | Pending |
+| `person` | `p` | Pending |
+| `quadruped` | `q` | Pending |
+| `quylthulg` | `Q` | Pending |
+| `reptile` | `R` | Pending |
+| `rodent` | `r` | Pending |
+| `skeleton` | `s` | Pending |
+| `snake` | `J` | Pending |
+| `spider` | `S` | Pending |
+| `townsfolk` | `t` | Pending |
+| `tree` | `l` | Pending |
+| `troll` | `T` | Pending |
+| `vampire` | `V` | Pending |
+| `vortex` | `v` | Pending |
+| `worm` | `w` | Pending |
+| `wraith` | `W` | Pending; candidate home for some spirits |
+| `xorn` | `X` | Pending; likely replacement candidate |
+| `yeek` | `y` | Pending |
+| `yeti` | `Y` | Pending |
+| `zephyr hound` | `Z` | Pending |
+| `zombie` | `z` | Pending |
+| `player` | `@` | Out of scope |
+| `Morgoth` | `P` | Special; retained for Hades/final boss |
 
 ## Objects
 - Most mundane weapons/armor stay.
@@ -99,7 +176,12 @@
 - Finish with tile prefs and help docs.
 
 # Ready to Implement
-- None yet; discuss each aspect before edits.
+- None currently.
 
 # Completed
 - Project/product rename to Hadesband.
+- Renamed four high-tier uniques: Morgoth -> Hades, Sauron -> Zeus, Khamûl -> Ares, Witch-King -> Hecate.
+- Updated quest records, Zeus friend references, tile prefs, sound comment, Borg boss checks, and monster test lookup for those unique renames.
+- Changed Zeus's direct `BA_FIRE` spell to `BA_ELEC`; deferred shape-form changes.
+- User smoke-tested the four unique rename pass successfully.
+- Added `god` monster base, moved Zeus/Ares/Hecate to it, and added Gods to monster knowledge.

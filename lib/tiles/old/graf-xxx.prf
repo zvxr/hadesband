@@ -1410,7 +1410,7 @@ monster:Baphomet the Minotaur Lord:0x91:0x95
 monster:Harowen the Black Hand:0x9D:0x86
 monster:Hoarmurath of Dir:0x95:0x92
 monster:Grand master mystic:0x9D:0x87
-monster:Khamûl, the Black Easterling:0x95:0x93
+monster:Ares, God of War:0x95:0x93
 monster:hound of Tindalos:0x96:0x8C
 monster:Great Ice Wyrm:0x8F:0x9C
 monster:The Phoenix:0x8E:0x9B
@@ -1451,7 +1451,7 @@ monster:Aether hound:0x96:0x8E
 monster:The Mouth of Sauron:0x9D:0x89
 monster:Master quylthulg:0x93:0x84
 monster:Qlzqqlzuup, the Emperor Quylthulg:0x93:0x88
-monster:The Witch-King of Angmar:0x95:0x96
+monster:Hecate, Goddess of Witchcraft:0x95:0x96
 monster:Pazuzu, Lord of Air:0x8E:0x9C
 monster:Cantoras, the Skeletal Lord:0x9D:0x9B
 monster:The Tarrasque:0x94:0x81
@@ -1461,8 +1461,8 @@ monster:Vecna, the Emperor Lich:0x92:0x8B
 monster:Huan, Wolfhound of the Valar:0xB2:0x83
 monster:Carcharoth, the Jaws of Thirst:0x8F:0x89
 monster:Gothmog, the High Captain of Balrogs:0x9F:0x83
-monster:Sauron, the Sorcerer:0x9D:0x8A
-monster:Morgoth, Lord of Darkness:0x92:0x9E
+monster:Zeus, God of the Sky:0x9D:0x8A
+monster:Hades, Lord of the Underworld:0x92:0x9E
 monster:Silver mouse:0xB0:0x83
 monster:Rot jelly:0xB1:0x91
 monster:Giant tan bat:0x96:0x99

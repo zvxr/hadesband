@@ -14211,8 +14211,8 @@ desc: enormous wolf inhabited with a human spirit.  He is chief of all his kind.
 
 ### Dungeon level 84 ###
 
-name:Khamûl, the Black Easterling
-base:wraith
+name:Ares, God of War
+base:god
 color:p
 speed:120
 hit-points:4900
@@ -14237,8 +14237,9 @@ spells:BLIND | WOUND | HOLD | SCARE
 spells:BA_COLD | BA_FIRE | BA_NETH
 spells:BO_MANA
 spells:S_HI_UNDEAD | S_WRAITH
-desc:A warrior-king of the East.  Khamûl is a powerful opponent, his skill in
-desc: combat awesome and his form twisted by evil cunning.
+desc:A brutal god of battle, Ares brings panic, ruin, and bloodshed wherever
+desc: he walks.  His skill in combat is awesome, and his presence twists the
+desc: courage of mortal warriors into terror.
 
 name:Cantoras, the Skeletal Lord
 base:skeleton
@@ -14302,8 +14303,8 @@ desc: Morgoth at the beginning of time and is now one of his most terrible
 desc: demonic servants.  With its flaming whip and sword it seeks to destroy
 desc: you.
 
-name:The Witch-King of Angmar
-base:wraith
+name:Hecate, Goddess of Witchcraft
+base:god
 color:p
 speed:130
 hit-points:5000
@@ -14318,7 +14319,7 @@ blow:HIT:HURT:10d10
 blow:HIT:BLACK_BREATH:10d10
 blow:HIT:EXP_80:7d7
 blow:HIT:EXP_80:7d7
-flags:UNIQUE | MALE | SMART
+flags:UNIQUE | FEMALE | NAME_COMMA | SMART
 flags:DROP_4 | DROP_GOOD | DROP_GREAT | ONLY_ITEM
 flags:OPEN_DOOR | BASH_DOOR | MOVE_BODY
 flags:FORCE_SLEEP
@@ -14328,11 +14329,9 @@ spells:BA_NETH
 spells:BO_MANA
 spells:S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_KIN | S_MONSTERS | S_WRAITH
 friends:50:1d1:Winged Horror
-desc:The most fell of all Sauron's captains: King of Angmar, Sorcerer,
-desc: Ringwraith, Lord of the Nazgûl, a spear of terror in the hand of Sauron,
-desc: shadow of despair.  His spells are lethal and his combat blows crushingly
-desc: hard.  He moves at speed, and commands legions of evil to do his bidding.
-desc:  It is said that he is fated never to die by the hand of mortal man.
+desc:Hecate is a dread goddess of witchcraft, crossroads, and restless shades.
+desc: Her spells are lethal and her combat blows crushingly hard.  She moves
+desc: at speed, and commands legions of the dead and damned to do her bidding.
 
 name:Ancalagon the Black
 base:ancient dragon
@@ -14633,8 +14632,8 @@ desc: awesome fiery breath he saved his master from Ungoliant's rage.
 
 ### Dungeon level 99 ###
 
-name:Sauron, the Sorcerer
-base:ainu
+name:Zeus, God of the Sky
+base:god
 color:p
 speed:130
 hit-points:8000
@@ -14656,20 +14655,19 @@ flags:FORCE_DEPTH
 spell-freq:2
 spell-power:260
 spells:BRAIN_SMASH | WOUND | TPORT
-spells:BA_DARK | BA_FIRE | BA_NETH
+spells:BA_DARK | BA_ELEC | BA_NETH
 spells:BO_ICE | BO_MANA | BO_PLAS
 spells:SHAPECHANGE
 spells:S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_UNIQUE | S_WRAITH
-friends:100:1d1:Khamûl, the Black Easterling:servant
-friends:100:1d1:The Witch-King of Angmar:servant
+friends:100:1d1:Ares, God of War:servant
+friends:100:1d1:Hecate, Goddess of Witchcraft:servant
 shape:Wolf-Sauron
 shape:Serpent-Sauron
 shape:Vampire-Sauron
-desc:Greatest and most terrible of the servants of Morgoth, creator of the One
-desc: Ring.  A sorcerer of dreadful powers, master of shadows and of phantoms,
-desc: foul in wisdom, cruel in strength, misshaping what he rules, lord of
-desc: werewolves; his dominion is torment.  He has many servants, and rarely
-desc: fights without them.
+desc:Zeus is god of the sky, thunder, and kingly power.  A ruler of dreadful
+desc: force, master of storm and omen, cruel in judgment and terrible in wrath;
+desc: his dominion is the high air and the lightning-struck world below.  He
+desc: has many servants, and rarely fights without them.
 
 name:Wolf-Sauron
 base:canine
@@ -14755,7 +14753,7 @@ desc:Sauron's form as a vampire, great as a dark cloud across the moon.
 
 ### Dungeon level 100 ###
 
-name:Morgoth, Lord of Darkness
+name:Hades, Lord of the Underworld
 base:Morgoth
 color:D
 speed:140
@@ -14782,14 +14780,10 @@ spells:BRAIN_SMASH
 spells:BA_MANA | BA_NETH
 spells:BO_MANA
 spells:S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_MONSTERS | S_UNIQUE
-desc:He is the Master of the Pits of Angband.  His figure is like a black
-desc: mountain crowned with lightning.  He rages with everlasting anger, his
-desc: body scarred by Fingolfin's eight mighty wounds.  He can never rest from
-desc: his pain, but seeks forever to dominate all that is light and good in the
-desc: world.  He is the origin of man's fear of darkness and created many foul
-desc: creatures with his evil powers.  Orcs, Dragons, and Trolls are his most
-desc: foul corruptions, causing much pain and suffering in the world to please
-desc: him.  His disgusting visage, twisted with evil, is crowned with iron, the
-desc: two remaining Silmarils forever burning him.  Grond, the mighty Hammer of
-desc: the Underworld, cries defiance as he strides towards you to crush you to
-desc: a pulp!
+desc:He is the lord of the underworld and master of the deepest halls below.
+desc: His figure is like a black mountain crowned with shadow, and the dead
+desc: answer when he calls.  He can never rest from his cold dominion, but
+desc: seeks forever to draw all light and life beneath the earth.  Spirits,
+desc: demons, and ancient terrors gather around his throne.  The mighty Hammer
+desc: of the Underworld cries defiance as he strides towards you to crush you
+desc: to a pulp!

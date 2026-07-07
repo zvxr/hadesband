@@ -7,12 +7,12 @@
 # to this file).  It would also only require fairly small game code changes to
 # allow other quests to be added as a result of game events.
 
-name:Sauron
+name:Zeus
 level:99
-race:Sauron, the Sorcerer
+race:Zeus, God of the Sky
 number:1
 
-name:Morgoth
+name:Hades
 level:100
-race:Morgoth, Lord of Darkness
+race:Hades, Lord of the Underworld
 number:1

@@ -3135,9 +3135,9 @@ static void borg_init_monster_names(void)
         what[size] = i;
 
         /* a few special uniques to look out for */
-        if (streq(r_ptr->name, "Morgoth, Lord of Darkness"))
+        if (streq(r_ptr->name, "Hades, Lord of the Underworld"))
             borg_morgoth_id = r_ptr->ridx;
-        if (streq(r_ptr->name, "Sauron, the Sorcerer"))
+        if (streq(r_ptr->name, "Zeus, God of the Sky"))
             borg_sauron_id = r_ptr->ridx;
         if (streq(r_ptr->name, "The Tarrasque"))
             borg_tarrasque_id = r_ptr->ridx;

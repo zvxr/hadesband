@@ -1392,7 +1392,7 @@ monster:Baphomet the Minotaur Lord:0xA7:0x88
 monster:Harowen the Black Hand:0xAE:0x8B
 monster:Hoarmurath of Dir:0xB4:0x8F
 monster:Grand master mystic:0xAE:0x8D
-monster:Khamûl, the Black Easterling:0xB4:0x91
+monster:Ares, God of War:0xB4:0x91
 monster:hound of Tindalos:0xB5:0x9C
 monster:Great Ice Wyrm:0xA2:0x9B
 monster:The Phoenix:0xA1:0x86
@@ -1433,7 +1433,7 @@ monster:Aether hound:0xB5:0x9E
 monster:The Mouth of Sauron:0xAE:0x8F
 monster:Master quylthulg:0xAF:0x88
 monster:Qlzqqlzuup, the Emperor Quylthulg:0xAF:0x89
-monster:The Witch-King of Angmar:0xB4:0x93
+monster:Hecate, Goddess of Witchcraft:0xB4:0x93
 monster:Pazuzu, Lord of Air:0xB2:0x8F
 monster:Cantoras, the Skeletal Lord:0xB0:0x9F
 monster:The Tarrasque:0xAF:0x9E
@@ -1443,8 +1443,8 @@ monster:Vecna, the Emperor Lich:0xAA:0x8E
 monster:Huan, Wolfhound of the Valar:0xA1:0x9F
 monster:Carcharoth, the Jaws of Thirst:0xA1:0x9E
 monster:Gothmog, the High Captain of Balrogs:0xB2:0x91
-monster:Sauron, the Sorcerer:0xAE:0x90
-monster:Morgoth, Lord of Darkness:0xAC:0x9F
+monster:Zeus, God of the Sky:0xAE:0x90
+monster:Hades, Lord of the Underworld:0xAC:0x9F
 monster:Silver mouse:0xB0:0x82
 monster:Rot jelly:0xA9:0x87
 monster:Giant tan bat:0xA1:0x8A

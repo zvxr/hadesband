@@ -45,6 +45,9 @@ mcat-include-flag:UNIQUE
 monster-category:Ainur
 mcat-include-base:ainu
 
+monster-category:Gods
+mcat-include-base:god
+
 monster-category:Ants
 mcat-include-base:ant
 
