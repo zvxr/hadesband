@@ -12055,9 +12055,9 @@ desc: strength and priestly wisdom are a true match for any adventurer.
 
 ### Dungeon level 60 ###
 
-name:Gilim, the Giant of Eruman
+name:Typhon, Father of Monsters
 base:giant
-color:w
+color:B
 speed:120
 hit-points:4000
 hearing:30
@@ -12066,21 +12066,21 @@ sleepiness:15
 depth:60
 rarity:3
 experience:6000
-blow:HIT:COLD:9d10
-blow:HIT:COLD:9d10
+blow:HIT:ELEC:9d10
+blow:HIT:ELEC:9d10
 blow:HIT:HURT:10d9
 blow:HIT:CONFUSE:10d9
 flags:UNIQUE | MALE | NAME_COMMA | SMART | ATTR_FLICKER
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
-flags:OPEN_DOOR | TAKE_ITEM | IM_COLD
+flags:OPEN_DOOR | TAKE_ITEM | IM_ELEC
 flags:FORCE_SLEEP
 innate-freq:6
 spell-freq:3
 spells:BOULDER
-spells:BO_ICE | STORM
+spells:BO_ELEC | STORM
 spells:S_MONSTERS
-desc:Known as the giant of winter and the northern reaches,
-desc: he is tall even among giants, and his name is cursed in many lands.
+desc:A monstrous storm giant whose voice shakes the vaults of the earth,
+desc: and whose brood gathers at the sound of his thunder.
 
 name:Maia of Yavanna
 plural:Maiar of Yavanna
@@ -12850,7 +12850,7 @@ friends:100:2d7:Same
 desc:Bodies of death, receptacles of all foulness, they emerge like smoke from
 desc: the angles of time, ravenous and snarling and unsatisfied.
 
-name:Nan, the Giant
+name:Antiphates, King of the Laestrygonians
 base:giant
 color:o
 speed:120
@@ -12875,9 +12875,8 @@ spell-power:85
 spells:BOULDER
 spells:BO_PLAS | BA_FIRE
 spells:S_MONSTERS
-desc:Known as the giant of summer and the south, he towers above you
-desc: like a great elm.  In his right hand, he holds the longest
-desc: sword you have ever beheld.
+desc:The cannibal king of the Laestrygonians towers above you, his massive
+desc: hands ready to crush ships, walls, and wanderers alike.
 
 name:nightcrawler
 base:snake

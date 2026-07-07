@@ -1173,8 +1173,8 @@ monster:Disenchanter worm mass:0x92:0x96
 monster:Rotting quylthulg:0x93:0x82
 monster:Spirit troll:0x9D:0xCA
 monster:Lesser titan:0x9F:0xEB
-monster:Gilim, the Giant of Eruman:0x9F:0x90
-monster:Nan, the Giant:0x9F:0x8F
+monster:Typhon, Father of Monsters:0x9F:0x90
+monster:Antiphates, King of the Laestrygonians:0x9F:0x8F
 monster:7-headed hydra:0x9D:0xCB
 monster:Enchantress:0x84:0x9E
 monster:patriarch:0x9F:0xD0
