@@ -102,6 +102,8 @@
 - Low-hanging fit: air/water/earth/fire spirits already use `elemental`; keep elemental spirits there unless we create a separate shade/ghost `spirit` base.
 - Possible rename/family fit: `naga` can absorb Lamia/Echidna/Gorgon-like serpent-women; current gorgon already uses `naga`.
 - Naga note: Medusa would fit here as a future unique, but is deferred beyond the initial reskin pass.
+- Mold note: keep existing mold names and mechanics; `The Stygian Mold` is a possible future unique.
+- Mushroom note: White Lotus and Black Lotus are possible future additions.
 - Implemented: `tree`/`l` now means Living Wood; old tree/ent names became dryad, Daphne, greater dryad, blighted dryad, and ancient hamadryad.
 - Implemented: `satyr`/`y` replaces yeeks; satyrs trade inherited acid immunity for confusion immunity, and Pan moves to depth 20 as a stronger trickster unique.
 - Implemented: canine pass renamed Tolkien dogs/wolves to Argos, Maera, Spartan war dog, alpha wolf, guard dog of Hephaestus, Laelaps, Golden Dog, and Cerberus; generic wolves/werewolves/hellhounds remain.
@@ -141,8 +143,8 @@
 | `major demon` | `U` | Pending |
 | `mimic` | `?` | Pending |
 | `minor demon` | `u` | Pending |
-| `mold` | `m` | Pending |
-| `mushroom` | `,` | Pending |
+| `mold` | `m` | Done; keep existing names, glyph, and mechanics |
+| `mushroom` | `,` | Done for current pass; light lotus descriptors added |
 | `naga` | `n` | Done for current pass; temple naga and lamia renamed, gorgon retained |
 | `ogre` | `O` | Pending |
 | `orc` | `o` | Pending |

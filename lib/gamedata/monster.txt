@@ -787,8 +787,8 @@ blow:HIT:HURT:1d8
 flags:DROP_60
 desc:It is a small, dog-headed humanoid.
 
-name:shrieker mushroom patch
-plural:shrieker mushroom patches
+name:red lotus patch
+plural:red lotus patches
 base:mushroom
 color:R
 speed:110
@@ -1938,8 +1938,8 @@ desc: terrible smell it exudes is also very hard to get rid of...
 
 ### Dungeon level 6 ###
 
-name:purple mushroom patch
-plural:purple mushroom patches
+name:Egyptian lotus patch
+plural:Egyptian lotus patches
 base:mushroom
 color:P
 speed:110
@@ -4725,7 +4725,7 @@ friends:100:2d7:Same
 desc:A strange magical member of the canine race, its form seems to shimmer and
 desc: fade in front of your very eyes.
 
-name:shambling mound
+name:green lotus patch
 base:mushroom
 color:g
 speed:110
