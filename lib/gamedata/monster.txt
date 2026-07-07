@@ -591,8 +591,8 @@ blow:STING:COLD:1d2
 flags:RAND_50 | BASH_DOOR
 desc:It is about four feet long and carnivorous.
 
-name:white icky thing
-base:icky thing
+name:white ichor
+base:ichor
 color:w
 speed:110
 hit-points:6
@@ -605,10 +605,10 @@ experience:1
 blow:TOUCH:HURT:1d2
 flags:EMPTY_MIND
 flags:RAND_25
-desc:It is a smallish, slimy, icky creature.
+desc:It is a smallish, pale clot of crawling ichor.
 
-name:clear icky thing
-base:icky thing
+name:clear ichor
+base:ichor
 color:w
 speed:110
 hit-points:6
@@ -622,7 +622,7 @@ blow:TOUCH:HURT:1d2
 flags:INVISIBLE | EMPTY_MIND
 flags:RAND_25
 flags:ATTR_CLEAR
-desc:It is a smallish, slimy, icky, blobby creature.
+desc:It is a smallish, transparent clot of crawling ichor.
 
 name:giant white mouse
 plural:giant white mice
@@ -806,9 +806,9 @@ innate-freq:4
 spells:SHRIEK
 desc:Yum!  It looks quite tasty.  It doesn't sound so nice, though...
 
-name:blubbering icky thing
-base:icky thing
-color:W
+name:red ichor
+base:ichor
+color:r
 speed:110
 hit-points:18
 hearing:14
@@ -822,7 +822,7 @@ blow:CRAWL:EAT_FOOD
 flags:EMPTY_MIND
 flags:KILL_BODY | TAKE_ITEM
 flags:IM_POIS
-desc:It is a smallish, slimy, icky, hungry creature.
+desc:It is a smallish, red clot of hungry ichor.
 
 name:metallic green centipede
 base:centipede
@@ -1813,8 +1813,8 @@ flags:EMPTY_MIND
 flags:OPEN_DOOR | BASH_DOOR
 desc:It is a small animated kobold skeleton.
 
-name:grey icky thing
-base:icky thing
+name:viscous ichor
+base:ichor
 color:s
 speed:110
 hit-points:18
@@ -1826,7 +1826,7 @@ rarity:1
 experience:10
 blow:TOUCH:HURT:1d5
 flags:EMPTY_MIND
-desc:It is a smallish, slimy, icky, nasty creature.
+desc:It is a smallish, viscous clot of nasty ichor.
 
 name:disenchanter eye
 base:eye
@@ -2209,8 +2209,8 @@ blow:BITE:LOSE_STR:2d4
 flags:RAND_50 | BASH_DOOR
 desc:It looks poisonous.
 
-name:green icky thing
-base:icky thing
+name:metallic ichor
+base:ichor
 color:g
 speed:110
 hit-points:23
@@ -2223,7 +2223,7 @@ experience:18
 blow:TOUCH:ACID:2d5
 flags:EMPTY_MIND
 flags:IM_ACID
-desc:It is a smallish, slimy, icky, acidic creature.
+desc:It is a smallish, metallic clot of acidic ichor.
 
 name:zombified kobold
 base:zombie
@@ -2535,8 +2535,8 @@ blow:CLAW:HURT:1d3
 blow:BITE:HURT:1d4
 desc:A large white figure covered in shaggy fur.
 
-name:bloodshot icky thing
-base:icky thing
+name:bloodshot ichor
+base:ichor
 color:r
 speed:110
 hit-points:32
@@ -2552,7 +2552,7 @@ flags:EMPTY_MIND
 spell-freq:11
 spells:DRAIN_MANA
 message-invis:DRAIN_MANA:Something slurps.
-desc:It is a strange, slimy, icky creature.
+desc:It is a strange, bloodshot clot of ichor.
 
 name:giant grey rat
 base:rodent
@@ -3814,8 +3814,8 @@ friends:100:3d4:cave orc
 desc:A thoughtful half-orc raised by gnomes.  He looks like he might apologize
 desc: before flattening you.
 
-name:blue icky thing
-base:icky thing
+name:azure ichor
+base:ichor
 color:b
 speed:100
 hit-points:35
@@ -3836,7 +3836,7 @@ flags:FORCE_SLEEP
 spell-freq:8
 spells:BLIND | CONF | SCARE
 message-invis:BLIND:Something slurps.
-desc:It is a strange, slimy, icky creature, with rudimentary intelligence, but
+desc:It is a strange, azure clot of ichor, with rudimentary intelligence, but
 desc: evil cunning.  It hungers for food, and you look tasty.
 
 name:flesh golem

@@ -134,7 +134,7 @@
 | `hybrid` | `H` | Done for current pass; harpies remain here |
 | `monstrous` | `M` | Done for current pass; major composite beasts moved here |
 | `hydra` | `H` | Done for current pass; base retained, glyph changed from `M` |
-| `icky thing` | `i` | Pending |
+| `ichor` | `i` | Done for current pass; base renamed from icky thing, glyph retained |
 | `insect` | `I` | Done for current pass; pyrausta, gadfly, and Elysian firefly renamed |
 | `jelly` | `j` | Done for current pass; kept generic, black ooze became Stygian ooze |
 | `killer beetle` | `K` | Pending |

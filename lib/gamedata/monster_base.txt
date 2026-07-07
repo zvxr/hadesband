@@ -223,11 +223,11 @@ flags:FORCE_SLEEP | HURT_COLD
 desc:Hydra
 
 # Non-descript early monsters that demonstrate some stuff but are mostly filler
-name:icky thing
+name:ichor
 glyph:i
 pain:2
 flags:RAND_50
-desc:Icky Thing
+desc:Ichor
 
 # Insects are small, a bit fast, weak breeders which bite for various effects
 name:insect

@@ -103,8 +103,8 @@ mcat-include-base:humanoid
 monster-category:Hydras
 mcat-include-base:hydra
 
-monster-category:Icky Things
-mcat-include-base:icky thing
+monster-category:Ichor
+mcat-include-base:ichor
 
 monster-category:Insects
 mcat-include-base:dragonfly

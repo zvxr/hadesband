@@ -155,7 +155,7 @@ name:Jelly
 room:2
 alloc:1:20
 obj-rarity:5
-mon-base:icky thing
+mon-base:ichor
 mon-base:jelly
 mon-base:mold
 mon-base:mushroom
