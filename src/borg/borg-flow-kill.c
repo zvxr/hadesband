@@ -85,7 +85,7 @@ static const char  **borg_normal_text; /* Names of normals */
  */
 unsigned int borg_morgoth_id   = 0;
 unsigned int borg_sauron_id    = 0;
-unsigned int borg_tarrasque_id = 0;
+unsigned int borg_cetus_id = 0;
 unsigned int borg_t_id         = 0;
 unsigned int unique_on_level;
 bool         scaryguy_on_level; /* flee from certain guys */
@@ -1127,7 +1127,7 @@ bool observe_kill_move(int y, int x, int d, uint8_t a, wchar_t c, bool flag)
  *
  * First we check for all possible "unique" monsters, including
  * ones we have killed, and even if the monster name is "prefixed"
- * (as in "The Tarrasque" and "The Lernean Hydra").  Since we use
+ * (as in "Cetus, the Sea Beast" and "The Lernean Hydra").  Since we use
  * a fast binary search, this is acceptable.
  *
  * Otherwise, if the monster is NOT named "The xxx", we assume it
@@ -3139,8 +3139,8 @@ static void borg_init_monster_names(void)
             borg_morgoth_id = r_ptr->ridx;
         if (streq(r_ptr->name, "Zeus, God of the Sky"))
             borg_sauron_id = r_ptr->ridx;
-        if (streq(r_ptr->name, "The Tarrasque"))
-            borg_tarrasque_id = r_ptr->ridx;
+        if (streq(r_ptr->name, "Cetus, the Sea Beast"))
+            borg_cetus_id = r_ptr->ridx;
 
         size++;
     }

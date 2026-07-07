@@ -89,7 +89,7 @@ extern int16_t *borg_race_death;
  */
 extern unsigned int borg_morgoth_id;
 extern unsigned int borg_sauron_id;
-extern unsigned int borg_tarrasque_id;
+extern unsigned int borg_cetus_id;
 
 extern unsigned int unique_on_level;
 extern bool         scaryguy_on_level;

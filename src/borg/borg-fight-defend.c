@@ -498,14 +498,6 @@ static int borg_defend_aux_resist_fecap(int p1)
     borg.temp.res_pois = save_poison;
 
     /*
-     * If the borg is fighting a particular unique enhance the
-     * benefit of the spell.
-     */
-    if (borg_fighting_unique
-        && (streq(r_info[unique_on_level].name, "The Tarrasque")))
-        p2 = p2 * 8 / 10;
-
-    /*
      * If borg is high enough level, he does not need to worry
      * about mana consumption.  Cast the good spell.
      */
@@ -587,14 +579,6 @@ static int borg_defend_aux_resist_f(int p1)
     borg.temp.res_fire = true;
     p2                 = borg_danger(borg.c.y, borg.c.x, 1, false, false);
     borg.temp.res_fire = save_fire;
-
-    /*
-     * If the borg is fighting a particular unique enhance the
-     * benefit of the spell.
-     */
-    if (borg_fighting_unique
-        && (streq(r_info[unique_on_level].name, "The Tarrasque")))
-        p2 = p2 * 8 / 10;
 
     /* if this is an improvement and we may not avoid monster now and */
     /* we may have before */
@@ -683,7 +667,7 @@ static int borg_defend_aux_resist_c(int p1)
      * benefit of the spell.
      */
     if (borg_fighting_unique
-        && (streq(r_info[unique_on_level].name, "The Tarrasque")))
+        && (streq(r_info[unique_on_level].name, "Cetus, the Sea Beast")))
         p2 = p2 * 8 / 10;
 
     /* if this is an improvement and we may not avoid monster now and */
@@ -766,6 +750,14 @@ static int borg_defend_aux_resist_a(int p1)
     borg.temp.res_acid = true;
     p2                 = borg_danger(borg.c.y, borg.c.x, 1, false, false);
     borg.temp.res_acid = save_acid;
+
+    /*
+     * If the borg is fighting a particular unique enhance the
+     * benefit of the spell.
+     */
+    if (borg_fighting_unique
+        && (streq(r_info[unique_on_level].name, "Cetus, the Sea Beast")))
+        p2 = p2 * 8 / 10;
 
     /* if this is an improvement and we may not avoid monster now and */
     /* we may have before */

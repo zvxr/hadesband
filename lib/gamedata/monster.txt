@@ -14361,7 +14361,7 @@ desc: terrible of all dragonkind, his power dismayed even the Valar for a time.
 
 ### Dungeon level 86 ###
 
-name:The Tarrasque
+name:Cetus, the Sea Beast
 base:reptile
 color:v
 speed:130
@@ -14380,12 +14380,12 @@ blow:TOUCH:DRAIN_CHARGES
 flags:UNIQUE | POWERFUL
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:OPEN_DOOR | BASH_DOOR | MOVE_BODY
-flags:IM_COLD | IM_FIRE | IM_DISEN | NO_CONF | NO_SLEEP | NO_HOLD
+flags:IM_ACID | IM_COLD | IM_WATER | IM_DISEN | NO_CONF | NO_SLEEP | NO_HOLD
 flags:ATTR_MULTI | FORCE_SLEEP
 flags-off:HURT_COLD
 innate-freq:2
-spells:BR_COLD | BR_DISE | BR_FIRE
-desc:The Tarrasque is a massive reptile of legend, rumoured to be unkillable and
+spells:BR_ACID | BR_COLD | BR_DISE
+desc:Cetus is a massive sea beast of legend, rumoured to be unkillable and
 desc: immune to magic.  Fear its anger, for its devastation is unmatched!
 
 ### Dungeon level 87 ###

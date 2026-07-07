@@ -151,7 +151,7 @@
 | `person` | `p` | Pending |
 | `quadruped` | `q` | Pending |
 | `quylthulg` | `Q` | Pending |
-| `reptile` | `R` | Pending |
+| `reptile` | `R` | Done for current pass; The Tarrasque became Cetus, the Sea Beast |
 | `rodent` | `r` | Pending |
 | `skeleton` | `s` | Pending |
 | `snake` | `J` | Done for current pass; python, Pythian serpent, Stygian crawler, and Ophion serpent renamed |

@@ -508,15 +508,15 @@ void borg_notice_weapon_swap(void)
             if (!borg.trait[BI_RFEAR] && weapon_swap_resist_fear)
                 v += 5500L;
 
-            /* Special concern if Tarrasque is alive */
+            /* Special concern if Cetus is alive */
             if (borg.trait[BI_MAXDEPTH] >= 75
                 && ((!borg.trait[BI_ICOLD] && weapon_swap_immune_cold)
-                    || (!borg.trait[BI_IFIRE] && weapon_swap_immune_fire))) {
-                /* If Tarraseque is alive */
-                if (borg_race_death[borg_tarrasque_id] == 0) {
+                    || (!borg.trait[BI_IACID] && weapon_swap_immune_acid))) {
+                /* If Cetus is alive */
+                if (borg_race_death[borg_cetus_id] == 0) {
                     if (!borg.trait[BI_ICOLD] && weapon_swap_immune_cold)
                         v += 90000L;
-                    if (!borg.trait[BI_IFIRE] && weapon_swap_immune_fire)
+                    if (!borg.trait[BI_IACID] && weapon_swap_immune_acid)
                         v += 90000L;
                 }
             }
@@ -1076,15 +1076,15 @@ void borg_notice_armour_swap(void)
                 v += 5000L;
             if (!borg.trait[BI_RNTHR] && armour_swap_resist_neth)
                 v += 5500L;
-            /* Special concern if Tarrasque is alive */
+            /* Special concern if Cetus is alive */
             if (borg.trait[BI_MAXDEPTH] >= 75
                 && ((!borg.trait[BI_ICOLD] && armour_swap_immune_cold)
-                    || (!borg.trait[BI_IFIRE] && armour_swap_immune_fire))) {
-                /* If Tarrasque is alive */
-                if (borg_race_death[borg_tarrasque_id] == 0) {
+                    || (!borg.trait[BI_IACID] && armour_swap_immune_acid))) {
+                /* If Cetus is alive */
+                if (borg_race_death[borg_cetus_id] == 0) {
                     if (!borg.trait[BI_ICOLD] && armour_swap_immune_cold)
                         v += 90000L;
-                    if (!borg.trait[BI_IFIRE] && armour_swap_immune_fire)
+                    if (!borg.trait[BI_IACID] && armour_swap_immune_acid)
                         v += 90000L;
                 }
             }
