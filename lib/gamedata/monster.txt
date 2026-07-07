@@ -6755,8 +6755,8 @@ friends:60:2d7:White wolf
 friends:100:4d4:Same
 desc:He is a white troll with shaggy fur and powerfully clawed hands.
 
-name:bat of Gorgoroth
-plural:bats of Gorgoroth
+name:Minyades bat
+plural:Minyades bats
 base:bat
 color:g
 speed:120
@@ -7643,7 +7643,7 @@ spells:BR_ACID | BR_COLD | BR_ELEC | BR_FIRE | BR_POIS
 desc:It has a form that legends are made of.  Beautiful scales of shimmering and
 desc: magical colours cover it.
 
-name:doombat
+name:Hades bat
 base:bat
 color:R
 speed:130
@@ -7661,8 +7661,8 @@ blow:BITE:FIRE:5d4
 flags:WEIRD_MIND
 flags:BASH_DOOR
 flags:IM_FIRE
-desc:It is a fast moving creature of chaos, a gigantic black bat surrounded by
-desc: flickering bright red flames.
+desc:It is a fast moving creature of the underworld, a gigantic black bat
+desc: surrounded by flickering bright red flames.
 
 ### Dungeon level 33 ###
 

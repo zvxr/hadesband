@@ -1527,8 +1527,8 @@ monster:Greater basilisk:0xB4:0x83
 monster:Ancient spider:0xBA:0x96
 monster:Spider of Gorgoroth:0xB3:0x9A
 monster:Kobold shaman:0x93:0x92
-monster:Bat of Gorgoroth:0xBA:0x9E
-monster:Doombat:0xBA:0x8C
+monster:Minyades bat:0xBA:0x9E
+monster:Hades bat:0xBA:0x8C
 monster:Wolf chieftain:0xB0:0x9F
 monster:Bone golem:0xB7:0x99
 monster:Bronze golem:0xB2:0x89
@@ -1546,4 +1546,3 @@ monster:Multi-hued hound:0xB2:0x81
 
 # Load the flavored objects
 %:flvr-new.prf
-

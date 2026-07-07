@@ -113,7 +113,7 @@
 | `ainu` | `A` | Old divine/spirit base; keep for now |
 | `god` | `G` | Done for initial pass; Zeus/Ares/Hecate moved |
 | `ant` | `a` | Done for current pass; myrmidon ant and Queen of the Myrmekes |
-| `bat` | `b` | Pending |
+| `bat` | `b` | Keep base/mechanics; renamed bat of Gorgoroth and doombat |
 | `bird` | `B` | Done for initial pass; Greek bird reskins complete |
 | `canine` | `C` | Done for initial pass; Greek dog/wolf reskins complete |
 | `centipede` | `c` | Pending |
