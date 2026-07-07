@@ -116,11 +116,11 @@
 | `bat` | `b` | Keep base/mechanics; renamed bat of Gorgoroth and doombat |
 | `bird` | `B` | Done for initial pass; Greek bird reskins complete |
 | `canine` | `C` | Done for initial pass; Greek dog/wolf reskins complete |
-| `centipede` | `c` | Pending |
+| `centipede` | `c` | Done; keep existing names, glyph, and mechanics |
 | `creeping coins` | `$` | Pending |
 | `dragon` | `d` | Pending |
 | `dragonfly` | `F` | Done for current pass; spelling normalized, mechanics unchanged |
-| `eye` | `e` | Pending |
+| `eye` | `e` | Done for current pass; Stygian beholder and Argus renamed |
 | `elemental` | `E` | Pending |
 | `feline` | `f` | Pending |
 | `ghost` | `G` | Untouched; conflicts with new god glyph |

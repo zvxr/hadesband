@@ -10497,7 +10497,7 @@ spells:S_DEMON
 desc:It is a large demon with the head of a giant boar.  Flames run up and down
 desc: its length.
 
-name:undead beholder
+name:Stygian beholder
 base:eye
 color:u
 speed:120
@@ -13328,7 +13328,7 @@ desc: leaving you defenseless against its evil wrath.  It can smell your fear,
 desc: and you in turn smell the awful stench of death as this ghastly figure
 desc: strides towards you menacingly.
 
-name:Omarax, the Eye Tyrant
+name:Argus, the Eye Tyrant
 base:eye
 color:v
 speed:130

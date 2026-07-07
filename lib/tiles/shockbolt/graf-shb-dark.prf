@@ -1199,7 +1199,7 @@ monster:Gorlim, Betrayer of Barahir:0x9F:0xC3
 monster:Glabrezu:0x9F:0xDD
 monster:Ren the Unclean:0x9F:0x9C
 monster:Nalfeshnee:0x9D:0xDC
-monster:Undead beholder:0x9D:0xDD
+monster:Stygian beholder:0x9D:0xDD
 monster:Ancient multi-hued dragon:0x9D:0xD8
 monster:Ethereal dragon:0x9F:0xC5
 monster:Ji Indur Dawndeath:0x9F:0x9D
@@ -1267,7 +1267,7 @@ monster:Greater demonic quylthulg:0x9F:0xB2
 monster:Greater draconic quylthulg:0x9F:0xB3
 monster:Greater rotting quylthulg:0x9F:0xB4
 monster:Feagwath, the Undead Sorcerer:0x9F:0x94
-monster:Omarax, the Eye Tyrant:0x9F:0xB7
+monster:Argus, the Eye Tyrant:0x9F:0xB7
 monster:Ungoliant, the Unlight:0x9F:0xBB
 monster:Aether hound:0x90:0xCE
 monster:The Mouth of Sauron:0x9F:0x9F
