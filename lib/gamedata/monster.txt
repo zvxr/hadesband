@@ -2301,7 +2301,7 @@ blow:BITE:HURT:1d6
 blow:BITE:HURT:1d6
 desc:It is a black lizard with overlapping scales and a powerful jaw.
 
-name:Mughash the Kobold Lord
+name:Mary Ann Skuttle
 base:kobold
 color:v
 speed:110
@@ -2316,14 +2316,15 @@ experience:100
 blow:HIT:HURT:1d10
 blow:HIT:HURT:1d10
 blow:HIT:HURT:1d10
-flags:UNIQUE | MALE | MOVE_BODY
+flags:UNIQUE | FEMALE | MOVE_BODY
 flags:DROP_1 | DROP_GOOD | ONLY_ITEM
 friends:100:1d10:Small kobold:servant
 friends:100:1d10:Kobold:servant
 friends:100:1d3:Kobold shaman:servant
 friends:100:1d5:Kobold archer:servant
 friends:100:1d5:Large kobold:bodyguard
-desc:Strong and powerful, for a kobold.
+desc:Low-energy but immensely strong, this kobold advances with the quiet
+desc: certainty of someone enhanced beyond her size.
 
 ### Dungeon level 8 ###
 

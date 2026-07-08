@@ -140,7 +140,7 @@
 | `insect` | `I` | Done for current pass; pyrausta, gadfly, and Elysian firefly renamed |
 | `jelly` | `j` | Done for current pass; kept generic, black ooze became Stygian ooze |
 | `killer beetle` | `K` | Pending |
-| `kobold` | `k` | Pending |
+| `kobold` | `k` | Done for current pass; Mary Ann Skuttle renamed, generics retained |
 | `lich` | `L` | Done for current pass; Mormo renamed, Vecna retained |
 | `lurker` | `x` | Pending |
 | `major demon` | `U` | Pending |
