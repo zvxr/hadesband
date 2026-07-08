@@ -141,7 +141,7 @@
 | `jelly` | `j` | Done for current pass; kept generic, black ooze became Stygian ooze |
 | `killer beetle` | `K` | Pending |
 | `kobold` | `k` | Pending |
-| `lich` | `L` | Pending |
+| `lich` | `L` | Done for current pass; Mormo renamed, Vecna retained |
 | `lurker` | `x` | Pending |
 | `major demon` | `U` | Pending |
 | `mimic` | `?` | Pending |

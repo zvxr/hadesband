@@ -13645,7 +13645,7 @@ desc: and his sister Meássë hunt and seek out the turmoils caused by Morgoth.
 
 ### Dungeon level 77 ###
 
-name:Feagwath, the Undead Sorcerer
+name:Mormo, the Undead Sorcerer
 base:lich
 color:v
 speed:130
