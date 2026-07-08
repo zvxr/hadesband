@@ -128,7 +128,7 @@
 | `dragonfly` | `F` | Done for current pass; spelling normalized, mechanics unchanged |
 | `eye` | `e` | Done for current pass; Stygian beholder and Argus renamed |
 | `elemental` | `E` | Done for current unique pass; primordial elemental deity names added |
-| `feline` | `f` | Pending |
+| `feline` | `f` | Done for current pass; The Nemean Lion renamed, generics retained |
 | `ghost` | `G` | Untouched; conflicts with new god glyph |
 | `giant` | `P` | Done for initial unique pass; generics retained |
 | `golem` | `g` | Done for current pass; several constructs given mythic material names and Talos made unique |

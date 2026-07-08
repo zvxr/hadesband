@@ -12651,7 +12651,7 @@ desc:A forty foot tall humanoid that shakes the ground as it walks.  The power
 desc: radiating from its frame shakes your courage, its hatred inspired by your
 desc: defiance.
 
-name:Tevildo, Prince of Cats
+name:The Nemean Lion
 base:feline
 color:v
 speed:130
@@ -12667,7 +12667,7 @@ blow:CLAW:CONFUSE:12d12
 blow:CLAW:LOSE_DEX:2d12
 blow:CLAW:BLIND:12d5
 blow:BITE:PARALYZE:6d1
-flags:UNIQUE | MALE | NAME_COMMA | INVISIBLE | SPIRIT
+flags:UNIQUE | MALE | INVISIBLE | SPIRIT
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:OPEN_DOOR | BASH_DOOR
 flags:IM_COLD | IM_FIRE | NO_CONF | NO_SLEEP | NO_HOLD
@@ -12678,9 +12678,8 @@ spells:S_KIN
 friends:100:2d4:Tiger:servant
 friends:100:2d4:Sabre-tooth tiger:servant
 friends:100:2d4:Displacer beast:servant
-desc:Master of all things feline, Tevildo serves his master Morgoth well.
-desc:  He delights in small torments and cunning stratagems, and laughs merrily
-desc: as he bats you about.
+desc:The legendary lion's hide turns away blade and spell alike.  It prowls
+desc: with cruel patience, followed by lesser hunters drawn to its strength.
 
 ### Dungeon level 67 ###
 
