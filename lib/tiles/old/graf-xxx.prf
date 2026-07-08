@@ -1222,7 +1222,7 @@ monster:black knight:0x9C:0x92
 monster:Uldor the Accursed:0x9C:0x93
 monster:Mage:0x9C:0x94
 monster:Mind flayer:0x9C:0x95
-monster:Draebor, the Imp:0x91:0x9C
+monster:Gello, the Hungry Revenant:0x91:0x9C
 monster:Basilisk:0x93:0x9C
 monster:snow troll:0x94:0x92
 monster:Purple worm:0x9E:0x90
@@ -1399,7 +1399,7 @@ monster:Death mold:0x9A:0x90
 monster:Cychreides, the Fire Drake:0x8F:0x99
 monster:Ismenian Dragon:0x8F:0x99
 monster:Master mystic:0x9D:0x85
-monster:The Balrog of Moria:0x9F:0x81
+monster:Corinthian Lamia:0x9F:0x81
 monster:Nightwing:0x8F:0x9E
 monster:Nether hound:0x96:0x89
 monster:Time hound:0x96:0x8A
@@ -1452,15 +1452,15 @@ monster:The Mouth of Sauron:0x9D:0x89
 monster:Master quylthulg:0x93:0x84
 monster:Qlzqqlzuup, the Emperor Quylthulg:0x93:0x88
 monster:Hecate, Goddess of Witchcraft:0x95:0x96
-monster:Pazuzu, Lord of Air:0x8E:0x9C
+monster:Arae, Curse of the Dead:0x8E:0x9C
 monster:Minos, the Skeletal Judge:0x9D:0x9B
 monster:Cetus, the Sea Beast:0x94:0x81
-monster:Lungorthin, the Balrog of White Fire:0x9F:0x82
+monster:Lamia of White Fire:0x9F:0x82
 monster:Laelaps, the Inescapable Hound:0x8F:0x88
 monster:Vecna, the Emperor Lich:0x92:0x8B
 monster:Golden Dog, Guardian of Zeus:0xB2:0x83
 monster:Cerberus, Hound of Hades:0x8F:0x89
-monster:Gothmog, the High Captain of Balrogs:0x9F:0x83
+monster:Keres, High Captain of Death:0x9F:0x83
 monster:Zeus, God of the Sky:0x9D:0x8A
 monster:Hades, Lord of the Underworld:0x92:0x9E
 monster:Silver mouse:0xB0:0x83

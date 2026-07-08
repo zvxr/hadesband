@@ -6684,7 +6684,7 @@ spells:BLIND | BRAIN_SMASH | FORGET | HOLD | MIND_BLAST | SCARE
 desc:A humanoid form with a gruesome head, tentacular mouth, and piercing eyes.
 desc:  Claws reach out for you and you feel a presence invade your mind.
 
-name:Draebor, the Imp
+name:Gello, the Hungry Revenant
 base:minor demon
 color:v
 speed:120
@@ -6699,7 +6699,7 @@ blow:HIT:POISON:3d4
 blow:HIT:POISON:3d4
 blow:HIT:HURT:3d4
 blow:INSULT
-flags:UNIQUE | NAME_COMMA | INVISIBLE | SMART
+flags:UNIQUE | FEMALE | NAME_COMMA | INVISIBLE | SMART
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:RAND_25 | BASH_DOOR
 flags:FORCE_SLEEP
@@ -6711,7 +6711,8 @@ friends-base:50:1d3:minor demon:servant
 friends-base:50:1d3:minor demon:servant
 friends-base:50:1d3:minor demon:servant
 friends:100:2d4:Imp:servant
-desc:An intensely irritating git of a monster.
+desc:A hungry revenant-demon whose spite follows the living from the edge of
+desc: the underworld.
 
 name:basilisk
 base:reptile
@@ -11178,7 +11179,7 @@ desc:A mighty spirit of darkness of vaguely humanoid form.  Razor-edged claws
 desc: reach out to end your life as it glides towards you, seeking to suck the
 desc: energy from your soul to feed its power.
 
-name:The Balrog of Moria
+name:Corinthian Lamia
 base:major demon
 color:v
 speed:130
@@ -11194,7 +11195,7 @@ blow:HIT:FIRE:6d12
 blow:HIT:FIRE:6d12
 blow:CRUSH:HURT:5d12
 blow:TOUCH:DRAIN_CHARGES
-flags:UNIQUE | MALE | POWERFUL
+flags:UNIQUE | FEMALE | POWERFUL
 flags:DROP_4 | DROP_GOOD
 flags:MOVE_BODY
 flags:IM_FIRE
@@ -11205,9 +11206,9 @@ spells:BR_FIRE
 spells:S_DEMON | S_UNDEAD
 friends:100:4d4:cave orc:servant
 friends:100:3d4:cave troll:servant
-desc:A huge Balrog surrounded by raging pillars of fire, this is indeed a
-desc: terrible opponent.  Wielding a great whip of fire and a blazing sword,
-desc: his fury blisters your skin and melts your flesh!
+desc:A beautiful and terrible demon, the Corinthian Lamia casts aside her
+desc: disguise amid raging pillars of fire.  Her hunger blisters your skin and
+desc: melts your flesh.
 
 ### Dungeon level 51 ###
 
@@ -14097,7 +14098,7 @@ spells:BR_ACID | BR_COLD | BR_ELEC | BR_FIRE | BR_POIS
 spells:S_DRAGON | S_HI_DRAGON
 desc:A gigantic dragon whose scales shimmer in myriad hues.
 
-name:Pazuzu, Lord of Air
+name:Arae, Curse of the Dead
 base:major demon
 color:Z
 speed:140
@@ -14112,7 +14113,7 @@ blow:HIT:ELEC:12d12
 blow:HIT:ELEC:12d12
 blow:HIT:ELEC:12d12
 blow:HIT:ELEC:12d12
-flags:UNIQUE | MALE | NAME_COMMA | INVISIBLE
+flags:UNIQUE | FEMALE | NAME_COMMA | INVISIBLE
 flags:DROP_4 | DROP_GOOD
 flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS
 spell-freq:3
@@ -14121,8 +14122,8 @@ spells:BA_ELEC
 spells:BO_ELEC | BO_MANA
 spells:S_HI_DEMON
 friends:100:2d3:eagle of Zeus:servant
-desc:A winged humanoid demon, Pazuzu grins inhumanely at you as he decides
-desc: your fate.
+desc:A curse given wings and will, Arae rises from the dead to punish the
+desc: guilty.  Her smile promises that fate has already found you.
 
 name:Dwar, Dog Lord of Waw
 base:wraith
@@ -14434,7 +14435,7 @@ desc: all violence, and recruits any beings of like abilities to her service.
 
 ### Dungeon level 88 ###
 
-name:Lungorthin, the Balrog of White Fire
+name:Lamia of White Fire
 base:major demon
 color:v
 speed:130
@@ -14450,7 +14451,7 @@ blow:HIT:FIRE:8d12
 blow:HIT:FIRE:8d12
 blow:CRUSH:HURT:8d12
 blow:TOUCH:DRAIN_CHARGES
-flags:UNIQUE | MALE | NAME_COMMA | POWERFUL
+flags:UNIQUE | FEMALE | POWERFUL
 flags:DROP_4 | DROP_GOOD
 flags:MOVE_BODY
 flags:IM_FIRE | IM_PLASMA
@@ -14461,10 +14462,10 @@ spells:BR_FIRE | BR_PLAS
 spells:S_HI_DEMON | S_UNDEAD
 friends:100:1d3:Lesser Balrog:servant
 friends:50:1d2:Greater Balrog:servant
-friends:100:1d1:The Balrog of Moria
-desc:A massive form cloaked in flame.  Lungorthin stares balefully at you with
-desc: eyes that smoulder red.  The dungeon floor where he stands is scorched by
-desc: the heat of his body.
+friends:100:1d1:Corinthian Lamia
+desc:A massive form cloaked in white flame.  This lamia stares balefully at
+desc: you with eyes that smoulder red.  The dungeon floor where she stands is
+desc: scorched by the heat of her body.
 
 
 ########## DUNGEON LEVELS 90-100 ##########
@@ -14591,7 +14592,7 @@ spells:BR_CHAO | BR_DISE | BR_TIME
 desc:Howling through the disintegrating dungeon, this whirlpool of Unmagic rips
 desc: the enchantments from everything it touches.
 
-name:Gothmog, the High Captain of Balrogs
+name:Keres, High Captain of Death
 base:major demon
 color:v
 speed:130
@@ -14607,7 +14608,7 @@ blow:HIT:FIRE:9d12
 blow:HIT:FIRE:9d12
 blow:CRUSH:HURT:8d12
 blow:TOUCH:DRAIN_CHARGES
-flags:UNIQUE | MALE | NAME_COMMA | POWERFUL
+flags:UNIQUE | FEMALE | NAME_COMMA | POWERFUL
 flags:DROP_4 | DROP_GOOD | DROP_GREAT
 flags:MOVE_BODY
 flags:IM_ELEC | IM_FIRE | IM_PLASMA
@@ -14621,12 +14622,10 @@ friends:30:1d3:Osyluth:servant
 friends:30:1d3:Gelugon:servant
 friends:30:1d3:Pit fiend:servant
 friends:100:1d2:Greater Balrog:bodyguard
-friends:100:1d1:The Balrog of Moria:servant
-friends:100:1d1:Lungorthin, the Balrog of White Fire:servant
-desc:Gothmog is the Chief Balrog in Morgoth's personal guard.  He is renowned
-desc: for slaying Fëanor and Fingon, two of the High Kings of the Noldor,
-desc: and has never been defeated in combat.  With his whip of flame and
-desc: awesome fiery breath he saved his master from Ungoliant's rage.
+friends:100:1d1:Corinthian Lamia:servant
+friends:100:1d1:Lamia of White Fire:servant
+desc:Keres commands violent death and the demons that gather in its wake.  With
+desc: flame, claw, and awful breath, she drives her host toward slaughter.
 
 ### Dungeon level 99 ###
 

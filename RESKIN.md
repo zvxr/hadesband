@@ -143,9 +143,9 @@
 | `kobold` | `k` | Done for current pass; Mary Ann Skuttle renamed, generics retained |
 | `lich` | `L` | Done for current pass; Mormo renamed, Vecna retained |
 | `lurker` | `x` | Pending |
-| `major demon` | `U` | Pending |
+| `major demon` | `U` | Done for current unique pass; Greek demon uniques renamed, generic demons retained |
 | `mimic` | `?` | Pending |
-| `minor demon` | `u` | Pending |
+| `minor demon` | `u` | Done for current unique pass; Gello renamed, generic demons retained |
 | `mold` | `m` | Done; keep existing names, glyph, and mechanics |
 | `mushroom` | `,` | Done for current pass; light lotus descriptors added |
 | `naga` | `n` | Done for current pass; temple naga and lamia renamed, gorgon retained |
