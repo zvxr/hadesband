@@ -131,7 +131,7 @@
 | `feline` | `f` | Pending |
 | `ghost` | `G` | Untouched; conflicts with new god glyph |
 | `giant` | `P` | Done for initial unique pass; generics retained |
-| `golem` | `g` | Pending |
+| `golem` | `g` | Done for current pass; several constructs given mythic material names and Talos made unique |
 | `humanoid` | `h` | Pending |
 | `hybrid` | `H` | Done for current pass; harpies remain here |
 | `monstrous` | `M` | Done for current pass; major composite beasts moved here |

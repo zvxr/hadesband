@@ -5983,8 +5983,7 @@ friends:60:1d7:Wolf
 friends:80:1d3:Same
 desc:A ten foot tall humanoid with powerful muscles.
 
-name:pukelman
-plural:pukelmen
+name:silver golem
 base:golem
 color:m
 speed:110
@@ -6006,8 +6005,8 @@ spells:CONF | SLOW
 spells:BO_ACID
 message-invis:SLOW:Something rumbles.
 message-invis:BO_ACID:Something rumbles.
-desc:A stumpy figure carved from stone, with glittering eyes, this sentinel
-desc: strides towards you with deadly intent.
+desc:A stumpy figure cast from tarnished silver, with glittering eyes.  This
+desc: sentinel strides towards you with deadly intent.
 
 name:stone troll
 base:troll
@@ -8233,7 +8232,7 @@ spell-freq:8
 spells:BO_ELEC
 desc:It is a towering tornado of winds.
 
-name:Eog golem
+name:orichalcum golem
 base:golem
 color:u
 speed:100
@@ -8252,7 +8251,7 @@ flags:COLD_BLOOD
 flags:DROP_2 | ONLY_GOLD
 flags:BASH_DOOR
 flags:IM_COLD | IM_FIRE | IM_POIS
-desc:It is a massive deep brown statue, striding towards you with an
+desc:It is a massive orichalcum statue, striding towards you with an
 desc: all-too-familiar purpose.  Your magic surprisingly feels much less
 desc: powerful now.
 
@@ -8499,7 +8498,7 @@ mimic:chest:Large iron chest
 mimic:chest:Small steel chest
 mimic:chest:Large steel chest
 
-name:silent watcher
+name:Stygian golem
 base:golem
 color:r
 speed:110
@@ -8525,8 +8524,8 @@ message-vis:SHRIEK:The baleful presence of {name} inspires your enemies.
 message-invis:DRAIN_MANA:Something drains your mana away.
 message-invis:HOLD:Your muscles lock up for no apparent reason.
 message-invis:SHRIEK:Something inspires your enemies.
-desc:A figure carved from stone, with three vulture faces whose eyes glow with a
-desc: malevolent light.
+desc:A figure carved from underworld stone, with three vulture faces whose eyes
+desc: glow with a malevolent light.
 
 ### Dungeon level 36 ###
 
@@ -8551,7 +8550,8 @@ flags:DROP_20
 friends:100:4d4:Olog
 desc:It is a massive intelligent troll with needle-sharp fangs.
 
-name:colbran
+name:Keledone, Golden Maiden
+plural:Keledones, Golden Maidens
 base:golem
 color:b
 speed:120
@@ -8574,8 +8574,8 @@ spell-power:20
 spells:BO_ELEC | BE_ELEC | TELE_SELF_TO
 message-invis:BO_ELEC:The constant crackling subsides briefly and then resumes.
 message-invis:TELE_SELF_TO:The constant crackling subsides briefly and then resumes.
-desc:A man-shaped form of living lightning.  Sparks and shocks crackle all over
-desc: this madly capering figure, as it leaps and whirls around and about you.
+desc:A golden maiden sculpted by Hephaestus and gifted with a voice like
+desc: ringing metal.  Lightning dances over her polished limbs as she whirls.
 
 name:cloud giant
 base:giant
@@ -13538,7 +13538,7 @@ desc: gathers every thread into her bloated body, and breathes out the darkest
 desc: shadow.  She is always ravenously hungry and would even eat herself to
 desc: avoid starvation.
 
-name:bronze golem
+name:Talos, the Bronze Golem
 base:golem
 color:o
 speed:120
@@ -13554,7 +13554,7 @@ blow:HIT:HURT:10d10
 blow:HIT:HURT:10d10
 blow:HIT:HURT:10d10
 blow:HIT:HURT:10d10
-flags:DEMON | COLD_BLOOD
+flags:UNIQUE | MALE | NAME_COMMA | DEMON | COLD_BLOOD
 flags:OPEN_DOOR | BASH_DOOR
 flags:IM_ACID | IM_FIRE | IM_POIS
 flags:FORCE_SLEEP
@@ -13568,8 +13568,8 @@ spells:S_DEMON
 message-invis:BA_ELEC:Something rumbles.
 message-invis:BA_FIRE:Something rumbles.
 message-invis:BO_PLAS:Something rumbles.
-desc:A gigantic four-armed animated bronze statue of demonic shape, glowing with
-desc: great heat.
+desc:A gigantic animated bronze guardian, glowing with great heat.  Talos
+desc: strides with tireless purpose, crushing intruders beneath metal fists.
 
 name:Ismenian Dragon
 base:ancient dragon
