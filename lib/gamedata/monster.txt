@@ -10239,7 +10239,7 @@ friends:50:1d4:Baby multi-hued dragon
 friends:50:1d2:Young multi-hued dragon
 desc:A large dragon, scales shimmering many colours.
 
-name:Vargo, Tyrant of Fire
+name:Aether, Flame of the Upper Air
 base:elemental
 color:R
 speed:120
@@ -10255,16 +10255,17 @@ blow:HIT:FIRE:4d6
 blow:HIT:FIRE:4d6
 blow:HIT:FIRE:4d6
 blow:HIT:FIRE:4d6
-flags:UNIQUE | NAME_COMMA | POWERFUL
+flags:UNIQUE | MALE | NAME_COMMA | POWERFUL
 flags:RAND_25 | BASH_DOOR | KILL_BODY | KILL_ITEM
 flags:IM_ACID | IM_ELEC | IM_FIRE | HURT_COLD
 flags:FORCE_SLEEP
 spell-freq:4
 spells:BA_FIRE
 spells:BO_PLAS
-desc:A towering fire elemental, Vargo burns everything beyond recognition.
+desc:Aether burns with the bright fire of the upper air, a towering elemental
+desc: presence whose radiance consumes everything it touches.
 
-name:Waldern, King of Water
+name:Pontus, Lord of the Sea
 base:elemental
 color:V
 speed:120
@@ -10279,15 +10280,15 @@ blow:HIT:HURT:5d5
 blow:HIT:HURT:5d5
 blow:HIT:HURT:5d5
 blow:HIT:HURT:5d5
-flags:UNIQUE | NAME_COMMA | COLD_BLOOD | POWERFUL
+flags:UNIQUE | MALE | NAME_COMMA | COLD_BLOOD | POWERFUL
 flags:RAND_25 | BASH_DOOR | KILL_BODY | KILL_ITEM
 flags:IM_ACID | IM_COLD | IM_FIRE | IM_WATER
 flags:FORCE_SLEEP
 spell-freq:4
 spells:BA_COLD | BA_WATE
 spells:BO_ICE | BO_WATE
-desc:A towering water elemental, Waldern is master of all things liquid.  Wave
-desc: after wave drowns your frail body.
+desc:Pontus rises as the primordial sea given shape.  Wave after wave crashes
+desc: down with the patience and weight of the ancient deep.
 
 name:glabrezu
 plural:glabrezu
@@ -10310,7 +10311,7 @@ spells:BO_FIRE
 spells:S_DEMON
 desc:It is demon with arms and pincers, its form a true mockery of life.
 
-name:Quaker, Master of Earth
+name:Gaea, Mother of Earth
 base:elemental
 color:U
 speed:110
@@ -10325,17 +10326,17 @@ blow:HIT:HURT:6d6
 blow:HIT:HURT:6d6
 blow:HIT:HURT:6d6
 blow:HIT:SHATTER:10d10
-flags:UNIQUE | MALE | NAME_COMMA | COLD_BLOOD | POWERFUL
+flags:UNIQUE | FEMALE | NAME_COMMA | COLD_BLOOD | POWERFUL
 flags:PASS_WALL | KILL_BODY | KILL_ITEM
 flags:HURT_ROCK | IM_COLD | IM_ELEC | IM_FIRE
 flags:FORCE_SLEEP
 spell-freq:6
 spells:BA_ACID | BA_SHAR
 spells:BO_ACID
-desc:A towering stone elemental stands before you.  The walls and ceiling are
-desc: reduced to rubble as Quaker advances.
+desc:A towering stone elemental stands before you, the earth-mother's wrath
+desc: made manifest.  Walls and ceiling crumble as Gaea advances.
 
-name:Ariel, Queen of Air
+name:Uranus, Lord of the Sky
 base:elemental
 color:Z
 speed:130
@@ -10350,15 +10351,15 @@ blow:HIT:HURT:4d6
 blow:HIT:HURT:4d6
 blow:HIT:CONFUSE:4d4
 blow:HIT:CONFUSE:4d4
-flags:UNIQUE | FEMALE | NAME_COMMA | COLD_BLOOD | POWERFUL
+flags:UNIQUE | MALE | NAME_COMMA | COLD_BLOOD | POWERFUL
 flags:RAND_25 | BASH_DOOR | KILL_BODY | KILL_ITEM
 flags:IM_ACID | IM_COLD | IM_ELEC
 flags:FORCE_SLEEP
 spell-freq:5
 spells:BA_COLD | BA_ELEC
 spells:BO_ELEC
-desc:A towering air elemental, Ariel, the sorceress, avoids your blows with her
-desc: extreme speed.
+desc:A towering air elemental, Uranus moves with the vastness of the open sky,
+desc: avoiding your blows with impossible speed.
 
 name:multi-hued hound
 base:zephyr hound
@@ -12139,7 +12140,7 @@ spells:BOULDER
 spells:SHAPECHANGE
 shape:shardstorm
 shape:great earth elemental
-shape:Quaker, Master of Earth
+shape:Gaea, Mother of Earth
 desc:A servant of Aulë the Smith, lord of all the substances of Arda and friend
 desc: of the Noldor.
 

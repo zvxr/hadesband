@@ -100,6 +100,8 @@
 - Graphics note: stale exact monster names in tile prefs are parser hazards after renames; missing mappings generally fall back to the monster's default attr/char.
 - Implemented: bird pass renamed Tolkien/dark flyers to swan of Apollo, strix, bird of Ares, eagle of Zeus, and siren; Phoenix remains unchanged.
 - Low-hanging fit: air/water/earth/fire spirits already use `elemental`; keep elemental spirits there unless we create a separate shade/ghost `spirit` base.
+- Implemented: depth-43 elemental uniques now use primordial deity names: Aether, Pontus, Gaea, and Uranus.
+- Elemental note: reserve Thalassa, Oceanus, Hemera, Erebus, Nyx, and Tartarus for future elemental/deep-underworld additions.
 - Possible rename/family fit: `naga` can absorb Lamia/Echidna/Gorgon-like serpent-women; current gorgon already uses `naga`.
 - Naga note: Medusa would fit here as a future unique, but is deferred beyond the initial reskin pass.
 - Mold note: keep existing mold names and mechanics; `The Stygian Mold` is a possible future unique.
@@ -121,11 +123,11 @@
 | `bird` | `B` | Done for initial pass; Greek bird reskins complete |
 | `canine` | `C` | Done for initial pass; Greek dog/wolf reskins complete |
 | `centipede` | `c` | Done; keep existing names, glyph, and mechanics |
-| `creeping coins` | `$` | Pending |
+| `creeping coins` | `$` | Done; keep existing names, glyph, and mechanics |
 | `dragon` | `d` | Done for current unique pass; generic dragons retained |
 | `dragonfly` | `F` | Done for current pass; spelling normalized, mechanics unchanged |
 | `eye` | `e` | Done for current pass; Stygian beholder and Argus renamed |
-| `elemental` | `E` | Pending |
+| `elemental` | `E` | Done for current unique pass; primordial elemental deity names added |
 | `feline` | `f` | Pending |
 | `ghost` | `G` | Untouched; conflicts with new god glyph |
 | `giant` | `P` | Done for initial unique pass; generics retained |
