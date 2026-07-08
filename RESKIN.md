@@ -113,7 +113,7 @@
 
 | Base | Glyph | Migration Status |
 | --- | --- | --- |
-| `ancient dragon` | `D` | Pending |
+| `ancient dragon` | `D` | Done for current unique pass; generic dragons retained |
 | `ainu` | `A` | Old divine/spirit base; keep for now |
 | `god` | `G` | Done for initial pass; Zeus/Ares/Hecate moved |
 | `ant` | `a` | Done for current pass; myrmidon ant and Queen of the Myrmekes |
@@ -122,7 +122,7 @@
 | `canine` | `C` | Done for initial pass; Greek dog/wolf reskins complete |
 | `centipede` | `c` | Done; keep existing names, glyph, and mechanics |
 | `creeping coins` | `$` | Pending |
-| `dragon` | `d` | Pending |
+| `dragon` | `d` | Done for current unique pass; generic dragons retained |
 | `dragonfly` | `F` | Done for current pass; spelling normalized, mechanics unchanged |
 | `eye` | `e` | Done for current pass; Stygian beholder and Argus renamed |
 | `elemental` | `E` | Pending |

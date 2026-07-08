@@ -10018,7 +10018,7 @@ desc: powerful elemental spells to use against you, in addition to his skills
 desc: as an archer and a warrior.  Furthermore, he is a master of camouflage,
 desc: so you will need magically enhanced seeing to spot him.
 
-name:Kavlax the Many-Headed
+name:Ladon, the Many-Headed
 base:dragon
 color:D
 speed:120
@@ -10041,8 +10041,8 @@ flags:NO_SLEEP | NO_STUN | NO_HOLD
 innate-freq:4
 spells:BR_ACID | BR_COLD | BR_CHAO | BR_ELEC | BR_FIRE | BR_GRAV
 spells:BR_NEXU | BR_SHAR | BR_SOUN
-desc:A large dragon with a selection of heads, all shouting and arguing as they
-desc: look for prey, but each with its own deadly breath weapon.
+desc:A many-headed dragon that once guarded the golden apples of immortality.
+desc: Each head watches for prey, and each throat holds its own deadly breath.
 
 ### Dungeon level 42 ###
 
@@ -11435,7 +11435,7 @@ friends:100:3d4:greater dryad
 desc:An ancient hamadryad rises with the whole grove in her limbs.  Stone,
 desc: steel, and flesh split under her roots as she moves against you.
 
-name:Itangast the Fire Drake
+name:Cychreides, the Fire Drake
 base:ancient dragon
 color:R
 speed:120
@@ -11459,8 +11459,8 @@ innate-freq:8
 spell-freq:8
 spells:WOUND | CONF
 spells:BR_FIRE
-desc:A mighty ancient dragon, Itangast's form scorches your flesh.  Wisps of
-desc: smoke curl up from his nostrils as he regards you with disdain.
+desc:A mighty ancient dragon whose burning rage once terrorized Salamis.  Wisps
+desc: of smoke curl up from his nostrils as he regards you with disdain.
 
 ### Dungeon level 53 ###
 
@@ -11537,7 +11537,7 @@ innate-freq:4
 spells:BR_CHAO
 desc:Void, nothingness, spinning destructively.
 
-name:Scatha the Worm
+name:Giantomachian Dragon
 base:ancient dragon
 color:W
 speed:120
@@ -11560,9 +11560,9 @@ innate-freq:8
 spell-freq:8
 spells:WOUND | CONF
 spells:BR_COLD
-desc:An ancient and wise Dragon.  Scatha has grown clever over the long years.
-desc:  His scales are covered with frost, and his breath sends a shower of ice
-desc: into the air.
+desc:An ancient dragon from the war of giants and gods.  Cast toward the cold
+desc: stars, its scales are rimed with frost and its breath sends ice into the
+desc: air.
 
 ### Dungeon level 54 ###
 
@@ -12314,7 +12314,7 @@ desc: drinks in light, and space around it is twisted and torn by the weight of
 desc: its evil.  It is unlife and it knows nothing but the stealing of souls
 desc: and the stench of death.  Flee its hunger!
 
-name:Smaug the Golden
+name:Colchian Dragon
 base:ancient dragon
 color:R
 speed:120
@@ -12338,10 +12338,9 @@ innate-freq:5
 spell-freq:8
 spells:WOUND | CONF
 spells:BR_FIRE
-desc:Smaug is one of the Urulóki that still survive, a fire-drake of immense
-desc: cunning and intelligence.  His speed through air is matched by few other
-desc: dragons and his dragonfire is what legends are made of; he is believed to
-desc: be the greatest dragon still surviving into the Third Age.
+desc:The unsleeping dragon of Colchis is a fire-drake of immense cunning and
+desc: intelligence.  Its speed through air is matched by few other dragons, and
+desc: its dragonfire is what legends are made of.
 
 ### Dungeon level 63 ###
 
@@ -13571,7 +13570,7 @@ message-invis:BO_PLAS:Something rumbles.
 desc:A gigantic four-armed animated bronze statue of demonic shape, glowing with
 desc: great heat.
 
-name:Glaurung, Father of the Dragons
+name:Ismenian Dragon
 base:ancient dragon
 color:v
 speed:130
@@ -13596,10 +13595,9 @@ spell-freq:3
 spells:BRAIN_SMASH | FORGET | SCARE
 spells:BR_FIRE | BR_POIS
 spells:S_HI_DRAGON
-desc:Glaurung is the father of all dragons, and was for a long time the most
-desc: powerful.  Though this is no longer so, he still has full command over his
-desc: brood and can command them to appear whenever he so wishes.  He is the
-desc: definition of dragonfire.
+desc:The Ismenian Dragon guarded the sacred spring of Ares near Thebes.  Its
+desc: venom and flame still command lesser dragons, and its brood answers
+desc: whenever it calls.
 
 ### Dungeon level 76 ###
 
@@ -14336,7 +14334,7 @@ desc:Hecate is a dread goddess of witchcraft, crossroads, and restless shades.
 desc: Her spells are lethal and her combat blows crushingly hard.  She moves
 desc: at speed, and commands legions of the dead and damned to do her bidding.
 
-name:Ancalagon the Black
+name:Python, the Black
 base:ancient dragon
 color:D
 speed:130
@@ -14359,13 +14357,13 @@ innate-freq:4
 spell-freq:10
 spells:BR_ACID | BR_COLD | BR_ELEC | BR_FIRE | BR_POIS
 spells:S_HI_DRAGON | S_KIN
-friends:100:1d1:Kavlax the Many-Headed
-friends:100:1d1:Scatha the Worm
-friends:100:1d1:Itangast the Fire Drake
-friends:100:1d1:Smaug the Golden
-friends:100:1d1:Glaurung, Father of the Dragons
-desc:"Rushing Jaws" is his name, and death is his game; the greatest and most
-desc: terrible of all dragonkind, his power dismayed even the Valar for a time.
+friends:100:1d1:Ladon, the Many-Headed
+friends:100:1d1:Giantomachian Dragon
+friends:100:1d1:Cychreides, the Fire Drake
+friends:100:1d1:Colchian Dragon
+friends:100:1d1:Ismenian Dragon
+desc:Python is the black dragon of Delphi, ancient guardian of the oracle and
+desc: master of every hateful breath.  Even the gods remember its shadow.
 
 ### Dungeon level 86 ###
 
