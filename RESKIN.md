@@ -159,7 +159,7 @@
 | `skeleton` | `s` | Done for current pass; Minos renamed, other skeletons retained |
 | `snake` | `J` | Done for current pass; python, Pythian serpent, Stygian crawler, and Ophion serpent renamed |
 | `spider` | `S` | Done for current pass; Tolkien names replaced, glyph/web/summon mechanics retained |
-| `townsfolk` | `t` | Pending |
+| `townsfolk` | `t` | Done for current pass; polis residents renamed, mechanics retained |
 | `tree` | `l` | Done for initial pass; Living Wood/dryads complete |
 | `troll` | `T` | Done for current pass; generics retained, uniques and underworld troll renamed |
 | `vampire` | `V` | Done for current pass; Empusa renamed and Sauron shape cleaned to Vampire-Zeus |

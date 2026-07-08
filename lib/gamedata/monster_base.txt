@@ -428,7 +428,7 @@ name:townsfolk
 glyph:t
 pain:4
 flags:SPIRIT | CLEAR_WEB
-desc:Townsfolk
+desc:Polis Folk
 
 # Living wood: dryads, hamadryads, and tree-bound spirits.
 name:tree
