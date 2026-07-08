@@ -139,12 +139,12 @@
 | `ichor` | `i` | Done for current pass; base renamed from icky thing, glyph retained |
 | `insect` | `I` | Done for current pass; pyrausta, gadfly, and Elysian firefly renamed |
 | `jelly` | `j` | Done for current pass; kept generic, black ooze became Stygian ooze |
-| `killer beetle` | `K` | Pending |
+| `killer beetle` | `K` | Done; keep existing names, glyph, pits, and mechanics |
 | `kobold` | `k` | Done for current pass; Mary Ann Skuttle renamed, generics retained |
 | `lich` | `L` | Done for current pass; Mormo renamed, Vecna retained |
-| `lurker` | `x` | Pending |
+| `sphinx` | `x` | Done for current pass; base renamed from lurker, old tile coordinates reused |
 | `major demon` | `U` | Done for current unique pass; Greek demon uniques renamed, generic demons retained |
-| `mimic` | `?` | Pending |
+| `mimic` | `?` | Done; keep existing names, descriptions, glyphs, and mechanics |
 | `minor demon` | `u` | Done for current unique pass; Gello renamed, generic demons retained |
 | `mold` | `m` | Done; keep existing names, glyph, and mechanics |
 | `mushroom` | `,` | Done for current pass; light lotus descriptors added |

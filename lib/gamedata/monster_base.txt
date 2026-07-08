@@ -273,14 +273,14 @@ flags:IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN | NO_HOLD
 flags:FORCE_SLEEP
 desc:Lich
 
-# Weird monsters tha look like floor.
-name:lurker
+# Riddle-speaking guardians with leonine bodies.
+name:sphinx
 glyph:x
-pain:1
-flags:COLD_BLOOD | EMPTY_MIND | INVISIBLE | UNAWARE
-flags:NEVER_MOVE
+pain:4
+flags:SMART
+flags:OPEN_DOOR | BASH_DOOR
 flags:NO_FEAR | NO_CONF | NO_SLEEP
-desc:Lurker
+desc:Sphinx
 
 # Demons are evil and tend to be fire-based.  Major demons frequently summon,
 # have a few powerful spells and/or breaths, and often dangerous melee.

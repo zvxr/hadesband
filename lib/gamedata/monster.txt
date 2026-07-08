@@ -3874,8 +3874,8 @@ flags:RAND_25 | BASH_DOOR
 friends:100:2d7:Same
 desc:It is a hardened war dog, trained to fight in disciplined packs.
 
-name:lurker
-base:lurker
+name:sphinx
+base:sphinx
 color:w
 speed:110
 hit-points:176
@@ -3884,11 +3884,13 @@ armor-class:30
 sleepiness:10
 depth:14
 rarity:3
-experience:80
-blow:HIT:HURT:1d8
-blow:HIT:HURT:1d8
-desc:A strange creature that merges with the dungeon floor, trapping its
-desc: victims by enveloping them within its perfectly disguised form.
+experience:95
+blow:CLAW:HURT:1d8
+blow:BITE:HURT:1d8
+spell-freq:8
+spells:BLIND | CONF | SLOW
+desc:A watchful sphinx crouches before you, leonine claws flexing while its
+desc: patient eyes weigh your every answer.
 
 ### Dungeon level 15 ###
 
@@ -8713,8 +8715,8 @@ desc:An enormous construct resembling a titan made from stone.  It strides
 desc: purposefully towards you, swinging its slow fists with earth-shattering
 desc: power.
 
-name:trapper
-base:lurker
+name:greater sphinx
+base:sphinx
 color:W
 speed:120
 hit-points:528
@@ -8723,13 +8725,15 @@ armor-class:90
 sleepiness:10
 depth:36
 rarity:3
-experience:580
-blow:HIT:HURT:4d7
-blow:HIT:HURT:4d7
-blow:HIT:PARALYZE:4d1
-blow:HIT:PARALYZE:4d1
-desc:A larger cousin of the lurker, this creature traps unsuspecting victims and
-desc: paralyzes them, to be slowly digested later.
+experience:650
+blow:CLAW:HURT:4d7
+blow:CLAW:HURT:4d7
+blow:BITE:HURT:4d7
+spell-freq:6
+spell-power:18
+spells:MIND_BLAST | BLIND | CONF | SLOW | HOLD
+desc:A greater sphinx blocks the way with ancient composure.  Its questions
+desc: cut deeper than its claws, and its gaze pins the careless in place.
 
 name:bodak
 base:minor demon

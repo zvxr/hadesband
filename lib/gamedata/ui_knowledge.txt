@@ -127,7 +127,6 @@ mcat-include-base:townsfolk
 mcat-include-base:person
 
 monster-category:Mimics
-mcat-include-base:lurker
 mcat-include-base:creeping coins
 mcat-include-base:mimic
 
@@ -163,6 +162,9 @@ mcat-include-base:skeleton
 
 monster-category:Snakes
 mcat-include-base:snake
+
+monster-category:Sphinxes
+mcat-include-base:sphinx
 
 monster-category:Living Wood
 mcat-include-base:tree
