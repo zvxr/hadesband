@@ -64,7 +64,7 @@ static NSString * const AngbandDirectoryNameLib = @"lib";
 static NSString * const AngbandDirectoryNameBase = @VERSION_NAME;
 
 static NSString * const FallbackFontName = @"Menlo";
-static float FallbackFontSizeMain = 13.0f;
+static float FallbackFontSizeMain = 18.0f;
 static float FallbackFontSizeSub = 10.0f;
 static NSString * const AngbandTerminalsDefaultsKey = @"Terminals";
 static NSString * const AngbandTerminalRowsDefaultsKey = @"Rows";
@@ -5516,6 +5516,9 @@ static void load_prefs(void)
     NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:
         FallbackFontName, @"FontName-0",
         [NSNumber numberWithFloat:FallbackFontSizeMain], @"FontSize-0",
+        [NSNumber numberWithFloat:14.0f], @"FontSize-1",
+        [NSNumber numberWithFloat:14.0f], @"FontSize-3",
+        [NSNumber numberWithFloat:14.0f], @"FontSize-5",
         [NSNumber numberWithInt:60], AngbandFrameRateDefaultsKey,
         [NSNumber numberWithBool:YES], AngbandSoundDefaultsKey,
         [NSNumber numberWithInt:GRAPHICS_NONE], AngbandGraphicsDefaultsKey,

@@ -39,6 +39,7 @@ borg_magic *borg_magics = NULL;
 
 
 static borg_spell_rating *borg_spell_ratings;
+static size_t borg_spell_ratings_count;
 // !FIX !TODO for now put this in the code.  It should probably end up in borg.txt or a new borg.cfg
 // I also gave low ratings to spells that are new since the borg doesn't know when to use them yet.
 static borg_spell_rating borg_spell_ratings_MAGE[] =
@@ -210,6 +211,37 @@ static borg_spell_rating borg_spell_ratings_RANGER[] =
     { "Haste Self", 95, HASTE_SELF },
     { "Decoy", 5, DECOY }, // !FIX !TODO not sure what to do with this
     { "Brand Ammunition", 95, BRAND_AMMUNITION }
+};
+static borg_spell_rating borg_spell_ratings_RED_MAGE[] =
+{
+    { "Magic Missile", 95, MAGIC_MISSILE },
+    { "Find Traps, Doors & Stairs", 85, FIND_TRAPS_DOORS_STAIRS },
+    { "Phase Door", 95, PHASE_DOOR },
+    { "Electric Arc", 85, ELECTRIC_ARC },
+    { "Detect Monsters", 85, DETECT_MONSTERS },
+    { "Fire Ball", 75, FIRE_BALL },
+    { "Detect Evil", 85, DETECT_EVIL },
+    { "Minor Healing", 95, MINOR_HEALING },
+    { "Bless", 75, BLESS },
+    { "Sense Invisible", 65, SENSE_INVISIBLE },
+    { "Heroism", 75, HEROISM },
+    { "Detect Life", 85, DETECT_LIFE },
+    { "Remove Hunger", 85, REMOVE_HUNGER },
+    { "Cure Poison", 55, CURE_POISON },
+    { "Confuse Monster", 55, CONFUSE_MONSTER },
+    { "Slow Monster", 65, SLOW_MONSTER },
+    { "Nether Bolt", 85, NETHER_BOLT },
+    { "Read Minds", 85, READ_MINDS },
+    { "Shadow Shift", 5, SHADOW_SHIFT },
+    { "Frighten", 55, FRIGHTEN },
+    { "Identify Rune", 95, IDENTIFY_RUNE },
+    { "Treasure Detection", 5, TREASURE_DETECTION },
+    { "Frost Bolt", 75, FROST_BOLT },
+    { "Reveal Monsters", 85, REVEAL_MONSTERS },
+    { "Resist Poison", 60, RESIST_POISON },
+    { "Turn Stone to Mud", 80, TURN_STONE_TO_MUD },
+    { "Sense Surroundings", 80, SENSE_SURROUNDINGS },
+    { "Lightning Strike", 85, LIGHTNING_STRIKE }
 };
 static borg_spell_rating borg_spell_ratings_BLACKGUARD[] =
 {
@@ -436,6 +468,9 @@ bool borg_spell_okay(const enum borg_spells spell)
         break;
     case CLASS_RANGER:
         reserve_mana = 22;
+        break;
+    case CLASS_RED_MAGE:
+        reserve_mana = 12;
         break;
     case CLASS_ROGUE:
         reserve_mana = 20;
@@ -744,6 +779,22 @@ static void borg_init_spell(borg_magic *spells, int spell_num)
 {
     borg_magic               *spell  = &spells[spell_num];
     const struct class_spell *cspell = spell_by_index(player, spell_num);
+    if (spell_num < 0 || (size_t) spell_num >= borg_spell_ratings_count) {
+        borg_note(format("**STARTUP FAILURE** no Borg rating for spell %d "
+                         "for class <%s>",
+            spell_num, player->class->name));
+        borg_init_failure = true;
+        return;
+    }
+
+    if (!cspell || !cspell->name || !borg_spell_ratings[spell_num].name) {
+        borg_note(format("**STARTUP FAILURE** invalid Borg spell data for "
+                         "spell %d for class <%s>",
+            spell_num, player->class->name));
+        borg_init_failure = true;
+        return;
+    }
+
     if (strcmp(cspell->name, borg_spell_ratings[spell_num].name)) {
         borg_note(format("**STARTUP FAILURE** spell definition mismatch. "
                          "<%s> not the same as <%s>",
@@ -769,30 +820,44 @@ static void borg_init_spell(borg_magic *spells, int spell_num)
  */
 void borg_prepare_book_info(void)
 {
+    borg_spell_ratings_count = 0;
+
     switch (player->class->cidx) {
     case CLASS_MAGE:
         borg_spell_ratings = borg_spell_ratings_MAGE;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_MAGE);
         break;
     case CLASS_DRUID:
         borg_spell_ratings = borg_spell_ratings_DRUID;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_DRUID);
         break;
     case CLASS_PRIEST:
         borg_spell_ratings = borg_spell_ratings_PRIEST;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_PRIEST);
         break;
     case CLASS_NECROMANCER:
         borg_spell_ratings = borg_spell_ratings_NECROMANCER;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_NECROMANCER);
         break;
     case CLASS_PALADIN:
         borg_spell_ratings = borg_spell_ratings_PALADIN;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_PALADIN);
         break;
     case CLASS_ROGUE:
         borg_spell_ratings = borg_spell_ratings_ROGUE;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_ROGUE);
         break;
     case CLASS_RANGER:
         borg_spell_ratings = borg_spell_ratings_RANGER;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_RANGER);
+        break;
+    case CLASS_RED_MAGE:
+        borg_spell_ratings = borg_spell_ratings_RED_MAGE;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_RED_MAGE);
         break;
     case CLASS_BLACKGUARD:
         borg_spell_ratings = borg_spell_ratings_BLACKGUARD;
+        borg_spell_ratings_count = N_ELEMENTS(borg_spell_ratings_BLACKGUARD);
         break;
     default:
         borg_spell_ratings = NULL;

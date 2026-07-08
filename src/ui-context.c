@@ -32,6 +32,7 @@
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "player-calcs.h"
+#include "player-properties.h"
 #include "player-timed.h"
 #include "player-util.h"
 #include "store.h"
@@ -475,8 +476,10 @@ int context_menu_cave(struct chunk *c, int y, int x, int adjacent, int mx,
 			}
 		}
 
-		if ((square(c, grid)->mon > 0) && player_has(player, PF_STEAL)) {
-			ADD_LABEL("Steal", CMD_STEAL, MN_ROW_VALID);
+		if (square(c, grid)->mon > 0 &&
+				player_power_needs_direction(PLAYER_POWER_CLASS)) {
+			ADD_LABEL(player_power_name(PLAYER_POWER_CLASS),
+				CMD_CLASS_SKILL, MN_ROW_VALID);
 		}
 
 		if (square_isdisarmabletrap(c, grid)) {
@@ -568,7 +571,7 @@ int context_menu_cave(struct chunk *c, int y, int x, int adjacent, int mx,
 			break;
 
 		case CMD_ALTER:
-		case CMD_STEAL:
+		case CMD_CLASS_SKILL:
 		case CMD_DISARM:
 		case CMD_JUMP:
 		case CMD_CLOSE:
@@ -620,7 +623,7 @@ int context_menu_cave(struct chunk *c, int y, int x, int adjacent, int mx,
 			break;
 
 		case CMD_ALTER:
-		case CMD_STEAL:
+		case CMD_CLASS_SKILL:
 		case CMD_DISARM:
 		case CMD_JUMP:
 		case CMD_CLOSE:

@@ -4,7 +4,12 @@
 
 * Rename project to Hadesband.
 * Added Dungeon Organics dungeon store room (30% chance on every 5th floor).
-* Added four races: Barbarian, Half-Giant, Nibelung, Fae.
+* Added four races: Spartan, Cyclops, Nibelung, Fae.
+* Added class Skill (`s`) and racial Expertise (`x`) command categories.
+* Centralized active Skill and Expertise dispatch in player properties.
+* Added Cyclopean Rage, which costs HP, alarms monsters, and temporarily
+  grants berserk combat effects and shard resistance.
+* Adjusted Cyclops experience requirement to 145%.
 * Added one class: Red Mage. Spell generalist that can steal mana.
 * Added three mushrooms: Stability, Visions, Madness.
 * Added two amulets: Amulet of Brilliance, Resist Confusion.
@@ -16,6 +21,8 @@
 * Updated Scroll of Detect Invisible (grants short sense invisible period).
 * Updated Shadow Shift spell, further distance but more damage.
 * Removed Amulet of Inertia.
+* Updated Borg compatibility for Hadesband's races, Red Mage, map size,
+  renamed content, game modes, and optional activations.
 
 * Renamed the fork to Hadesband.
 * Added a root `make build` command for clean macOS app builds.

@@ -140,7 +140,7 @@ struct cmd_info cmd_action[] =
 {
 	{ "Disarm a trap or chest", { 'D' }, CMD_DISARM, NULL, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Rest for a while", { 'R' }, CMD_NULL, textui_cmd_rest, NULL, 0, NULL, NULL, NULL, 0 },
-	{ "Look around", { 'l', 'x' }, CMD_NULL, do_cmd_look, NULL, 0, NULL, NULL, NULL, 0 },
+	{ "Look around", { 'l', '(' }, CMD_NULL, do_cmd_look, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Target monster or location", { '*' }, CMD_NULL, textui_target, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Target closest monster", { '\'' }, CMD_NULL, textui_target_closest, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Dig a tunnel", { 'T', KTRL('T') }, CMD_TUNNEL, NULL, NULL, 0, NULL, NULL, NULL, 0 },
@@ -213,7 +213,8 @@ struct cmd_info cmd_hidden[] =
 	{ "Load a single pref line", { '"' }, CMD_NULL, do_cmd_pref, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Toggle windows", { KTRL('E') }, CMD_NULL, toggle_inven_equip, NULL, 0, NULL, NULL, NULL, 0 }, /* XXX */
 	{ "Alter a grid", { '+' }, CMD_ALTER, NULL, NULL, 0, NULL, NULL, NULL, 0 },
-	{ "Steal from a monster", { 's' }, CMD_STEAL, NULL, NULL, 0, NULL, NULL, NULL, 0 },
+	{ "Use class skill", { 's', 's' }, CMD_CLASS_SKILL, NULL, NULL, 0, NULL, NULL, NULL, 0 },
+	{ "Use racial expertise", { 'x', 'x' }, CMD_RACE_EXPERTISE, NULL, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Walk", { ';' }, CMD_WALK, NULL, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Start running", { '.', ',' }, CMD_RUN, NULL, NULL, 0, NULL, NULL, NULL, 0 },
 	{ "Start exploring", { 'p' }, CMD_EXPLORE, NULL, NULL, 0, NULL, NULL, NULL, 0 },

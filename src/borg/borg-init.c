@@ -618,27 +618,35 @@ void borg_init(void)
         || !streq(player_id2class(CLASS_PALADIN)->name, "Paladin")
         || !streq(player_id2class(CLASS_ROGUE)->name, "Rogue")
         || !streq(player_id2class(CLASS_RANGER)->name, "Ranger")
+        || !streq(player_id2class(CLASS_RED_MAGE)->name, "Red Mage")
         || !streq(player_id2class(CLASS_BLACKGUARD)->name, "Blackguard")) {
         borg_note("**STARTUP FAILURE** classes do not match");
         borg_init_failure = true;
     }
 
+    if (!streq(player_id2race(RACE_HUMAN)->name, "Human")
+        || !streq(player_id2race(RACE_HALF_ELF)->name, "Half-Elf")
+        || !streq(player_id2race(RACE_ELF)->name, "Elf")
+        || !streq(player_id2race(RACE_HOBBIT)->name, "Hobbit")
+        || !streq(player_id2race(RACE_GNOME)->name, "Gnome")
+        || !streq(player_id2race(RACE_DWARF)->name, "Dwarf")
+        || !streq(player_id2race(RACE_HALF_ORC)->name, "Half-Orc")
+        || !streq(player_id2race(RACE_HALF_TROLL)->name, "Half-Troll")
+        || !streq(player_id2race(RACE_SPARTAN)->name, "Spartan")
+        || !streq(player_id2race(RACE_CYCLOPS)->name, "Cyclops")
+        || !streq(player_id2race(RACE_DUNADAN)->name, "Dunadan")
+        || !streq(player_id2race(RACE_HIGH_ELF)->name, "High-Elf")
+        || !streq(player_id2race(RACE_NIBELUNG)->name, "Nibelung")
+        || !streq(player_id2race(RACE_FAE)->name, "Fae")
+        || !streq(player_id2race(RACE_KOBOLD)->name, "Kobold")) {
+        borg_note("**STARTUP FAILURE** races do not match");
+        borg_init_failure = true;
+    }
+
     /* Don't allow the user to do stupid things unless they ask to */
     if (!borg_cfg[BORG_ALLOW_STRANGE_OPTS]) {
-        if (OPT(player, birth_force_descend)) {
-            borg_note("**STARTUP FAILURE** must allow up stairs");
-            borg_note("** birth option failure **");
-            borg_init_failure = true;
-        }
-
         if (!OPT(player, birth_connect_stairs)) {
             borg_note("**STARTUP FAILURE** must connect stairs");
-            borg_note("** birth option failure **");
-            borg_init_failure = true;
-        }
-
-        if (OPT(player, birth_no_recall)) {
-            borg_note("**STARTUP FAILURE** must allow recall");
             borg_note("** birth option failure **");
             borg_init_failure = true;
         }

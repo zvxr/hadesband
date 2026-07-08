@@ -317,6 +317,15 @@ on-increase:You feel even more berserk!
 msgt:BERSERK
 flag-synonym:PROT_FEAR:0
 
+name:CYCLOPEAN_RAGE
+desc:Cyclopean rage
+grade:r:10000:Cyclops:Your blood burns with Cyclopean fury!
+on-end:Your Cyclopean fury subsides.
+on-increase:Your Cyclopean fury intensifies!
+msgt:BERSERK
+resist:SHARD
+flag-synonym:PROT_FEAR:0
+
 name:SHIELD
 desc:mystic shield
 grade:G:10000:Shield:A mystic shield forms around your body!

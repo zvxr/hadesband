@@ -203,6 +203,7 @@ static void create_random_name(int race, char *name, size_t name_len)
     case RACE_ELF:
     case RACE_HALF_ELF:
     case RACE_HIGH_ELF:
+    case RACE_FAE:
         my_strcpy(name,
             elf_syllable1[randint0(sizeof(elf_syllable1) / sizeof(char *))],
             name_len);
@@ -239,6 +240,7 @@ static void create_random_name(int race, char *name, size_t name_len)
             name_len);
         break;
     case RACE_HUMAN:
+    case RACE_SPARTAN:
     case RACE_DUNADAN:
         my_strcpy(name,
             human_syllable1[randint0(sizeof(human_syllable1) / sizeof(char *))],
@@ -252,6 +254,8 @@ static void create_random_name(int race, char *name, size_t name_len)
         break;
     case RACE_HALF_ORC:
     case RACE_HALF_TROLL:
+    case RACE_CYCLOPS:
+    case RACE_NIBELUNG:
     case RACE_KOBOLD:
         my_strcpy(name,
             orc_syllable1[randint0(sizeof(orc_syllable1) / sizeof(char *))],

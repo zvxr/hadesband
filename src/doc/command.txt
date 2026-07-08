@@ -229,10 +229,15 @@ Arguments:
 - 'item' (type item): the stack to stash
 - 'quantity' (type number): the number of items from the stack to stash
 
-"steal"
-Constant: CMD_STEAL
+"use class skill"
+Constant: CMD_CLASS_SKILL
 Arguments:
-- 'direction' (type direction): the direction to steal from
+- 'direction' (type direction): the direction for the class skill
+
+"use racial expertise"
+Constant: CMD_RACE_EXPERTISE
+Arguments:
+- none
 
 "take off"
 Constant: CMD_TAKEOFF

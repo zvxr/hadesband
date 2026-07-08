@@ -5,7 +5,8 @@
 - Uniques are all rebranded, where most simply change to appropriate names (Morgoth >> Hades), while changing pertinent/identifying traits (Hades is a god, not human).
 - When considering changes to races and monsters, we should try to preserve key elements, even if they are more fantasy setting as opposed to Greco-Roman mythology. e.g., Kobold, Goblin, Human will probably remain.
 - When considering changes to monsters and monster groups, we should try to respect letters. For example, we must include Gods, which can replace Ghost's "G". Ghosts could then move to "v" as part of vortexes or "s" creating a spirit monster type.
-- We want most aspects to be recognizable. We'd still have Fighter and Mages, but instead of Barbarian we'd have Gladiator. We would keep recognizable weapons, but may consider analogues. Spear would remain Spear, but Pike might be replaced with Dory or Javalin.
+- We want most aspects to remain recognizable. Spartan replaces Barbarian;
+  familiar weapons remain unless a clear Greco-Roman analogue improves flavor.
 - As a first pass, we would avoid changing the number of weapons, spells, objects, etc., and only very lightly change effects and purpose. We are most interested in preserving the "feel" of the game and providing enough identical or near-identical context, so that what few changes there are, they can be intuited.
 
 # Working Principles
@@ -45,15 +46,53 @@
 ## Races
 - Likely keep Human, Kobold, Goblin, Half-Orc style fantasy staples unless they clash strongly.
 - Discuss replacing Tolkien-coded races: Hobbit, Dunadan, High-Elf.
-- Barbarian likely becomes Gladiator or another martial culture.
+- Done: Barbarian renamed to Spartan; core mechanics retained.
+- Done: Half-Giant renamed to Cyclops.
+- Cyclops uses `x` for Cyclopean Rage: costs 5% maximum HP, alarms monsters,
+  grants berserk combat effects and temporary shard resistance.
+- Hadesband command convention: `s` invokes a class Skill and `x` invokes a
+  racial Expertise.
+- Active Skills and Expertise use the registry in `player-properties.c`;
+  ownership checks class/race `pflags` directly, not derived player flags.
 - Fae may remain if framed as nymph/sprite-adjacent.
 - Need preserve stats/XP unless a name implies changed mechanics.
+
+| Tactical race | Hadesband race | Reskin | Balance |
+| --- | --- | --- | --- |
+| Human | Human | Pending; likely retain | Not reviewed |
+| Half-Elf | Half-Elf | Pending | Not reviewed |
+| Elf | Elf | Pending | Not reviewed |
+| Hobbit | Hobbit | Pending | Not reviewed |
+| Gnome | Gnome | Pending | Not reviewed |
+| Dwarf | Dwarf | Pending; likely retain | Not reviewed |
+| Half-Orc | Half-Orc | Pending; likely retain | Not reviewed |
+| Half-Troll | Half-Troll | Pending | Not reviewed |
+| Barbarian | Spartan | Done | Reviewed; 130% XP retained |
+| Half-Giant | Cyclops | Done | Reviewed; Cyclopean Rage, 145% XP |
+| Dunadan | Dunadan | Pending | Not reviewed |
+| High-Elf | High-Elf | Pending | Not reviewed |
+| New | Nibelung | Done | Reviewed; 140% XP |
+| New | Fae | Done | Reviewed; 125% XP |
+| Kobold | Kobold | Pending; likely retain | Not reviewed |
 
 ## Classes
 - Keep direct archetypes: Warrior/Fighter, Mage, Rogue, Ranger likely remain readable.
 - Discuss Priest/Paladin/Necromancer/Druid naming in Greco-Roman terms.
 - Red Mage can remain a fantasy class or become a named hybrid archetype.
 - Avoid changing spell lists until class names/themes are settled.
+
+| Tactical class | Hadesband class | Reskin | Balance |
+| --- | --- | --- | --- |
+| Warrior | Warrior | Pending; likely retain | Not reviewed |
+| Mage | Mage | Pending; likely retain | Not reviewed |
+| Druid | Druid | Pending | Not reviewed |
+| Priest | Priest | Pending | Not reviewed |
+| Necromancer | Necromancer | Pending | Not reviewed |
+| Paladin | Paladin | Pending | Not reviewed |
+| Rogue | Rogue | Pending; likely retain | Skill command migrated; balance not reviewed |
+| Ranger | Ranger | Pending; likely retain | Not reviewed |
+| New | Red Mage | Pending reskin | Reviewed initial implementation |
+| Blackguard | Blackguard | Pending | Not reviewed |
 
 ## Monsters
 - Biggest surface area; handle by families and unique tiers.

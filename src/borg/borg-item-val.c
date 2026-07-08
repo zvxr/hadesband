@@ -269,7 +269,7 @@ void borg_init_item_val(void)
     sv_food_sip        = borg_lookup_sval_fail(tval, "Sip of Miruvor");
     sv_food_waybread = borg_lookup_sval_fail(tval, "Piece of Elvish Waybread");
     sv_food_honey_cake = borg_lookup_sval_fail(tval, "Honey-cake");
-    sv_food_slice      = borg_lookup_sval_fail(tval, "Slice of Meat");
+    sv_food_slice      = borg_lookup_sval_fail(tval, "Moon-cured Pork");
     sv_food_handful    = borg_lookup_sval_fail(tval, "Handful of Dried Fruits");
 
     tval               = tval_find_idx("mushroom");

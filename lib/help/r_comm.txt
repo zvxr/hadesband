@@ -33,12 +33,12 @@ when the autoexplore_commands option is on.
   p    - (see above)                   P    Browse a book
   q    Quaff a potion                  Q    Retire character & quit
   r    Read a scroll                   R    Rest for a period
-  s    Steal from a monster (rogues)   S    See abilities
+  s    Use class skill                 S    See abilities
   t    Fire an item                    T    Take off equipment
   u    (walk - north east)             U    (run - north east)
   v    Throw an item                   V    Display version info
   w    Wear/wield equipment            W    Locate player on map (Where)
-  x    Look around                     X    Use an item
+  x    Use racial expertise            X    Use an item
   y    (walk - north west)             Y    (run - north west)
   z    Aim a wand (Zap)                Z    Use a staff (Zap)
   !    -                               ^a   (special - debug command)
@@ -49,7 +49,7 @@ when the autoexplore_commands option is on.
   ^    (special - control key)         ^f   Repeat level feeling
   &    -                               ^g   Do autopickup
   *    Target monster or location      ^h   (alter - west)
-  (    -                               ^i   (special - tab)
+  (    Look around                     ^i   (special - tab)
   )    Dump screen to a file           ^j   (alter - south)
   {    Inscribe an object              ^k   (alter - north)
   }    Uninscribe an object            ^l   (alter - east)

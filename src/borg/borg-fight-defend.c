@@ -331,7 +331,7 @@ static int borg_defend_aux_speed(int p1)
     /* if the unique is a rather nasty one. */
     if (borg_fighting_unique
         && (streq(r_info[unique_on_level].name, "Bullroarer the Hobbit")
-            || streq(r_info[unique_on_level].name, "Mughash the Kobold Lord")
+            || streq(r_info[unique_on_level].name, "Mary Ann Skuttle")
             || streq(
                 r_info[unique_on_level].name, "Wormtongue, Agent of Saruman")
             || streq(r_info[unique_on_level].name, "Burbag the No-Skull")

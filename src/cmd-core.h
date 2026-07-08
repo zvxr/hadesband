@@ -97,7 +97,8 @@ typedef enum cmd_code {
 	CMD_NAVIGATE_DOWN,
 	CMD_HOLD,
 	CMD_ALTER,
-	CMD_STEAL,
+	CMD_CLASS_SKILL,
+	CMD_RACE_EXPERTISE,
 	CMD_SLEEP,
 
 	/* Store commands */

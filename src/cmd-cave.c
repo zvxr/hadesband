@@ -43,6 +43,7 @@
 #include "player-attack.h"
 #include "player-calcs.h"
 #include "player-path.h"
+#include "player-properties.h"
 #include "player-quest.h"
 #include "player-timed.h"
 #include "player-util.h"
@@ -1013,88 +1014,14 @@ void do_cmd_alter(struct command *cmd)
 	do_cmd_alter_aux(dir);
 }
 
-static void do_cmd_steal_aux(int dir)
+void do_cmd_class_skill(struct command *cmd)
 {
-	/* Get location */
-	struct loc grid = loc_sum(player->grid, ddgrid[dir]);
-	struct monster *mon = square_monster(cave, grid);
-
-	/* Take a turn */
-	player->upkeep->energy_use = z_info->move_energy;
-
-	/* Apply confusion */
-	if (player_confuse_dir(player, &dir, false)) {
-		/* Get location */
-		grid = loc_sum(player->grid, ddgrid[dir]);
-		mon = square_monster(cave, grid);
-	}
-
-	if (mon && player_has(player, PF_MANA_STEAL)) {
-		char m_name[80];
-		int mlevel, spell_power, chance, roll;
-		int missing_mana, mana;
-
-		monster_desc(m_name, sizeof(m_name), mon, MDESC_TARG);
-
-		if (!monster_has_non_innate_spells(mon)) {
-			msg("You sense no spell energy to steal from %s.", m_name);
-			monster_wake(mon, false, 100);
-			return;
-		}
-
-		if (player->csp >= player->msp) {
-			msg("Your mana is already full.");
-			return;
-		}
-
-		mlevel = MAX(1, mon->race->level);
-		spell_power = MAX(mlevel, mon->race->spell_power);
-
-		/* Device skill already includes class, race, level and INT. */
-		chance = 50 + player->lev + player->state.stat_ind[STAT_INT] +
-			(player->state.skills[SKILL_DEVICE] / 2);
-		chance -= mlevel + (spell_power / 3);
-		if (monster_is_unique(mon)) chance -= 20;
-		chance = MIN(95, MAX(5, chance));
-
-		roll = randint0(100);
-		if (roll < chance) {
-			missing_mana = player->msp - player->csp;
-			mana = 1 + (player->lev / 5) + (mlevel / 10) +
-				(spell_power / 20);
-			mana = MIN(20, MIN(missing_mana, MAX(1, mana)));
-
-			player_restore_mana(player, mana);
-			msg("You steal %d mana from %s.", mana, m_name);
-			monster_wake(mon, false, 100);
-			return;
-		}
-
-		msg("You fail to siphon mana from %s.", m_name);
-		monster_wake(mon, true, 100);
-		monster_desc(m_name, sizeof(m_name), mon, MDESC_STANDARD);
-		msg("%s cries out in anger!", m_name);
-		return;
-	}
-
-	/* Attack or steal from monsters */
-	if (mon && player_has(player, PF_STEAL)) {
-		steal_monster_item(mon, -1);
-	} else {
-		/* Oops */
-		msg("You spin around.");
-	}
+	use_player_power(PLAYER_POWER_CLASS, cmd);
 }
 
-void do_cmd_steal(struct command *cmd)
+void do_cmd_race_expertise(struct command *cmd)
 {
-	int dir;
-
-	/* Get arguments */
-	if (cmd_get_direction(cmd, "direction", &dir, false) != CMD_OK)
-		return;
-
-	do_cmd_steal_aux(dir);
+	use_player_power(PLAYER_POWER_RACE, cmd);
 }
 
 /**

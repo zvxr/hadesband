@@ -51,10 +51,14 @@
 #define RACE_DWARF      5
 #define RACE_HALF_ORC   6
 #define RACE_HALF_TROLL 7
-#define RACE_DUNADAN    8
-#define RACE_HIGH_ELF   9
-#define RACE_KOBOLD     10
-#define MAX_RACES       11
+#define RACE_SPARTAN    8
+#define RACE_CYCLOPS    9
+#define RACE_DUNADAN    10
+#define RACE_HIGH_ELF   11
+#define RACE_NIBELUNG   12
+#define RACE_FAE        13
+#define RACE_KOBOLD     14
+#define MAX_RACES       15
 
 enum borg_item_pos { BORG_INVEN = 1, BORG_EQUIP = 2, BORG_QUILL = 4 };
 
@@ -500,9 +504,10 @@ extern const char *prefix_pref[];
 #define CLASS_PALADIN     5
 #define CLASS_ROGUE       6
 #define CLASS_RANGER      7
-#define CLASS_BLACKGUARD  8
+#define CLASS_RED_MAGE    8
+#define CLASS_BLACKGUARD  9
 
-#define MAX_CLASSES 9 /* Max # of classes 0 = warrior, 5 = Paladin */
+#define MAX_CLASSES 10 /* Max # of classes 0 = warrior */
 
 /*
  * helper to determine if swaps are being used.

@@ -30,8 +30,8 @@
  */
 /* NOTE: this corresponds to z_info->dungeon_hgt/dungeon_wid */
 /* a test is done at the start of borg to make sure the values are right */
-#define DUNGEON_WID 198
-#define DUNGEON_HGT 66
+#define DUNGEON_WID 99
+#define DUNGEON_HGT 33
 
 #define AUTO_MAX_X DUNGEON_WID
 #define AUTO_MAX_Y DUNGEON_HGT

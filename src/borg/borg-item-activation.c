@@ -197,9 +197,11 @@ int borg_findact(const char *act_name)
         act = act->next;
     }
 
-    borg_note(format(
-        "**STARTUP FAILURE** activation lookup failure - %s ", act_name));
-    borg_init_failure = true;
+    /*
+     * The variant does not define every activation known to the Borg.
+     * Zero is not a valid activation index, so callers safely treat a
+     * missing optional activation as unavailable.
+     */
     return 0;
 }
 

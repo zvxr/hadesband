@@ -2426,6 +2426,7 @@ int borg_attack_aux_spell_bolt(
     case CLASS_PALADIN:
     case CLASS_ROGUE:
     case CLASS_RANGER:
+    case CLASS_RED_MAGE:
     case CLASS_BLACKGUARD:
         break;
     }

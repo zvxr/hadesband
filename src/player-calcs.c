@@ -2173,6 +2173,11 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		state->to_a -= 10;
 		adjust_skill_scale(&state->skills[SKILL_DEVICE], -1, 10, 0);
 	}
+	if (p->timed[TMD_CYCLOPEAN_RAGE]) {
+		state->skills[SKILL_TO_HIT_MELEE] += 75;
+		state->to_a -= 10;
+		adjust_skill_scale(&state->skills[SKILL_DEVICE], -1, 10, 0);
+	}
 	if (p->timed[TMD_RUNNING]) {
 		extra_moves += 1;
 	}
@@ -2733,4 +2738,3 @@ void handle_stuff(struct player *p)
 	if (p->upkeep->update) update_stuff(p);
 	if (p->upkeep->redraw) redraw_stuff(p);
 }
-

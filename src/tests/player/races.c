@@ -9,6 +9,8 @@
 #include "player.h"
 #include "player-birth.h"
 #include "player-calcs.h"
+#include "player-properties.h"
+#include "player-timed.h"
 
 struct expected_race {
 	const char *name;
@@ -25,16 +27,16 @@ struct expected_race {
 
 static const struct expected_race expected[] = {
 	{
-		"Barbarian",
+		"Spartan",
 		{ 3, -2, -1, 0, 3 },
 		12, 130, 0, 14, -10,
 		OF_PROT_FEAR, -1, -1
 	},
 	{
-		"Half-Giant",
+		"Cyclops",
 		{ 5, -3, -2, -2, 4 },
-		13, 150, 3, 24, -10,
-		-1, ELEM_SHARD, ELEM_GRAVITY
+		13, 145, 3, 24, -10,
+		-1, -1, ELEM_GRAVITY
 	},
 	{
 		"Nibelung",
@@ -124,15 +126,22 @@ static int test_records0(void *state)
 static int test_bonuses0(void *data)
 {
 	struct player_state calc_state;
+	int base_melee;
 
-	eq(player_make_simple("Barbarian", "Warrior", "Tester"), true);
+	eq(player_make_simple("Spartan", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
 	require(of_has(calc_state.flags, OF_PROT_FEAR));
 
-	eq(player_make_simple("Half-Giant", "Warrior", "Tester"), true);
+	eq(player_make_simple("Cyclops", "Warrior", "Tester"), true);
+	calc_bonuses(player, &calc_state, false, false);
+	eq(calc_state.el_info[ELEM_SHARD].res_level, 0);
+	eq(calc_state.el_info[ELEM_GRAVITY].res_level, 1);
+	require(player_has(player, PF_CYCLOPEAN_RAGE));
+	base_melee = calc_state.skills[SKILL_TO_HIT_MELEE];
+	player->timed[TMD_CYCLOPEAN_RAGE] = 10;
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.el_info[ELEM_SHARD].res_level, 1);
-	eq(calc_state.el_info[ELEM_GRAVITY].res_level, 1);
+	eq(calc_state.skills[SKILL_TO_HIT_MELEE], base_melee + 75);
 
 	eq(player_make_simple("Nibelung", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
@@ -147,9 +156,38 @@ static int test_bonuses0(void *data)
 	ok;
 }
 
+static int test_power_ownership0(void *data)
+{
+	struct player_class class_copy;
+	const struct player_class *original_class;
+
+	eq(player_make_simple("Cyclops", "Warrior", "Tester"), true);
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Cyclopean Rage"));
+	require(!player_power_needs_direction(PLAYER_POWER_RACE));
+	null(player_power_name(PLAYER_POWER_CLASS));
+
+	original_class = player->class;
+	memcpy(&class_copy, player->class, sizeof(class_copy));
+	pf_on(class_copy.pflags, PF_STEAL);
+	player->class = &class_copy;
+	require(streq(player_power_name(PLAYER_POWER_CLASS), "Steal"));
+	require(player_power_needs_direction(PLAYER_POWER_CLASS));
+	player->class = original_class;
+
+	eq(player_make_simple("Human", "Warrior", "Tester"), true);
+	null(player_power_name(PLAYER_POWER_RACE));
+
+	/* Derived flags must not grant a class Skill or racial Expertise. */
+	pf_on(player->state.pflags, PF_CYCLOPEAN_RAGE);
+	null(player_power_name(PLAYER_POWER_RACE));
+
+	ok;
+}
+
 const char *suite_name = "player/races";
 struct test tests[] = {
 	{ "records0", test_records0 },
 	{ "bonuses0", test_bonuses0 },
+	{ "power ownership0", test_power_ownership0 },
 	{ NULL, NULL }
 };

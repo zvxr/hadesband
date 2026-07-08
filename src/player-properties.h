@@ -20,6 +20,8 @@
 #ifndef PLAYER_PROPS_H
 #define PLAYER_PROPS_H
 
+struct command;
+
 enum {
     PLAYER_FLAG_NONE,
     PLAYER_FLAG_SPECIAL,
@@ -27,10 +29,18 @@ enum {
     PLAYER_FLAG_CLASS
 };
 
+enum player_power_source {
+	PLAYER_POWER_CLASS,
+	PLAYER_POWER_RACE
+};
+
 bool class_has_ability(const struct player_class *class,
 					   struct player_ability *ability);
 bool race_has_ability(const struct player_race *race,
 					  struct player_ability *ability);
+const char *player_power_name(enum player_power_source source);
+bool player_power_needs_direction(enum player_power_source source);
+void use_player_power(enum player_power_source source, struct command *cmd);
 void do_cmd_abilities(void);
 
 #endif /* !PLAYER_PROPS_H */
