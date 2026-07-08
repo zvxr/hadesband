@@ -170,7 +170,7 @@
 | `satyr` | `y` | Done for initial pass; yeeks replaced with satyrs and Pan |
 | `yeti` | `Y` | Done; keep existing names, glyph, and mechanics |
 | `zephyr hound` | `Z` | Done for current pass; lightning and underworld hound names added |
-| `zombie` | `z` | Pending |
+| `zombie` | `z` | Done for current pass; mummified cyclops added |
 | `player` | `@` | Out of scope |
 | `Morgoth` | `P` | Special; retained for Hades/final boss |
 

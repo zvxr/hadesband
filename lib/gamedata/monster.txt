@@ -9082,7 +9082,7 @@ desc: approaches.
 
 ### Dungeon level 38 ###
 
-name:mummified chieftain
+name:mummified cyclops
 base:zombie
 color:y
 speed:115
@@ -9113,9 +9113,9 @@ spells:S_UNDEAD
 friends:100:2d3:Mummified orc:servant
 friends:100:2d3:Mummified human:servant
 friends:100:2d3:Mummified troll:servant
-desc:A powerful ruler who refused the summons of Mandos on death, preferring
-desc: to re-occupy his now embalmed body.  He commands a legion of his former
-desc: subjects with unearthly shrieks.
+desc:A one-eyed giant who refused the summons of Hades on death, preferring to
+desc: re-occupy his now embalmed body.  He commands a legion of corpses with
+desc: unearthly shrieks.
 
 name:will o' the wisp
 base:elemental
@@ -14552,7 +14552,7 @@ spells:BLIND | WOUND | SCARE | TPORT | BRAIN_SMASH
 spells:BA_FIRE | BA_MANA | BA_NETH
 spells:BO_MANA
 spells:S_HI_DEMON | S_HI_UNDEAD | S_KIN | S_MONSTERS
-friends:50:1d3:mummified chieftain:servant
+friends:50:1d3:mummified cyclops:servant
 friends:50:1d3:Skeleton sphinx:servant
 friends:50:1d3:Stygian mare:servant
 friends:30:1d2:Dreadlord:servant
