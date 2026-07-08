@@ -4655,7 +4655,7 @@ friends:100:2d7:Same
 desc:A hound as tall as a man, this creature appears to be composed of angular
 desc: planes of ice.  Cold radiates from it and freezes your breath in the air.
 
-name:energy hound
+name:lightning hound
 base:zephyr hound
 color:b
 speed:110
@@ -4678,7 +4678,7 @@ innate-freq:10
 spells:BR_ELEC
 friends:100:2d7:Same
 desc:Saint Elmo's Fire forms a ghostly halo around this hound, and sparks sting
-desc: your fingers as energy builds up in the air around you.
+desc: your fingers as lightning builds up in the air around you.
 
 name:potion mimic
 base:mimic
@@ -8595,7 +8595,7 @@ flags:OPEN_DOOR | TAKE_ITEM
 flags:IM_ELEC
 innate-freq:8
 spells:BOULDER
-friends:60:1d7:Energy hound
+friends:60:1d7:lightning hound
 friends:80:1d3:Same
 desc:It is a twenty foot tall giant wreathed in clouds.
 
@@ -10886,7 +10886,7 @@ innate-freq:40
 spell-freq:8
 spells:BLINK | CONF | SCARE | TELE_TO
 spells:BA_ELEC | BO_ELEC | STORM | BOULDER
-friends:60:1d7:Energy hound
+friends:60:1d7:lightning hound
 friends:80:1d3:Same
 desc:It is a twenty-five foot tall giant wreathed in lightning.
 
@@ -12683,7 +12683,7 @@ desc: as he bats you about.
 
 ### Dungeon level 67 ###
 
-name:Thuringwethil, the Vampire Messenger
+name:Empusa, Daughter of Hecate
 base:vampire
 color:v
 speed:130
@@ -12707,9 +12707,9 @@ spells:BLIND | BRAIN_SMASH | WOUND | DRAIN_MANA
 spells:BA_NETH
 spells:S_HI_UNDEAD | S_KIN
 spells:HOLD | SCARE
-desc:Chief messenger between Sauron and Morgoth, she is surely the most deadly
-desc: of her vampire race.  At first she is charming to meet, but her wings and
-desc: eyes give away her true form.
+desc:A night-wandering daughter of Hecate, she is surely the most deadly of her
+desc: vampire race.  At first she is charming to meet, but her wings and eyes
+desc: give away her true form.
 
 name:beholder hive-mother
 base:eye
@@ -12827,8 +12827,7 @@ desc: victims.
 
 ### Dungeon level 69 ###
 
-name:hound of Tindalos
-plural:hounds of Tindalos
+name:underworld hound
 base:zephyr hound
 color:t
 speed:130
@@ -12852,7 +12851,7 @@ innate-freq:5
 spells:BR_NETH | BR_DISE | BR_TIME
 friends:100:2d7:Same
 desc:Bodies of death, receptacles of all foulness, they emerge like smoke from
-desc: the angles of time, ravenous and snarling and unsatisfied.
+desc: the underworld, ravenous and snarling and unsatisfied.
 
 name:Antiphates, King of the Laestrygonians
 base:giant
@@ -14662,7 +14661,7 @@ friends:100:1d1:Ares, God of War:servant
 friends:100:1d1:Hecate, Goddess of Witchcraft:servant
 shape:Wolf-Sauron
 shape:Serpent-Sauron
-shape:Vampire-Sauron
+shape:Vampire-Zeus
 desc:Zeus is god of the sky, thunder, and kingly power.  A ruler of dreadful
 desc: force, master of storm and omen, cruel in judgment and terrible in wrath;
 desc: his dominion is the high air and the lightning-struck world below.  He
@@ -14724,7 +14723,7 @@ spells:S_DRAGON | S_HI_DEMON | S_HI_UNDEAD
 desc:Sauron's form as a serpent: poisonous, biting, spitting, and threatening
 desc: to crush you in its mighty coils.
 
-name:Vampire-Sauron
+name:Vampire-Zeus
 base:vampire
 color:p
 speed:130
@@ -14748,7 +14747,7 @@ spells:BRAIN_SMASH | FORGET
 spells:BO_ICE | BO_PLAS | BE_NETH
 spells:BA_NETH | STORM | BA_DARK | BA_POIS | BA_ACID
 spells:S_DRAGON | S_HI_DEMON | S_HI_UNDEAD
-desc:Sauron's form as a vampire, great as a dark cloud across the moon.
+desc:Zeus's form as a vampire, great as a storm cloud across the moon.
 
 ### Dungeon level 100 ###
 
