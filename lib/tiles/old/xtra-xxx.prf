@@ -25,7 +25,7 @@ monster:<player>:0x8C:0x85
 monster:<player>:0x8C:0x86
 ?:[AND [EQU $CLASS Warrior] [EQU $RACE Half-Troll] ]
 monster:<player>:0x8C:0x87
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Demigod] ]
 monster:<player>:0x8C:0x88
 ?:[AND [EQU $CLASS Warrior] [EQU $RACE High-Elf] ]
 monster:<player>:0x8C:0x89
@@ -48,7 +48,7 @@ monster:<player>:0x8C:0x8F
 monster:<player>:0x8C:0x90
 ?:[AND [EQU $CLASS Mage] [EQU $RACE Half-Troll] ]
 monster:<player>:0x8C:0x91
-?:[AND [EQU $CLASS Mage] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Demigod] ]
 monster:<player>:0x8C:0x92
 ?:[AND [EQU $CLASS Mage] [EQU $RACE High-Elf] ]
 monster:<player>:0x8C:0x93
@@ -71,7 +71,7 @@ monster:<player>:0x8C:0x99
 monster:<player>:0x8C:0x9A
 ?:[AND [EQU $CLASS Priest] [EQU $RACE Half-Troll] ]
 monster:<player>:0x8C:0x9B
-?:[AND [EQU $CLASS Priest] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Priest] [EQU $RACE Demigod] ]
 monster:<player>:0x8C:0x9C
 ?:[AND [EQU $CLASS Priest] [EQU $RACE High-Elf] ]
 monster:<player>:0x8C:0x9D
@@ -94,7 +94,7 @@ monster:<player>:0x8D:0x83
 monster:<player>:0x8D:0x84
 ?:[AND [EQU $CLASS Rogue] [EQU $RACE Half-Troll] ]
 monster:<player>:0x8D:0x85
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Demigod] ]
 monster:<player>:0x8D:0x86
 ?:[AND [EQU $CLASS Rogue] [EQU $RACE High-Elf] ]
 monster:<player>:0x8D:0x87
@@ -117,7 +117,7 @@ monster:<player>:0x8D:0x8D
 monster:<player>:0x8D:0x8E
 ?:[AND [EQU $CLASS Ranger] [EQU $RACE Half-Troll] ]
 monster:<player>:0x8D:0x8F
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Demigod] ]
 monster:<player>:0x8D:0x90
 ?:[AND [EQU $CLASS Ranger] [EQU $RACE High-Elf] ]
 monster:<player>:0x8D:0x91
@@ -140,7 +140,7 @@ monster:<player>:0x8D:0x97
 monster:<player>:0x8D:0x98
 ?:[AND [EQU $CLASS Paladin] [EQU $RACE Half-Troll] ]
 monster:<player>:0x8D:0x99
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Demigod] ]
 monster:<player>:0x8D:0x9A
 ?:[AND [EQU $CLASS Paladin] [EQU $RACE High-Elf] ]
 monster:<player>:0x8D:0x9B

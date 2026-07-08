@@ -223,30 +223,30 @@ monster:<player>:0x83:0xBB #
 ?:[AND [EQU $CLASS Paladin] [EQU $RACE Half-Troll]  [EQU $GENDER Female] ]
 monster:<player>:0x84:0xDD #  
 
-##### Dunadan Classes #####
-?:[EQU $RACE Dunadan]
+##### Demigod Classes #####
+?:[EQU $RACE Demigod]
 monster:<player>:0x83:0xA7 #  
-?:[AND [EQU $RACE Dunadan] [EQU $GENDER Female] ]
+?:[AND [EQU $RACE Demigod] [EQU $GENDER Female] ]
 monster:<player>:0x84:0xDF #  
-?:[AND [EQU $CLASS Mage] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Demigod] ]
 monster:<player>:0x83:0xA1 #  
-?:[AND [EQU $CLASS Mage] [EQU $RACE Dunadan]  [EQU $GENDER Female] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Demigod]  [EQU $GENDER Female] ]
 monster:<player>:0x84:0xE0 #  
-?:[AND [EQU $CLASS Priest] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Priest] [EQU $RACE Demigod] ]
 monster:<player>:0x83:0xA4 #  
-?:[AND [EQU $CLASS Priest] [EQU $RACE Dunadan]  [EQU $GENDER Female] ]
+?:[AND [EQU $CLASS Priest] [EQU $RACE Demigod]  [EQU $GENDER Female] ]
 monster:<player>:0x84:0xE1 #  
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Demigod] ]
 monster:<player>:0x83:0xA6 #  
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Dunadan]  [EQU $GENDER Female] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Demigod]  [EQU $GENDER Female] ]
 monster:<player>:0x84:0xE2 #  
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Demigod] ]
 monster:<player>:0x83:0xA5 #  
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Dunadan]  [EQU $GENDER Female] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Demigod]  [EQU $GENDER Female] ]
 monster:<player>:0x84:0xE3 #  
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Demigod] ]
 monster:<player>:0x83:0xA3 #  
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Dunadan]  [EQU $GENDER Female] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Demigod]  [EQU $GENDER Female] ]
 monster:<player>:0x84:0xE4 #  
 
 ##### High-Elf Classes #####

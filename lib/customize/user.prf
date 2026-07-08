@@ -37,8 +37,8 @@
 %:Half-Troll.prf
 %:H-Troll.prf
 
-?:[EQU $RACE Dunadan]
-%:Dunadan.prf
+?:[EQU $RACE Demigod]
+%:Demigod.prf
 
 ?:[EQU $RACE High-Elf]
 %:High-Elf.prf

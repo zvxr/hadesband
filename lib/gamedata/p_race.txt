@@ -278,8 +278,8 @@ weight:255:65
 player-flags:CYCLOPEAN_RAGE
 values:RES_GRAVITY[1]
 
-name:Dunadan
-stats:1:2:2:2:3
+name:Demigod
+stats:2:2:2:2:2
 skill-disarm-phys:4
 skill-disarm-magic:4
 skill-device:5
@@ -291,10 +291,10 @@ skill-shoot:10
 skill-throw:10
 skill-dig:0
 hitdie:10
-exp:120
+exp:150
 infravision:0
 history:1
-age:50:20
+age:75:50
 height:80:6
 weight:190:20
 obj-flags:SUST_CON

@@ -45,7 +45,7 @@
 
 ## Races
 - Likely keep Human, Kobold, Goblin, Half-Orc style fantasy staples unless they clash strongly.
-- Discuss replacing Tolkien-coded races: Hobbit, Dunadan, High-Elf.
+- Discuss replacing Tolkien-coded races: Hobbit and High-Elf.
 - Done: Barbarian renamed to Spartan; core mechanics retained.
 - Done: Half-Giant renamed to Cyclops.
 - Cyclops uses `x` for Cyclopean Rage: costs 5% maximum HP, alarms monsters,
@@ -69,7 +69,7 @@
 | Half-Troll | Half-Troll | Pending | Not reviewed |
 | Barbarian | Spartan | Done | Reviewed; 130% XP retained |
 | Half-Giant | Cyclops | Done | Reviewed; Cyclopean Rage, 145% XP |
-| Dunadan | Dunadan | Pending | Not reviewed |
+| Dunadan | Demigod | Done | Reviewed; +2 all stats, 150% XP |
 | High-Elf | High-Elf | Pending | Not reviewed |
 | New | Nibelung | Done | Reviewed; 140% XP |
 | New | Fae | Done | Reviewed; 125% XP |

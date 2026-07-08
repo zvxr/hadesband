@@ -124,9 +124,13 @@ borg_cheat_death = FALSE
 #       5 Dwarf                         5 Paladin
 #       6 Half Orc                      6 Rogue
 #       7 Half Troll                    7 Ranger
-#       8 Dunadan                       8 Blackguard
-#       9 High Elf
-#	   10 Kobold
+#       8 Spartan                       8 Red Mage
+#       9 Cyclops                       9 Blackguard
+#      10 Demigod
+#      11 High Elf
+#      12 Nibelung
+#      13 Fae
+#      14 Kobold
 #
 # With regards to the stats. The minimal stats are rolled by the
 # borg. CON will be 16, the secondary stat (usually DEX) will be 17,

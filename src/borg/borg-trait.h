@@ -53,7 +53,7 @@
 #define RACE_HALF_TROLL 7
 #define RACE_SPARTAN    8
 #define RACE_CYCLOPS    9
-#define RACE_DUNADAN    10
+#define RACE_DEMIGOD    10
 #define RACE_HIGH_ELF   11
 #define RACE_NIBELUNG   12
 #define RACE_FAE        13

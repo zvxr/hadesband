@@ -39,6 +39,12 @@ static const struct expected_race expected[] = {
 		-1, -1, ELEM_GRAVITY
 	},
 	{
+		"Demigod",
+		{ 2, 2, 2, 2, 2 },
+		10, 150, 0, 15, 5,
+		OF_SUST_CON, -1, -1
+	},
+	{
 		"Nibelung",
 		{ 1, -1, 2, 0, 2 },
 		11, 140, 5, 9, 8,
@@ -142,6 +148,10 @@ static int test_bonuses0(void *data)
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.el_info[ELEM_SHARD].res_level, 1);
 	eq(calc_state.skills[SKILL_TO_HIT_MELEE], base_melee + 75);
+
+	eq(player_make_simple("Demigod", "Warrior", "Tester"), true);
+	calc_bonuses(player, &calc_state, false, false);
+	require(of_has(calc_state.flags, OF_SUST_CON));
 
 	eq(player_make_simple("Nibelung", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);

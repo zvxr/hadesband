@@ -60,7 +60,7 @@ buy:arrow
 store:STORE_ARMOR
 owner:5000:Kon-Dar the Ugly (Half-Orc)
 owner:10000:Darg-Low the Grim (Human)
-owner:25000:Decado the Handsome (Dunadan)
+owner:25000:Decado the Handsome (Demigod)
 owner:30000:Mauglin the Grumpy (Dwarf)
 slots:6:18
 turnover:9

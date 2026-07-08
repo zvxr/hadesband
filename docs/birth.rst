@@ -234,12 +234,13 @@ Half-Troll
   regeneration also requires them to eat more food than other races. They
   have fair infravision.
 
-.. _Dunadan:
+.. _Demigod:
 
-Dunadan
-  Dunedain are a race of hardy men from the West. This elder race surpasses
-  human abilities in every field, especially constitution. Their hardiness
-  ensures that their constitution cannot be reduced. They have no infravision.
+Demigod
+  Demigods descend from mortals and the gods of Olympus. Their divine heritage
+  grants equal aptitude in every field, and their vitality ensures that their
+  constitution cannot be reduced. Their broad gifts make advancement slower
+  than it is for ordinary mortals. They have no infravision.
 
 .. _High-Elf:
 
@@ -603,7 +604,7 @@ adjusted for constitution).
       Dwarf       +2   -3   +2   -2   +2      11        120%   50'
       Half-Orc    +2   -1    0    0   +1      10        120%   30'
       Half-Troll  +4   -4   -2   -4   +3      12        120%   30'
-      Dunadan     +1   +2   +2   +2   +3      10        120%   None
+      Demigod     +2   +2   +2   +2   +2      10        150%   None
       High-Elf    +1   +3   -1   +3   +1      10        145%   40'
       Kobold      -1   -1    0   +2   +2       8        120%   50'
 ================ ===  ===  ===  ===  ===  =========  ========  ======
@@ -655,7 +656,7 @@ Ability Tables
   Dwarf         2        2        9       9      -1       2      15       0
   Half-Orc     -3       -3       -3      -3      -1      -3      12      -5
   Half-Troll   -5       -5       -8      -8      -2      -9      20     -10
-  Dunadan       4        4        5       5       1       3      15      10
+  Demigod       4        4        5       5       1       3      15      10
   High-Elf      4        4       20      20       2      10      10      25
   Kobold       10       10        5       0       3      10      -5      10
 ============ =======  =======  ======  =====  =======  ======  ======  =====
@@ -737,4 +738,3 @@ score list.
 You can play a dynasty of characters. If you use a Roman numeral at the end
 of your character name (like "Fred I" or "Pimplesnarg XVI"), the game will
 automatically increment the numeral each time you die (or win!).
-
