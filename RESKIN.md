@@ -163,7 +163,7 @@
 | `tree` | `l` | Done for initial pass; Living Wood/dryads complete |
 | `troll` | `T` | Done for current pass; generics retained, uniques and underworld troll renamed |
 | `vampire` | `V` | Done for current pass; Empusa renamed and Sauron shape cleaned to Vampire-Zeus |
-| `vortex` | `v` | Pending |
+| `vortex` | `v` | Done for current pass; Aeolus, storm of Lethe, and Darude sandstorm renamed |
 | `worm` | `w` | Done for current pass; Stygian worm mass renamed, other worms retained |
 | `wraith` | `W` | Pending; candidate home for some spirits |
 | `xorn` | `X` | Pending; likely replacement candidate |

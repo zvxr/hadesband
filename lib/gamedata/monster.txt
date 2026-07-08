@@ -9040,7 +9040,7 @@ flags:NO_CONF
 desc:A massive troll, larger and stronger than many men together.  It needs no
 desc: weapons aside from its massive hands and feet.
 
-name:shardstorm
+name:Darude sandstorm
 base:vortex
 color:u
 speed:120
@@ -9054,8 +9054,8 @@ experience:800
 blow:ENGULF:HURT:6d6
 innate-freq:4
 spells:BR_SHAR
-desc:A howling blast of razor-sharp mountain fragments, kept intact by perilous
-desc: magics.
+desc:A howling blast of razor-sharp sand driven by an insistently familiar
+desc: rhythm.  The dungeon floor is about to become a dance floor.
 
 name:emperor wight
 base:wraith
@@ -12140,7 +12140,7 @@ innate-freq:5
 spell-freq:5
 spells:BOULDER
 spells:SHAPECHANGE
-shape:shardstorm
+shape:Darude sandstorm
 shape:great earth elemental
 shape:Gaea, Mother of Earth
 desc:A servant of Aulë the Smith, lord of all the substances of Arda and friend
@@ -13926,7 +13926,7 @@ desc:A wrathful dragon, of a breed that even legends do not mention,
 desc: rushing towards you like a thunderbolt.  Few ever face the wyrms
 desc: of the exotic airs; fewer live to tell the tale.
 
-name:Wiruin, the Maelstrom
+name:Aeolus, Keeper of the Winds
 base:vortex
 color:z
 speed:140
@@ -13947,9 +13947,8 @@ innate-freq:3
 spell-freq:5
 spells:BR_COLD | BR_SOUN
 spells:S_KIN
-desc:A violent icy whirlpool, brought from the frozen wastes of the Helcaraxë
-desc: by Morgoth as guard and entertainment.  Smaller vortices arise on its
-desc: edges, and you feel as if you will never be free of its deafening roar.
+desc:The divine keeper of the winds commands a violent, deafening maelstrom.
+desc: Smaller vortices arise at its edges, eager to obey their master's call.
 
 name:Ren the Unclean
 base:wraith
@@ -14568,8 +14567,8 @@ desc: ancient shadow of death wilts every living thing it passes.
 
 ### Dungeon level 95 ###
 
-name:storm of Unmagic
-plural:storms of Unmagic
+name:storm of Lethe
+plural:storms of Lethe
 base:vortex
 color:v
 speed:140
@@ -14589,8 +14588,8 @@ flags:IM_DISEN
 flags:ATTR_MULTI
 innate-freq:3
 spells:BR_CHAO | BR_DISE | BR_TIME
-desc:Howling through the disintegrating dungeon, this whirlpool of Unmagic rips
-desc: the enchantments from everything it touches.
+desc:This howling current carries the oblivion of Lethe, stripping memory,
+desc: strength, and enchantment from everything it touches.
 
 name:Keres, High Captain of Death
 base:major demon
