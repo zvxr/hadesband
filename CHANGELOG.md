@@ -7,6 +7,8 @@
 * Added four races: Spartan, Cyclops, Nibelung, Fae.
 * Added class Skill (`s`) and racial Expertise (`x`) command categories.
 * Centralized active Skill and Expertise dispatch in player properties.
+* Removed the old `x` weapon-swap keymap so racial Expertise activates
+  directly.
 * Added Cyclopean Rage, which costs HP, alarms monsters, and temporarily
   grants berserk combat effects and shard resistance.
 * Adjusted Cyclops experience requirement to 145%.

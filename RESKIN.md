@@ -54,6 +54,8 @@
   racial Expertise.
 - Active Skills and Expertise use the registry in `player-properties.c`;
   ownership checks class/race `pflags` directly, not derived player flags.
+- Removed Tactical's original-keyset `x -> w0` weapon-swap keymap so `x`
+  consistently invokes racial Expertise.
 - Fae may remain if framed as nymph/sprite-adjacent.
 - Need preserve stats/XP unless a name implies changed mechanics.
 

@@ -7,11 +7,10 @@
 #
 # See "docs/customize.rst" and "src/ui-prefs.c" for more information.
 #
-# Note that the "x" key is mapped in the original keyset to the key sequence
-# "w0", which will "swap weapons" as long as both weapons contain the
-# inscription "@0".  For example, inscribe your main weapon as "@1@0"
-# and your secondary weapon as "@2@0".  There isn't a similar keymap for the
-# rogue-like keyset (previously had "X" mapped to "w0" for both keysets).
+# The "x" key is reserved for racial expertise.  Tactical Angband previously
+# mapped "x" in the original keyset to "w0" for swapping weapons by
+# inscription; Hadesband leaves that unmapped so expertise commands work
+# directly.
 #
 
 # Movement
@@ -287,10 +286,6 @@ keymap-input:0:{MK}5
 keymap-input:0:{K}[Begin]
 keymap-input:0:{MK}[Begin]
 
-# Swap equipment
-keymap-act:w0
-keymap-input:0:x
-
 ##### Roguelike Keyset Mappings #####
 
 # Stay still (numerical)
@@ -362,4 +357,3 @@ keymap-input:1:^U
 %:sound.prf
 
 ##### System Specific Subfiles #####
-
