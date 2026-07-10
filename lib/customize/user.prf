@@ -74,10 +74,9 @@
 %:Necromancer.prf
 %:Necro.prf
 
-?:[EQU $CLASS Blackguard]
+?:[EQU $CLASS Stygian Warrior]
 %:Blackguard.prf
 %:BG.prf
 
 
 ?:1
-

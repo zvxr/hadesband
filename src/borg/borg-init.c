@@ -619,7 +619,7 @@ void borg_init(void)
         || !streq(player_id2class(CLASS_ROGUE)->name, "Rogue")
         || !streq(player_id2class(CLASS_RANGER)->name, "Ranger")
         || !streq(player_id2class(CLASS_RED_MAGE)->name, "Red Mage")
-        || !streq(player_id2class(CLASS_BLACKGUARD)->name, "Blackguard")) {
+        || !streq(player_id2class(CLASS_BLACKGUARD)->name, "Stygian Warrior")) {
         borg_note("**STARTUP FAILURE** classes do not match");
         borg_init_failure = true;
     }

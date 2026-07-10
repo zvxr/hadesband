@@ -1914,7 +1914,7 @@ desc: grid in the line of sight, the player will be the target.
 
 
 ############### BLACKGUARD ###############
-name:Blackguard
+name:Stygian Warrior
 stats:2:0:-3:0:2
 skill-disarm-phys:20:15
 skill-disarm-magic:20:10
@@ -1940,16 +1940,16 @@ equip:scroll:Word of Recall:1:1:birth_no_recall
 equip:potion:Cure Light Wounds:1:1:none
 obj-flags:IMPAIR_HP
 player-flags:CHOOSE_SPELLS | SHIELD_BASH | COMBAT_REGEN
-title:Rat
-title:Bully
-title:Thug
-title:Ruffian
-title:Brigand
-title:Raider
-title:Tormentor
-title:Marauder
-title:Destroyer
-title:Tyrant
+title:Initiate
+title:Graveblade
+title:Blooded
+title:Shade-Binder
+title:Stygian Raider
+title:Pit Champion
+title:Dread Reaver
+title:Deathsworn
+title:Underworld Tyrant
+title:Scourge of Styx
 
 magic:1:600:3
 

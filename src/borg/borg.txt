@@ -125,7 +125,7 @@ borg_cheat_death = FALSE
 #       6 Half Orc                      6 Rogue
 #       7 Half Troll                    7 Ranger
 #       8 Spartan                       8 Red Mage
-#       9 Cyclops                       9 Blackguard
+#       9 Cyclops                       9 Stygian Warrior
 #      10 Demigod
 #      11 High Elf
 #      12 Nibelung

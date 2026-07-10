@@ -597,7 +597,7 @@ Upon Death and Dying
 ====================
  
 If your character falls below 0 hit points, they have died and cannot be
-restored (with the exception that blackguards can go below zero hit points
+restored (with the exception that Stygian Warriors can go below zero hit points
 in some circumstances and live to tell tale). A tombstone showing information
 about your character will be displayed. You are also permitted to get a
 record of your character, and all your equipment (identified) either on the

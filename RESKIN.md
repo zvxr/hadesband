@@ -94,7 +94,7 @@
 | Rogue | Rogue | Pending; likely retain | Skill command migrated; balance not reviewed |
 | Ranger | Ranger | Pending; likely retain | Not reviewed |
 | New | Red Mage | Pending reskin | Reviewed initial implementation |
-| Blackguard | Blackguard | Pending | Not reviewed |
+| Blackguard | Stygian Warrior | Done | Display rename and class titles updated; mechanics retained |
 
 ## Monsters
 - Biggest surface area; handle by families and unique tiers.

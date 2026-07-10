@@ -267,7 +267,7 @@ Gain new spells (``G``)
   which you may learn, then you may choose to study that book. Most classes
   may actually choose which spell to study, but if you are a priest or paladin,
   your gods will choose a prayer for you. There are five books of each
-  realm, but hybrid classes - paladins, rogues, rangers and blackguards - can
+  realm, but hybrid classes - paladins, rogues, rangers and Stygian Warriors - can
   only cast from two or three of these.  Higher level books are normally found
   only in the dungeon. This command takes some energy.
 
@@ -784,4 +784,3 @@ or 'ESCAPE' which are always ignored as commands in case you type the
 command just after the count expires.	
 
 .. |``)``| replace:: ``)``
-

@@ -15,6 +15,7 @@
 * Renamed Dunadan to Demigod and rebalanced it as a +2 all-stat generalist
   with a 150% experience requirement.
 * Added one class: Red Mage. Spell generalist that can steal mana.
+* Renamed Blackguard to Stygian Warrior and updated class titles.
 * Added three mushrooms: Stability, Visions, Madness.
 * Added two amulets: Amulet of Brilliance, Resist Confusion.
 * Increased starting gold by 400.
