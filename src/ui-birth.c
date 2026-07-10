@@ -168,8 +168,8 @@ static struct menu race_menu, class_menu, roller_menu, game_mode_menu;
 #define RACE_COL         2
 #define RACE_AUX_COL    19
 #define CLASS_COL       19
-#define CLASS_AUX_COL   36
-#define GAME_MODE_COL   36
+#define CLASS_AUX_COL   41
+#define GAME_MODE_COL   41
 #define GAME_MODE_AUX_COL   58
 #define ROLLER_COL      58
 #define HIST_INSTRUCT_ROW 18
@@ -180,8 +180,8 @@ static struct menu race_menu, class_menu, roller_menu, game_mode_menu;
  * upper left column and row, width, and lower column
  */
 static region race_region = {RACE_COL, TABLE_ROW, 17, MENU_ROWS};
-static region class_region = {CLASS_COL, TABLE_ROW, 17, MENU_ROWS};
-static region game_mode_region = {GAME_MODE_COL, TABLE_ROW, 22, MENU_ROWS};
+static region class_region = {CLASS_COL, TABLE_ROW, 22, MENU_ROWS};
+static region game_mode_region = {GAME_MODE_COL, TABLE_ROW, 17, MENU_ROWS};
 static region roller_region = {ROLLER_COL, TABLE_ROW, 50, MENU_ROWS};
 
 /**
@@ -1891,4 +1891,3 @@ void ui_init_birthstate_handlers(void)
 	event_add_handler(EVENT_ENTER_BIRTH, ui_enter_birthscreen, NULL);
 	event_add_handler(EVENT_LEAVE_BIRTH, ui_leave_birthscreen, NULL);
 }
-
