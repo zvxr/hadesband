@@ -1623,7 +1623,7 @@ desc: slay, is broken, or is cursed.
 
 
 ############### RED MAGE ###############
-name:Red Mage
+name:Mystagogue
 stats:2:2:-1:1:0
 skill-disarm-phys:20:7
 skill-disarm-magic:34:11
@@ -1648,16 +1648,16 @@ equip:magic book:[First Spells]:1:1:none
 equip:scroll:Word of Recall:1:1:birth_no_recall
 #equip:scroll:Deep Descent:1:1:none
 player-flags:CHOOSE_SPELLS | MANA_STEAL
-title:Dabbler
-title:Cantripier
-title:Spellblade
-title:Thaumaturge
-title:Battle Mage
-title:Red Adept
-title:Warlock
-title:Magus
-title:Red Wizard
-title:Crimson Sage
+title:Initiate
+title:Torchbearer
+title:Rite-Speaker
+title:Mystery Blade
+title:Crossroads Adept
+title:Soul-Siphon
+title:Theurgist
+title:Hierophant
+title:Veiled Magus
+title:High Mystagogue
 
 magic:3:450:6
 

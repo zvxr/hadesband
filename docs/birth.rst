@@ -122,8 +122,9 @@ suddenly be 42 hit points better off.)
 Each character has spell points, or mana, which limits how many spells (or
 prayers) a character can cast (or pray). The maximum number of spell points
 is derived from your class, level, and the class's spellcasting stat
-(intelligence for mages, rogues, necromancers, and Stygian Warriors, and wisdom
-for priests, paladins, druids, and rangers), and you can never have more spell
+(intelligence for mages, rogues, necromancers, and Stygian Warriors; wisdom
+for priests, paladins, druids, and rangers; and either for Mystagogues depending
+on the realm), and you can never have more spell
 points than the maximum.  Spell points may be regained by resting, or by
 magical means. Warriors never have any spell points. If a character gains
 enough wisdom or intelligence to get more spell points, the result is
@@ -377,6 +378,15 @@ Ranger
   good searching, a good saving throw, and is good with magical devices.
   Their primary stats are strength, wisdom and dexterity.
 
+.. _Mystagogue:
+
+Mystagogue
+  A Mystagogue is a warrior-mage initiated into many secret rites. Mystagogues
+  blend blade work with practical magic from several realms, but must balance
+  intelligence and wisdom to use their whole repertoire well. They lack the
+  raw magical mastery of a true mage and the staying power of a dedicated
+  warrior, but can adapt to many threats and siphon mana from enemies.
+
 .. _Stygian Warrior:
 
 Stygian Warrior
@@ -417,7 +427,8 @@ Strength
 
 Intelligence
   Intelligence affects the spellcasting abilities of spellcasters from the
-  arcane and shadow realms: mages, rogues, necromancers and Stygian Warriors.
+  arcane and shadow realms: mages, rogues, necromancers, Mystagogues, and
+  Stygian Warriors.
   Intelligence will affect the number of spells you may learn each level as
   well as the number of spell points you receive. Intelligence is the most
   important stat for mages and necromancers. A high intelligence may also
@@ -431,8 +442,8 @@ Intelligence
 
 Wisdom
   The primary function of wisdom is to determine the ability of a priest or
-  paladin to use prayers, and druids and rangers to use verses, just like
-  intelligence affects spellcasting. Again, high wisdom will increase the
+  paladin to use prayers, and druids, rangers, and Mystagogues to use verses,
+  just like intelligence affects spellcasting. Again, high wisdom will increase the
   number of mana points you have and increase the number of prayers or verses
   you can learn each level, while improving your chance of success. A good
   wisdom increases your saving throw, thereby improving your chances of
@@ -629,6 +640,7 @@ adjusted for constitution).
       Paladin      +1   -3   +1   -1   +2       6
       Rogue        +0   +1   -3   +3   -1       4
       Ranger       +0   +0   +2   +1   -1       5
+      Mystagogue   +2   +2   -1   +1   +0       4
  Stygian Warrior   +2   +0   -3   +0   +2       8
 ================= ===  ===  ===  ===  ===  ==========
  
@@ -683,6 +695,7 @@ Ability Tables
  Paladin           20(+15) 20(+10) 24(+10) 25(+11)  0(+0)  10(+12)  65(+40) 50(+30)
  Rogue             45(+20) 45(+20) 32(+10) 28(+10)  3(+1)  20(+16)  35(+45) 66(+30)
  Ranger            40(+15) 30(+10) 28(+10) 32(+10)  3(+0)  15(+15)  60(+40) 72(+45)
+ Mystagogue        20(+7)  34(+11) 34(+11) 34(+11)  1(+0)  10(+10)  56(+30) 30(+20)
  Stygian Warrior   20(+15) 20(+10) 24(+10) 18(+10) -1(-1)   8(+10)  65(+40) 35(+15)
 ================   ======= ======= ======= ======= ======= =======  ======= =======
 
@@ -693,7 +706,7 @@ the total skill value of any character's skills, add the race value to the
 class value, and then the bonus once for every ten levels that the
 character has. Throwing skill is not shown as its adjustments for race
 and class are the same as for the shooting skill except for rogues (72(+45)),
-rangers (66(+30)), and Stygian Warriors (40(+30)).
+rangers (66(+30)), Mystagogues (35(+20)), and Stygian Warriors (40(+30)).
 
 Please note, however, that these numbers are only good for comparing
 characters to each other in the absence of other bonuses from high stats

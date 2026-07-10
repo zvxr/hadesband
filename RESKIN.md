@@ -80,7 +80,7 @@
 ## Classes
 - Keep direct archetypes: Warrior/Fighter, Mage, Rogue, Ranger likely remain readable.
 - Discuss Priest/Paladin/Necromancer/Druid naming in Greco-Roman terms.
-- Red Mage can remain a fantasy class or become a named hybrid archetype.
+- Mystagogue replaced Red Mage as a mystery-cult warrior mage; mechanics retained.
 - Avoid changing spell lists until class names/themes are settled.
 
 | Tactical class | Hadesband class | Reskin | Balance |
@@ -93,7 +93,7 @@
 | Paladin | Paladin | Pending | Not reviewed |
 | Rogue | Rogue | Pending; likely retain | Skill command migrated; balance not reviewed |
 | Ranger | Ranger | Pending; likely retain | Not reviewed |
-| New | Red Mage | Pending reskin | Reviewed initial implementation |
+| New | Mystagogue | Done | Reviewed initial implementation; display rename and class titles updated |
 | Blackguard | Stygian Warrior | Done | Display rename and class titles updated; mechanics retained |
 
 ## Monsters

@@ -14,7 +14,7 @@
 * Adjusted Cyclops experience requirement to 145%.
 * Renamed Dunadan to Demigod and rebalanced it as a +2 all-stat generalist
   with a 150% experience requirement.
-* Added one class: Red Mage. Spell generalist that can steal mana.
+* Added one class: Mystagogue. Spell generalist that can steal mana.
 * Renamed Blackguard to Stygian Warrior and updated class titles.
 * Added three mushrooms: Stability, Visions, Madness.
 * Added two amulets: Amulet of Brilliance, Resist Confusion.
@@ -26,7 +26,7 @@
 * Updated Scroll of Detect Invisible (grants short sense invisible period).
 * Updated Shadow Shift spell, further distance but more damage.
 * Removed Amulet of Inertia.
-* Updated Borg compatibility for Hadesband's races, Red Mage, map size,
+* Updated Borg compatibility for Hadesband's races, Mystagogue, map size,
   renamed content, game modes, and optional activations.
 
 * Renamed the fork to Hadesband.
