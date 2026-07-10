@@ -23,6 +23,7 @@
 #include "grafmode.h"
 #include "init.h"
 #include "obj-util.h"
+#include "player-calcs.h"
 #include "savefile.h"
 #if defined(MACH_O_CARBON) && defined(SOUND) && !defined(SOUND_SDL) && !defined(SOUND_SDL2)
 #include "sound.h"
@@ -1827,6 +1828,30 @@ static uint32_t AngbandMaskForValidSubwindowFlags(void)
     return mask;
 }
 
+static void sync_context_to_cocoa_window(AngbandContext *context)
+{
+    NSWindow *window;
+    NSRect contentRect;
+
+    if (!context) return;
+
+    window = context.primaryWindow;
+    if (!window) return;
+
+    contentRect = [window contentRectForFrameRect:[window frame]];
+    [context resizeTerminalWithContentRect:contentRect saveToDefaults:NO];
+}
+
+static void redraw_cocoa_subwindows_after_resize(void)
+{
+    if (!player || !character_generated) return;
+
+    player->upkeep->redraw |=
+        (PR_INVEN | PR_EQUIP | PR_MONSTER | PR_OBJECT |
+         PR_MONLIST | PR_ITEMLIST | PR_MESSAGE);
+    redraw_stuff(player);
+}
+
 /**
  * Check for changes in the subwindow flags and update window visibility.
  * This seems to be called for every user event, so we don't
@@ -1874,6 +1899,7 @@ static void AngbandUpdateWindowVisibility(void)
             if( [angbandContext windowVisibleUsingDefaults] )
             {
                 [angbandContext.primaryWindow orderFront: nil];
+                sync_context_to_cocoa_window(angbandContext);
                 angbandContext.windowVisibilityChecked = YES;
                 anyChanged = YES;
             }
@@ -1898,6 +1924,7 @@ static void AngbandUpdateWindowVisibility(void)
             else if( !angbandContext.hasSubwindowFlags && termHasSubwindowFlags )
             {
                 [angbandContext.primaryWindow orderFront: nil];
+                sync_context_to_cocoa_window(angbandContext);
                 angbandContext.hasSubwindowFlags = YES;
                 [angbandContext saveWindowVisibleToDefaults: YES];
                 anyChanged = YES;
@@ -1909,6 +1936,7 @@ static void AngbandUpdateWindowVisibility(void)
     if (anyChanged) {
         AngbandContext *mainWindow =
 	    (__bridge AngbandContext*) (angband_term[0]->data);
+        redraw_cocoa_subwindows_after_resize();
         [mainWindow.primaryWindow makeKeyAndOrderFront: nil];
     }
 }
@@ -5615,19 +5643,13 @@ static void sync_term_sizes_to_cocoa_windows(void)
 
     for (int i = 0; i < ANGBAND_TERM_MAX; i++) {
         AngbandContext *context;
-        NSWindow *window;
-        NSRect contentRect;
 
         if (!angband_term[i]) continue;
 
         context = (__bridge AngbandContext*) (angband_term[i]->data);
         if (!context) continue;
 
-        window = context.primaryWindow;
-        if (!window) continue;
-
-        contentRect = [window contentRectForFrameRect:[window frame]];
-        [context resizeTerminalWithContentRect:contentRect saveToDefaults:NO];
+        sync_context_to_cocoa_window(context);
     }
 
     Term_activate(old);
