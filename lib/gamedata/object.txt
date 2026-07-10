@@ -714,6 +714,24 @@ effect:NOURISH:INC_BY
 dice:5
 desc:It trades a random stat for strength and experience.
 
+name:Revelation
+type:mushroom
+graphics:,:d
+level:0
+weight:1
+cost:300
+alloc:10:10 to 80
+pile:70:2d4
+power:8
+msg:Strange patterns shimmer before your eyes.
+effect:LEARN_FLAVOR
+dice:1d4
+effect:TIMED_INC:IMAGE
+dice:20d10
+effect:NOURISH:INC_BY
+dice:5
+desc:It reveals hidden meanings at the cost of unsettling visions.
+
 
 ##### Weapons #####
 
@@ -2702,6 +2720,18 @@ pile:70:2d4
 power:6
 effect:IDENTIFY
 
+name:Revelation
+type:scroll
+graphics:?:w
+level:20
+weight:5
+cost:1000
+alloc:20:20 to 90
+pile:20:1
+power:16
+effect:LEARN_RUNE
+dice:5
+
 ### Enchantments ###
 
 name:Enchant Weapon To-Hit
@@ -3333,6 +3363,18 @@ alloc:64:15 to 100
 pile:25:2
 power:20
 effect:RESTORE_MANA
+
+name:Revelation
+type:potion
+graphics:!:d
+level:10
+weight:4
+cost:600
+alloc:30:10 to 80
+pile:25:1
+power:12
+effect:LEARN_FLAVOR
+dice:5
 
 
 ### Stat restore ###

@@ -22,6 +22,8 @@
 * Added boosted birth game modes that start with an Experience potion,
   Deep Descent scrolls, and extra gold for testing.
 * Increased Identify accessibility (cheaper, always in town, larger piles).
+* Disabled automatic birth knowledge of all runes and flavors by default.
+* Added Potion, Scroll, and Mushroom of Revelation for learning random flavors and runes.
 * Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
 * Changed Slice of Meat to Moon-Cured Pork (temporary infravision buff).
 * Updated lower level mushroom piles (double amount).

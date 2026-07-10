@@ -1975,6 +1975,38 @@ bool effect_handler_IDENTIFY(effect_handler_context_t *context)
 	return true;
 }
 
+bool effect_handler_LEARN_FLAVOR(effect_handler_context_t *context)
+{
+	int amount = effect_calculate_value(context, false);
+	int learned;
+
+	if (amount <= 0) amount = 1;
+
+	context->ident = true;
+	learned = player_learn_random_flavors(player, amount);
+	if (!learned) {
+		msg("You already know every object flavor.");
+	}
+
+	return true;
+}
+
+bool effect_handler_LEARN_RUNE(effect_handler_context_t *context)
+{
+	int amount = effect_calculate_value(context, false);
+	int learned;
+
+	if (amount <= 0) amount = 1;
+
+	context->ident = true;
+	learned = player_learn_random_runes(player, amount);
+	if (!learned) {
+		msg("You already know every rune.");
+	}
+
+	return true;
+}
+
 /**
  * Try creating stairs. Returns success or failure
  */

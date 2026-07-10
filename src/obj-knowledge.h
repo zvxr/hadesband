@@ -84,6 +84,8 @@ void player_learn_slay(struct player *p, int index);
 void player_learn_curse(struct player *p, struct curse *curse);
 void player_learn_innate(struct player *p);
 void player_learn_all_runes(struct player *p);
+int player_learn_random_flavors(struct player *p, int amount);
+int player_learn_random_runes(struct player *p, int amount);
 
 void equip_learn_on_defend(struct player *p);
 void equip_learn_on_ranged_attack(struct player *p);

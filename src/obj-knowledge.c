@@ -1493,6 +1493,43 @@ void player_learn_all_runes(struct player *p)
 }
 
 /**
+ * Learn random unknown runes.
+ *
+ * \param p is the player
+ * \param amount is the maximum number of runes to learn
+ * \return the number of runes learned
+ */
+int player_learn_random_runes(struct player *p, int amount)
+{
+	size_t i;
+	int learned = 0;
+	int count = 0;
+	size_t *candidates;
+
+	if (amount <= 0) return 0;
+
+	candidates = mem_zalloc(rune_max * sizeof(*candidates));
+	for (i = 0; i < rune_max; i++) {
+		if (!player_knows_rune(p, i)) {
+			candidates[count++] = i;
+		}
+	}
+
+	while (amount > 0 && count > 0) {
+		int pick = randint0(count);
+		size_t rune = candidates[pick];
+
+		player_learn_rune(p, rune, true);
+		candidates[pick] = candidates[--count];
+		amount--;
+		learned++;
+	}
+
+	mem_free(candidates);
+	return learned;
+}
+
+/**
  * ------------------------------------------------------------------------
  * Functions for learning from the behaviour of indvidual objects or shapes
  * ------------------------------------------------------------------------ */
@@ -2270,25 +2307,18 @@ bool object_flavor_was_tried(const struct object *obj)
 	return obj->kind->tried;
 }
 
-/**
- * Mark an object's flavour as as one the player is aware of.
- *
- * \param p is the player becoming aware of the flavor
- * \param obj is the object whose flavour should be marked as aware
- */
-void object_flavor_aware(struct player *p, struct object *obj)
+static void object_kind_flavor_aware(struct player *p, struct object_kind *kind)
 {
 	int y, x, i;
 	struct object *obj1;
 
-	assert(obj->known);
-	if (obj->kind->aware) return;
-	obj->kind->aware = true;
-	obj->known->effect = obj->effect;
+	assert(kind);
+	if (kind->aware) return;
+	kind->aware = true;
 
 	/* Fix ignore/autoinscribe */
-	if (kind_is_ignored_unaware(obj->kind))
-		kind_ignore_when_aware(obj->kind);
+	if (kind_is_ignored_unaware(kind))
+		kind_ignore_when_aware(kind);
 	p->upkeep->notice |= PN_IGNORE;
 
 	/* Update player objects */
@@ -2315,7 +2345,7 @@ void object_flavor_aware(struct player *p, struct object *obj)
 
 			for (floor_obj = square_object(cave, grid); floor_obj;
 				 floor_obj = floor_obj->next)
-				if (floor_obj->kind == obj->kind) {
+				if (floor_obj->kind == kind) {
 					light = true;
 					break;
 				}
@@ -2323,6 +2353,69 @@ void object_flavor_aware(struct player *p, struct object *obj)
 			if (light) square_light_spot(cave, grid);
 		}
 	}
+}
+
+static void object_kind_flavor_desc(char *buf, size_t max,
+		const struct object_kind *kind)
+{
+	char base[80];
+	char name[80];
+
+	object_base_name(base, sizeof(base), kind->tval, false);
+	object_kind_name(name, sizeof(name), kind, true);
+	strnfmt(buf, max, "%s of %s", base, name);
+}
+
+/**
+ * Mark an object's flavour as as one the player is aware of.
+ *
+ * \param p is the player becoming aware of the flavor
+ * \param obj is the object whose flavour should be marked as aware
+ */
+void object_flavor_aware(struct player *p, struct object *obj)
+{
+	assert(obj->known);
+	if (obj->kind->aware) return;
+	object_kind_flavor_aware(p, obj->kind);
+	obj->known->effect = obj->effect;
+}
+
+int player_learn_random_flavors(struct player *p, int amount)
+{
+	int i;
+	int learned = 0;
+	int count = 0;
+	struct object_kind **candidates;
+
+	if (amount <= 0) return 0;
+
+	candidates = mem_zalloc(z_info->ordinary_kind_max * sizeof(*candidates));
+	for (i = 0; i < z_info->ordinary_kind_max; i++) {
+		struct object_kind *kind = &k_info[i];
+
+		if (!kind->name) continue;
+		if (!kind->flavor) continue;
+		if (kind->aware) continue;
+
+		candidates[count++] = kind;
+	}
+
+	while (amount > 0 && count > 0) {
+		char o_name[80];
+		int pick = randint0(count);
+		struct object_kind *kind = candidates[pick];
+
+		object_kind_flavor_desc(o_name, sizeof(o_name), kind);
+		object_kind_flavor_aware(p, kind);
+		msgt(MSG_GENERIC, "You learn the flavor of %s.", o_name);
+
+		candidates[pick] = candidates[--count];
+		amount--;
+		learned++;
+	}
+
+	mem_free(candidates);
+	return learned;
 }
 
 /**

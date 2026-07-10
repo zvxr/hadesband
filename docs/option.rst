@@ -233,11 +233,13 @@ Monsters learn from their mistakes ``birth_ai_learn``
 Know all runes on birth ``birth_know_runes``
   For players who don't enjoy the "identify by use" process for wearable
   items.  This option means all object properties are known at the outset, so
-  artifacts and ego items will be identified on walking over them.
+  artifacts and ego items will be identified on walking over them.  This is
+  off by default.
 
 Know all flavors on birth ``birth_know_flavors``
   For players who don't enjoy the "identify by use" process for consumable
-  items.  This option means all object flavors are known at the outset.
+  items.  This option means all object flavors are known at the outset.  This
+  is off by default.
 
 Persistent levels (experimental) ``birth_levels_persist``
   Each level is generated for the first time when the player enters it, and 
