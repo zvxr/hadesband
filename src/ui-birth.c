@@ -316,6 +316,15 @@ static void race_help(int i, void *db, const region *l)
 	text_out_indent = 0;
 }
 
+static void clear_birth_aux(int col)
+{
+	int row;
+
+	for (row = TABLE_ROW; row < MENU_ROWS; row++) {
+		Term_erase(col, row, 255);
+	}
+}
+
 static void game_mode_help(int i, void *db, const region *l)
 {
 	bool boosted = false;
@@ -326,11 +335,7 @@ static void game_mode_help(int i, void *db, const region *l)
 	/* Indent output */
 	text_out_indent = GAME_MODE_AUX_COL;
 
-	/* Wipe the help area. Why do other _help function not do this, and
-	 * have no issue with stale text? XXX */
-	for (int i=0; i<8; i++) {
-		Term_erase(GAME_MODE_AUX_COL, TABLE_ROW+i, 255);
-	}
+	clear_birth_aux(GAME_MODE_AUX_COL);
 	Term_gotoxy(GAME_MODE_AUX_COL, TABLE_ROW);
 
 	switch ((enum game_modes)i) {
@@ -383,6 +388,7 @@ static void class_help(int i, void *db, const region *l)
 	
 	/* Indent output */
 	text_out_indent = CLASS_AUX_COL;
+	clear_birth_aux(CLASS_AUX_COL);
 	Term_gotoxy(CLASS_AUX_COL, TABLE_ROW);
 
 	for (j = 0; j < len; j++) {  

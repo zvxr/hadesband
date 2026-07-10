@@ -5609,6 +5609,30 @@ static void init_windows(void)
     Term_activate(primary);
 }
 
+static void sync_term_sizes_to_cocoa_windows(void)
+{
+    term *old = Term;
+
+    for (int i = 0; i < ANGBAND_TERM_MAX; i++) {
+        AngbandContext *context;
+        NSWindow *window;
+        NSRect contentRect;
+
+        if (!angband_term[i]) continue;
+
+        context = (__bridge AngbandContext*) (angband_term[i]->data);
+        if (!context) continue;
+
+        window = context.primaryWindow;
+        if (!window) continue;
+
+        contentRect = [window contentRectForFrameRect:[window frame]];
+        [context resizeTerminalWithContentRect:contentRect saveToDefaults:NO];
+    }
+
+    Term_activate(old);
+}
+
 /**
  * Set HFS file type and creator codes on a path
  */
@@ -5885,6 +5909,7 @@ static void cocoa_reinit(void)
 
 	/* Prepare the windows */
 	init_windows();
+	sync_term_sizes_to_cocoa_windows();
 	text_mbcs_hook = Term_mbcs_cocoa;
 	text_wctomb_hook = Term_wctomb_cocoa;
 	text_wcsz_hook = Term_wcsz_cocoa;
