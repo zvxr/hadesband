@@ -19,6 +19,8 @@
 * Added three mushrooms: Stability, Visions, Madness.
 * Added two amulets: Amulet of Brilliance, Resist Confusion.
 * Increased starting gold by 400.
+* Added boosted birth game modes that start with an Experience potion,
+  Deep Descent scrolls, and extra gold for testing.
 * Increased Identify accessibility (cheaper, always in town, larger piles).
 * Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).
 * Changed Slice of Meat to Moon-Cured Pork (temporary infravision buff).

@@ -584,6 +584,33 @@ bool player_make_simple(const char *nrace, const char *nclass,
  *
  * Having an item identifies it and makes the player "aware" of its purpose.
  */
+static void player_birth_item(struct player *p, const char *tval_name,
+		const char *sval_name, int number)
+{
+	int tval = tval_find_idx(tval_name);
+	int sval = lookup_sval(tval, sval_name);
+	struct object_kind *kind = lookup_kind(tval, sval);
+	struct object *obj, *known_obj;
+
+	assert(kind);
+
+	obj = object_new();
+	object_prep(obj, kind, 0, MINIMISE);
+	obj->number = number;
+	obj->origin = ORIGIN_BIRTH;
+
+	known_obj = object_new();
+	obj->known = known_obj;
+	object_set_base_known(p, obj);
+	object_flavor_aware(p, obj);
+	obj->known->pval = obj->pval;
+	obj->known->effect = obj->effect;
+	obj->known->notice |= OBJ_NOTICE_ASSESSED;
+
+	inven_carry(p, obj, true, false);
+	kind->everseen = true;
+}
+
 static void player_outfit(struct player *p)
 {
 	int i;
@@ -659,6 +686,13 @@ static void player_outfit(struct player *p)
 		/* Carry the item */
 		inven_carry(p, obj, true, false);
 		kind->everseen = true;
+	}
+
+	if (OPT(p, birth_boosted_start)) {
+		player_birth_item(p, "potion", "Experience", 1);
+		player_birth_item(p, "scroll", "Deep Descent", 4);
+		p->au += 20000;
+		p->au_birth += 20000;
 	}
 
 	/* Sanity check */

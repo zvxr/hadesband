@@ -91,6 +91,8 @@ OP(birth_no_selling,      "Increase gold drops but disable selling",
 BIRTH, false)
 OP(birth_start_kit,       "Start with a kit of useful gear",
 BIRTH, true)
+OP(birth_boosted_start,   "Start with extra xp/gold",
+SPECIAL, false)
 OP(birth_ai_learn,        "Monsters learn from their mistakes",
 BIRTH, false)
 OP(birth_know_runes,      "Know all runes on birth",
