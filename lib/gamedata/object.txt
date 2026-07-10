@@ -666,6 +666,24 @@ effect:NOURISH:INC_BY
 dice:5
 desc:It protects you from some exotic effects.
 
+name:Revelation
+type:mushroom
+graphics:,:d
+level:0
+weight:1
+cost:300
+alloc:10:10 to 80
+pile:70:2d4
+power:8
+msg:Strange patterns shimmer before your eyes.
+effect:LEARN_FLAVOR
+dice:1d4
+effect:TIMED_INC:IMAGE
+dice:20d10
+effect:NOURISH:INC_BY
+dice:5
+desc:It reveals hidden meanings at the cost of unsettling visions.
+
 name:Visions
 type:mushroom
 graphics:,:d
@@ -713,24 +731,6 @@ dice:5+5d100
 effect:NOURISH:INC_BY
 dice:5
 desc:It trades a random stat for strength and experience.
-
-name:Revelation
-type:mushroom
-graphics:,:d
-level:0
-weight:1
-cost:300
-alloc:10:10 to 80
-pile:70:2d4
-power:8
-msg:Strange patterns shimmer before your eyes.
-effect:LEARN_FLAVOR
-dice:1d4
-effect:TIMED_INC:IMAGE
-dice:20d10
-effect:NOURISH:INC_BY
-dice:5
-desc:It reveals hidden meanings at the cost of unsettling visions.
 
 
 ##### Weapons #####
@@ -2714,8 +2714,8 @@ type:scroll
 graphics:?:w
 level:1
 weight:5
-cost:200
-alloc:50:5 to 100
+cost:50
+alloc:50:1 to 100
 pile:70:2d4
 power:6
 effect:IDENTIFY

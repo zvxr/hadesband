@@ -255,6 +255,7 @@ sometimes:80:mushroom:Second Sight:2d4
 sometimes:80:mushroom:Fast Recovery:2d4
 sometimes:80:mushroom:Clear Mind:2d4
 sometimes:80:mushroom:Sprinting:2d4
+sometimes:50:mushroom:Revelation:1d3
 sometimes:25:mushroom:Visions
 sometimes:25:mushroom:Madness
 sometimes:75:potion:Healing:1d3
