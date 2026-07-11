@@ -3,7 +3,10 @@
 ## 0.9.0
 
 * Rename project to Hadesband.
-* Added Dungeon Organics dungeon store room (30% chance on every 5th floor).
+* Added Dungeon Organics dungeon store room with fixed-depth, mode-aware
+  spawning.
+* Renamed birth game modes to Classic, Recall, and Nightmare, and defaulted
+  new characters to Classic.
 * Added three races: Cyclops, Nibelung, Fae.
 * Removed the erroneous Spartan player race.
 * Added class Skill (`s`) and racial Expertise (`x`) command categories.

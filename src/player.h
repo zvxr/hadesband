@@ -393,6 +393,12 @@ struct player_history {
 	size_t length;					/**< Current length */
 };
 
+enum player_game_mode {
+	PLAYER_GAME_MODE_CLASSIC,
+	PLAYER_GAME_MODE_RECALL,
+	PLAYER_GAME_MODE_NIGHTMARE
+};
+
 /**
  * All the variable state that changes when you put on/take off equipment.
  * Player flags are not currently variable, but useful here so monsters can

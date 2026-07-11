@@ -31,6 +31,7 @@
 #include "obj-util.h"
 #include "object.h"
 #include "player-timed.h"
+#include "player-util.h"
 #include "trap.h"
 
 struct feature *f_info;
@@ -339,20 +340,43 @@ const char *get_feat_code_name(int idx)
 }
 
 /**
- * Check whether a dungeon room feature should be placed at the given depth.
+ * Check whether a dungeon room feature should be placed at the given depth
+ * for the current game mode.
  * \param fidx is the feature index.
  * \param depth is the dungeon depth (0 is never eligible).
+ * \param p is the player whose birth mode controls the spawn chance.
  */
-bool feat_spawns_at_depth(int fidx, int depth)
+bool feat_spawns_at_depth(int fidx, int depth, const struct player *p)
 {
 	const struct feature *f = &f_info[fidx];
+	const struct feature_spawn *spawn;
+	enum player_game_mode mode;
+	uint8_t chance;
 
-	if (!f->spawn_chance) return false;
 	if (!depth) return false;
-	if (f->spawn_floor_mod && depth % f->spawn_floor_mod != 0) {
-		return false;
+
+	mode = player_get_game_mode(p);
+	for (spawn = f->spawns; spawn; spawn = spawn->next) {
+		if (spawn->depth != depth) continue;
+
+		switch (mode) {
+			case PLAYER_GAME_MODE_CLASSIC:
+				chance = spawn->classic_chance;
+				break;
+			case PLAYER_GAME_MODE_RECALL:
+				chance = spawn->recall_chance;
+				break;
+			case PLAYER_GAME_MODE_NIGHTMARE:
+				chance = spawn->nightmare_chance;
+				break;
+			default:
+				chance = 0;
+				break;
+		}
+		return (randint0(100) < chance);
 	}
-	return (randint0(100) < f->spawn_chance);
+
+	return false;
 }
 
 /**

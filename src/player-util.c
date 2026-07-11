@@ -812,6 +812,19 @@ bool player_attack_random_monster(struct player *p)
 	return false;
 }
 
+enum player_game_mode player_get_game_mode(const struct player *p)
+{
+	if (!OPT(p, birth_force_descend)) {
+		return PLAYER_GAME_MODE_CLASSIC;
+	}
+
+	if (!OPT(p, birth_no_recall)) {
+		return PLAYER_GAME_MODE_RECALL;
+	}
+
+	return PLAYER_GAME_MODE_NIGHTMARE;
+}
+
 /**
  * Have random bad stuff happen to the player from over-exertion
  *

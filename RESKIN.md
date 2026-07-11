@@ -25,6 +25,8 @@
 - Objects: `object.txt`, `object_base.txt`, `artifact.txt`, `ego_item.txt`, `flavor.txt`.
 - Magic/effects naming: `realm.txt`, `projection.txt`, `player_timed.txt`, `activation.txt`.
 - Stores and dungeon features: `store.txt`, `terrain.txt`, `room_template.txt`, `vault.txt`, `dungeon_profile.txt`.
+- Terrain `spawn` rules for dungeon rooms are exact-depth and mode-aware:
+  `spawn:<floor>:<classic %>:<recall %>:<nightmare %>`.
 - Player-facing intro/death/help text: `lib/screens/*.txt`, `lib/help/*.txt`, `README.md`.
 - Tile pref files contain many exact monster/object/race names and will need follow-up after data renames.
 

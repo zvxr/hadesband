@@ -94,12 +94,12 @@ enum birth_rollers
 
 enum game_modes
 {
-	GM_NORMAL,
-	GM_SHOPPING,
-	GM_GRINDING,
-	GM_NORMAL_BOOSTED,
-	GM_SHOPPING_BOOSTED,
-	GM_GRINDING_BOOSTED,
+	GM_CLASSIC,
+	GM_RECALL,
+	GM_NIGHTMARE,
+	GM_CLASSIC_BOOSTED,
+	GM_RECALL_BOOSTED,
+	GM_NIGHTMARE_BOOSTED,
 	MAX_GAME_MODES
 };
 
@@ -339,25 +339,25 @@ static void game_mode_help(int i, void *db, const region *l)
 	Term_gotoxy(GAME_MODE_AUX_COL, TABLE_ROW);
 
 	switch ((enum game_modes)i) {
-		case GM_NORMAL:
-			text_out_e("Descend only, with no return to town.");
-			break;
-		case GM_SHOPPING:
-			text_out_e("Descend only, with shopping trips to town.");
-			break;
-		case GM_GRINDING:
+		case GM_CLASSIC:
 			text_out_e("Classic infinite dungeon with shopping trips to town.");
 			break;
-		case GM_NORMAL_BOOSTED:
+		case GM_RECALL:
+			text_out_e("Descend only, with shopping trips to town.");
+			break;
+		case GM_NIGHTMARE:
 			text_out_e("Descend only, with no return to town.");
+			break;
+		case GM_CLASSIC_BOOSTED:
+			text_out_e("Classic infinite dungeon with shopping trips to town.");
 			boosted = true;
 			break;
-		case GM_SHOPPING_BOOSTED:
+		case GM_RECALL_BOOSTED:
 			text_out_e("Descend only, with shopping trips to town.");
 			boosted = true;
 			break;
-		case GM_GRINDING_BOOSTED:
-			text_out_e("Classic infinite dungeon with shopping trips to town.");
+		case GM_NIGHTMARE_BOOSTED:
+			text_out_e("Descend only, with no return to town.");
 			boosted = true;
 			break;
 		case MAX_GAME_MODES: break; // to shut up enum case warning...
@@ -620,12 +620,12 @@ static void setup_menus(void)
 	};
 
 	const char *game_mode_choices[MAX_GAME_MODES] = { 
-		"Normal", 
-		"With recall",
-		"Classic grind",
-		"Normal*",
-		"With recall*",
-		"Classic grind*"
+		"Classic",
+		"Recall",
+		"Nightmare",
+		"Classic*",
+		"Recall*",
+		"Nightmare*"
 	};
 
 	struct birthmenu_data *mdata;
@@ -665,7 +665,7 @@ static void setup_menus(void)
 	mdata->hint = "Choose how to generate your intrinsic stats. Point-based is recommended.";
 
 	/* Game mode menu */
-	init_birth_menu(&game_mode_menu, MAX_GAME_MODES, GM_NORMAL, &game_mode_region, false,
+	init_birth_menu(&game_mode_menu, MAX_GAME_MODES, GM_CLASSIC, &game_mode_region, false,
 					game_mode_help);
 	mdata = game_mode_menu.menu_data;
 	for (i = 0; i < MAX_GAME_MODES; i++)
@@ -920,31 +920,31 @@ static enum birth_stage menu_question(enum birth_stage current,
 				OPT(player, birth_boosted_start) = false;
 				player->opts.stair_skip = 2;
 				switch ((enum game_modes)current_menu->cursor) {
-					case GM_NORMAL:
-						OPT(player, birth_force_descend) = true;
-						OPT(player, birth_no_recall) = true;
-						break;
-					case GM_SHOPPING:
-						OPT(player, birth_force_descend) = true;
-						OPT(player, birth_no_recall) = false;
-						break;
-					case GM_GRINDING:
+					case GM_CLASSIC:
 						OPT(player, birth_force_descend) = false;
 						OPT(player, birth_no_recall) = false;
 						break;
-					case GM_NORMAL_BOOSTED:
+					case GM_RECALL:
+						OPT(player, birth_force_descend) = true;
+						OPT(player, birth_no_recall) = false;
+						break;
+					case GM_NIGHTMARE:
 						OPT(player, birth_force_descend) = true;
 						OPT(player, birth_no_recall) = true;
+						break;
+					case GM_CLASSIC_BOOSTED:
+						OPT(player, birth_force_descend) = false;
+						OPT(player, birth_no_recall) = false;
 						OPT(player, birth_boosted_start) = true;
 						break;
-					case GM_SHOPPING_BOOSTED:
+					case GM_RECALL_BOOSTED:
 						OPT(player, birth_force_descend) = true;
 						OPT(player, birth_no_recall) = false;
 						OPT(player, birth_boosted_start) = true;
 						break;
-					case GM_GRINDING_BOOSTED:
-						OPT(player, birth_force_descend) = false;
-						OPT(player, birth_no_recall) = false;
+					case GM_NIGHTMARE_BOOSTED:
+						OPT(player, birth_force_descend) = true;
+						OPT(player, birth_no_recall) = true;
 						OPT(player, birth_boosted_start) = true;
 						break;
 					case MAX_GAME_MODES: break; // to shut up enum case warning...

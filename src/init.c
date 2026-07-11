@@ -2199,20 +2199,32 @@ static enum parser_error parse_feat_look_in_preposition(struct parser *p) {
 
 static enum parser_error parse_feat_spawn(struct parser *p) {
 	struct feature *f = parser_priv(p);
-	unsigned int chance = parser_getuint(p, "chance");
-	unsigned int floor_mod = parser_getuint(p, "floor-mod");
+	unsigned int depth = parser_getuint(p, "depth");
+	unsigned int classic = parser_getuint(p, "classic");
+	unsigned int recall = parser_getuint(p, "recall");
+	unsigned int nightmare = parser_getuint(p, "nightmare");
+	struct feature_spawn *spawn;
+	struct feature_spawn **tail;
 
 	if (!f) {
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	}
-	if (chance > 100) {
+	if (depth > 255 || classic > 100 || recall > 100 || nightmare > 100) {
 		return PARSE_ERROR_OUT_OF_BOUNDS;
 	}
-	if (floor_mod > 255) {
-		return PARSE_ERROR_OUT_OF_BOUNDS;
+
+	spawn = mem_zalloc(sizeof(*spawn));
+	spawn->depth = depth;
+	spawn->classic_chance = classic;
+	spawn->recall_chance = recall;
+	spawn->nightmare_chance = nightmare;
+
+	tail = &f->spawns;
+	while (*tail) {
+		tail = &(*tail)->next;
 	}
-	f->spawn_chance = chance;
-	f->spawn_floor_mod = floor_mod;
+	*tail = spawn;
+
 	return PARSE_ERROR_NONE;
 }
 
@@ -2249,7 +2261,8 @@ static struct parser *init_parse_feat(void) {
 	parser_reg(p, "confused-msg str text", parse_feat_confused_msg);
 	parser_reg(p, "look-prefix str text", parse_feat_look_prefix);
 	parser_reg(p, "look-in-preposition str text", parse_feat_look_in_preposition);
-	parser_reg(p, "spawn uint chance uint floor-mod", parse_feat_spawn);
+	parser_reg(p, "spawn uint depth uint classic uint recall uint nightmare",
+		parse_feat_spawn);
 	parser_reg(p, "resist-flag sym flag", parse_feat_resist_flag);
 
 	/*
@@ -2301,6 +2314,14 @@ static errr finish_parse_feat(struct parser *p) {
 static void cleanup_feat(void) {
 	int idx;
 	for (idx = 0; idx < FEAT_MAX; idx++) {
+		struct feature_spawn *spawn = f_info[idx].spawns;
+
+		while (spawn) {
+			struct feature_spawn *next = spawn->next;
+
+			mem_free(spawn);
+			spawn = next;
+		}
 		string_free(f_info[idx].look_in_preposition);
 		string_free(f_info[idx].look_prefix);
 		string_free(f_info[idx].confused_msg);

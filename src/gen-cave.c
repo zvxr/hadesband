@@ -151,7 +151,9 @@ static bool build_dungeon_store_room(struct chunk *c)
 	const struct feature *feat = &f_info[FEAT_STORE_DUNGEON];
 
 	if (!tf_has(feat->flags, TF_DUNGEON_ROOM)) return false;
-	if (!feat_spawns_at_depth(FEAT_STORE_DUNGEON, c->depth)) return false;
+	if (!feat_spawns_at_depth(FEAT_STORE_DUNGEON, c->depth, player)) {
+		return false;
+	}
 
 	for (attempt = 0; attempt < 200; attempt++) {
 		int y, x;
