@@ -54,10 +54,10 @@ static int test_nearby_kin(void *state) {
 
 	struct monster *wolf0 = t_add_monster(c, loc(5, 5), "wolf");
 	struct monster *wolf1 = t_add_monster(c, loc(4, 5), "wolf");
-	struct monster *warg0 = t_add_monster(c, loc(6, 5), "spartan war dog");
+	struct monster *warg0 = t_add_monster(c, loc(6, 5), "war dog");
 	struct monster *cat0 = t_add_monster(c, loc(5, 6), "wild cat");
 	struct monster *wolf2 = t_add_monster(c, loc(9, 5), "wolf");
-	struct monster *warg1 = t_add_monster(c, loc(2, 2), "spartan war dog");
+	struct monster *warg1 = t_add_monster(c, loc(2, 2), "war dog");
 	struct monster *wolf3 = t_add_monster(c, loc(15, 5), "wolf");
 
 	/* To start off with, nothing is injured. */
@@ -68,7 +68,7 @@ static int test_nearby_kin(void *state) {
 	ptreq(wolf1, choose_nearby_injured_kin(c, wolf0));
 	wolf1->hp += 1;
 
-	/* Injure the nearby spartan war dog (different race, same base), it
+	/* Injure the nearby war dog (different race, same base), it
 	 * should get chosen. */
 	warg0->hp -= 1;
 	ptreq(warg0, choose_nearby_injured_kin(c, wolf0));

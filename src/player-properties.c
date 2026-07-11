@@ -42,13 +42,16 @@ struct player_power {
 static void use_steal(int dir);
 static void use_mana_siphon(int dir);
 static void use_cyclopean_rage(int dir);
+static void use_kobold_scurry(int dir);
 
 static const struct player_power player_powers[] = {
 	{ PF_STEAL, PLAYER_POWER_CLASS, "Steal", true, use_steal },
 	{ PF_MANA_STEAL, PLAYER_POWER_CLASS, "Siphon Mana", true,
 		use_mana_siphon },
 	{ PF_CYCLOPEAN_RAGE, PLAYER_POWER_RACE, "Cyclopean Rage", false,
-		use_cyclopean_rage }
+		use_cyclopean_rage },
+	{ PF_KOBOLD_SCURRY, PLAYER_POWER_RACE, "Scurry", false,
+		use_kobold_scurry }
 };
 
 static bool player_owns_power(const struct player_power *power)
@@ -215,6 +218,19 @@ static void use_cyclopean_rage(int dir)
 	(void)player_inc_timed(player, TMD_CYCLOPEAN_RAGE, duration, true,
 		false, false);
 	monsters_handle_player_noise(100);
+}
+
+static void use_kobold_scurry(int dir)
+{
+	if (player->timed[TMD_SCURRY_COOLDOWN]) {
+		msg("You need %d more turns before you can scurry again.",
+			player->timed[TMD_SCURRY_COOLDOWN]);
+		return;
+	}
+
+	player->upkeep->energy_use = z_info->move_energy;
+	(void)player_set_timed(player, TMD_RUNNING, 20, true, false);
+	(void)player_set_timed(player, TMD_SCURRY_COOLDOWN, 200, true, false);
 }
 
 /**

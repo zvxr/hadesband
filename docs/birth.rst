@@ -212,6 +212,18 @@ Dwarf
   themselves for no good reason, screaming out challenges at imagined foes.
   In other words, dwarves have a miserable stealth.
 
+.. _Kobold:
+
+Kobold
+  Kobolds are a race of small dog-headed humanoids that dwell underground.
+  They have excellent infravision, and are intrinsically resistant to
+  poisons of all kinds. They have a good dexterity and constitution.
+  However, they are weaker than humans, and also not noted for great
+  intelligence. And while their constitution makes them tough, it still
+  cannot prevent the fact that they are not the biggest of creatures, and
+  have few hit points. Kobolds can Scurry, moving with frantic speed for a
+  short time before needing to catch their breath.
+
 .. _Half-Orc:
 
 Half-Orc
@@ -256,17 +268,6 @@ High-Elf
   races. Like normal Elves, they resist attacks involving bright light.
   They have good infravision and can even see cold-blooded invisible
   creatures.
-
-.. _Kobold:
-
-Kobold
-  Kobolds are a race of small dog-headed humanoids that dwell underground.
-  They have excellent infravision, and are intrinsically resistant to
-  poisons of all kinds. They have a good dexterity and constitution.
-  However, they are weaker than humans, and also not noted for great
-  intelligence. And while their constitution makes them tough, it still
-  cannot prevent the fact that they are not the biggest of creatures, and
-  have few hit points.
 
 Classes
 =======
@@ -613,11 +614,11 @@ adjusted for constitution).
       Hobbit      -2   +2   +1   +3   +2       7        120%   40'
       Gnome       -1   +2    0   +2   +1       8        120%   40'
       Dwarf       +2   -3   +2   -2   +2      11        120%   50'
+      Kobold      -1   -1    0   +2   +2       8        120%   50'
       Half-Orc    +2   -1    0    0   +1      10        120%   30'
       Half-Troll  +4   -4   -2   -4   +3      12        120%   30'
       Demigod     +2   +2   +2   +2   +2      10        150%   None
       High-Elf    +1   +3   -1   +3   +1      10        145%   40'
-      Kobold      -1   -1    0   +2   +2       8        120%   50'
 ================ ===  ===  ===  ===  ===  =========  ========  ======
 
 
@@ -666,11 +667,11 @@ Ability Tables
   Hobbit       15       15       18      18       4       6     -10      20
   Gnome        10       10       22      12       3       4      -8      12
   Dwarf         2        2        9       9      -1       2      15       0
+  Kobold       10       10        5       0       3      10      -5      10
   Half-Orc     -3       -3       -3      -3      -1      -3      12      -5
   Half-Troll   -5       -5       -8      -8      -2      -9      20     -10
   Demigod       4        4        5       5       1       3      15      10
   High-Elf      4        4       20      20       2      10      10      25
-  Kobold       10       10        5       0       3      10      -5      10
 ============ =======  =======  ======  =====  =======  ======  ======  =====
 
 

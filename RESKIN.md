@@ -5,7 +5,8 @@
 - Uniques are all rebranded, where most simply change to appropriate names (Morgoth >> Hades), while changing pertinent/identifying traits (Hades is a god, not human).
 - When considering changes to races and monsters, we should try to preserve key elements, even if they are more fantasy setting as opposed to Greco-Roman mythology. e.g., Kobold, Goblin, Human will probably remain.
 - When considering changes to monsters and monster groups, we should try to respect letters. For example, we must include Gods, which can replace Ghost's "G". Ghosts could then move to "v" as part of vortexes or "s" creating a spirit monster type.
-- We want most aspects to remain recognizable. Spartan replaces Barbarian;
+- We want most aspects to remain recognizable. Race and class reskins should
+  stay in the correct character-choice layer;
   familiar weapons remain unless a clear Greco-Roman analogue improves flavor.
 - As a first pass, we would avoid changing the number of weapons, spells, objects, etc., and only very lightly change effects and purpose. We are most interested in preserving the "feel" of the game and providing enough identical or near-identical context, so that what few changes there are, they can be intuited.
 
@@ -46,7 +47,8 @@
 ## Races
 - Likely keep Human, Kobold, Goblin, Half-Orc style fantasy staples unless they clash strongly.
 - Discuss replacing Tolkien-coded races: Hobbit and High-Elf.
-- Done: Barbarian renamed to Spartan; core mechanics retained.
+- Removed: Spartan was mistakenly added as a race; revisit Barbarian as a
+  class/theme discussion instead.
 - Done: Half-Giant renamed to Cyclops.
 - Cyclops uses `x` for Cyclopean Rage: costs 5% maximum HP, alarms monsters,
   grants berserk combat effects and temporary shard resistance.
@@ -56,6 +58,8 @@
   ownership checks class/race `pflags` directly, not derived player flags.
 - Removed Tactical's original-keyset `x -> w0` weapon-swap keymap so `x`
   consistently invokes racial Expertise.
+- Kobold uses `x` for Scurry: 20 turns of extra movement, then a 200-turn
+  cooldown.
 - Fae may remain if framed as nymph/sprite-adjacent.
 - Need preserve stats/XP unless a name implies changed mechanics.
 
@@ -67,15 +71,15 @@
 | Hobbit | Hobbit | Pending | Not reviewed |
 | Gnome | Gnome | Pending | Not reviewed |
 | Dwarf | Dwarf | Pending; likely retain | Not reviewed |
+| Kobold | Kobold | Done; likely retain | Reviewed; Scurry, 120% XP |
 | Half-Orc | Half-Orc | Pending; likely retain | Not reviewed |
 | Half-Troll | Half-Troll | Pending | Not reviewed |
-| Barbarian | Spartan | Done | Reviewed; 130% XP retained |
+| Barbarian | Barbarian | Pending; Spartan race removed | Not reviewed |
 | Half-Giant | Cyclops | Done | Reviewed; Cyclopean Rage, 145% XP |
 | Dunadan | Demigod | Done | Reviewed; +2 all stats, 150% XP |
 | High-Elf | High-Elf | Pending | Not reviewed |
 | New | Nibelung | Done | Reviewed; 140% XP |
 | New | Fae | Done | Reviewed; 125% XP |
-| Kobold | Kobold | Pending; likely retain | Not reviewed |
 
 ## Classes
 - Keep direct archetypes: Warrior/Fighter, Mage, Rogue, Ranger likely remain readable.
@@ -149,7 +153,7 @@
 - Mushroom note: White Lotus and Black Lotus are possible future additions.
 - Implemented: `tree`/`l` now means Living Wood; old tree/ent names became dryad, Daphne, greater dryad, blighted dryad, and ancient hamadryad.
 - Implemented: `satyr`/`y` replaces yeeks; satyrs trade inherited acid immunity for confusion immunity, and Pan moves to depth 20 as a stronger trickster unique.
-- Implemented: canine pass renamed Tolkien dogs/wolves to Argos, Maera, Spartan war dog, alpha wolf, guard dog of Hephaestus, Laelaps, Golden Dog, and Cerberus; generic wolves/werewolves/hellhounds remain.
+- Implemented: canine pass renamed Tolkien dogs/wolves to Argos, Maera, War dog, alpha wolf, guard dog of Hephaestus, Laelaps, Golden Dog, and Cerberus; generic wolves/werewolves/hellhounds remain.
 - Implemented: giant uniques `Gilim` and `Nan` became Typhon and Antiphates; generic giants stay unchanged on `P`.
 - Orc note: generic orcs remain unchanged; unique orcs are seeded with Dimension 20 easter-egg names.
 - Possible future fit: centaurs and fauns probably use `hybrid`, `humanoid`, or `person` rather than new bases.

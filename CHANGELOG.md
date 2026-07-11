@@ -4,7 +4,8 @@
 
 * Rename project to Hadesband.
 * Added Dungeon Organics dungeon store room (30% chance on every 5th floor).
-* Added four races: Spartan, Cyclops, Nibelung, Fae.
+* Added three races: Cyclops, Nibelung, Fae.
+* Removed the erroneous Spartan player race.
 * Added class Skill (`s`) and racial Expertise (`x`) command categories.
 * Centralized active Skill and Expertise dispatch in player properties.
 * Removed the old `x` weapon-swap keymap so racial Expertise activates
@@ -12,6 +13,7 @@
 * Added Cyclopean Rage, which costs HP, alarms monsters, and temporarily
   grants berserk combat effects and shard resistance.
 * Adjusted Cyclops experience requirement to 145%.
+* Added Kobold Scurry, a short movement burst with a 200-turn cooldown.
 * Renamed Dunadan to Demigod and rebalanced it as a +2 all-stat generalist
   with a 150% experience requirement.
 * Added one class: Mystagogue. Spell generalist that can steal mana.

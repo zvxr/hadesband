@@ -598,6 +598,12 @@ grade:B:10000:Heal:Healing energies course through you!
 on-end:The healing energies subside.
 flags:DURATION_IN_PLAYER_TURNS
 
+name:SCURRY_COOLDOWN
+desc:recovering from scurrying
+grade:y:10000:ScurryCD:You catch your breath.
+on-end:You are ready to scurry again.
+msgt:GENERIC
+
 name:OPP_CHAOS
 desc:chaos resistance
 grade:v:10000:RChaos:You feel resistant to chaos!

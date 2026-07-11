@@ -117,13 +117,13 @@ effect-msg:taking bat form
 blow:bite
 blow:scratch
 
-name:spartan war dog
+name:war dog
 combat:5:5:0
 values:BLOWS[2]
 effect:DAMAGE
 dice:1d$S
 expr:S:PLAYER_LEVEL:+ 0
-effect-msg:taking spartan war dog form
+effect-msg:taking war dog form
 effect:CURE:AFRAID
 effect:TIMED_INC:SHERO
 dice:5+1d20

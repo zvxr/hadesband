@@ -27,12 +27,6 @@ struct expected_race {
 
 static const struct expected_race expected[] = {
 	{
-		"Spartan",
-		{ 3, -2, -1, 0, 3 },
-		12, 130, 0, 14, -10,
-		OF_PROT_FEAR, -1, -1
-	},
-	{
 		"Cyclops",
 		{ 5, -3, -2, -2, 4 },
 		13, 145, 3, 24, -10,
@@ -134,10 +128,6 @@ static int test_bonuses0(void *data)
 	struct player_state calc_state;
 	int base_melee;
 
-	eq(player_make_simple("Spartan", "Warrior", "Tester"), true);
-	calc_bonuses(player, &calc_state, false, false);
-	require(of_has(calc_state.flags, OF_PROT_FEAR));
-
 	eq(player_make_simple("Cyclops", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.el_info[ELEM_SHARD].res_level, 0);
@@ -152,6 +142,15 @@ static int test_bonuses0(void *data)
 	eq(player_make_simple("Demigod", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
 	require(of_has(calc_state.flags, OF_SUST_CON));
+
+	eq(player_make_simple("Kobold", "Warrior", "Tester"), true);
+	calc_bonuses(player, &calc_state, false, false);
+	eq(calc_state.el_info[ELEM_POIS].res_level, 1);
+	require(player_has(player, PF_KOBOLD_SCURRY));
+	eq(calc_state.num_moves, 0);
+	player->timed[TMD_RUNNING] = 20;
+	calc_bonuses(player, &calc_state, false, false);
+	eq(calc_state.num_moves, 1);
 
 	eq(player_make_simple("Nibelung", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
@@ -183,6 +182,10 @@ static int test_power_ownership0(void *data)
 	require(streq(player_power_name(PLAYER_POWER_CLASS), "Steal"));
 	require(player_power_needs_direction(PLAYER_POWER_CLASS));
 	player->class = original_class;
+
+	eq(player_make_simple("Kobold", "Warrior", "Tester"), true);
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Scurry"));
+	require(!player_power_needs_direction(PLAYER_POWER_RACE));
 
 	eq(player_make_simple("Human", "Warrior", "Tester"), true);
 	null(player_power_name(PLAYER_POWER_RACE));

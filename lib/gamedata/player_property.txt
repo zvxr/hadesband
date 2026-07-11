@@ -63,6 +63,12 @@ name:Cyclopean Rage
 desc:You can spend vitality to enter a Cyclopean fury, gaining
 desc: combat prowess, fear protection, and shard resistance.
 
+type:player
+code:KOBOLD_SCURRY
+name:Scurry
+desc:You can move with frantic speed for 20 turns.  After using
+desc: Scurry, you must wait 200 turns before using it again.
+
 ## Class player flags
 
 type:player

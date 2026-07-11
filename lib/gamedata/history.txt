@@ -20,7 +20,7 @@
 # 'phrase' lines are the actual chart entries which make up the history.
 
 # Chart progression by race:
-#   Human/Demigod/Spartan
+#   Human/Demigod
 #                 -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Half-Elf      -->  4 -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Elf/Fae       -->  5 -->  6 -->  9 --> 54 --> 55 --> 56
@@ -29,10 +29,10 @@
 #   Gnome         --> 13 --> 14 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Dwarf/Nibelung
 #                 --> 16 --> 17 --> 18 --> 57 --> 58 --> 59 --> 60 --> 61
+#   Kobold        --> 23 --> 24 --> 25 --> 26 --> 67 --> 68 --> 69
 #   Half-Orc      --> 19 --> 20 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Half-Troll/Cyclops
 #                 --> 21 --> 22 --> 62 --> 63 --> 64 --> 65 --> 66
-#   Kobold        --> 23 --> 24 --> 25 --> 26 --> 67 --> 68 --> 69
 
 # This table *must* be correct or the history may look very silly.
 

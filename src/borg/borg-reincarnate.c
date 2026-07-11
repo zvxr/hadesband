@@ -240,7 +240,6 @@ static void create_random_name(int race, char *name, size_t name_len)
             name_len);
         break;
     case RACE_HUMAN:
-    case RACE_SPARTAN:
     case RACE_DEMIGOD:
         my_strcpy(name,
             human_syllable1[randint0(sizeof(human_syllable1) / sizeof(char *))],
