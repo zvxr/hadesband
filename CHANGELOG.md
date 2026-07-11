@@ -23,6 +23,7 @@
   Deep Descent scrolls, and extra gold for testing.
 * Increased Identify accessibility (cheaper, always in town, larger piles).
 * Reduced Identify Rune scroll cost to match Hengband's normal Identify scroll.
+* Added Identify Relic scrolls for fully revealing one ego, artifact, or sentient item.
 * Disabled automatic birth knowledge of all runes and flavors by default.
 * Added Potion, Scroll, and Mushroom of Revelation for learning random flavors and runes.
 * Changed Amulets of Teleportation to rechargeable items with inline teleport effect (uncurse).

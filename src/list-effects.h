@@ -55,6 +55,7 @@ EFFECT(DETECT_VISIBLE_MONSTERS,		false,	NULL,		0,		EFINFO_NONE,	"detects visible
 EFFECT(DETECT_INVISIBLE_MONSTERS,	false,	NULL,		0,		EFINFO_NONE,	"detects invisible creatures nearby",	"detect invisible")
 EFFECT(DETECT_FEARFUL_MONSTERS,		false,	NULL,		0,		EFINFO_NONE,	"detects creatures nearby which are susceptible to fear",	"detect fearful")
 EFFECT(IDENTIFY,					false,	NULL,		0,		EFINFO_NONE,	"identifies a single unknown rune on a selected item",	"identify")
+EFFECT(IDENTIFY_RELIC,				false,	NULL,		0,		EFINFO_NONE,	"fully identifies a selected relic without teaching its runes",	"identify relic")
 EFFECT(LEARN_FLAVOR,				false,	NULL,		1,		EFINFO_DICE,	"reveals %s random unknown object flavors",	"learn flavors")
 EFFECT(LEARN_RUNE,					false,	NULL,		1,		EFINFO_DICE,	"reveals %s random unknown object runes",	"learn runes")
 EFFECT(DETECT_EVIL,					false,	NULL,		0,		EFINFO_NONE,	"detects evil creatures nearby",	"detect evil")

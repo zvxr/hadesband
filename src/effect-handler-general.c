@@ -251,6 +251,16 @@ static bool item_tester_unknown(const struct object *obj)
 }
 
 /**
+ * Selects relics that can still reveal more about themselves.
+ */
+static bool item_tester_relic_unknown(const struct object *obj)
+{
+	if (!obj) return false;
+	if (!obj->ego && !obj->artifact && !obj->sentient) return false;
+	return object_fully_known(obj) ? false : true;
+}
+
+/**
  * Used by the enchant() function (chance of failure)
  */
 static const int enchant_table[16] =
@@ -1972,6 +1982,33 @@ bool effect_handler_IDENTIFY(effect_handler_context_t *context)
 	/* Identify the object */
 	object_learn_unknown_rune(player, obj);
 
+	return true;
+}
+
+/**
+ * Fully identify a relic without teaching its runes globally.
+ */
+bool effect_handler_IDENTIFY_RELIC(effect_handler_context_t *context)
+{
+	struct object *obj;
+	const char *q, *s;
+	int itemmode = (USE_EQUIP | USE_INVEN | USE_QUIVER | USE_FLOOR);
+	bool used = false;
+
+	context->ident = true;
+
+	q = "Identify which relic? ";
+	s = "You have no relics to identify.";
+	if (context->cmd) {
+		if (cmd_get_item(context->cmd, "tgtitem", &obj, q, s,
+				item_tester_relic_unknown, itemmode)) {
+			return used;
+		}
+	} else if (!get_item(&obj, q, s, 0, item_tester_relic_unknown, itemmode)) {
+		return used;
+	}
+
+	object_reveal_relic(player, obj);
 	return true;
 }
 

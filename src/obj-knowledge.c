@@ -1862,6 +1862,28 @@ void object_learn_unknown_rune(struct player *p, struct object *obj)
 }
 
 /**
+ * Fully reveal one special object without teaching its runes globally.
+ */
+void object_reveal_relic(struct player *p, struct object *obj)
+{
+	if (!obj) return;
+	if (!obj->known) obj->known = object_new();
+
+	if (obj->kind && obj->kind->flavor && !object_flavor_is_aware(obj)) {
+		object_flavor_aware(p, obj);
+	}
+
+	object_wipe(obj->known);
+	object_copy(obj->known, obj);
+	obj->known->known = NULL;
+	obj->known->notice |= OBJ_NOTICE_ASSESSED;
+
+	if (obj->ego) {
+		obj->ego->everseen = true;
+	}
+}
+
+/**
  * Learn object properties that become obvious on wielding or wearing
  *
  * \param p is the player

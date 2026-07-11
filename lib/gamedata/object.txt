@@ -2732,6 +2732,17 @@ power:16
 effect:LEARN_RUNE
 dice:5
 
+name:Identify Relic
+type:scroll
+graphics:?:w
+level:25
+weight:5
+cost:1200
+alloc:15:25 to 90
+pile:10:1
+power:18
+effect:IDENTIFY_RELIC
+
 ### Enchantments ###
 
 name:Enchant Weapon To-Hit
