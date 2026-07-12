@@ -103,11 +103,11 @@ static const struct stone_lore stone_lore[] = {
 	{ "Ore Sense", 1, 25, EF_DETECT_ORE, EF_NONE, "detect nearby ore" },
 	{ "Treasure Sense", 8, 40, EF_DETECT_ORE, EF_DETECT_GOLD,
 		"detect ore and treasure" },
-	{ "Passage Sense", 15, 50, EF_DETECT_DOORS, EF_DETECT_STAIRS,
-		"detect doors and stairs" },
-	{ "Hazard Sense", 22, 60, EF_DETECT_TRAPS, EF_NONE,
+	{ "Hazard Sense", 12, 40, EF_DETECT_TRAPS, EF_NONE,
 		"detect nearby traps" },
-	{ "Deep Sense", 30, 80, EF_DETECT_OBJECTS, EF_NONE,
+	{ "Passage Sense", 20, 40, EF_DETECT_DOORS, EF_DETECT_STAIRS,
+		"detect doors and stairs" },
+	{ "Deep Sense", 30, 400, EF_DETECT_OBJECTS, EF_NONE,
 		"detect nearby objects" }
 };
 
