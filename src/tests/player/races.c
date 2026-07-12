@@ -28,8 +28,8 @@ struct expected_race {
 static const struct expected_race expected[] = {
 	{
 		"Cyclops",
-		{ 5, -3, -2, -2, 4 },
-		13, 145, 3, 24, -10,
+		{ 5, -3, -2, -2, 2 },
+		13, 140, 1, 20, -10,
 		-1, -1, ELEM_GRAVITY
 	},
 	{

@@ -77,7 +77,7 @@
 | Half-Orc | Half-Orc | Pending; likely retain | Not reviewed |
 | Half-Troll | Half-Troll | Pending | Not reviewed |
 | Barbarian | Barbarian | Pending; Spartan race removed | Not reviewed |
-| Half-Giant | Cyclops | Done | Reviewed; Cyclopean Rage, 145% XP |
+| Half-Giant | Cyclops | Done | Reviewed; Cyclopean Rage, 140% XP |
 | Dunadan | Demigod | Done | Reviewed; +2 all stats, 150% XP |
 | High-Elf | High-Elf | Pending | Not reviewed |
 | New | Nibelung | Done | Reviewed; 140% XP |

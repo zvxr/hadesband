@@ -258,20 +258,20 @@ weight:240:60
 obj-flags:SUST_STR | REGEN
 
 name:Cyclops
-stats:5:-3:-2:-2:4
+stats:5:-3:-2:-2:2
 skill-disarm-phys:-6
 skill-disarm-magic:-8
 skill-device:-10
 skill-save:-4
 skill-stealth:-3
 skill-search:-2
-skill-melee:24
+skill-melee:20
 skill-shoot:-5
 skill-throw:8
 skill-dig:20
 hitdie:13
-exp:145
-infravision:3
+exp:140
+infravision:1
 history:21
 age:40:10
 height:100:10

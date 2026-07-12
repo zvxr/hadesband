@@ -15,7 +15,7 @@
   directly.
 * Added Cyclopean Rage, which costs HP, alarms monsters, and temporarily
   grants berserk combat effects and shard resistance.
-* Adjusted Cyclops experience requirement to 145%.
+* Adjusted Cyclops experience requirement to 140%.
 * Added Kobold Scurry, a short movement burst with a 200-turn cooldown.
 * Renamed Dunadan to Demigod and rebalanced it as a +2 all-stat generalist
   with a 150% experience requirement.
