@@ -254,7 +254,7 @@ static void create_random_name(int race, char *name, size_t name_len)
     case RACE_HALF_ORC:
     case RACE_HALF_TROLL:
     case RACE_CYCLOPS:
-    case RACE_NIBELUNG:
+    case RACE_SATYR:
     case RACE_KOBOLD:
         my_strcpy(name,
             orc_syllable1[randint0(sizeof(orc_syllable1) / sizeof(char *))],

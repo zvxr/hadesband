@@ -39,10 +39,10 @@ static const struct expected_race expected[] = {
 		OF_SUST_CON, -1, -1
 	},
 	{
-		"Nibelung",
+		"Satyr",
 		{ 1, -1, 2, 0, 2 },
 		11, 140, 5, 9, 8,
-		-1, ELEM_DARK, ELEM_DISEN
+		-1, ELEM_DISEN, -1
 	},
 	{
 		"Fae",
@@ -152,10 +152,10 @@ static int test_bonuses0(void *data)
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.num_moves, 1);
 
-	eq(player_make_simple("Nibelung", "Warrior", "Tester"), true);
+	eq(player_make_simple("Satyr", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
-	eq(calc_state.el_info[ELEM_DARK].res_level, 1);
 	eq(calc_state.el_info[ELEM_DISEN].res_level, 1);
+	require(player_has(player, PF_KNOW_MUSHROOM));
 
 	eq(player_make_simple("Fae", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);

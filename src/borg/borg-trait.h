@@ -55,7 +55,7 @@
 #define RACE_CYCLOPS    9
 #define RACE_DEMIGOD    10
 #define RACE_HIGH_ELF   11
-#define RACE_NIBELUNG   12
+#define RACE_SATYR      12
 #define RACE_FAE        13
 #define MAX_RACES       14
 

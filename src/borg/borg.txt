@@ -128,7 +128,7 @@ borg_cheat_death = FALSE
 #       9 Cyclops                       9 Stygian Warrior
 #      10 Demigod
 #      11 High Elf
-#      12 Nibelung
+#      12 Satyr
 #      13 Fae
 #
 # With regards to the stats. The minimal stats are rolled by the

@@ -27,8 +27,9 @@
 #   High-Elf      -->  7 -->  8 -->  9 --> 54 --> 55 --> 56
 #   Hobbit        --> 10 --> 11 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Gnome         --> 13 --> 14 -->  3 --> 50 --> 51 --> 52 --> 53
-#   Dwarf/Nibelung
+#   Dwarf
 #                 --> 16 --> 17 --> 18 --> 57 --> 58 --> 59 --> 60 --> 61
+#   Satyr         --> 70 --> 71 --> 72 --> 50 --> 51 --> 52 --> 53
 #   Kobold        --> 23 --> 24 --> 25 --> 26 --> 67 --> 68 --> 69
 #   Half-Orc      --> 19 --> 20 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Half-Troll/Cyclops
@@ -257,6 +258,31 @@ chart:26:67:95
 phrase:and your mother was a cook. 
 chart:26:67:100
 phrase:and your mother was one of the Chief's harem. 
+
+chart:70:71:35
+phrase:You were raised in a mountain revel, 
+chart:70:71:70
+phrase:You were born near a hidden spring, 
+chart:70:71:100
+phrase:You came from a wild woodland band, 
+
+chart:71:72:30
+phrase:where your kin tended strange mushrooms. 
+chart:71:72:65
+phrase:where your kin guarded an old shrine. 
+chart:71:72:90
+phrase:where your kin brewed wine and played pipes. 
+chart:71:72:100
+phrase:where your kin bartered charms with travelers. 
+
+chart:72:50:25
+phrase:You were known as a harmless prankster.  
+chart:72:50:65
+phrase:You learned old songs and woodland lore.  
+chart:72:50:90
+phrase:You became a fierce guardian of the grove.  
+chart:72:50:100
+phrase:You were touched by a god's passing shadow.  
 
 chart:50:51:20
 phrase:You have dark brown eyes, 

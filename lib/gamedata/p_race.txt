@@ -322,7 +322,7 @@ weight:190:20
 obj-flags:SEE_INVIS
 values:RES_LIGHT[1]
 
-name:Nibelung
+name:Satyr
 stats:1:-1:2:0:2
 skill-disarm-phys:3
 skill-disarm-magic:5
@@ -337,11 +337,12 @@ skill-dig:20
 hitdie:11
 exp:140
 infravision:5
-history:16
-age:40:12
-height:43:3
-weight:92:6
-values:RES_DARK[1] | RES_DISEN[1]
+history:70
+age:35:10
+height:64:6
+weight:150:25
+player-flags:KNOW_MUSHROOM
+values:RES_DISEN[1]
 
 name:Fae
 stats:-3:3:1:4:-2

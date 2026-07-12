@@ -80,7 +80,7 @@
 | Half-Giant | Cyclops | Done | Reviewed; Cyclopean Rage, 140% XP |
 | Dunadan | Demigod | Done | Reviewed; +2 all stats, 150% XP |
 | High-Elf | High-Elf | Pending | Not reviewed |
-| New | Nibelung | Done | Reviewed; 140% XP |
+| New | Satyr | Done | Reviewed; 140% XP; Mushroom Lore, disenchantment resistance |
 | New | Fae | Done | Reviewed; 125% XP |
 
 ## Classes
