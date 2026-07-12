@@ -75,6 +75,27 @@ name:Siren Song
 desc:You can sing focused songs that frighten, lull, impede,
 desc: distract, or briefly command a single target.
 
+type:player
+code:WAR_CRY
+name:War Cry
+desc:You can unleash a battle cry to frighten a single target.
+
+type:player
+code:CURE_CONFUSION
+name:Cure Confusion
+desc:You can steady your mind and clear confusion.
+
+type:player
+code:STONE_LORE
+name:Stone Lore
+desc:You can read the dungeon's stone, beginning with ore and
+desc: later sensing treasure, passages, hazards, and objects.
+
+type:player
+code:DEMIGOD_TAUNT
+name:Taunt
+desc:You can challenge nearby creatures and draw their anger.
+
 ## Class player flags
 
 type:player

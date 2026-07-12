@@ -332,6 +332,30 @@ grade:y:10000:Song:Your voice needs rest.
 on-end:Your voice is ready again.
 msgt:GENERIC
 
+name:WAR_CRY_COOLDOWN
+desc:catching your breath
+grade:y:10000:WarCry:You catch your breath.
+on-end:You are ready to unleash another war cry.
+msgt:GENERIC
+
+name:CURE_CONFUSION_COOLDOWN
+desc:steadying your mind
+grade:y:10000:Clarity:Your thoughts settle.
+on-end:You are ready to clear your thoughts again.
+msgt:GENERIC
+
+name:STONE_LORE_COOLDOWN
+desc:reading the stone
+grade:y:10000:Stone:You listen to the dungeon's stone.
+on-end:The stone is ready to speak again.
+msgt:GENERIC
+
+name:DEMIGOD_TAUNT_COOLDOWN
+desc:recovering your bearing
+grade:y:10000:Taunt:Your divine challenge echoes.
+on-end:You are ready to taunt your foes again.
+msgt:GENERIC
+
 name:SHIELD
 desc:mystic shield
 grade:G:10000:Shield:A mystic shield forms around your body!

@@ -631,13 +631,13 @@ void borg_init(void)
         || !streq(player_id2race(RACE_GNOME)->name, "Gnome")
         || !streq(player_id2race(RACE_DWARF)->name, "Dwarf")
         || !streq(player_id2race(RACE_KOBOLD)->name, "Kobold")
+        || !streq(player_id2race(RACE_HIGH_ELF)->name, "High-Elf")
         || !streq(player_id2race(RACE_HALF_ORC)->name, "Half-Orc")
         || !streq(player_id2race(RACE_HALF_TROLL)->name, "Half-Troll")
         || !streq(player_id2race(RACE_CYCLOPS)->name, "Cyclops")
-        || !streq(player_id2race(RACE_DEMIGOD)->name, "Demigod")
-        || !streq(player_id2race(RACE_HIGH_ELF)->name, "High-Elf")
         || !streq(player_id2race(RACE_SATYR)->name, "Satyr")
-        || !streq(player_id2race(RACE_SIREN)->name, "Siren")) {
+        || !streq(player_id2race(RACE_SIREN)->name, "Siren")
+        || !streq(player_id2race(RACE_DEMIGOD)->name, "Demigod")) {
         borg_note("**STARTUP FAILURE** races do not match");
         borg_init_failure = true;
     }

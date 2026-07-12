@@ -609,7 +609,7 @@ adjusted for constitution).
       Race       STR  INT  WIS  DEX  CON  HD (base)  XP/level  Infra
 ================ ===  ===  ===  ===  ===  =========  ========  ======
       Human        0    0    0    0    0      10        100%   None
-      Half-Elf     0   +1   -1   +1   -1      10        120%   20'
+      Half-Elf     0   +1   -1   +1   -1      10        110%   20'
       Elf         -1   +2   -1   +1   -1       9        120%   30'
       Hobbit      -2   +2   +1   +3   +2       7        120%   40'
       Gnome       -1   +2    0   +2   +1       8        120%   40'

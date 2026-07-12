@@ -68,20 +68,20 @@
 | Tactical race | Hadesband race | Reskin | Balance |
 | --- | --- | --- | --- |
 | Human | Human | Pending; likely retain | Not reviewed |
-| Half-Elf | Half-Elf | Pending | Not reviewed |
+| Half-Elf | Half-Elf | Pending | Reviewed; 110% XP |
 | Elf | Elf | Pending | Not reviewed |
 | Hobbit | Hobbit | Pending | Not reviewed |
 | Gnome | Gnome | Pending | Not reviewed |
 | Dwarf | Dwarf | Pending; likely retain | Not reviewed |
 | Kobold | Kobold | Done; likely retain | Reviewed; Scurry, 120% XP |
+| High-Elf | High-Elf | Pending | Not reviewed |
 | Half-Orc | Half-Orc | Pending; likely retain | Not reviewed |
 | Half-Troll | Half-Troll | Pending | Not reviewed |
 | Barbarian | Barbarian | Pending; Spartan race removed | Not reviewed |
 | Half-Giant | Cyclops | Done | Reviewed; Cyclopean Rage, 140% XP |
-| Dunadan | Demigod | Done | Reviewed; +2 all stats, 150% XP |
-| High-Elf | High-Elf | Pending | Not reviewed |
-| New | Satyr | Done | Reviewed; 140% XP; Mushroom Lore, disenchantment resistance |
+| New | Satyr | Done | Reviewed; 130% XP; Mushroom Lore, disenchantment resistance, Cure Confusion |
 | New | Siren | Done | Reviewed; 125% XP; Siren Song |
+| Dunadan | Demigod | Done | Reviewed; +2 all stats, 150% XP |
 
 ## Classes
 - Keep direct archetypes: Warrior/Fighter, Mage, Rogue, Ranger likely remain readable.

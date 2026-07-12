@@ -19,6 +19,7 @@
 
 #include "angband.h"
 #include "player-properties.h"
+#include "effects.h"
 #include "game-input.h"
 #include "init.h"
 #include "mon-desc.h"
@@ -47,6 +48,10 @@ static void use_mana_siphon(int dir);
 static void use_cyclopean_rage(int dir);
 static void use_kobold_scurry(int dir);
 static void use_siren_song(int dir);
+static void use_war_cry(int dir);
+static void use_cure_confusion(int dir);
+static void use_stone_lore(int dir);
+static void use_demigod_taunt(int dir);
 
 static const struct player_power player_powers[] = {
 	{ PF_STEAL, PLAYER_POWER_CLASS, "Steal", true, use_steal },
@@ -57,7 +62,14 @@ static const struct player_power player_powers[] = {
 	{ PF_KOBOLD_SCURRY, PLAYER_POWER_RACE, "Scurry", false,
 		use_kobold_scurry },
 	{ PF_SIREN_SONG, PLAYER_POWER_RACE, "Siren Song", false,
-		use_siren_song }
+		use_siren_song },
+	{ PF_WAR_CRY, PLAYER_POWER_RACE, "War Cry", false, use_war_cry },
+	{ PF_CURE_CONFUSION, PLAYER_POWER_RACE, "Cure Confusion", false,
+		use_cure_confusion },
+	{ PF_STONE_LORE, PLAYER_POWER_RACE, "Stone Lore", false,
+		use_stone_lore },
+	{ PF_DEMIGOD_TAUNT, PLAYER_POWER_RACE, "Taunt", false,
+		use_demigod_taunt }
 };
 
 struct siren_song {
@@ -76,6 +88,27 @@ static const struct siren_song siren_songs[] = {
 	{ "Distracting Song", 25, 60, 45, MON_TMD_CONF, "confuse one target" },
 	{ "Siren's Song", 40, 120, 60, MON_TMD_COMMAND,
 		"briefly command one target" }
+};
+
+struct stone_lore {
+	const char *name;
+	int level;
+	int recharge;
+	int effect1;
+	int effect2;
+	const char *desc;
+};
+
+static const struct stone_lore stone_lore[] = {
+	{ "Ore Sense", 1, 25, EF_DETECT_ORE, EF_NONE, "detect nearby ore" },
+	{ "Treasure Sense", 8, 40, EF_DETECT_ORE, EF_DETECT_GOLD,
+		"detect ore and treasure" },
+	{ "Passage Sense", 15, 50, EF_DETECT_DOORS, EF_DETECT_STAIRS,
+		"detect doors and stairs" },
+	{ "Hazard Sense", 22, 60, EF_DETECT_TRAPS, EF_NONE,
+		"detect nearby traps" },
+	{ "Deep Sense", 30, 80, EF_DETECT_OBJECTS, EF_NONE,
+		"detect nearby objects" }
 };
 
 static bool player_owns_power(const struct player_power *power)
@@ -348,7 +381,8 @@ static void use_siren_song(int dir)
 		choices[i] = entries[i];
 	}
 
-	choice = get_siren_song(choices, N_ELEMENTS(siren_songs));
+	choice = get_power_menu("Sing which song? ", choices,
+		N_ELEMENTS(siren_songs));
 	if (choice < 0 || choice >= (int)N_ELEMENTS(siren_songs)) {
 		return;
 	}
@@ -402,6 +436,122 @@ static void use_siren_song(int dir)
 	}
 
 	mon_inc_timed(mon, song->effect, duration, 0);
+}
+
+static void use_war_cry(int dir)
+{
+	struct monster *mon;
+	char m_name[80];
+
+	if (player->timed[TMD_WAR_CRY_COOLDOWN]) {
+		msg("You need %d more turns before another war cry.",
+			player->timed[TMD_WAR_CRY_COOLDOWN]);
+		return;
+	}
+
+	if (!get_aim_dir(&dir)) {
+		return;
+	}
+
+	mon = siren_song_target(dir);
+	if (!mon) {
+		msg("Your war cry finds no suitable target.");
+		return;
+	}
+
+	monster_desc(m_name, sizeof(m_name), mon, MDESC_TARG);
+	player->upkeep->energy_use = z_info->move_energy;
+	(void)player_set_timed(player, TMD_WAR_CRY_COOLDOWN, 70, true,
+		false);
+
+	if (randint1(player->lev + 10) < randint1(mon->race->level + 10)) {
+		msg("%s stands firm against your war cry.", m_name);
+		return;
+	}
+
+	mon_inc_timed(mon, MON_TMD_FEAR, 10 + player->lev, 0);
+}
+
+static void use_cure_confusion(int dir)
+{
+	if (player->timed[TMD_CURE_CONFUSION_COOLDOWN]) {
+		msg("You need %d more turns before clearing your thoughts again.",
+			player->timed[TMD_CURE_CONFUSION_COOLDOWN]);
+		return;
+	}
+
+	if (!player->timed[TMD_CONFUSED]) {
+		msg("Your thoughts are already clear.");
+		return;
+	}
+
+	player->upkeep->energy_use = z_info->move_energy;
+	(void)player_clear_timed(player, TMD_CONFUSED, true, false);
+	(void)player_set_timed(player, TMD_CURE_CONFUSION_COOLDOWN, 120,
+		true, false);
+}
+
+static void use_stone_lore(int dir)
+{
+	const char *choices[N_ELEMENTS(stone_lore)];
+	char entries[N_ELEMENTS(stone_lore)][96];
+	const struct stone_lore *lore;
+	int choice;
+	size_t i;
+	bool ident = false;
+
+	if (player->timed[TMD_STONE_LORE_COOLDOWN]) {
+		msg("You need %d more turns before reading the stone again.",
+			player->timed[TMD_STONE_LORE_COOLDOWN]);
+		return;
+	}
+
+	for (i = 0; i < N_ELEMENTS(stone_lore); i++) {
+		strnfmt(entries[i], sizeof(entries[i]),
+			"%-18s Lv %2d  Rchg %3d  %s",
+			stone_lore[i].name, stone_lore[i].level,
+			stone_lore[i].recharge, stone_lore[i].desc);
+		choices[i] = entries[i];
+	}
+
+	choice = get_power_menu("Use which stone lore? ", choices,
+		N_ELEMENTS(stone_lore));
+	if (choice < 0 || choice >= (int)N_ELEMENTS(stone_lore)) {
+		return;
+	}
+
+	lore = &stone_lore[choice];
+	if (player->lev < lore->level) {
+		msg("You are not yet skilled enough to use %s.", lore->name);
+		return;
+	}
+
+	player->upkeep->energy_use = z_info->move_energy;
+	(void)player_set_timed(player, TMD_STONE_LORE_COOLDOWN,
+		lore->recharge, true, false);
+
+	effect_simple(lore->effect1, source_player(), "0", 0, 0, 0, 22, 40,
+		&ident);
+	if (lore->effect2 != EF_NONE) {
+		effect_simple(lore->effect2, source_player(), "0", 0, 0, 0,
+			22, 40, &ident);
+	}
+}
+
+static void use_demigod_taunt(int dir)
+{
+	if (player->timed[TMD_DEMIGOD_TAUNT_COOLDOWN]) {
+		msg("You need %d more turns before another divine challenge.",
+			player->timed[TMD_DEMIGOD_TAUNT_COOLDOWN]);
+		return;
+	}
+
+	player->upkeep->energy_use = z_info->move_energy;
+	(void)player_inc_timed(player, TMD_TAUNT, 20 + player->lev / 2,
+		true, false, false);
+	(void)player_set_timed(player, TMD_DEMIGOD_TAUNT_COOLDOWN, 120,
+		true, false);
+	monsters_handle_player_noise(100);
 }
 
 /**

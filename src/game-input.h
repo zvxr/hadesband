@@ -57,7 +57,8 @@ extern bool (*get_item_hook)(struct object **choice, const char *pmt,
 							 int mode);
 extern bool (*get_curse_hook)(int *choice, struct object *obj,
 							  char *dice_string);
-extern int (*get_siren_song_hook)(const char **choices, int count);
+extern int (*get_power_menu_hook)(const char *prompt, const char **choices,
+	int count);
 extern int (*get_effect_from_list_hook)(const char *prompt,
 	struct effect *effect, int count, bool allow_random);
 extern bool (*confirm_debug_hook)(void);
@@ -83,7 +84,7 @@ int get_spell(struct player *p, const char *verb,
 bool get_item(struct object **choice, const char *pmt, const char *str,
 			  cmd_code cmd, item_tester tester, int mode);
 bool get_curse(int *choice, struct object *obj, char *dice_string);
-int get_siren_song(const char **choices, int count);
+int get_power_menu(const char *prompt, const char **choices, int count);
 int get_effect_from_list(const char *prompt, struct effect *effect, int count,
 	bool allow_random);
 void get_panel(int *min_y, int *min_x, int *max_y, int *max_x);

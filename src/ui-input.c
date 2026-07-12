@@ -1430,7 +1430,8 @@ static bool textui_get_com(const char *prompt, char *command)
 	return result;
 }
 
-static int textui_get_siren_song(const char **choices, int count)
+static int textui_get_power_menu(const char *prompt, const char **choices,
+	int count)
 {
 	struct menu *m;
 	ui_event out;
@@ -1455,7 +1456,7 @@ static int textui_get_siren_song(const char **choices, int count)
 
 	screen_save();
 	region_erase_bordered(&m->active);
-	prt("Sing which song? ", 0, 0);
+	prt(prompt, 0, 0);
 	out = menu_select(m, 0, false);
 	if (out.type & EVT_SELECT) {
 		selection = m->cursor;
@@ -1774,7 +1775,7 @@ void textui_input_init(void)
 	get_aim_dir_hook = textui_get_aim_dir;
 	get_spell_from_book_hook = textui_get_spell_from_book;
 	get_spell_hook = textui_get_spell;
-	get_siren_song_hook = textui_get_siren_song;
+	get_power_menu_hook = textui_get_power_menu;
 	get_effect_from_list_hook = textui_get_effect_from_list;
 	get_item_hook = textui_get_item;
 	get_curse_hook = textui_get_curse;

@@ -41,7 +41,7 @@ static const struct expected_race expected[] = {
 	{
 		"Satyr",
 		{ 1, -1, 2, 0, 2 },
-		11, 140, 5, 9, 8,
+		11, 130, 5, 9, 8,
 		-1, ELEM_DISEN, -1
 	},
 	{
@@ -156,6 +156,7 @@ static int test_bonuses0(void *data)
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.el_info[ELEM_DISEN].res_level, 1);
 	require(player_has(player, PF_KNOW_MUSHROOM));
+	require(player_has(player, PF_CURE_CONFUSION));
 
 	eq(player_make_simple("Siren", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
@@ -186,8 +187,24 @@ static int test_power_ownership0(void *data)
 	require(streq(player_power_name(PLAYER_POWER_RACE), "Scurry"));
 	require(!player_power_needs_direction(PLAYER_POWER_RACE));
 
+	eq(player_make_simple("Half-Orc", "Warrior", "Tester"), true);
+	require(streq(player_power_name(PLAYER_POWER_RACE), "War Cry"));
+	require(!player_power_needs_direction(PLAYER_POWER_RACE));
+
+	eq(player_make_simple("Dwarf", "Warrior", "Tester"), true);
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Stone Lore"));
+	require(!player_power_needs_direction(PLAYER_POWER_RACE));
+
+	eq(player_make_simple("Satyr", "Warrior", "Tester"), true);
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Cure Confusion"));
+	require(!player_power_needs_direction(PLAYER_POWER_RACE));
+
 	eq(player_make_simple("Siren", "Warrior", "Tester"), true);
 	require(streq(player_power_name(PLAYER_POWER_RACE), "Siren Song"));
+	require(!player_power_needs_direction(PLAYER_POWER_RACE));
+
+	eq(player_make_simple("Demigod", "Warrior", "Tester"), true);
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Taunt"));
 	require(!player_power_needs_direction(PLAYER_POWER_RACE));
 
 	eq(player_make_simple("Human", "Warrior", "Tester"), true);
