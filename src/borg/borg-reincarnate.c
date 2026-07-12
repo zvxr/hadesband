@@ -203,7 +203,7 @@ static void create_random_name(int race, char *name, size_t name_len)
     case RACE_ELF:
     case RACE_HALF_ELF:
     case RACE_HIGH_ELF:
-    case RACE_FAE:
+    case RACE_SIREN:
         my_strcpy(name,
             elf_syllable1[randint0(sizeof(elf_syllable1) / sizeof(char *))],
             name_len);

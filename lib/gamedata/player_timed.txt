@@ -326,6 +326,12 @@ msgt:BERSERK
 resist:SHARD
 flag-synonym:PROT_FEAR:0
 
+name:SIREN_SONG_COOLDOWN
+desc:recovering your voice
+grade:y:10000:Song:Your voice needs rest.
+on-end:Your voice is ready again.
+msgt:GENERIC
+
 name:SHIELD
 desc:mystic shield
 grade:G:10000:Shield:A mystic shield forms around your body!

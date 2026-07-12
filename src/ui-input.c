@@ -1430,6 +1430,47 @@ static bool textui_get_com(const char *prompt, char *command)
 	return result;
 }
 
+static int textui_get_siren_song(const char **choices, int count)
+{
+	struct menu *m;
+	ui_event out;
+	char **items;
+	region loc = { 0, 1, 74, 0 };
+	int i, selection = -1;
+
+	if (count <= 0) return -1;
+
+	items = mem_zalloc((count + 1) * sizeof(*items));
+	for (i = 0; i < count; i++) {
+		items[i] = string_make(choices[i]);
+	}
+
+	m = menu_new(MN_SKIN_SCROLL, menu_find_iter(MN_ITER_STRINGS));
+	m->selections = all_letters_nohjkl;
+	m->flags = MN_KEYMAP_ESC;
+	menu_setpriv(m, count, items);
+
+	loc.page_rows = MIN(count, Term->hgt - 2);
+	menu_layout(m, &loc);
+
+	screen_save();
+	region_erase_bordered(&m->active);
+	prt("Sing which song? ", 0, 0);
+	out = menu_select(m, 0, false);
+	if (out.type & EVT_SELECT) {
+		selection = m->cursor;
+	}
+	screen_load();
+
+	for (i = 0; items[i]; i++) {
+		string_free(items[i]);
+	}
+	mem_free(items);
+	mem_free(m);
+
+	return selection;
+}
+
 
 bool get_com_ex(const char *prompt, ui_event *command)
 {
@@ -1733,6 +1774,7 @@ void textui_input_init(void)
 	get_aim_dir_hook = textui_get_aim_dir;
 	get_spell_from_book_hook = textui_get_spell_from_book;
 	get_spell_hook = textui_get_spell;
+	get_siren_song_hook = textui_get_siren_song;
 	get_effect_from_list_hook = textui_get_effect_from_list;
 	get_item_hook = textui_get_item;
 	get_curse_hook = textui_get_curse;

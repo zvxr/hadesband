@@ -69,6 +69,12 @@ name:Scurry
 desc:You can move with frantic speed for 20 turns.  After using
 desc: Scurry, you must wait 200 turns before using it again.
 
+type:player
+code:SIREN_SONG
+name:Siren Song
+desc:You can sing focused songs that frighten, lull, impede,
+desc: distract, or briefly command a single target.
+
 ## Class player flags
 
 type:player

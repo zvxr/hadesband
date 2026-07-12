@@ -242,7 +242,7 @@ owner:0:Your home
 
 # Dungeon Organics
 store:STORE_DUNGEON
-owner:30000:Twyla (Fae)
+owner:30000:Twyla (Siren)
 owner:15000:Gertrude the Cursed (Demon)
 owner:10000:Princess the Quiet (Human)
 owner:5000:Clockarella the Timely (Gnome)

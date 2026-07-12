@@ -637,7 +637,7 @@ void borg_init(void)
         || !streq(player_id2race(RACE_DEMIGOD)->name, "Demigod")
         || !streq(player_id2race(RACE_HIGH_ELF)->name, "High-Elf")
         || !streq(player_id2race(RACE_SATYR)->name, "Satyr")
-        || !streq(player_id2race(RACE_FAE)->name, "Fae")) {
+        || !streq(player_id2race(RACE_SIREN)->name, "Siren")) {
         borg_note("**STARTUP FAILURE** races do not match");
         borg_init_failure = true;
     }

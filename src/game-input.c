@@ -37,6 +37,7 @@ int (*get_spell_hook)(struct player *p, const char *verb,
 bool (*get_item_hook)(struct object **choice, const char *pmt, const char *str,
 					  cmd_code cmd, item_tester tester, int mode);
 bool (*get_curse_hook)(int *choice, struct object *obj, char *dice_string);
+int (*get_siren_song_hook)(const char **choices, int count);
 int (*get_effect_from_list_hook)(const char* prompt,
 	struct effect *effect, int count, bool allow_random);
 bool (*confirm_debug_hook)(void);
@@ -111,6 +112,17 @@ bool get_com(const char *prompt, char *command)
 		return get_com_hook(prompt, command);
 	else
 		return false;
+}
+
+/**
+ * Display the Siren song menu.
+ */
+int get_siren_song(const char **choices, int count)
+{
+	if (get_siren_song_hook)
+		return get_siren_song_hook(choices, count);
+	else
+		return -1;
 }
 
 

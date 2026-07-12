@@ -23,13 +23,14 @@
 #   Human/Demigod
 #                 -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Half-Elf      -->  4 -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
-#   Elf/Fae       -->  5 -->  6 -->  9 --> 54 --> 55 --> 56
+#   Elf           -->  5 -->  6 -->  9 --> 54 --> 55 --> 56
 #   High-Elf      -->  7 -->  8 -->  9 --> 54 --> 55 --> 56
 #   Hobbit        --> 10 --> 11 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Gnome         --> 13 --> 14 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Dwarf
 #                 --> 16 --> 17 --> 18 --> 57 --> 58 --> 59 --> 60 --> 61
 #   Satyr         --> 70 --> 71 --> 72 --> 50 --> 51 --> 52 --> 53
+#   Siren         --> 73 --> 74 --> 75 --> 50 --> 51 --> 52 --> 53
 #   Kobold        --> 23 --> 24 --> 25 --> 26 --> 67 --> 68 --> 69
 #   Half-Orc      --> 19 --> 20 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
 #   Half-Troll/Cyclops
@@ -283,6 +284,31 @@ chart:72:50:90
 phrase:You became a fierce guardian of the grove.  
 chart:72:50:100
 phrase:You were touched by a god's passing shadow.  
+
+chart:73:74:35
+phrase:You were born on a wave-swept island, 
+chart:73:74:70
+phrase:You were raised among singers of a hidden cove, 
+chart:73:74:100
+phrase:You came from a lonely cliffside shrine, 
+
+chart:74:75:30
+phrase:where sailors left offerings and warnings. 
+chart:74:75:65
+phrase:where your kin guarded old sea-lanes. 
+chart:74:75:90
+phrase:where every child learned the power of a true note. 
+chart:74:75:100
+phrase:where your voice was trained by temple singers. 
+
+chart:75:50:25
+phrase:You first learned songs that stir dread.  
+chart:75:50:55
+phrase:You mastered lullabies that still the restless.  
+chart:75:50:85
+phrase:You learned to cloud the thoughts of listeners.  
+chart:75:50:100
+phrase:You were taught the forbidden song of command.  
 
 chart:50:51:20
 phrase:You have dark brown eyes, 

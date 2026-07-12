@@ -62,7 +62,7 @@
   consistently invokes racial Expertise.
 - Kobold uses `x` for Scurry: 20 turns of extra movement, then a 200-turn
   cooldown.
-- Fae may remain if framed as nymph/sprite-adjacent.
+- Fae replaced by Siren, with a shared-cooldown Siren Song Expertise.
 - Need preserve stats/XP unless a name implies changed mechanics.
 
 | Tactical race | Hadesband race | Reskin | Balance |
@@ -81,7 +81,7 @@
 | Dunadan | Demigod | Done | Reviewed; +2 all stats, 150% XP |
 | High-Elf | High-Elf | Pending | Not reviewed |
 | New | Satyr | Done | Reviewed; 140% XP; Mushroom Lore, disenchantment resistance |
-| New | Fae | Done | Reviewed; 125% XP |
+| New | Siren | Done | Reviewed; 125% XP; Siren Song |
 
 ## Classes
 - Keep direct archetypes: Warrior/Fighter, Mage, Rogue, Ranger likely remain readable.

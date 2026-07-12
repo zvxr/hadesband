@@ -56,7 +56,7 @@
 #define RACE_DEMIGOD    10
 #define RACE_HIGH_ELF   11
 #define RACE_SATYR      12
-#define RACE_FAE        13
+#define RACE_SIREN      13
 #define MAX_RACES       14
 
 enum borg_item_pos { BORG_INVEN = 1, BORG_EQUIP = 2, BORG_QUILL = 4 };

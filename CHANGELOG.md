@@ -7,7 +7,7 @@
   spawning.
 * Renamed birth game modes to Classic, Recall, and Nightmare, and defaulted
   new characters to Classic.
-* Added three races: Cyclops, Satyr, Fae.
+* Added three races: Cyclops, Satyr, Siren.
 * Removed the erroneous Spartan player race.
 * Added class Skill (`s`) and racial Expertise (`x`) command categories.
 * Centralized active Skill and Expertise dispatch in player properties.

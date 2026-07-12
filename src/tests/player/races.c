@@ -45,10 +45,10 @@ static const struct expected_race expected[] = {
 		-1, ELEM_DISEN, -1
 	},
 	{
-		"Fae",
+		"Siren",
 		{ -3, 3, 1, 4, -2 },
 		6, 125, 4, -12, 16,
-		OF_TRAP_IMMUNE, -1, -1
+		-1, -1, -1
 	}
 };
 
@@ -157,10 +157,9 @@ static int test_bonuses0(void *data)
 	eq(calc_state.el_info[ELEM_DISEN].res_level, 1);
 	require(player_has(player, PF_KNOW_MUSHROOM));
 
-	eq(player_make_simple("Fae", "Warrior", "Tester"), true);
+	eq(player_make_simple("Siren", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
-	require(of_has(calc_state.flags, OF_FEATHER));
-	require(of_has(calc_state.flags, OF_TRAP_IMMUNE));
+	require(player_has(player, PF_SIREN_SONG));
 
 	ok;
 }
@@ -185,6 +184,10 @@ static int test_power_ownership0(void *data)
 
 	eq(player_make_simple("Kobold", "Warrior", "Tester"), true);
 	require(streq(player_power_name(PLAYER_POWER_RACE), "Scurry"));
+	require(!player_power_needs_direction(PLAYER_POWER_RACE));
+
+	eq(player_make_simple("Siren", "Warrior", "Tester"), true);
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Siren Song"));
 	require(!player_power_needs_direction(PLAYER_POWER_RACE));
 
 	eq(player_make_simple("Human", "Warrior", "Tester"), true);

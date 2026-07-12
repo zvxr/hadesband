@@ -25,9 +25,12 @@
 #include "mon-move.h"
 #include "mon-predicate.h"
 #include "mon-spell.h"
+#include "mon-timed.h"
 #include "mon-util.h"
 #include "player-timed.h"
 #include "player-util.h"
+#include "project.h"
+#include "target.h"
 
 typedef void (*player_power_handler)(int dir);
 
@@ -43,6 +46,7 @@ static void use_steal(int dir);
 static void use_mana_siphon(int dir);
 static void use_cyclopean_rage(int dir);
 static void use_kobold_scurry(int dir);
+static void use_siren_song(int dir);
 
 static const struct player_power player_powers[] = {
 	{ PF_STEAL, PLAYER_POWER_CLASS, "Steal", true, use_steal },
@@ -51,7 +55,27 @@ static const struct player_power player_powers[] = {
 	{ PF_CYCLOPEAN_RAGE, PLAYER_POWER_RACE, "Cyclopean Rage", false,
 		use_cyclopean_rage },
 	{ PF_KOBOLD_SCURRY, PLAYER_POWER_RACE, "Scurry", false,
-		use_kobold_scurry }
+		use_kobold_scurry },
+	{ PF_SIREN_SONG, PLAYER_POWER_RACE, "Siren Song", false,
+		use_siren_song }
+};
+
+struct siren_song {
+	const char *name;
+	int level;
+	int recharge;
+	int fail;
+	int effect;
+	const char *desc;
+};
+
+static const struct siren_song siren_songs[] = {
+	{ "Dread Song", 1, 25, 25, MON_TMD_FEAR, "frighten one target" },
+	{ "Lullaby", 8, 35, 30, MON_TMD_SLEEP, "put one target to sleep" },
+	{ "Impeding Song", 15, 45, 35, MON_TMD_SLOW, "slow one target" },
+	{ "Distracting Song", 25, 60, 45, MON_TMD_CONF, "confuse one target" },
+	{ "Siren's Song", 40, 120, 60, MON_TMD_COMMAND,
+		"briefly command one target" }
 };
 
 static bool player_owns_power(const struct player_power *power)
@@ -231,6 +255,153 @@ static void use_kobold_scurry(int dir)
 	player->upkeep->energy_use = z_info->move_energy;
 	(void)player_set_timed(player, TMD_RUNNING, 20, true, false);
 	(void)player_set_timed(player, TMD_SCURRY_COOLDOWN, 200, true, false);
+}
+
+static int siren_song_chance(const struct siren_song *song)
+{
+	int stat = (player->state.stat_ind[STAT_INT] +
+		player->state.stat_ind[STAT_WIS]) / 2;
+	int chance = song->fail;
+
+	chance -= 3 * (player->lev - song->level);
+	chance -= stat / 2;
+
+	if (player_of_has(player, OF_AFRAID)) chance += 20;
+	if (player->timed[TMD_CONFUSED]) chance += 15;
+	if (player->timed[TMD_STUN] > 50) {
+		chance += 25;
+	} else if (player->timed[TMD_STUN]) {
+		chance += 15;
+	}
+
+	return MIN(95, MAX(5, chance));
+}
+
+static int siren_song_duration(const struct siren_song *song)
+{
+	switch (song->effect) {
+		case MON_TMD_FEAR:
+			return 10 + player->lev;
+		case MON_TMD_SLEEP:
+			return 100 + player->lev * 10;
+		case MON_TMD_SLOW:
+			return 10 + player->lev / 3;
+		case MON_TMD_CONF:
+			return 8 + player->lev / 4;
+		case MON_TMD_COMMAND:
+			return 5 + randint1(5);
+		default:
+			return 0;
+	}
+}
+
+static struct monster *siren_song_target(int dir)
+{
+	struct monster *mon = target_get_monster();
+	struct loc path_g[256];
+	struct loc target;
+	int i, path_n;
+
+	if (mon && target_able(mon) &&
+			projectable(cave, player->grid, mon->grid, PROJECT_NONE)) {
+		return mon;
+	}
+
+	target = loc(player->grid.x + ddgrid[dir].x * z_info->max_range,
+		player->grid.y + ddgrid[dir].y * z_info->max_range);
+	path_n = project_path(cave, path_g, z_info->max_range, player->grid,
+		target, PROJECT_STOP);
+
+	for (i = 0; i < path_n; i++) {
+		mon = square_monster(cave, path_g[i]);
+		if (mon && target_able(mon)) {
+			return mon;
+		}
+	}
+
+	return NULL;
+}
+
+static void use_siren_song(int dir)
+{
+	const struct siren_song *song;
+	const char *choices[N_ELEMENTS(siren_songs)];
+	char entries[N_ELEMENTS(siren_songs)][96];
+	struct monster *mon;
+	char m_name[80];
+	int choice, chance, duration;
+	size_t i;
+
+	if (player->timed[TMD_SIREN_SONG_COOLDOWN]) {
+		msg("You need %d more turns before your voice recovers.",
+			player->timed[TMD_SIREN_SONG_COOLDOWN]);
+		return;
+	}
+
+	for (i = 0; i < N_ELEMENTS(siren_songs); i++) {
+		int fail = siren_song_chance(&siren_songs[i]);
+
+		strnfmt(entries[i], sizeof(entries[i]),
+			"%-18s Lv %2d  Rchg %3d  Fail %2d%%  %s",
+			siren_songs[i].name, siren_songs[i].level,
+			siren_songs[i].recharge, fail, siren_songs[i].desc);
+		choices[i] = entries[i];
+	}
+
+	choice = get_siren_song(choices, N_ELEMENTS(siren_songs));
+	if (choice < 0 || choice >= (int)N_ELEMENTS(siren_songs)) {
+		return;
+	}
+
+	song = &siren_songs[choice];
+	if (player->lev < song->level) {
+		msg("You are not yet skilled enough to sing %s.", song->name);
+		return;
+	}
+	if (song->effect == MON_TMD_COMMAND && player->timed[TMD_COMMAND]) {
+		msg("You are already commanding a creature.");
+		return;
+	}
+
+	if (!get_aim_dir(&dir)) {
+		return;
+	}
+
+	mon = siren_song_target(dir);
+	if (!mon) {
+		msg("Your song finds no suitable target.");
+		return;
+	}
+
+	monster_desc(m_name, sizeof(m_name), mon, MDESC_TARG);
+	player->upkeep->energy_use = z_info->move_energy;
+	(void)player_set_timed(player, TMD_SIREN_SONG_COOLDOWN,
+		song->recharge, true, false);
+
+	chance = siren_song_chance(song);
+	if (randint0(100) < chance) {
+		msg("Your voice falters before reaching %s.", m_name);
+		return;
+	}
+
+	duration = siren_song_duration(song);
+
+	if (song->effect == MON_TMD_COMMAND) {
+		if (monster_is_unique(mon)) {
+			msg("%s refuses to heed your song.", m_name);
+			return;
+		}
+		if (randint1(player->lev) < randint1(mon->race->level)) {
+			msg("%s resists your song.", m_name);
+			return;
+		}
+
+		player_set_timed(player, TMD_COMMAND, duration, false, false);
+		mon_inc_timed(mon, MON_TMD_COMMAND, duration, 0);
+		return;
+	}
+
+	mon_inc_timed(mon, song->effect, duration, 0);
 }
 
 /**

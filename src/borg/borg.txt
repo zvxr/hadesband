@@ -129,7 +129,7 @@ borg_cheat_death = FALSE
 #      10 Demigod
 #      11 High Elf
 #      12 Satyr
-#      13 Fae
+#      13 Siren
 #
 # With regards to the stats. The minimal stats are rolled by the
 # borg. CON will be 16, the secondary stat (usually DEX) will be 17,
