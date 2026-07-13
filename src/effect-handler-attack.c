@@ -225,6 +225,7 @@ bool effect_handler_HEAL_HP(effect_handler_context_t *context)
 
 	/* Gain hitpoints */
 	player->chp += num;
+	context->changed = true;
 
 	/* Enforce maximum */
 	if (player->chp >= player->mhp) {

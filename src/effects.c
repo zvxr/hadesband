@@ -389,6 +389,8 @@ bool effect_do(struct effect *effect,
 		struct command *cmd)
 {
 	bool completed = false;
+	bool saw_cure = false;
+	bool changed = false;
 	effect_handler_f handler;
 	random_value value = { 0, 0, 0, 0 };
 
@@ -499,17 +501,26 @@ bool effect_do(struct effect *effect,
 				effect->x,
 				effect->msg,
 				*ident,
+				false,
 				cmd
 			};
 
 			completed = handler(&context) || completed;
 			*ident = context.ident;
+			if (context.effect == EF_CURE) {
+				saw_cure = true;
+			}
+			changed = changed || context.changed;
 		}
 
 		/* Get the next effect, if there is one */
 		while (leftover-- && effect)
 			effect = effect->next;
 	} while (effect);
+
+	if (completed && saw_cure && !changed && origin.what == SRC_PLAYER) {
+		msg("You feel no different.");
+	}
 
 	return completed;
 }
@@ -567,4 +578,3 @@ int recharge_failure_chance(const struct object *obj, int strength) {
 		- 2 * (obj->pval / obj->number);
 	return raw_chance > 1 ? raw_chance : 1;
 }
-

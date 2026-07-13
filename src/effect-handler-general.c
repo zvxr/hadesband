@@ -511,15 +511,17 @@ bool effect_handler_RANDOM(effect_handler_context_t *context)
 bool effect_handler_NOURISH(effect_handler_context_t *context)
 {
 	int amount = effect_calculate_value(context, false);
+	int old_food = player->timed[TMD_FOOD];
+
 	amount *= z_info->food_value;
 	if (context->subtype == 0) {
 		/* Increase food level by amount */
-		player_inc_timed(player, TMD_FOOD, MAX(amount, 0), false,
+		(void)player_inc_timed(player, TMD_FOOD, MAX(amount, 0), false,
 			context->origin.what != SRC_PLAYER || !context->aware,
 			false);
 	} else if (context->subtype == 1) {
 		/* Decrease food level by amount */
-		player_dec_timed(player, TMD_FOOD, MAX(amount, 0), false,
+		(void)player_dec_timed(player, TMD_FOOD, MAX(amount, 0), false,
 			context->origin.what != SRC_PLAYER || !context->aware);
 	} else if (context->subtype == 2) {
 		/* Set food level to amount, vomiting if necessary */
@@ -527,12 +529,12 @@ bool effect_handler_NOURISH(effect_handler_context_t *context)
 		if (message) {
 			msg("You vomit!");
 		}
-		player_set_timed(player, TMD_FOOD, MAX(amount, 0), false,
+		(void)player_set_timed(player, TMD_FOOD, MAX(amount, 0), false,
 			context->origin.what != SRC_PLAYER || !context->aware);
 	} else if (context->subtype == 3) {
 		/* Increase food level to amount if needed */
 		if (player->timed[TMD_FOOD] < amount) {
-			player_set_timed(player, TMD_FOOD, MAX(amount + 1, 0),
+			(void)player_set_timed(player, TMD_FOOD, MAX(amount + 1, 0),
 				false, context->origin.what != SRC_PLAYER
 				|| !context->aware);
 		}
@@ -540,6 +542,7 @@ bool effect_handler_NOURISH(effect_handler_context_t *context)
 		return false;
 	}
 	context->ident = true;
+	context->changed = player->timed[TMD_FOOD] != old_food;
 	return true;
 }
 
@@ -559,6 +562,7 @@ bool effect_handler_CRUNCH(effect_handler_context_t *context)
 bool effect_handler_CURE(effect_handler_context_t *context)
 {
 	int type = context->subtype;
+	context->changed = player->timed[type] != 0;
 	(void) player_clear_timed(player, type, true,
 		context->origin.what != SRC_PLAYER || !context->aware);
 	context->ident = true;

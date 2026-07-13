@@ -42,6 +42,7 @@ typedef struct effect_handler_context_s {
 	const int subtype, radius, other, y, x;
 	const char *msg;
 	bool ident;
+	bool changed;
 	struct command *cmd;
 } effect_handler_context_t;
 
