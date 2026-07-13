@@ -868,7 +868,7 @@ desc:  The recall effect is not immediate; it is delayed by 14+1d20 turns.
 desc:  During that delay, the prayer can be canceled by invoking the prayer
 desc: of recall again.
 desc:  This prayer has no effect when the option to restrict the use of
-desc: stairs and recall is set, unless Morgoth is dead.
+desc: stairs and recall is set, unless Hades is dead.
 
 spell:Healing:30:50:80:100
 effect:TIMED_INC:ACCEL_HEALING
@@ -1364,7 +1364,7 @@ desc:  The recall effect is not immediate; it is delayed by 14+1d20 turns.
 desc:  During that delay, the prayer can be canceled by invoking the prayer
 desc: of recall again.
 desc:  This prayer has no effect when the option to restrict the use of
-desc: stairs and recall is set, unless Morgoth is dead.
+desc: stairs and recall is set, unless Hades is dead.
 
 spell:Healing:30:50:80:100
 effect:TIMED_INC:ACCEL_HEALING

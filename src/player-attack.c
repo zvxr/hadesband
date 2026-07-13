@@ -1080,6 +1080,53 @@ static const struct hit_types ranged_hit_types[] = {
 	{ MSG_HIT_SUPERB, "It was a superb hit!" }
 };
 
+static struct object *single_fireable_item(void)
+{
+	struct object *obj = NULL;
+	struct object **items;
+	size_t max = z_info->pack_size + z_info->quiver_size + z_info->floor_size;
+	int mode = USE_INVEN | USE_QUIVER | USE_FLOOR;
+	int item_num;
+
+	if (player_is_shapechanged(player)) {
+		mode &= ~(USE_INVEN | USE_QUIVER);
+	}
+
+	items = mem_zalloc(max * sizeof(*items));
+	item_num = scan_items(items, max, player, mode, obj_can_fire);
+	if (item_num == 1) {
+		obj = items[0];
+	}
+	mem_free(items);
+
+	return obj;
+}
+
+static int cmd_get_fire_target(struct command *cmd, struct object *obj,
+		int *target)
+{
+	char o_name[80];
+	char prompt[160];
+
+	if (cmd_get_arg_target(cmd, "target", target) == CMD_OK) {
+		if (*target != DIR_UNKNOWN &&
+				(*target != DIR_TARGET || target_okay())) {
+			return CMD_OK;
+		}
+	}
+
+	object_desc(o_name, sizeof(o_name), obj,
+		ODESC_FULL | ODESC_SINGULAR, player);
+	strnfmt(prompt, sizeof(prompt), "Fire %s in which direction", o_name);
+
+	if (get_aim_dir_prompt(target, prompt)) {
+		cmd_set_arg_target(cmd, "target", *target);
+		return CMD_OK;
+	}
+
+	return CMD_ARG_ABORTED;
+}
+
 /**
  * This is a helper function used by do_cmd_throw and do_cmd_fire.
  *
@@ -1367,6 +1414,13 @@ void do_cmd_fire(struct command *cmd) {
 	}
 
 	/* Get arguments */
+	if (cmd_get_arg_item(cmd, "item", &obj) != CMD_OK) {
+		obj = single_fireable_item();
+		if (obj) {
+			cmd_set_arg_item(cmd, "item", obj);
+		}
+	}
+
 	if (cmd_get_item(cmd, "item", &obj,
 			/* Prompt */ "Fire which ammunition?",
 			/* Error  */ "You have no suitable ammunition to fire.",
@@ -1393,7 +1447,7 @@ void do_cmd_fire(struct command *cmd) {
 		return;
 	}
 
-	if (cmd_get_target(cmd, "target", &dir) == CMD_OK)
+	if (cmd_get_fire_target(cmd, obj, &dir) == CMD_OK)
 		player_confuse_dir(player, &dir, false);
 	else
 		return;

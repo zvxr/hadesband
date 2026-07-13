@@ -360,9 +360,10 @@ static void use_siren_song(int dir)
 	const struct siren_song *song;
 	const char *choices[N_ELEMENTS(siren_songs)];
 	char entries[N_ELEMENTS(siren_songs)][96];
+	int choice_map[N_ELEMENTS(siren_songs)];
 	struct monster *mon;
 	char m_name[80];
-	int choice, chance, duration;
+	int choice, chance, duration, count = 0;
 	size_t i;
 
 	if (player->timed[TMD_SIREN_SONG_COOLDOWN]) {
@@ -374,24 +375,23 @@ static void use_siren_song(int dir)
 	for (i = 0; i < N_ELEMENTS(siren_songs); i++) {
 		int fail = siren_song_chance(&siren_songs[i]);
 
+		if (player->lev < siren_songs[i].level) continue;
+
 		strnfmt(entries[i], sizeof(entries[i]),
 			"%-18s Lv %2d  Rchg %3d  Fail %2d%%  %s",
 			siren_songs[i].name, siren_songs[i].level,
 			siren_songs[i].recharge, fail, siren_songs[i].desc);
-		choices[i] = entries[i];
+		choices[count] = entries[i];
+		choice_map[count++] = i;
 	}
 
 	choice = get_power_menu("Sing which song? ", choices,
-		N_ELEMENTS(siren_songs));
-	if (choice < 0 || choice >= (int)N_ELEMENTS(siren_songs)) {
+		count);
+	if (choice < 0 || choice >= count) {
 		return;
 	}
 
-	song = &siren_songs[choice];
-	if (player->lev < song->level) {
-		msg("You are not yet skilled enough to sing %s.", song->name);
-		return;
-	}
+	song = &siren_songs[choice_map[choice]];
 	if (song->effect == MON_TMD_COMMAND && player->timed[TMD_COMMAND]) {
 		msg("You are already commanding a creature.");
 		return;
@@ -495,8 +495,9 @@ static void use_stone_lore(int dir)
 {
 	const char *choices[N_ELEMENTS(stone_lore)];
 	char entries[N_ELEMENTS(stone_lore)][96];
+	int choice_map[N_ELEMENTS(stone_lore)];
 	const struct stone_lore *lore;
-	int choice;
+	int choice, count = 0;
 	size_t i;
 	bool ident = false;
 
@@ -507,24 +508,23 @@ static void use_stone_lore(int dir)
 	}
 
 	for (i = 0; i < N_ELEMENTS(stone_lore); i++) {
+		if (player->lev < stone_lore[i].level) continue;
+
 		strnfmt(entries[i], sizeof(entries[i]),
 			"%-18s Lv %2d  Rchg %3d  %s",
 			stone_lore[i].name, stone_lore[i].level,
 			stone_lore[i].recharge, stone_lore[i].desc);
-		choices[i] = entries[i];
+		choices[count] = entries[i];
+		choice_map[count++] = i;
 	}
 
 	choice = get_power_menu("Use which stone lore? ", choices,
-		N_ELEMENTS(stone_lore));
-	if (choice < 0 || choice >= (int)N_ELEMENTS(stone_lore)) {
+		count);
+	if (choice < 0 || choice >= count) {
 		return;
 	}
 
-	lore = &stone_lore[choice];
-	if (player->lev < lore->level) {
-		msg("You are not yet skilled enough to use %s.", lore->name);
-		return;
-	}
+	lore = &stone_lore[choice_map[choice]];
 
 	player->upkeep->energy_use = z_info->move_energy;
 	(void)player_set_timed(player, TMD_STONE_LORE_COOLDOWN,

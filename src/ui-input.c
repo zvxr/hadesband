@@ -1655,7 +1655,7 @@ static bool textui_get_rep_dir(int *dp, bool allow_5)
  * Note that "Force Target", if set, will pre-empt user interaction,
  * if there is a usable target already set.
  */
-static bool textui_get_aim_dir(int *dp)
+static bool textui_get_aim_dir(int *dp, const char *prompt)
 {
 	/* Global direction */
 	int dir = 0;
@@ -1678,10 +1678,24 @@ static bool textui_get_aim_dir(int *dp)
 		bool need_beep = false;
 
 		/* Choose a prompt */
-		if (!target_okay())
+		if (prompt) {
+			static char prompt_buf[160];
+
+			if (!target_okay()) {
+				strnfmt(prompt_buf, sizeof(prompt_buf),
+					"%s ('*' or <click> to target, \"'\" for closest, Escape to cancel)? ",
+					prompt);
+			} else {
+				strnfmt(prompt_buf, sizeof(prompt_buf),
+					"%s ('5' for target, '*' or <click> to re-target, Escape to cancel)? ",
+					prompt);
+			}
+			p = prompt_buf;
+		} else if (!target_okay()) {
 			p = "Direction ('*' or <click> to target, \"'\" for closest, Escape to cancel)? ";
-		else
+		} else {
 			p = "Direction ('5' for target, '*' or <click> to re-target, Escape to cancel)? ";
+		}
 
 		/* Get a command (or Cancel) */
 		if (!get_com_ex(p, &ke)) break;

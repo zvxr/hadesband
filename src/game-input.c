@@ -26,7 +26,7 @@ int (*get_quantity_hook)(const char *prompt, int max);
 bool (*get_check_hook)(const char *prompt);
 bool (*get_com_hook)(const char *prompt, char *command);
 bool (*get_rep_dir_hook)(int *dir, bool allow_none);
-bool (*get_aim_dir_hook)(int *dir);
+bool (*get_aim_dir_hook)(int *dir, const char *prompt);
 int (*get_spell_from_book_hook)(struct player *p, const char *verb,
 	struct object *book, const char *error,
 	bool (*spell_filter)(const struct player *p, int spell));
@@ -151,9 +151,17 @@ bool get_rep_dir(int *dir, bool allow_none)
  */
 bool get_aim_dir(int *dir)
 {
+	return get_aim_dir_prompt(dir, NULL);
+}
+
+/**
+ * Get an "aiming" direction from the user with a custom prompt.
+ */
+bool get_aim_dir_prompt(int *dir, const char *prompt)
+{
 	/* Ask the UI for it */
 	if (get_aim_dir_hook)
-		return get_aim_dir_hook(dir);
+		return get_aim_dir_hook(dir, prompt);
 	else
 		return false;
 }

@@ -70,7 +70,7 @@ void do_cmd_go_up(struct command *cmd)
 
 	/* Force descend */
 	if (OPT(player, birth_force_descend) && !player->total_winner) {
-		msg("You have vowed not to return until you have slain Morgoth.");
+		msg("You have vowed not to return until you have slain Hades.");
 		return;
 	}
 	
