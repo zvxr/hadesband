@@ -309,7 +309,7 @@ static const struct stat_data stat_message[] =
 	{ST_RUNNING_AMULETS, " Amulets-Running  "},
 	{ST_WIS_AMULETS, " Amulets-Wisdom      "},
 	{ST_TELEP_AMULETS, " Amulets-Telepathy   "},
-	{ST_ENDGAME_AMULETS, " Amulets-Endgame     "},//Trickery, weaponmastery, magi
+	{ST_ENDGAME_AMULETS, " Amulets-Endgame     "},//Hermes, Ares, Oracle
 	{ST_CURSED_AMULETS, " Amulets-Cursed      "},
 	{ST_AMMO, "\n ***AMMO***      \n Ammo-All:        "},
 	{ST_BAD_AMMO, " Ammo-Bad         "},
@@ -907,9 +907,9 @@ static void get_obj_data(const struct object *obj, int y, int x, bool mon,
 				add_stats(ST_WIS_AMULETS, vault, mon, number);
 			} else if (strstr(obj->kind->name, "Running")) {
 				add_stats(ST_RUNNING_AMULETS, vault, mon, number);
-			} else if ((strstr(obj->kind->name, "Magi")) || 
-					   (strstr(obj->kind->name, "Trickery")) ||
-					   (strstr(obj->kind->name, "Weaponmastery"))) {
+			} else if ((strstr(obj->kind->name, "Oracle")) ||
+					   (strstr(obj->kind->name, "Hermes")) ||
+					   (strstr(obj->kind->name, "Ares"))) {
 				add_stats(ST_ENDGAME_AMULETS, vault, mon, number);
 			} else if (strstr(obj->kind->name, "ESP")) {
 				add_stats(ST_TELEP_AMULETS, vault, mon, number);

@@ -277,8 +277,15 @@
 - Potion names otherwise retained for readability. Implemented light
   Greek-flavored descriptions for `Speed`, `Heroism`, `Berserk Strength`,
   `Boldness`, `True Seeing`, `Life`, and `Experience`.
-- Pending review: scrolls, potions, wands, rods, staves, rings, amulets,
-  lights, chests, and money/material names.
+- Implemented amulet renames:
+  `the Magi` -> `the Oracle`,
+  `Weaponmastery` -> `Ares`,
+  `Trickery` -> `Hermes`.
+- Ring and amulet description pass implemented for `Speed`, `Flames`, `Ice`,
+  `Lightning`, `the Dog`, `Sustenance`, `Devotion`, `Hermes`, `Brilliance`,
+  and amulet `Teleportation`.
+- Pending review: wands, rods, staves, lights, chests, and money/material
+  names.
 
 ## Magic
 - Preserve effects and spell function first.
