@@ -91,7 +91,7 @@ static borg_spell_rating borg_spell_ratings_DRUID[] =
     { "Earth Rising", 70, EARTH_RISING },
     { "Trance", 55, TRANCE },
     { "Mass Sleep", 80, MASS_SLEEP },
-    { "Become Pukel-man", 5, BECOME_PUKEL_MAN }, // !FIX !TODO shapechange
+    { "Become Earthborn", 5, BECOME_PUKEL_MAN }, // !FIX !TODO shapechange
     { "Eagle's Flight", 5, EAGLES_FLIGHT }, // !FIX !TODO shapechange
     { "Bear Form", 5, BEAR_FORM }, // !FIX !TODO shapechange
     { "Tremor", 80, TREMOR },
@@ -134,7 +134,7 @@ static borg_spell_rating borg_spell_ratings_PRIEST[] =
     { "Banish Evil", 85, BANISH_EVIL },
     { "Word of Destruction", 75, WORD_OF_DESTRUCTION },
     { "Holy Word", 85, HOLY_WORD },
-    { "Spear of Orom\xC3\xab", 85, SPEAR_OF_OROME }, /* "Spear of Orom(e + diaresis)" */
+    { "Spear of Athena", 85, SPEAR_OF_OROME },
     { "Light of Manw\xC3\xab", 85, LIGHT_OF_MANWE } /* "Light of Manw(e + diaresis)"*/
 };
 static borg_spell_rating borg_spell_ratings_NECROMANCER[] =
@@ -156,9 +156,9 @@ static borg_spell_rating borg_spell_ratings_NECROMANCER[] =
     { "War Dog Form", 5, WARG_FORM }, // !FIX !TODO shapechange
     { "Banish Spirits", 65, BANISH_SPIRITS },
     { "Annihilate", 95, ANNIHILATE },
-    { "Grond's Blow", 85, GRONDS_BLOW },
+    { "Titan's Blow", 85, GRONDS_BLOW },
     { "Unleash Chaos", 85, UNLEASH_CHAOS },
-    { "Fume of Mordor", 75, FUME_OF_MORDOR },
+    { "Stygian Fume", 75, FUME_OF_MORDOR },
     { "Storm of Darkness", 65, STORM_OF_DARKNESS },
     { "Power Sacrifice", 5, POWER_SACRIFICE },  /* not sure if this is borg happy. */
     { "Zone of Unmagic", 5, ZONE_OF_UNMAGIC },  // !FIX !TODO defense?  not sure how to code. 

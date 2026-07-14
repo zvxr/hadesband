@@ -605,9 +605,10 @@ expr:B:PLAYER_LEVEL:* 10 + 500
 desc:Attempts to put to sleep each monster within line of sight.
 desc:  Monsters that resist sleep are not affected.
 
-spell:Become Pukel-man:30:20:75:50
+spell:Become Earthborn:30:20:75:50
 effect:SHAPECHANGE:Pukel-man
-desc:Gives you the form of a statue of the Drúedain, slow but hard to hurt.
+desc:Gives you the form of an earth-born stone guardian, slow but hard to
+desc: hurt.
 
 spell:Eagle's Flight:35:20:80:80
 effect:SHAPECHANGE:eagle
@@ -934,7 +935,7 @@ effect:TIMED_INC:ATT_DEMON:0:5
 dice:20+d20
 desc:Temporarily makes your melee attacks powerfully slay demons.
 
-book:prayer book:dungeon:[Wrath of the Valar]:5:divine
+book:prayer book:dungeon:[Wrath of Olympus]:5:divine
 book-graphics:?:g
 book-properties:50000:28:60 to 100
 
@@ -972,7 +973,7 @@ desc:Inflicts unresistable damage on each evil monster within line of sight,
 desc: cures 1000 points of damage, cures all stunning, heals all cut damage,
 desc: neutralizes poison, and removes fear.
 
-spell:Spear of Oromë:40:10:75:130
+spell:Spear of Athena:40:10:75:130
 effect:BEAM:HOLY_ORB
 dice:$Dd8
 expr:D:PLAYER_LEVEL:/ 2
@@ -1163,7 +1164,7 @@ expr:B:PLAYER_LEVEL:* 4
 desc:Inflicts damage equal to four times player level on a single monster that
 desc: is not undead, an elemental, a golem, or a vortex.
 
-spell:Grond's Blow:35:35:80:115
+spell:Titan's Blow:35:35:80:115
 effect:DESTRUCTION:DARK:10
 effect:DAMAGE
 dice:2d25
@@ -1195,7 +1196,7 @@ expr:B:PLAYER_LEVEL:+ 0
 desc:Fires a chaos beam, arc or ball in the chosen direction, wakes everything
 desc: in the area, and attempts to frighten everything in line of sight.
 
-spell:Fume of Mordor:40:50:80:150
+spell:Stygian Fume:40:50:80:150
 effect:DARKEN_LEVEL
 dice:1
 desc:Darkens, maps out, and detects all objects on the complete current

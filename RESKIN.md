@@ -288,12 +288,20 @@
   Greek-flavored descriptions for selected distinctive devices, including
   `Wonder`, `Dragon's Breath`, `Annihilation`, `the Magi`, `Holiness`,
   `Detection`, `Restoration`, and `Recall`.
-- Pending review: lights, chests, and money/material names.
+- Lights, chests, dragon scale mail, and money/material names reviewed; retain
+  current names for readability.
+- Object review can continue later with artifacts and object flavor tables.
 
 ## Magic
 - Preserve effects and spell function first.
 - Rename divine books/spells away from Valar/Tolkien terms.
 - Decide whether realms map to Olympian/Chthonic/Nature/Arcane framing.
+- Implemented light-touch spell/book renames:
+  `[Wrath of the Valar]` -> `[Wrath of Olympus]`,
+  `Spear of Oromë` -> `Spear of Athena`,
+  `Become Pukel-man` -> `Become Earthborn`,
+  `Grond's Blow` -> `Titan's Blow`,
+  `Fume of Mordor` -> `Stygian Fume`.
 
 ## Stores and Town
 - Dungeon Organics can remain or be reframed later.

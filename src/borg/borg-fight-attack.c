@@ -4027,7 +4027,7 @@ int borg_calculate_attack_effectiveness(int attack_type)
         return (borg_attack_aux_spell_bolt(
             RIVER_OF_LIGHTNING, rad, dam, BORG_ATTACK_PLASMA, 20, true));
 
-    /* spell -- Spear of Orom(e + diaresis) */
+    /* spell -- Spear of Athena */
     case BF_SPELL_SPEAR_OF_OROME:
         rad = 0;
         dam = ((borg.trait[BI_CLEVEL] / 2) + (8 + 1)) / 2;
