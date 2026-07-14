@@ -3249,6 +3249,7 @@ alloc:50:65 to 100
 power:20000
 effect:GAIN_EXP
 dice:200000
+desc:Old voices gather in the bubbles, each remembering a different life.
 
 ### Healings ###
 
@@ -3363,6 +3364,7 @@ effect:RESTORE_STAT:DEX
 effect:RESTORE_STAT:CON
 effect:TIMED_INC:ACCEL_HEALING
 dice:20
+desc:The draught feels like spring water poured from Persephone's own cup.
 
 name:Neutralize Poison
 type:potion
@@ -3538,6 +3540,7 @@ pile:25:2
 power:10
 effect:TIMED_INC:FAST:0:5
 dice:20+2d10
+desc:It smells of dust from a road Hermes crossed before sunrise.
 
 name:Heroism
 type:potion
@@ -3553,6 +3556,7 @@ dice:10
 effect:CURE:AFRAID
 effect:TIMED_INC:HERO
 dice:25+1d25
+desc:A warm courage rises in the chest, like a hymn before the shield wall.
 
 name:Berserk Strength
 type:potion
@@ -3568,6 +3572,7 @@ dice:30
 effect:CURE:AFRAID
 effect:TIMED_INC:SHERO
 dice:25+1d25
+desc:The draught burns with the red temper of Ares.
 
 name:Boldness
 type:potion
@@ -3579,6 +3584,7 @@ alloc:40:1 to 90
 pile:25:2
 power:2
 effect:CURE:AFRAID
+desc:The taste is sharp and clean, cutting fear down to size.
 
 name:Resist Heat
 type:potion
@@ -3629,6 +3635,8 @@ power:7
 effect:CURE:BLIND
 effect:TIMED_INC:SINVIS
 dice:50+2d6
+desc:For a moment the world looks as Athena might judge it: bright, exact, and
+desc: bare.
 
 name:Infravision
 type:potion
@@ -3645,7 +3653,7 @@ dice:100+4d25
 
 ### Useless buggers ###
 
-name:Slime Mold Juice
+name:Herbal Tonic
 type:potion
 graphics:!:d
 level:0

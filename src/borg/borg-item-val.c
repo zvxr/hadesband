@@ -332,7 +332,7 @@ void borg_init_item_val(void)
     sv_potion_boldness     = borg_lookup_sval_fail(tval, "Boldness");
     sv_potion_detect_invis = borg_lookup_sval_fail(tval, "True Seeing");
     sv_potion_enlightenment  = borg_lookup_sval_fail(tval, "Enlightenment");
-    sv_potion_slime_mold     = borg_lookup_sval_fail(tval, "Slime Mold Juice");
+    sv_potion_slime_mold     = borg_lookup_sval_fail(tval, "Herbal Tonic");
     sv_potion_berserk        = borg_lookup_sval_fail(tval, "Berserk Strength");
     sv_potion_infravision    = borg_lookup_sval_fail(tval, "Infravision");
     sv_potion_inc_exp        = borg_lookup_sval_fail(tval, "Experience");

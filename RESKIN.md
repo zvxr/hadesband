@@ -273,6 +273,10 @@
   descriptions for `Phase Door`, `Teleportation`, `Teleport Level`,
   `Magic Mapping`, `Treasure Detection`, `Detect Invisible`, `Word of Recall`,
   and `Deep Descent`.
+- Implemented potion rename: `Slime Mold Juice` -> `Herbal Tonic`.
+- Potion names otherwise retained for readability. Implemented light
+  Greek-flavored descriptions for `Speed`, `Heroism`, `Berserk Strength`,
+  `Boldness`, `True Seeing`, `Life`, and `Experience`.
 - Pending review: scrolls, potions, wands, rods, staves, rings, amulets,
   lights, chests, and money/material names.
 
