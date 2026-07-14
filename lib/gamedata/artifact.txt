@@ -455,7 +455,7 @@ values:RES_ELEC[1] | RES_LIGHT[1] | RES_DARK[1]
 brand:POIS_3
 slay:EVIL_2
 slay:DEMON_3
-desc:This black blade was forged of meteoric iron by Eöl the Dark Elf.  It is
+desc:This black blade was forged of meteoric iron by Daedalus the Dark Smith.  It is
 desc: imbued with the malice of its maker; as dangerous to its wielder as it is
 desc: deadly to his foes.
 
@@ -720,7 +720,7 @@ slay:GIANT_3
 desc:A great crackling Balrog's whip of flame, this weapon could bring
 desc: even Ungoliant to heel.
 
-name:of Fundin Bluecloak
+name:of Orpheus
 base-object:hafted:Ball-and-Chain
 level:65
 weight:130
@@ -2011,7 +2011,7 @@ values:STR[-3] | DEX[-3] | RES_FIRE[1] | RES_DISEN[1]
 desc:A pair of weakening gauntlets, named for a doomed hand lost to a ravenous
 desc: hound at the edge of the underworld.
 
-name:of Eöl
+name:of Daedalus
 base-object:gloves:Set of Gauntlets
 level:55
 weight:25
@@ -2023,7 +2023,7 @@ flags:FREE_ACT | FEATHER | AGGRAVATE
 values:INT[3] | RES_ELEC[1] | RES_DARK[1] | RES_POIS[1] | RES_FIRE[3]
 act:MANA_BOLT
 time:30+d30
-desc:The iron-shod gauntlets of the Dark Elven smith Eöl, who imbued them
+desc:The iron-shod gauntlets of the dark smith Daedalus, who imbued them
 desc: with magics he could channel in battle.
 
 name:of Fingolfin

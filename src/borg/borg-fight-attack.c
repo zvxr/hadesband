@@ -208,13 +208,13 @@ static int borg_thrust_damage_one(int i)
      * Keep in mind that he should hit the uniques but if he has a
      * x5 great bane of dragons, he will tend attack the dragon since the
      * perceived (and actual) damage is higher.  But don't select
-     * the town uniques (maggot does no damage)
+     * the town uniques (Socrates does no damage)
      *
      */
     if ((rf_has(r_ptr->flags, RF_UNIQUE)) && borg.trait[BI_CDEPTH] >= 1)
         dam += (dam * 5);
 
-    /* Ignore Maggot until later.  Player will chase Maggot
+    /* Ignore Socrates until later.  Player will chase Socrates
      * down all across the screen waking up all the monsters.  Then
      * he is stuck in a compromised situation.
      * !FIX !TODO: Handle all uniques generically.
@@ -1149,7 +1149,7 @@ static int borg_launch_damage_one(int i, int dam, int typ, int ammo_location)
     if ((rf_has(r_ptr->flags, RF_UNIQUE)) && borg.trait[BI_CDEPTH] >= 1)
         dam = (dam * 3);
 
-    /* Ignore Maggot until later.  Player will chase Maggot
+    /* Ignore Socrates until later.  Player will chase Socrates
      * down all across the screen waking up all the monsters.  Then
      * he is stuck in a compromised situation.
      * !FIX !TODO: Handle all uniques generically.

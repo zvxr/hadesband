@@ -328,7 +328,7 @@ flag-synonym:PROT_FEAR:0
 
 name:SIREN_SONG_COOLDOWN
 desc:recovering your voice
-grade:y:10000:Song:Your voice needs rest.
+grade:y:10000:Song:-
 on-end:Your voice is ready again.
 msgt:GENERIC
 

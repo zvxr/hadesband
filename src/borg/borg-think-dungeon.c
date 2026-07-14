@@ -1269,7 +1269,7 @@ bool borg_think_dungeon(void)
         borg.trait[BI_MAXCLEVEL] < 15 ? z_info->max_sight : 12);
 
     /* Allow borg to jump back up to town if needed.  He probably fled town
-     * because he saw a scaryguy (BSV, SER, Maggot).  Since he is here on depth
+     * because he saw a scaryguy (BSV, SER, Socrates).  Since he is here on depth
      * 1, do a quick check for items near the stairs that I can pick up before I
      * return to town.
      */

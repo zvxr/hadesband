@@ -214,7 +214,7 @@ bool borg_play_magic(bool bored)
 
             /* Allow spells that require selection of a monster type */
             if (as->effect_index == EF_BANISH) {
-                /* Target Maggot */
+                /* Target Socrates */
                 borg_keypress('h');
             }
 

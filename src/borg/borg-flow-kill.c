@@ -1786,7 +1786,7 @@ bool borg_flow_kill(bool viewable, int nearness)
             && (rf_has(r_info[kill->r_idx].flags, RF_MULTIPLY)))
             continue;
 
-        /* Ignore Maggot until later.  Player will chase Maggot
+        /* Ignore Socrates until later.  Player will chase Socrates
          * down all across the screen waking up all the monsters.  Then
          * he is stuck in a compromised situation.
          * !FIX !TODO: Handle all uniques generically.
@@ -2746,7 +2746,7 @@ void borg_near_monster_type(int dist)
                 || strstr(r_ptr->name, "Kobold archer")
                 || strstr(r_ptr->name, "Jackal")
                 || strstr(r_ptr->name, "Shrieker")
-                || strstr(r_ptr->name, "Farmer Maggot")
+                || strstr(r_ptr->name, "Socrates")
                 || strstr(r_ptr->name, "Filthy street urchin")
                 || strstr(r_ptr->name, "Battle-scarred veteran")
                 || strstr(r_ptr->name, "Mean-looking mercenary")))
@@ -2772,7 +2772,7 @@ void borg_near_monster_type(int dist)
         if (borg.trait[BI_CLEVEL] < 45
             && (strstr(r_ptr->name, "Gravity") || strstr(r_ptr->name, "Inertia")
                 || strstr(r_ptr->name, "Ancient")
-                || strstr(r_ptr->name, "Beorn")
+                || strstr(r_ptr->name, "Callisto")
                 || strstr(r_ptr->name, "Dread") /* Appear in Groups */))
             scaryguy_on_level = true;
 

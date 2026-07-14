@@ -1240,7 +1240,7 @@ void do_cmd_study_book(struct command *cmd)
 /**
  * Choose the way to study.  Choose life.  Choose a career.  Choose family.
  * Choose a fucking big monster, choose orc shamans, kobolds, dark elven
- * druids, and Mim, Betrayer of Turin.
+ * druids, and Vici.
  */
 void do_cmd_study(struct command *cmd)
 {

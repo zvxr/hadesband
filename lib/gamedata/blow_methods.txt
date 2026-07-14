@@ -186,10 +186,10 @@ stun:0
 miss:0
 phys:0
 msg:MON_MOAN
-act:wants his mushrooms back
-act:tells {target} to get off his land
-act:looks for his dogs
-act:says 'Did you kill my Maera?'
+act:asks whether {target} has examined this life
+act:insists that he knows nothing, least of all where his sandals went
+act:wonders if courage is merely wisdom wearing armor
+act:asks {target} to define "getting off my land"
 act:asks 'Do you want to buy any mushrooms?'
 act:seems sad about something
 act:asks if {target} {has} seen his dogs
