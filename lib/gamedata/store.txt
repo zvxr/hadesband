@@ -25,7 +25,7 @@
 
 # General store
 store:STORE_GENERAL
-owner:10000:Cephalus the Hospitable (Hobbit)
+owner:10000:Cephalus the Hospitable (Satyr)
 owner:15000:Strepsiades the Worried (Human)
 owner:25000:Philogelos the Jester (Gnome)
 owner:40000:Charis the Fair (Elf)
@@ -96,7 +96,7 @@ buy:dragon armor
 store:STORE_WEAPON
 owner:10000:Eurytion the Brutal (Half-Troll)
 owner:15000:Bellerophon the Beast-Slayer (Half-Elf)
-owner:30000:Melampus the Beast-Master (Hobbit)
+owner:30000:Melampus the Beast-Master (Satyr)
 owner:40000:Cadmus the Dragon-Slayer (Dwarf)
 slots:3:14
 turnover:9
@@ -158,7 +158,7 @@ buy:shadow book
 # Alchemist
 store:STORE_ALCHEMY
 owner:15000:Medea the Brewer (Half-Elf)
-owner:15000:Circe the Shifting (Hobbit)
+owner:15000:Circe the Shifting (Human)
 owner:20000:Midas the Greedy (Gnome)
 owner:20000:Aglaia the Slender (Human)
 slots:6:10

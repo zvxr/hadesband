@@ -1171,7 +1171,7 @@ cost:334
 alloc:20:15 to 100
 attack:2d8:0:0
 armor:0:0
-desc:A double-bladed axe.  Very popular among Dwarves.
+desc:A double-bladed axe, favored by heavy infantry and forge-trained warriors.
 
 name:& Lochaber Axe~
 type:polearm
@@ -1193,8 +1193,8 @@ cost:500
 alloc:20:40 to 100
 attack:4d4:0:0
 armor:0:0
-desc:An enormous two-handed battle axe, carried by Dwarven champions, who
-desc: compete to see who can cleave the most orc heads.
+desc:An enormous two-handed battle axe, carried by brutal champions who
+desc: compete to see who can split the most shields and helms.
 
 
 ### Other misc polearms ###
@@ -1885,8 +1885,8 @@ alloc:8:40 to 100
 attack:0d0:0:0
 armor:6:0
 values:STEALTH[1] | SPEED[1]
-desc:A mantle made of curious silken material by the Galadrim that wondrously
-desc: takes on the hues and shapes of its surroundings.
+desc:A mantle made of curious silken material that wondrously takes on the
+desc: hues and shapes of its surroundings.
 
 name:& Ethereal Cloak~
 type:cloak

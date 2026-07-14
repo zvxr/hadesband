@@ -52,19 +52,19 @@ chart:1:2:100
 phrase:You are the first child 
 
 chart:2:3:40
-phrase:of a Serf.  
+phrase:of a tenant farmer near Argos.  
 chart:2:3:65
-phrase:of a Yeoman.  
+phrase:of a freeholder outside Corinth.  
 chart:2:3:80
-phrase:of a Townsman.  
+phrase:of an Athenian townsman.  
 chart:2:3:90
-phrase:of a Guildsman.  
+phrase:of a guild artisan of Thebes.  
 chart:2:3:96
-phrase:of a Landed Knight.  
+phrase:of a Spartan estate holder.  
 chart:2:3:99
-phrase:of a Titled Noble.  
+phrase:of a noble house of Mycenae.  
 chart:2:3:100
-phrase:of a Royal Blood Line.  
+phrase:of a royal bloodline of old Crete.  
 
 chart:3:50:20
 phrase:You are the black sheep of the family.  
@@ -74,21 +74,21 @@ chart:3:50:100
 phrase:You are a well liked child.  
 
 chart:4:1:15
-phrase:Your mother was of the Avari. 
+phrase:Your mother was of the Arcadian wilds. 
 chart:4:1:30
-phrase:Your father was of the Avari. 
+phrase:Your father was of the Arcadian wilds. 
 chart:4:1:50
-phrase:Your mother was of the Nandor. 
+phrase:Your mother was of the olive groves of Attica. 
 chart:4:1:70
-phrase:Your father was of the Nandor.  
+phrase:Your father was of the olive groves of Attica.  
 chart:4:1:85
-phrase:Your mother was of the Sindar.  
+phrase:Your mother was of the moonlit isles.  
 chart:4:1:95
-phrase:Your father was of the Sindar.  
+phrase:Your father was of the moonlit isles.  
 chart:4:1:98
-phrase:Your mother was of the Noldor.  
+phrase:Your mother was of an old Athenian lineage.  
 chart:4:1:100
-phrase:Your father was of the Noldor.  
+phrase:Your father was of an old Athenian lineage.  
 
 chart:5:6:60
 phrase:You are one of several children 
@@ -96,11 +96,11 @@ chart:5:6:100
 phrase:You are the only child 
 
 chart:6:9:40
-phrase:of an Avarin 
+phrase:of an Arcadian 
 chart:6:9:70
-phrase:of a Nandorin 
+phrase:of an Attic 
 chart:6:9:100
-phrase:of a Sindarin 
+phrase:of a moonlit island 
 
 chart:7:8:60
 phrase:You are one of several children 
@@ -108,11 +108,11 @@ chart:7:8:100
 phrase:You are the only child 
 
 chart:8:9:75
-phrase:of a Telerin 
+phrase:of a Delian 
 chart:8:9:95
-phrase:of a Noldorin 
+phrase:of an Athenian 
 chart:8:9:100
-phrase:of a Vanyarin 
+phrase:of an Olympian-touched 
 
 chart:9:54:40
 phrase:Ranger.  
@@ -128,12 +128,12 @@ chart:9:54:100
 phrase:King.  
 
 chart:10:11:85
-phrase:You are one of several children of a Hobbit 
+phrase:You are one of several children of a smallfolk 
 chart:10:11:100
-phrase:You are the only child of a Hobbit 
+phrase:You are the only child of a smallfolk 
 
 chart:11:3:20
-phrase:Burglar.  
+phrase:Agora Pilferer.  
 chart:11:3:30
 phrase:Miller.  
 chart:11:3:40
@@ -143,9 +143,9 @@ phrase:Archer.
 chart:11:3:80
 phrase:Warrior.  
 chart:11:3:95
-phrase:Shirriff.  
+phrase:Market Watchman.  
 chart:11:3:99
-phrase:Mayor.  
+phrase:Village Archon.  
 chart:11:3:100
 phrase:Clan Elder.  
 
@@ -166,22 +166,22 @@ chart:14:3:100
 phrase:Mage.  
 
 chart:16:17:25
-phrase:You are one of two children of a Dwarven 
+phrase:You are one of two children of a forge-clan 
 chart:16:17:100
-phrase:You are the only child of a Dwarven 
+phrase:You are the only child of a forge-clan 
 
 chart:17:18:10
-phrase:Thief.  
+phrase:Mine Thief.  
 chart:17:18:25
 phrase:Prison Guard.  
 chart:17:18:75
 phrase:Miner.  
 chart:17:18:90
-phrase:Warrior.  
+phrase:Forge Guard.  
 chart:17:18:99
-phrase:Priest.  
+phrase:Priest of Hephaestus.  
 chart:17:18:100
-phrase:King.  
+phrase:Forge-Lord.  
 
 chart:18:57:15
 phrase:You are the black sheep of the family.  

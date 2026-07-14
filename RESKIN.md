@@ -382,6 +382,15 @@
   `Evenstar` -> `Pomegranate Jewel`.
 - Reviewed dragon scale mail artifacts and retained `Razorback`, `Mediator`,
   and `Bladeturner`; lightly polished descriptions only.
+- Applied base object description-only cleanup for `Battle Axe`, `Great Axe`,
+  and `Elven Cloak`; no object names or mechanics changed.
+- Updated remaining store owner race labels:
+  `Cephalus the Hospitable (Hobbit)` -> `(Satyr)`,
+  `Melampus the Beast-Master (Hobbit)` -> `(Satyr)`,
+  `Circe the Shifting (Hobbit)` -> `(Human)`.
+- Applied birth history text-only Greek flavor pass for human social origins,
+  half-elf/elf/high-elf ancestry, smallfolk history, and dwarf forge-clan
+  backgrounds; no chart structure, race links, or probabilities changed.
 
 ## Text, UI, and Help
 - Splash/news and death screens should match Hadesband premise.
