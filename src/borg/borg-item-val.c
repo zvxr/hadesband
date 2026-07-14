@@ -264,10 +264,10 @@ void borg_init_item_val(void)
     sv_food_apple      = borg_lookup_sval_fail(tval, "Apple");
     sv_food_ration     = borg_lookup_sval_fail(tval, "Ration of Food");
     sv_food_slime_mold = borg_lookup_sval_fail(tval, "Slime Mold");
-    sv_food_draught    = borg_lookup_sval_fail(tval, "Draught of the Ents");
+    sv_food_draught    = borg_lookup_sval_fail(tval, "Draught of Gaia");
     sv_food_pint       = borg_lookup_sval_fail(tval, "Pint of Fine Wine");
-    sv_food_sip        = borg_lookup_sval_fail(tval, "Sip of Miruvor");
-    sv_food_waybread = borg_lookup_sval_fail(tval, "Piece of Elvish Waybread");
+    sv_food_sip        = borg_lookup_sval_fail(tval, "Sip of Nectar");
+    sv_food_waybread = borg_lookup_sval_fail(tval, "Ambrosia");
     sv_food_honey_cake = borg_lookup_sval_fail(tval, "Honey-cake");
     sv_food_slice      = borg_lookup_sval_fail(tval, "Moon-cured Pork");
     sv_food_handful    = borg_lookup_sval_fail(tval, "Handful of Dried Fruits");

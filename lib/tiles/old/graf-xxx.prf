@@ -442,15 +442,15 @@ object:food:Hard Biscuit:0x8B:0x82
 #object:food:Handful of Dried Fruits
 object:food:Slime Mold:0x8A:0x9F
 object:food:Ration of Food:0x8B:0x82
-#object:food:Scrap of Flesh
+#object:food:Wild Boar
 #object:food:Slice of Meat
 #object:food:Honey-cake
-object:food:Piece of Elvish Waybread:0x8B:0x80
-object:food:Flask of Whisky:0x8A:0x95
+object:food:Ambrosia:0x8B:0x80
+object:food:Minoan Wine:0x8A:0x95
 object:food:Pint of Fine Wine:0x8A:0x96
-#object:food:Sip of Miruvor
-#object:food:Swig of Orcish Liquor
-#object:food:Draught of the Ents
+#object:food:Sip of Nectar
+#object:food:Swig of Spartan Moonshine
+#object:food:Draught of Gaia
 
 ### The shrooms, an interesting collection ###
 # Graphics are sourced from flavor entries in flvr-xxx.prf

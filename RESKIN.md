@@ -179,7 +179,7 @@
 | `ghost` | `G` | Untouched; conflicts with new god glyph |
 | `giant` | `P` | Done for initial unique pass; generics retained |
 | `golem` | `g` | Done for current pass; several constructs given mythic material names and Talos made unique |
-| `humanoid` | `h` | Pending |
+| `humanoid` | `h` | Done for current pass; Greek humanoid generics and uniques reskinned |
 | `hybrid` | `H` | Done for current pass; harpies remain here |
 | `monstrous` | `M` | Done for current pass; major composite beasts moved here |
 | `hydra` | `H` | Done for current pass; base retained, glyph changed from `M` |
@@ -198,7 +198,7 @@
 | `naga` | `n` | Done for current pass; temple naga and lamia renamed, gorgon retained |
 | `ogre` | `O` | Done for current pass; Polyphemus renamed, generic ogres retained |
 | `orc` | `o` | Done for current pass; generic orcs kept, uniques reskinned |
-| `person` | `p` | Pending |
+| `person` | `p` | Done for current pass; Greek person generics and uniques reskinned |
 | `quadruped` | `q` | Done for current pass; Ayula, sacred deer, odontotyrannos, and Stygian mare renamed |
 | `quylthulg` | `Q` | Pending |
 | `reptile` | `R` | Done for current pass; The Tarrasque became Cetus, the Sea Beast |
@@ -223,9 +223,54 @@
 
 ## Objects
 - Most mundane weapons/armor stay.
-- Rename culturally specific weapons where clear: Pike -> Dory/Javelin candidate; keep Spear.
+- Rename culturally specific weapons only where clear; keep broad fantasy staples
+  when readability is better than flavor.
 - Artifacts need the most care; preserve powers while replacing Tolkien identity.
 - Consumables probably stay mostly readable.
+- Approval rule: propose item/object renames first, then implement only after
+  explicit approval.
+
+### Object Base Names
+- Implemented weapon renames:
+  `Short Sword` -> `Xiphos`,
+  `Scimitar` -> `Kopis`,
+  `Katana` -> `Machaira`,
+  `Awl-Pike` -> `Javelin`.
+- Implemented: `Javelin` has the `THROWING` flag.
+- Implemented armor renames:
+  `Wicker Shield` -> `Pelte`,
+  `Small Metal Shield` -> `Aspis`,
+  `Knight's Shield` -> `Spartan Shield`,
+  `Metal Cap` -> `Bronze Cap`,
+  `Metal Scale Mail` -> `Bronze Scale Armour`.
+- Implemented starting-kit baseline: every class starts with `Soft Leather
+  Armour`; every class starts with `Pelte` except Stygian Warrior, which keeps
+  `Leather Shield`.
+
+### Ego Items
+- Minimal Olympian ego pass implemented:
+  `of Westernesse` -> `of Ares`,
+  `of Morgul` -> `of Hades`,
+  `of Lothlórien` -> `of Artemis`,
+  `of the Haradrim` -> `of Apollo`,
+  `of Buckland` -> `of Hermes`.
+- Wizard statistics and player combat docs were updated for the renamed egos.
+- Deliberately retained for now: `Defender`, `Holy Avenger`, `Blessed`,
+  `Elvenkind`, `(Dwarven)`, and other mechanically iconic ego names.
+
+### Consumables
+- Mushrooms reviewed separately; skip unless adding new mushroom content.
+- Implemented food/drink renames:
+  `Piece of Elvish Waybread` -> `Ambrosia`,
+  `Sip of Miruvor` -> `Sip of Nectar`,
+  `Swig of Orcish Liquor` -> `Swig of Spartan Moonshine`,
+  `Scrap of Flesh` -> `Wild Boar`,
+  `Flask of Whisky` -> `Minoan Wine`,
+  `Draught of the Ents` -> `Draught of Gaia`.
+- Honey-cake name retained; description changed only to remove the Beornings
+  reference.
+- Pending review: scrolls, potions, wands, rods, staves, rings, amulets,
+  lights, chests, and money/material names.
 
 ## Magic
 - Preserve effects and spell function first.

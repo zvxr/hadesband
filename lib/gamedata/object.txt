@@ -306,7 +306,7 @@ desc:This nutritious but fairly bland food, called cram by the Lake-men who
 desc: make it is familiar to anyone contemplating long journeys.  It is
 desc: sustaining, but very uninteresting except as a chewing exercise.
 
-name:& Scrap~ of Flesh
+name:& Wild Boar~
 type:food
 graphics:,:s
 level:0
@@ -328,8 +328,8 @@ effect:NOURISH:SET_TO
 dice:1d4
 effect:NOURISH:SET_TO
 dice:5+1d4
-desc:A grey-looking piece of dried flesh of you dare not guess what creature.
-desc:  You would have to be desperate to eat this.
+desc:A rough strip of wild boar, smoked hard and chewed harder.  It is safer
+desc: than it looks, though only just.
 
 name:& Moon-cured Pork~
 type:food
@@ -360,11 +360,10 @@ power:1
 msg:Delicious!
 effect:NOURISH:INC_TO
 dice:60
-desc:The Beornings are renowned as the best bakers among men, and their
-desc: honey-cakes are deservedly prized.  Made of wheat flour with nuts and
-desc: honey and twice baked, they will sustain you through a long march.
+desc:Made of wheat flour, nuts, and honey, then twice baked until dense and
+desc: fragrant, these cakes will sustain you through a long march.
 
-name:& Piece~ of Elvish Waybread
+name:Ambrosia
 type:food
 graphics:,:B
 level:5
@@ -379,10 +378,10 @@ dice:75
 effect:CURE:POISONED
 effect:HEAL_HP
 dice:4d8
-desc:Food of the elves is always good; their waybread is no exception.  These
-desc: thin cakes are wrapped in leaves and keep their tastiness for months.
+desc:A small portion of deathless food, fragrant as mountain air after rain.
+desc: Even a morsel restores strength and steadies the body against poison.
 
-name:& Flask~ of Whisky
+name:Minoan Wine
 type:food
 graphics:,:y
 level:0
@@ -394,7 +393,8 @@ effect:NOURISH:INC_BY
 dice:3
 effect:TIMED_INC:CONFUSED
 dice:-1+1d5
-desc:It raises your spirits.
+desc:A strong island wine with enough bite to raise your spirits and blur the
+desc: floor beneath your feet.
 
 name:& Pint~ of Fine Wine
 type:food
@@ -410,7 +410,7 @@ effect:TIMED_INC:BOLD
 dice:79+1d41
 desc:A fine way to wash down some otherwise unappetising rations.
 
-name:& Sip~ of Miruvor
+name:& Sip~ of Nectar
 type:food
 graphics:,:w
 level:0
@@ -423,10 +423,10 @@ effect:NOURISH:INC_BY
 dice:3
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:CON
-desc:Just a little of this warm and fragrant liquor gives you fresh hope and
-desc: vigour.
+desc:Just a little of this warm and fragrant nectar gives you fresh hope and
+desc: vigor.
 
-name:& Swig~ of Orcish Liquor
+name:& Swig~ of Spartan Moonshine
 type:food
 graphics:,:m
 level:0
@@ -442,9 +442,9 @@ effect:TIMED_SET:STUN
 dice:2+1d3
 effect:TIMED_SET:SLOW
 dice:2+1d3
-desc:This is a dirty brown color; you don't trust it.
+desc:This clear liquor burns like a torch and marches straight to your knees.
 
-name:& Draught~ of the Ents
+name:& Draught~ of Gaia
 type:food
 graphics:,:w
 level:0
@@ -459,8 +459,8 @@ effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:CON
 effect:GAIN_STAT:STR
 effect:GAIN_STAT:CON
-desc:This looks like pure water, but its scent reminds you of the smell of a
-desc: distant wood borne from afar by a cool breeze at night.
+desc:This looks like pure spring water, but smells of rain on dark soil and
+desc: roots pushing deep beneath the world.
 
 ### The shrooms, an interesting collection ###
 

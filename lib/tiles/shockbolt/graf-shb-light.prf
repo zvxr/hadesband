@@ -325,15 +325,15 @@ object:food:Apple:0x82:0xA9
 object:food:Handful of Dried Fruits:0x82:0xAC
 object:food:Slime Mold:0x82:0x85
 object:food:Ration of Food:0x82:0x84
-object:food:Scrap of Flesh:0x82:0x83
+object:food:Wild Boar:0x82:0x83
 object:food:Slice of Meat:0x82:0xAB
 object:food:Honey-cake:0x82:0x86
-object:food:Piece of Elvish Waybread:0x82:0xA7
-object:food:Flask of Whisky:0x82:0x80
+object:food:Ambrosia:0x82:0xA7
+object:food:Minoan Wine:0x82:0x80
 object:food:Pint of Fine Wine:0x82:0x81
-object:food:Sip of Miruvor:0x82:0xAE
-object:food:Swig of Orcish Liquor:0x82:0xAD
-object:food:Draught of the Ents:0x82:0xAF
+object:food:Sip of Nectar:0x82:0xAE
+object:food:Swig of Spartan Moonshine:0x82:0xAD
+object:food:Draught of Gaia:0x82:0xAF
 
 
 ### The shrooms, an interesting collection ###
