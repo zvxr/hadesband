@@ -2460,7 +2460,12 @@ static void show_splashscreen(game_event_type type, game_event_data *data,
 			char *version_marker = strstr(buf, "$VERSION");
 			if (version_marker) {
 				ptrdiff_t pos = version_marker - buf;
-				strnfmt(version_marker, sizeof(buf) - pos, "%-8s", buildver);
+				char version_buf[1024];
+
+				strnfmt(version_buf, sizeof(version_buf), "%.*s%-8s%s",
+						(int) pos, buf, buildver,
+						version_marker + strlen("$VERSION"));
+				my_strcpy(buf, version_buf, sizeof(buf));
 			}
 
 			text_out_e("%s", buf);

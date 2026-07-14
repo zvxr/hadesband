@@ -393,6 +393,9 @@
   backgrounds; no chart structure, race links, or probabilities changed.
 - Renamed dungeon level labels in `world.txt` from `Angband N` to
   `Underworld N`; retained `Town`, `None`, and the existing level graph.
+- Replaced the intro `news.txt` Angband ASCII art and old Tolkien quote with
+  horizontal two-font Hadesband ASCII art fitted to the 80x23 splash screen
+  assumption.
 
 ## Text, UI, and Help
 - Splash/news and death screens should match Hadesband premise.
