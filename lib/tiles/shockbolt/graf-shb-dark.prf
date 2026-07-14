@@ -689,7 +689,7 @@ object:gold:emeralds:0x87:0x91
 object:gold:mithril:0x87:0x8A
 object:gold:adamantite:0x87:0x8B
 
-##### "Morgoth Artifacts" #####
+##### Quest Artifacts #####
 
 object:hafted:Mighty Hammer:0x8A:0xE4
 object:crown:Massive Iron Crown:0x80:0x92
@@ -698,14 +698,14 @@ object:crown:Massive Iron Crown:0x80:0x92
 
 # These artifacts use numeric SVALs to ensure unique matches
 
-# The Phial of Galadriel
+# The Phial of Selene
 object:light:Phial:0x87:0xB3
 
-# The Star of Elendil
+# The Star of Apollo
 object:light:Star:0x87:0xB4
 
-# The Arkenstone of Thrain
-object:light:Arkenstone:0x87:0xB5
+# The Omphalos of Delphi
+object:light:Omphalos:0x87:0xB5
 
 # The Amulet of Carlammas
 object:amulet:Amulet:0x85:0xA6

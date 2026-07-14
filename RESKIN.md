@@ -314,6 +314,15 @@
 - Store owner purse values increased from the old `5000`-to-`30000` scale to
   the new `10000`-to-`40000` scale.
 
+## Artifacts
+- Artifact mechanics should be preserved unless explicitly discussed.
+- Implemented first artifact batch:
+  `Phial of Galadriel` -> `Phial of Selene`,
+  `Star of Elendil` -> `Star of Apollo`,
+  `Arkenstone of Thráin` -> `Omphalos of Delphi`,
+  `Grond` -> `Titan's Hammer`,
+  `Massive Iron Crown of Morgoth` -> `Massive Iron Crown of Hades`.
+
 ## Text, UI, and Help
 - Splash/news and death screens should match Hadesband premise.
 - Help docs likely retain many Angband references; update only player-visible lore first.

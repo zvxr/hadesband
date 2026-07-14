@@ -874,7 +874,7 @@ object:gold:adamantite:0x83:0x95
 
 
 
-##### "Morgoth Artifacts" #####
+##### Quest Artifacts #####
 
 object:hafted:Mighty Hammer:0x88:0x9E
 object:crown:Massive Iron Crown:0x8B:0x9E
@@ -884,14 +884,14 @@ object:crown:Massive Iron Crown:0x8B:0x9E
 
 ##### "Special Artifacts" #####
 
-# The Phial of Galadriel
+# The Phial of Selene
 object:light:Phial:0x8E:0x9D
 
-# The Star of Elendil
+# The Star of Apollo
 object:light:Star:0x8E:0x9E
 
-# The Arkenstone of Thrain
-object:light:Arkenstone:0x8E:0x9F
+# The Omphalos of Delphi
+object:light:Omphalos:0x8E:0x9F
 
 # The Amulet of Carlammas
 object:amulet:Amulet:0x84:0x96
