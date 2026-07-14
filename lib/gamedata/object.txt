@@ -2641,6 +2641,7 @@ pile:100:1d1
 power:5
 effect:TELEPORT
 dice:5
+desc:The letters twist like a threshold glimpsed from the corner of the eye.
 
 name:Teleportation
 type:scroll
@@ -2653,6 +2654,7 @@ pile:25:2
 power:6
 effect:TELEPORT
 dice:M60
+desc:The script promises a flight swifter than Hermes, though not always wiser.
 
 name:Teleport Level
 type:scroll
@@ -2664,6 +2666,8 @@ alloc:0:20 to 100
 pile:10:2
 power:15
 effect:TELEPORT_LEVEL
+desc:The ink sinks downward through the page, as if pulled by the roots of the
+desc: world.
 
 
 ### Detection ###
@@ -2679,6 +2683,8 @@ pile:70:1d3
 power:10
 effect:MAP_AREA
 effect-yx:20:20
+desc:A maze of fine lines rearranges itself into halls, doors, and hidden
+desc: turns.
 
 name:Treasure Detection
 type:scroll
@@ -2695,6 +2701,7 @@ effect:SENSE_GOLD
 effect-yx:20:20
 effect:SENSE_OBJECTS
 effect-yx:20:20
+desc:Bronze-flecked signs glimmer where buried wealth answers the script.
 
 name:Detect Invisible
 type:scroll
@@ -2709,6 +2716,7 @@ effect:DETECT_INVISIBLE_MONSTERS
 effect-yx:20:20
 effect:TIMED_INC:SINVIS
 dice:3d3
+desc:The words shine briefly, outlining what would rather remain unseen.
 
 name:Identify Rune
 type:scroll
@@ -2954,6 +2962,7 @@ alloc:50:5 to 100
 pile:35:2d3
 power:15
 effect:RECALL
+desc:A single command draws the reader back along a thread already spun.
 
 name:Recharging
 type:scroll
@@ -2988,6 +2997,7 @@ alloc:20:50 to 100
 pile:20:2
 power:19
 effect:DEEP_DESCENT
+desc:The page smells of cold stone and opens the way to a deeper dark.
 
 
 ### "Holy" spells ###

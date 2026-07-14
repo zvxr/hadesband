@@ -269,6 +269,10 @@
   `Draught of the Ents` -> `Draught of Gaia`.
 - Honey-cake name retained; description changed only to remove the Beornings
   reference.
+- Scroll names retained for readability. Implemented light Greek-flavored
+  descriptions for `Phase Door`, `Teleportation`, `Teleport Level`,
+  `Magic Mapping`, `Treasure Detection`, `Detect Invisible`, `Word of Recall`,
+  and `Deep Descent`.
 - Pending review: scrolls, potions, wands, rods, staves, rings, amulets,
   lights, chests, and money/material names.
 
