@@ -22,7 +22,7 @@ What hasn't changed
 ===================
 
 All the old objects and ego items are still generatable almost exactly as they
-used to look. Slay weapons, branded weapons, Defender/HA/Gondolin/Westernesse
+used to look. Slay weapons, branded weapons, Defender/HA/Gondolin/Ares
 weapons, Elvenkind armours and boots, Robes of Permanence, etc. At the moment
 (subject to any rebalancing we may wish to do) they are still generated with
 the same flags and on the same object types as they used to. (So only Maces
@@ -242,7 +242,7 @@ automatically get this theme.
 
 Blessed weapons have three affixes, but one of them has a weighting of zero
 (of Dweomercraft, the one which provides the random ability - also on
-Gondolin and \*Slay\* Evil weapons, Lothlorien bows etc.). This means it
+Gondolin and \*Slay\* Evil weapons, Artemis bows etc.). This means it
 doesn't contribute to the weighting, but it is applied in *obj_apply_theme*
 after the theme is chosen. This function simply cycles through all the
 affixes in the theme and applies all the ones that aren't already on the

@@ -136,7 +136,7 @@ typedef enum stat_code
 	ST_SLAYEVIL_WEAPONS,
 	ST_KILL_WEAPONS,
 	ST_BRAND_WEAPONS,
-	ST_WESTERNESSE_WEAPONS,
+	ST_ARES_WEAPONS,
 	ST_DEFENDER_WEAPONS,
 	ST_GONDOLIN_WEAPONS,
 	ST_HOLY_WEAPONS,
@@ -144,7 +144,7 @@ typedef enum stat_code
 	ST_TELEP_WEAPONS,
 	ST_HUGE_WEAPONS,
 	ST_ENDGAME_WEAPONS,
-	ST_MORGUL_WEAPONS,
+	ST_HADES_WEAPONS,
 	ST_BOWS,
 	ST_BAD_BOWS,
 	ST_AVERAGE_BOWS,
@@ -152,7 +152,7 @@ typedef enum stat_code
 	ST_VERYGOOD_BOWS,
 	ST_XTRAMIGHT_BOWS,
 	ST_XTRASHOTS_BOWS,
-	ST_BUCKLAND_BOWS,
+	ST_HERMES_BOWS,
 	ST_TELEP_BOWS,
 	ST_CURSED_BOWS,
 	ST_POTIONS,
@@ -256,7 +256,7 @@ static const struct stat_data stat_message[] =
 	{ST_SLAYEVIL_WEAPONS, " Weapons-Slay evil   "},
 	{ST_KILL_WEAPONS, " Weapons-*Slay*      "},
 	{ST_BRAND_WEAPONS, " Weapons-Brand       "},
-	{ST_WESTERNESSE_WEAPONS, " Weapons-Westernesse "},
+	{ST_ARES_WEAPONS, " Weapons-Ares        "},
 	{ST_DEFENDER_WEAPONS, " Weapons-Defender    "},
 	{ST_GONDOLIN_WEAPONS, " Weapons-Gondolin    "},
 	{ST_HOLY_WEAPONS, " Weapons-Holy Avengr "},
@@ -264,7 +264,7 @@ static const struct stat_data stat_message[] =
 	{ST_TELEP_WEAPONS, " Weapons-Telepathy   "},
 	{ST_HUGE_WEAPONS, " Weapons-Huge        "},//MoD, SoS and BoC
 	{ST_ENDGAME_WEAPONS, " Weapons-Endgame     "},//MoD, SoS and BoC with slay evil or x2B
-	{ST_MORGUL_WEAPONS, " Weapons-Morgul      "},
+	{ST_HADES_WEAPONS, " Weapons-Hades       "},
 	{ST_BOWS, "\n ***LAUNCHERS*** \n Launchers-All:        "},
 	{ST_BAD_BOWS, " Launchers-Bad         "},
 	{ST_AVERAGE_BOWS, " Launchers-Average     "},
@@ -272,7 +272,7 @@ static const struct stat_data stat_message[] =
 	{ST_VERYGOOD_BOWS, " Launchers-Very Good   "},//Power > 15
 	{ST_XTRAMIGHT_BOWS, " Launchers-Extra might "},
 	{ST_XTRASHOTS_BOWS, " Launchers-Extra shots "},
-	{ST_BUCKLAND_BOWS, " Launchers-Buckland    "},
+	{ST_HERMES_BOWS, " Launchers-Hermes      "},
 	{ST_TELEP_BOWS, " Launchers-Telepathy   "},
 	{ST_CURSED_BOWS, " Launchers-Cursed      "},
 	{ST_POTIONS, "\n ***POTIONS***   \n Potions-All:        "},
@@ -661,9 +661,9 @@ static void get_obj_data(const struct object *obj, int y, int x, bool mon,
 				if (strstr(obj->ego->name, "of *Slay"))
 					add_stats(ST_KILL_WEAPONS, vault, mon, number);
 
-				/* determine westernesse by flags */
-				if (strstr(obj->ego->name, "Westernesse"))
-					add_stats(ST_WESTERNESSE_WEAPONS, vault, mon, number);
+				/* determine Ares by ego name */
+				if (strstr(obj->ego->name, "Ares"))
+					add_stats(ST_ARES_WEAPONS, vault, mon, number);
 
 				/* determine defender by flags */
 				if (strstr(obj->ego->name, "Defender"))
@@ -677,9 +677,9 @@ static void get_obj_data(const struct object *obj, int y, int x, bool mon,
 				if (strstr(obj->ego->name, "Avenger"))
 					add_stats(ST_HOLY_WEAPONS, vault, mon, number);
 
-				/* is morgul */
-				if (strstr(obj->ego->name, "Morgul"))
-					add_stats(ST_MORGUL_WEAPONS, vault, mon, number);
+				/* is Hades */
+				if (strstr(obj->ego->name, "Hades"))
+					add_stats(ST_HADES_WEAPONS, vault, mon, number);
 			}
 
 			/* branded weapons */
@@ -741,12 +741,12 @@ static void get_obj_data(const struct object *obj, int y, int x, bool mon,
 					add_stats(ST_XTRAMIGHT_BOWS, vault, mon, number);
 			}
 
-			/* check for buckland */
+			/* check for Hermes */
 			if ((obj->pval == 2) &&
 				kf_has(obj->kind->kind_flags, KF_SHOOTS_SHOTS) &&
 				(obj->modifiers[OBJ_MOD_MIGHT] > 0) &&
 				(obj->modifiers[OBJ_MOD_SHOTS] > 0))
-					add_stats(ST_BUCKLAND_BOWS, vault, mon, number);
+					add_stats(ST_HERMES_BOWS, vault, mon, number);
 
 			/* has telep */
 			if (of_has(obj->flags, OF_TELEPATHY))

@@ -207,7 +207,7 @@ slay:ORC_3
 slay:TROLL_3
 slay:DRAGON_3
 
-name:of Westernesse
+name:of Ares
 info:20000:20
 alloc:10:10 to 70
 combat:d5:d5:0
@@ -474,7 +474,7 @@ slay:DRAGON_5
 
 ### Cursed Weapons
 
-name:of Morgul
+name:of Hades
 info:1:0
 alloc:10:10 to 80
 type:sword
@@ -505,7 +505,7 @@ type:bow
 desc:It has no special abilities, but its to-dam value may be unusually
 desc: high.
 
-name:of Lothlórien
+name:of Artemis
 info:20000:30
 alloc:5:20 to 127
 combat:d10:d10:0
@@ -515,7 +515,7 @@ flags:FREE_ACT | IGNORE_ACID | IGNORE_FIRE | RAND_POWER
 values:DEX[1+d2M2] | MIGHT[d2]
 min-values:DEX[2] | MIGHT[1]
 
-name:of the Haradrim
+name:of Apollo
 info:20000:30
 alloc:5:20 to 127
 combat:d5:d5:0
@@ -540,7 +540,7 @@ type:bow
 values:SHOTS[2d3]
 min-values:SHOTS[2]
 
-name:of Buckland
+name:of Hermes
 info:20000:25
 alloc:5:20 to 127
 combat:d8:d8:0

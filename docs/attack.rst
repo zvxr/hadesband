@@ -484,12 +484,12 @@ Ego Melee Weapons:
   wielding one gives you bonuses for melee combat. Blessed blades also have
   one extra, random, power.
 
-Weapon of Westernesse
-  A Weapon of Westernesse is one of the more powerful weapons. It does
+Weapon of Ares
+  A Weapon of Ares is one of the more powerful weapons. It does
   extra damage against orcs, trolls, and giants, while increasing your
   strength, dexterity, and constitution. It also lets you see invisible
-  creatures and protects from paralyzation. These blades were made by the
-  Dunedain.
+  creatures and protects from paralyzation. These blades carry the force
+  of battle itself.
 
 Weapon of Extra Attacks
   A weapon of extra attacks will allow the wielder to deliver extra attacks
