@@ -308,6 +308,11 @@
 - Town store owner names should eventually shift to Greco-Roman or underworld flavor.
 - Store behavior should not change in first pass.
 - Open terminology: consider renaming player-facing "town" to "polis"; keep code/data identifiers as-is unless needed.
+- Implemented Greek-flavored town store owner names for General Store, Armoury,
+  Weaponsmith, Bookseller, Alchemy Shop, Magic Shop, and Black Market.
+- Dungeon Organics owner names intentionally retained.
+- Store owner purse values increased from the old `5000`-to-`30000` scale to
+  the new `10000`-to-`40000` scale.
 
 ## Text, UI, and Help
 - Splash/news and death screens should match Hadesband premise.

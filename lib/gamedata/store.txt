@@ -25,10 +25,10 @@
 
 # General store
 store:STORE_GENERAL
-owner:5000:Bilbo the Friendly (Hobbit)
-owner:10000:Rincewind the Chicken (Human)
-owner:20000:Snafu the Midget (Gnome)
-owner:30000:Lyar-el the Comely (Elf)
+owner:10000:Cephalus the Hospitable (Hobbit)
+owner:15000:Strepsiades the Worried (Human)
+owner:25000:Philogelos the Jester (Gnome)
+owner:40000:Charis the Fair (Elf)
 slots:0:4
 turnover:2
 always:cloak:Cloak
@@ -58,10 +58,10 @@ buy:arrow
 
 # Armoury
 store:STORE_ARMOR
-owner:5000:Kon-Dar the Ugly (Half-Orc)
-owner:10000:Darg-Low the Grim (Human)
-owner:25000:Decado the Handsome (Demigod)
-owner:30000:Mauglin the Grumpy (Dwarf)
+owner:10000:Polemarchos the Scarred (Half-Orc)
+owner:15000:Brasidas the Grim (Human)
+owner:30000:Adonis the Handsome (Demigod)
+owner:40000:Kleon the Grumbling (Dwarf)
 slots:6:18
 turnover:9
 normal:boots:Pair of Leather Sandals
@@ -94,10 +94,10 @@ buy:dragon armor
 
 # Weaponsmith
 store:STORE_WEAPON
-owner:5000:Ithyl-Mak the Beastly (Half-Troll)
-owner:10000:Arndal Beast-Slayer (Half-Elf)
-owner:25000:Tarl Beast-Master (Hobbit)
-owner:30000:Oglign Dragon-Slayer (Dwarf)
+owner:10000:Eurytion the Brutal (Half-Troll)
+owner:15000:Bellerophon the Beast-Slayer (Half-Elf)
+owner:30000:Melampus the Beast-Master (Hobbit)
+owner:40000:Cadmus the Dragon-Slayer (Dwarf)
 slots:3:14
 turnover:9
 normal:shot:Iron Shot
@@ -140,10 +140,10 @@ buy:hafted
 
 # Bookseller
 store:STORE_BOOK
-owner:15000:Ludwig the Humble (Human)
-owner:20000:Gunnar the Paladin (Human)
-owner:25000:Delilah the Pure (Elf)
-owner:30000:Bosk the Wise (Dwarf)
+owner:20000:Socrates the Questioner (Human)
+owner:25000:Plato the Idealist (Human)
+owner:30000:Hypatia the Wise (Elf)
+owner:40000:Aristotle the Learned (Dwarf)
 slots:0:2
 turnover:0
 always:prayer book
@@ -157,10 +157,10 @@ buy:shadow book
 
 # Alchemist
 store:STORE_ALCHEMY
-owner:10000:Mauser the Chemist (Half-Elf)
-owner:10000:Wizzle the Chaotic (Hobbit)
-owner:15000:Ga-nat the Greedy (Gnome)
-owner:15000:Vella the Slender (Human)
+owner:15000:Medea the Brewer (Half-Elf)
+owner:15000:Circe the Shifting (Hobbit)
+owner:20000:Midas the Greedy (Gnome)
+owner:20000:Aglaia the Slender (Human)
 slots:6:10
 turnover:9
 always:scroll:Word of Recall
@@ -190,10 +190,10 @@ buy:potion
 
 # Magic-user's
 store:STORE_MAGIC
-owner:15000:Ariel the Sorceress (Half-Elf)
-owner:20000:Buggerby the Great (Gnome)
-owner:25000:Inglorian the Mage (Human)
-owner:30000:Luthien Starshine (High-Elf)
+owner:20000:Hecate's Apprentice (Half-Elf)
+owner:25000:Hermes Trismegistus (Gnome)
+owner:30000:Orpheus the Enchanter (Human)
+owner:40000:Selene Star-Bright (High-Elf)
 slots:4:14
 turnover:9
 normal:ring:Searching
@@ -223,10 +223,10 @@ buy:rod
 
 # Black Market - no stock given but we still need slot/turnover info
 store:STORE_BLACK
-owner:15000:Lo-Hak the Awful (Half-Troll)
-owner:20000:Histor the Goblin (Kobold)
-owner:25000:Durwin the Shifty (Half-Orc)
-owner:30000:Drago the Fair (Elf)
+owner:20000:Autolycus the Cunning (Half-Troll)
+owner:25000:Dolon the Sneak (Kobold)
+owner:30000:Sisyphus the Shifty (Half-Orc)
+owner:40000:Phaon the Fair (Elf)
 slots:6:18
 turnover:9
 always:scroll:Acquirement
@@ -242,10 +242,10 @@ owner:0:Your home
 
 # Dungeon Organics
 store:STORE_DUNGEON
-owner:30000:Twyla (Siren)
-owner:15000:Gertrude the Cursed (Demon)
-owner:10000:Princess the Quiet (Human)
-owner:5000:Clockarella the Timely (Gnome)
+owner:40000:Twyla (Siren)
+owner:20000:Gertrude the Cursed (Demon)
+owner:15000:Princess the Quiet (Human)
+owner:10000:Clockarella the Timely (Gnome)
 slots:0:0
 turnover:9
 always:food:Apple:3d4
