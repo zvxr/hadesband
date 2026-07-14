@@ -3894,6 +3894,7 @@ graphics:-:d
 level:5
 weight:10
 cost:400
+desc:The tip is stained with a greenish crust, like fumes from a cursed marsh.
 alloc:20:5 to 60
 attack:1d1:0:0
 armor:0:0
@@ -4063,6 +4064,7 @@ graphics:-:d
 level:10
 weight:10
 cost:300
+desc:Fine grit falls from the wand whenever it is turned toward worked stone.
 alloc:20:10 to 100
 attack:1d1:0:0
 armor:0:0
@@ -4077,6 +4079,7 @@ graphics:-:d
 level:20
 weight:10
 cost:400
+desc:The grain knots and shifts under the thumb, refusing to hold one shape.
 alloc:20:20 to 60
 attack:1d1:0:0
 armor:0:0
@@ -4119,6 +4122,7 @@ graphics:-:d
 level:20
 weight:10
 cost:3500
+desc:A hairline spiral curls around the wand, vanishing beneath the grip.
 alloc:0:20 to 100
 attack:1d1:0:0
 armor:0:0
@@ -4147,6 +4151,7 @@ graphics:-:d
 level:3
 weight:10
 cost:250
+desc:No two carvings on it quite agree, and none look the same twice.
 alloc:20:3 to 60
 attack:1d1:0:0
 armor:0:0
@@ -4199,6 +4204,7 @@ graphics:-:d
 level:60
 weight:10
 cost:2400
+desc:Scaled bands bind the wand, each warm or cold in a different way.
 alloc:20:60 to 100
 attack:1d1:0:0
 armor:0:0
@@ -4228,6 +4234,7 @@ graphics:-:d
 level:50
 weight:10
 cost:1200
+desc:The wand feels light in the hand, as if it has hollowed itself out.
 alloc:50:50 to 100
 attack:1d1:0:0
 armor:0:0
@@ -4242,6 +4249,7 @@ graphics:-:d
 level:60
 weight:10
 cost:3000
+desc:Its black surface drinks torchlight and gives nothing back.
 alloc:20:60 to 100
 attack:1d1:0:0
 armor:0:0
@@ -4295,6 +4303,7 @@ graphics:_:d
 level:10
 weight:50
 cost:0
+desc:Its head is carved with small open mouths, all turned toward the dark.
 alloc:10:10 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4340,6 +4349,7 @@ graphics:_:d
 level:40
 weight:50
 cost:350
+desc:The ferrule is chipped and dusty, as though it has struck bedrock often.
 alloc:40:40 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4353,6 +4363,7 @@ graphics:_:d
 level:50
 weight:50
 cost:6000
+desc:Old ash is packed into the carved grooves, untouched by any breeze.
 alloc:20:50 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4430,6 +4441,7 @@ graphics:_:d
 level:20
 weight:50
 cost:350
+desc:A narrow bronze eye watches from the staff's crown.
 alloc:30:20 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4444,6 +4456,7 @@ graphics:_:d
 level:20
 weight:50
 cost:600
+desc:Tiny incised corridors cross the wood, too regular to be accidental.
 alloc:20:10 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4495,6 +4508,7 @@ graphics:_:d
 level:70
 weight:50
 cost:5000
+desc:Laurel leaves of pale metal are set beneath the grip.
 alloc:25:70 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4531,6 +4545,7 @@ graphics:_:d
 level:70
 weight:50
 cost:5000
+desc:Its length is marked with boundary signs no exile would willingly cross.
 alloc:0:70 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4558,6 +4573,7 @@ graphics:_:d
 level:70
 weight:50
 cost:3500
+desc:The staff smells faintly of temple smoke and rain on white stone.
 alloc:20:70 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4605,6 +4621,7 @@ graphics:_:d
 level:20
 weight:50
 cost:800
+desc:Small silver points gleam along the shaft, cold and sharp as winter stars.
 alloc:20:20 to 80
 attack:1d2:0:0
 armor:0:0
@@ -4619,6 +4636,7 @@ graphics:_:d
 level:20
 weight:50
 cost:2000
+desc:The staff never casts quite the same shadow twice.
 alloc:0:20 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4661,6 +4679,8 @@ graphics:_:d
 level:70
 weight:50
 cost:4500
+desc:Old letters spiral around the shaft, promising wisdom to a mind that can
+desc: survive reading them.
 alloc:10:70 to 100
 attack:1d2:0:0
 armor:0:0
@@ -4681,6 +4701,7 @@ graphics:-:d
 level:10
 weight:15
 cost:1000
+desc:Bronze flecks drift beneath its surface, gathering toward hidden wealth.
 alloc:30:8 to 75
 power:6
 effect:DETECT_ORE
@@ -4697,6 +4718,7 @@ graphics:-:d
 level:30
 weight:15
 cost:3000
+desc:An unblinking eye of blue enamel is set into the rod's tip.
 alloc:60:50 to 100
 attack:1d1:0:0
 armor:0:0
@@ -4720,6 +4742,7 @@ graphics:-:d
 level:35
 weight:15
 cost:2000
+desc:Its polished face catches walls and doorways that are not yet visible.
 alloc:30:35 to 100
 attack:1d1:0:0
 armor:0:0
@@ -4734,6 +4757,7 @@ graphics:-:d
 level:30
 weight:15
 cost:1000
+desc:The point is needle-fine, made to pierce secrets rather than flesh.
 alloc:20:35 to 100
 attack:1d1:0:0
 armor:0:0
@@ -4940,6 +4964,7 @@ graphics:-:d
 level:80
 weight:15
 cost:25000
+desc:Five bright bands circle the rod, each one etched with a different virtue.
 alloc:10:80 to 100
 attack:1d1:0:0
 armor:0:0
@@ -5049,6 +5074,7 @@ graphics:-:d
 level:30
 weight:15
 cost:4000
+desc:A single thread of pale metal runs through it from end to end.
 alloc:10:30 to 100
 attack:1d1:0:0
 armor:0:0

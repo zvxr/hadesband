@@ -284,8 +284,11 @@
 - Ring and amulet description pass implemented for `Speed`, `Flames`, `Ice`,
   `Lightning`, `the Dog`, `Sustenance`, `Devotion`, `Hermes`, `Brilliance`,
   and amulet `Teleportation`.
-- Pending review: wands, rods, staves, lights, chests, and money/material
-  names.
+- Wand, rod, and staff names retained for readability. Implemented light
+  Greek-flavored descriptions for selected distinctive devices, including
+  `Wonder`, `Dragon's Breath`, `Annihilation`, `the Magi`, `Holiness`,
+  `Detection`, `Restoration`, and `Recall`.
+- Pending review: lights, chests, and money/material names.
 
 ## Magic
 - Preserve effects and spell function first.
