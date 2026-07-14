@@ -300,7 +300,7 @@ bool borg_swap_rings(void)
     if (!borg_items[INVEN_RIGHT].iqty)
         return false;
 
-    /* Cannot remove the One Ring */
+    /* Cannot remove the Ring of Gyges */
     if (borg_items[INVEN_RIGHT].one_ring)
         return false;
 
@@ -472,7 +472,7 @@ bool borg_wear_rings(void)
         /* Evaluate the inventory */
         p = borg_power();
 
-        /* the One Ring would be awesome */
+        /* the Ring of Gyges would be awesome */
         if (item->one_ring)
             p = borg.power * 2;
 
@@ -897,7 +897,7 @@ bool borg_wear_stuff(void)
             /* Restore the hole */
             borg_items[hole].iqty = 0;
 
-            /* Need to be careful not to put the One Ring onto
+            /* Need to be careful not to put the Ring of Gyges onto
              * the Left Hand
              */
             if (item->one_ring && !borg_items[INVEN_LEFT].tval)
@@ -925,7 +925,7 @@ bool borg_wear_stuff(void)
                 for (ii = INVEN_RIGHT; ii <= INVEN_LEFT; ii++) {
                     slot = ii;
 
-                    /* Does One Ring need to be handled here? */
+                    /* Does the Ring of Gyges need to be handled here? */
 
                     /* Take off old item */
                     memcpy(&borg_items[hole], &safe_items[slot],
@@ -963,7 +963,7 @@ bool borg_wear_stuff(void)
                     /* Restore the hole */
                     borg_items[hole].iqty = 0;
 
-                    /* Need to be careful not to put the One Ring onto
+                    /* Need to be careful not to put the Ring of Gyges onto
                      * the Left Hand
                      */
                     if (ii == INVEN_LEFT && item->one_ring)

@@ -4410,35 +4410,35 @@ int borg_calculate_attack_effectiveness(int attack_type)
         return (borg_attack_aux_staff_dispel(
             sv_staff_holiness, rad, dam, BORG_ATTACK_DISP_EVIL));
 
-    /* Artifact -- Narthanc- fire bolt 9d8*/
+    /* Artifact -- Prometheus- fire bolt 9d8*/
     case BF_ACT_FIRE_BOLT:
         rad = 0;
         dam = (9 * (8 + 1) / 2);
         return (borg_attack_aux_activation(
             act_fire_bolt, rad, dam, BORG_ATTACK_FIRE, true, -1));
 
-    /* Artifact -- Anduril & Firestar- fire ball 72*/
+    /* Artifact -- Asterion & Helios' Star- fire ball 72*/
     case BF_ACT_FIRE_BALL72:
         rad = 2;
         dam = 72;
         return (borg_attack_aux_activation(
             act_fire_ball72, rad, dam, BORG_ATTACK_FIRE, true, -1));
 
-    /* Artifact -- Gothmog- FIRE BALL 144 */
+    /* Artifact -- Megaera- FIRE BALL 144 */
     case BF_ACT_FIRE_BALL:
         rad = 2;
         dam = 144;
         return (borg_attack_aux_activation(
             act_fire_ball, rad, dam, BORG_ATTACK_FIRE, true, -1));
 
-    /* Artifact -- Nimthanc & Paurnimmen- frost bolt 6d8*/
+    /* Artifact -- Khione & Boreas' Grip- frost bolt 6d8*/
     case BF_ACT_COLD_BOLT:
         rad = 0;
         dam = (6 * (8 + 1) / 2);
         return (borg_attack_aux_activation(
             act_cold_bolt, rad, dam, BORG_ATTACK_COLD, true, -1));
 
-    /* Artifact -- Belangil- frost ball 50 */
+    /* Artifact -- Khione's Fang- frost ball 50 */
     case BF_ACT_COLD_BALL50:
         rad = 2;
         dam = 50;
@@ -4452,42 +4452,42 @@ int borg_calculate_attack_effectiveness(int attack_type)
         return (borg_attack_aux_activation(
             act_cold_bolt2, rad, dam, BORG_ATTACK_COLD, true, -1));
 
-    /* Artifact -- Ringil- frost ball 100*/
+    /* Artifact -- Boreas- frost ball 100*/
     case BF_ACT_COLD_BALL100:
         rad = 2;
         dam = 100;
         return (borg_attack_aux_activation(
             act_cold_ball100, rad, dam, BORG_ATTACK_COLD, true, -1));
 
-    /* Artifact -- Dethanc- electric bolt 6d6*/
+    /* Artifact -- Zeus' Spark- electric bolt 6d6*/
     case BF_ACT_ELEC_BOLT:
         rad = -1;
         dam = (6 * (6 + 1) / 2);
         return (borg_attack_aux_activation(
             act_elec_bolt, rad, dam, BORG_ATTACK_ELEC, true, -1));
 
-    /* Artifact -- Rilia- poison gas 12*/
+    /* Artifact -- Hydra- poison gas 12*/
     case BF_ACT_STINKING_CLOUD:
         rad = 2;
         dam = 12;
         return (borg_attack_aux_activation(
             act_stinking_cloud, rad, dam, BORG_ATTACK_POIS, true, -1));
 
-    /* Artifact -- Theoden- drain Life 120*/
+    /* Artifact -- Odysseus- drain Life 120*/
     case BF_ACT_DRAIN_LIFE2:
         rad = 0;
         dam = 120;
         return (borg_attack_aux_activation(
             act_drain_life2, rad, dam, BORG_ATTACK_OLD_DRAIN, true, -1));
 
-    /* Artifact -- Totila- confustion */
+    /* Artifact -- Dionysus' Revel- confustion */
     case BF_ACT_CONFUSE2:
         rad = 0;
         dam = 20;
         return (borg_attack_aux_activation(
             act_confuse2, rad, dam, BORG_ATTACK_OLD_CONF, true, -1));
 
-    /* Artifact -- Holcolleth -- sleep ii and sanctuary */
+    /* Artifact -- Mantle of Hypnos -- sleep ii and sanctuary */
     case BF_ACT_SLEEPII:
         dam = 10;
         return (borg_attack_aux_artifact_holcolleth());
@@ -4499,21 +4499,21 @@ int borg_calculate_attack_effectiveness(int attack_type)
         return (borg_attack_aux_activation(
             act_drain_life1, rad, dam, BORG_ATTACK_OLD_DRAIN, true, -1));
 
-    /* Artifact -- Fingolfin- spikes 150 */
+    /* Artifact -- Achilles- spikes 150 */
     case BF_ACT_ARROW:
         rad = 0;
         dam = 150;
         return (borg_attack_aux_activation(
             act_arrow, rad, dam, BORG_ATTACK_MISSILE, true, -1));
 
-    /* Artifact -- Cammithrim- Magic Missile 3d4 */
+    /* Artifact -- Apollo's Hands- Magic Missile 3d4 */
     case BF_ACT_MISSILE:
         rad = 0;
         dam = (3 * (4 + 1) / 2);
         return (borg_attack_aux_activation(
             act_missile, rad, dam, BORG_ATTACK_MISSILE, true, -1));
 
-    /* Artifact -- Paurnen- ACID bolt 5d8 */
+    /* Artifact -- Hydra's Touch- ACID bolt 5d8 */
     case BF_ACT_ACID_BOLT:
         rad = 0;
         dam = (5 * (8 + 1) / 2);
@@ -4541,7 +4541,7 @@ int borg_calculate_attack_effectiveness(int attack_type)
         return (borg_attack_aux_activation(
             act_star_ball, rad, dam, BORG_ATTACK_ELEC, true, -1));
 
-    /* Artifact -- Gil-galad */
+    /* Artifact -- Snowpoint & Helios */
     case BF_ACT_STARLIGHT2:
         rad = 7;
         dam = (10 * (8 + 1)) / 2;

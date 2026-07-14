@@ -732,7 +732,7 @@ static void count_modifiers(const struct artifact *art, struct artifact_set_data
 	 * frequency for the supercharged value and the normal value.
 	 * We get away with this by using a somewhat lower average value
 	 * for the supercharged ability than in the basic set (around
-	 * +7 or +8 - c.f. Ringil and the others at +10 and upwards).
+	 * +7 or +8 - c.f. Boreas and the others at +10 and upwards).
 	 * This then allows us to add an equal number of
 	 * small bonuses around +3 or so without unbalancing things.
 	 */
@@ -1075,7 +1075,7 @@ static void collect_artifact_data(struct artifact_set_data *data)
 		kind = lookup_kind(art->tval, art->sval);
 
 		/* Special cases -- don't parse these! */
-		if (strstr(art->name, "The One Ring") ||
+		if (strstr(art->name, "Ring of Gyges") ||
 			kf_has(kind->kind_flags, KF_QUEST_ART))
 			continue;
 
@@ -2775,7 +2775,7 @@ static void design_artifact(struct artifact_set_data *data, int tv, int *aidx)
 	char *new_name = artifact_gen_name(art, name_sections);
 
 	/* Skip fixed artifacts */
-	while (strstr(art->name, "The One Ring") ||
+	while (strstr(art->name, "Ring of Gyges") ||
 		kf_has(kind->kind_flags, KF_QUEST_ART)) {
 		(*aidx)++;
 		if ((*aidx) >= z_info->a_max) {

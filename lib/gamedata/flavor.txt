@@ -14,19 +14,19 @@
 
 kind:ring:=
 
-# Fixed: the One Ring
+# Fixed: the Ring of Gyges
 fixed:1:Ring of Power:Yellow:Plain Gold
 
-# The Ring of Barahir 50
-# The Ring of Tulkas 51
+# The Ring of Medusa 50
+# The Ring of Heracles 51
 
-# The Ring of Fire 'Narya'
+# The Ring of Fire 'Hestia's Flame'
 fixed:28:Ring of Fire:Red:Ruby
 
-# The Ring of Adamant 'Nenya'
+# The Ring of Adamant 'Persephone's Tear'
 fixed:40:Ring of Adamant:Light Blue:Mithril
 
-# The Ring of Firmament 'Vilya'
+# The Ring of Firmament 'Ouranos' Sapphire'
 fixed:29:Ring of Firmament:Blue:Sapphire
 
 flavor:2:Green:Alexandrite
@@ -86,18 +86,18 @@ flavor:43:Light Green:Adamantite
 
 kind:amulet:"
 
-# The Amulet of Carlammas
+# The Amulet of Hecate
 fixed:52:Amulet:Light Umber:Bronze
 
-# The Amulet of Ingwe 51
+# The Amulet of Athena 51
 
-# The Necklace of the Dwarves
+# The Necklace of Hephaestus
 fixed:55:Necklace:Yellow:Golden
 
-# New Artifact (14): The Elfstone 'Elessar'
+# New Artifact (14): The Elfstone 'Aesonstone'
 fixed:44:Elfstone:Green:Green
 
-# New Artifact (15): The Jewel 'Evenstar'
+# New Artifact (15): The Jewel 'Pomegranate Jewel'
 fixed:46:Jewel:White:White
 
 #flavor:44:Yellow:Amber

@@ -233,7 +233,7 @@ void take_hit(struct player *p, int dam, const char *kb_str)
 				msg("Your lust for blood keeps you alive!");
 			} else {
 				msg("So great was his prowess and skill in warfare, the Elves said: ");
-				msg("'The Mormegil cannot be slain, save by mischance.'");
+				msg("'Lethe cannot be slain, save by mischance.'");
 			}
 		} else {
 			/*

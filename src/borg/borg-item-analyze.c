@@ -515,7 +515,7 @@ void borg_item_analyze(
     }
 
     /* check if we know this is the one ring */
-    /* HACK we assume The One Ring is the only artifact that does BIZARRE */
+    /* HACK we assume the Ring of Gyges is the only artifact that does BIZARRE */
     if (o->activation) {
         if (o->activation->index == act_bizarre)
             item->one_ring = true;
@@ -617,7 +617,7 @@ void borg_item_analyze(
         item->value = borg_object_value_guess(item);
     }
 
-    /* If it's not The One Ring, then it's worthless if cursed */
+    /* If it's not the Ring of Gyges, then it's worthless if cursed */
     if (item->cursed && !item->one_ring)
         item->value = 0L;
 }

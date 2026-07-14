@@ -322,6 +322,66 @@
   `Arkenstone of Thráin` -> `Omphalos of Delphi`,
   `Grond` -> `Titan's Hammer`,
   `Massive Iron Crown of Morgoth` -> `Massive Iron Crown of Hades`.
+- Implemented sword and dagger artifact reskins, preserving base objects and
+  mechanics while replacing most Tolkien-coded names with Greek mythic names.
+- Implemented blunt weapon artifact reskins, preserving mechanics and retaining
+  `of Orpheus` while refreshing its description.
+- Implemented polearm artifact reskins, preserving mechanics and retaining
+  `Glaive of Pain`.
+- Implemented missile weapon artifact reskins, preserving mechanics.
+- Implemented digging tool and boot artifact reskins, preserving mechanics and
+  retaining `Stormwalker` while replacing its description.
+- Implemented helmet and crown artifact reskins, preserving mechanics.
+- Implemented light and heavy armor artifact reskins, preserving mechanics:
+  `Hithlomir` -> `Kevin Sorbo's Leather Armor`,
+  `of Himring` -> `of Thebes`,
+  `Thalkettoth` -> `Hermes' Scales`,
+  `of Arvedui` -> `of Theseus`,
+  `of Caspanion` -> `of Pythagoras`,
+  `of the Rohirrim` -> `of the Spartans`,
+  `of Isildur` -> `of Caesar`,
+  `Belegennon` -> `Aegis Mail`,
+  `of Celeborn` -> `of Heracles`.
+- Implemented cloak and glove artifact reskins, preserving mechanics:
+  `Colluin` -> `Mantle of Olympus`,
+  `Holcolleth` -> `Mantle of Hypnos`,
+  `of Thingol` -> `of Ariadne`,
+  `of Thorongil` -> `of Odysseus`,
+  `Colannon` -> `Iris' Mantle`,
+  `of Lúthien` -> `of Eurydice`,
+  `of Tuor` -> `of Poseidon`,
+  `Cambeleg` -> `Heracles' Grip`,
+  `Cammithrim` -> `Apollo's Hands`,
+  `Paurhach` -> `Hephaestus' Grip`,
+  `Paurnimmen` -> `Boreas' Grip`,
+  `Pauraegen` -> `Zeus' Grasp`,
+  `Paurnen` -> `Hydra's Touch`,
+  `Camlost` -> `Midas' Regret`,
+  `of Fingolfin` -> `of Achilles`.
+- Implemented shield artifact reskins, preserving mechanics:
+  `of Elros` -> `of Asclepius`,
+  `of Thorin` -> `of Atlas`,
+  `of Celegorm` -> `of Artemis`,
+  `of the Haradrim` -> `of Ares`,
+  `of Anárion` -> `of Themis`,
+  `of Eärendil` -> `of Apollo`,
+  `of Gil-galad` -> `of Helios`.
+- Implemented ring artifact reskins, preserving mechanics and base ring kinds:
+  `of Barahir` -> `of Medusa`,
+  `of Tulkas` -> `of Heracles`,
+  `Narya` -> `Hestia's Flame`,
+  `Nenya` -> `Persephone's Tear`,
+  `Vilya` -> `Ouranos' Sapphire`,
+  `The One Ring` -> `Ring of Gyges`.
+- Implemented amulet artifact reskins, preserving mechanics and base amulet
+  kinds:
+  `of Carlammas` -> `of Hecate`,
+  `of Ingwë` -> `of Athena`,
+  `of the Dwarves` -> `of Hephaestus`,
+  `Elessar` -> `Aesonstone`,
+  `Evenstar` -> `Pomegranate Jewel`.
+- Reviewed dragon scale mail artifacts and retained `Razorback`, `Mediator`,
+  and `Bladeturner`; lightly polished descriptions only.
 
 ## Text, UI, and Help
 - Splash/news and death screens should match Hadesband premise.

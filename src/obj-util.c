@@ -116,7 +116,7 @@ static void flavor_assign_random(uint8_t tval)
  * Reset svals on flavors, effectively removing any fixed flavors.
  *
  * Mainly useful for randarts so that fixed flavors for standards aren't
- * predictable. The One Ring is kept as fixed, since it lives through randarts.
+ * predictable. The Ring of Gyges is kept as fixed, since it lives through randarts.
  */
 static void flavor_reset_fixed(void)
 {

@@ -12218,7 +12218,7 @@ spells:S_ANIMAL | S_DEMON | S_HI_DRAGON | S_MONSTERS | S_UNDEAD
 friends:100:1d1:Dolon, Spy of Troy:servant
 desc:Originally known as the White, Saruman fell prey to Sauron's wiles.  He
 desc: seeks to emulate him and breeds orcs and trolls to fight for him.  He
-desc: searches forever for the One Ring, to become a mighty Sorcerer-King of
+desc: searches forever for the Ring of Gyges, to become a mighty Sorcerer-King of
 desc: the world.
 
 ### Dungeon level 61 ###

@@ -790,7 +790,7 @@ void borg_notice_armour_swap(void)
         if (item->cursed && !item->uncursable)
             continue;
 
-        /* One Ring is not a swap */
+        /* The Ring of Gyges is not a swap */
         if (item->one_ring)
             continue;
 

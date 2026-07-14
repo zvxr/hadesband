@@ -3788,7 +3788,7 @@ bool effect_handler_COMMAND(effect_handler_context_t *context)
 }
 
 /**
- * One Ring activation
+ * Ring of Gyges activation
  */
 bool effect_handler_BIZARRE(effect_handler_context_t *context)
 {
