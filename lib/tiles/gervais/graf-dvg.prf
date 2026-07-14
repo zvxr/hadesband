@@ -940,14 +940,14 @@ object:food:Hard Biscuit:0x82:0x82
 object:sword:Dagger:0x8a:0x83
 object:sword:Main Gauche:0x8a:0x84
 object:sword:Rapier:0x8a:0x85
-object:sword:Short Sword:0x8a:0x88
+object:sword:Xiphos:0x8a:0x88
 object:sword:Cutlass:0x8a:0x8A
 object:sword:Tulwar:0x8a:0x89
-object:sword:Scimitar:0x8a:0x8B
+object:sword:Kopis:0x8a:0x8B
 object:sword:Long Sword:0x8a:0x8D
 object:sword:Broad Sword:0x8a:0x8C
 object:sword:Bastard Sword:0x8a:0xC2
-object:sword:Katana:0x8a:0x8E
+object:sword:Machaira:0x8a:0x8E
 object:sword:Zweihander:0x8a:0x90
 object:sword:Executioner's Sword:0x8a:0x8F
 object:sword:Blade of Chaos:0x8a:0x91
@@ -977,7 +977,7 @@ object:hafted:Throwing Hammer:0x8a:0xb9
 ### Spears ###
 
 object:polearm:Spear:0x8a:0x9C
-object:polearm:Awl-Pike:0x8a:0x9E
+object:polearm:Javelin:0x8a:0x9E
 object:polearm:Trident:0x8a:0x9D
 object:polearm:Halberd:0x8a:0xA6
 object:polearm:Pike:0x8a:0xA2
@@ -1050,7 +1050,7 @@ object:boots:Pair of Ethereal Slippers:0x80:0x95
 ### Headgear ###
 
 object:helm:Hard Leather Cap:0x80:0x8C
-object:helm:Metal Cap:0x80:0x8D
+object:helm:Bronze Cap:0x80:0x8D
 object:helm:Iron Helm:0x80:0x8E
 object:helm:Steel Helm:0x80:0x8F
 object:crown:Iron Crown:0x80:0x91
@@ -1065,7 +1065,7 @@ object:soft armor:Soft Leather Armour:0x80:0xA8
 object:soft armor:Studded Leather Armour:0x80:0xAB
 object:soft armor:Hard Leather Armour:0x80:0xAA
 object:soft armor:Leather Scale Mail:0x80:0xAC
-object:hard armor:Metal Scale Mail:0x80:0xAD
+object:hard armor:Bronze Scale Armour:0x80:0xAD
 object:hard armor:Chain Mail:0x80:0xAF
 object:hard armor:Augmented Chain Mail:0x80:0xB1
 object:hard armor:Bar Chain Mail:0x80:0xB2
@@ -1100,12 +1100,12 @@ object:gloves:Set of Alchemist's Gloves:0x80:0xCD
 ### The shields ###
 
 #K:shield:Buckler:0x80:0xE4
-object:shield:Wicker Shield:0x80:0x9E
-object:shield:Small Metal Shield:0x80:0xA0
+object:shield:Pelte:0x80:0x9E
+object:shield:Aspis:0x80:0xA0
 object:shield:Leather Shield:0x80:0x9F
 object:shield:Large Metal Shield:0x80:0xA1
 object:shield:Mithril Shield:0x80:0xA2
-object:shield:Knight's Shield:0x93:0xb7
+object:shield:Spartan Shield:0x93:0xb7
 
 
 

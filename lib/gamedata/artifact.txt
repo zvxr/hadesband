@@ -334,7 +334,7 @@ desc:An heirloom of the dauntless Lords of Rhûn far to the east, and a name
 desc: of dismay to creatures natural and unnatural.
 
 name:'Sting'
-base-object:sword:Short Sword
+base-object:sword:Xiphos
 level:20
 weight:75
 cost:100000
@@ -353,7 +353,7 @@ desc: sturdy little blade grants the wearer combat prowess and survival
 desc: abilities he did not know he had.
 
 name:'Dagmor'
-base-object:sword:Short Sword
+base-object:sword:Xiphos
 level:20
 weight:80
 cost:15000
@@ -383,7 +383,7 @@ desc: with a perfect edge shining cleanly in the sun, an object of hate to the
 desc: men of Umbar who met it in combat.
 
 name:'Haradekket'
-base-object:sword:Scimitar
+base-object:sword:Kopis
 level:20
 weight:130
 cost:30000
@@ -395,7 +395,7 @@ values:DEX[2] | BLOWS[2]
 slay:ANIMAL_2
 slay:EVIL_2
 slay:UNDEAD_3
-desc:A damascened scimitar that hefts with wondrous ease.  Famed in song
+desc:A damascened kopis that hefts with wondrous ease.  Famed in song
 desc: as the "Sickle of Harad", and a deadly foe to the undead.
 
 name:'Ringil'
@@ -583,7 +583,7 @@ desc: steed of the Morgul-lord before striking down the mighty Witch-king
 desc: himself, whom no mortal man could hinder.
 
 name:'Aglarang'
-base-object:sword:Katana
+base-object:sword:Machaira
 level:30
 weight:50
 cost:40000
@@ -1512,7 +1512,7 @@ desc:The hunting cap of King Thranduil, to whose ears come all the secrets of
 desc: his forest domain.
 
 name:of Thengel
-base-object:helm:Metal Cap
+base-object:helm:Bronze Cap
 level:10
 weight:20
 cost:22000
@@ -1521,11 +1521,11 @@ attack:1d1:0:0
 armor:3:12
 flags:PROT_CONF
 values:WIS[3]
-desc:A ridged helmet made of steel and embossed with scenes of valor in fine-
+desc:A ridged bronze cap embossed with scenes of valor in fine-
 desc:engraved silver.  It grants the wearer nobility and understanding.
 
 name:of Celebrimbor
-base-object:helm:Metal Cap
+base-object:helm:Bronze Cap
 level:55
 weight:20
 cost:45000
@@ -1534,7 +1534,7 @@ attack:1d1:0:0
 armor:3:18
 values:INT[2] | DEX[2] | SEARCH[3]
 values:RES_FIRE[1] | RES_ACID[1] | RES_DISEN[1] | RES_SHARD[1]
-desc:A metal cap forged by the greatest Noldorin smith of the Second Age,
+desc:A bronze cap forged by the greatest Noldorin smith of the Second Age,
 desc: this helm serves equally well in battle or at the forge, and its
 desc: enchantment will never be diminished.
 
@@ -2046,7 +2046,7 @@ desc: Morgoth seven mighty wounds and pain that will last until the end of Arda.
 ### Shields ###
 
 name:of Elros
-base-object:shield:Wicker Shield
+base-object:shield:Pelte
 level:40
 weight:30
 cost:60000
@@ -2059,7 +2059,7 @@ desc:The shield of Elros Tar-Minyatur, founder of Númenor.  Granted long
 desc: life by the Valar, even his shield became imbued with power.
 
 name:of Thorin
-base-object:shield:Small Metal Shield
+base-object:shield:Aspis
 level:40
 weight:65
 cost:60000
@@ -2069,7 +2069,7 @@ armor:5:25
 flags:PROT_FEAR | FREE_ACT
 values:CON[4] | STR[3] | STEALTH[-1] | RES_SOUND[1] | RES_ACID[3] | RES_CHAOS[1]
 desc:Invoking the strength and endurance of Thorin, King under the Mountain,
-desc: this little metal shield is proof against the Element of Earth.
+desc: this bronze-faced aspis is proof against the Element of Earth.
 
 name:of Celegorm
 base-object:shield:Leather Shield
@@ -2116,7 +2116,7 @@ desc:The great metal-bound shield of Elendil's younger son Anárion, whom
 desc: even Sauron could not corrupt.
 
 name:of Eärendil
-base-object:shield:Knight's Shield
+base-object:shield:Spartan Shield
 level:32
 weight:160
 cost:90000

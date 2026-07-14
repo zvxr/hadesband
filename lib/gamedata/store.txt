@@ -68,19 +68,19 @@ normal:boots:Pair of Leather Sandals
 normal:boots:Pair of Leather Boots
 normal:boots:Pair of Iron Shod Boots
 normal:helm:Hard Leather Cap
-normal:helm:Metal Cap
+normal:helm:Bronze Cap
 normal:helm:Iron Helm
 normal:soft armour:Robe
 normal:soft armour:Soft Leather Armour
 normal:soft armour:Studded Leather Armour
 normal:soft armour:Hard Leather Armour
 normal:soft armour:Leather Scale Mail
-normal:hard armour:Metal Scale Mail
+normal:hard armour:Bronze Scale Armour
 normal:hard armour:Chain Mail
 normal:gloves:Set of Leather Gloves
 normal:gloves:Set of Gauntlets
-normal:shield:Wicker Shield
-normal:shield:Small Metal Shield
+normal:shield:Pelte
+normal:shield:Aspis
 normal:shield:Leather Shield
 buy:boots
 buy:gloves
@@ -106,16 +106,16 @@ normal:bolt:Bolt
 normal:sword:Dagger
 normal:sword:Main Gauche
 normal:sword:Rapier
-normal:sword:Short Sword
+normal:sword:Xiphos
 normal:sword:Cutlass
 normal:sword:Tulwar
 normal:sword:Broad Sword
 normal:sword:Long Sword
-normal:sword:Scimitar
-normal:sword:Katana
+normal:sword:Kopis
+normal:sword:Machaira
 normal:sword:Bastard Sword
 normal:polearm:Spear
-normal:polearm:Awl-Pike
+normal:polearm:Javelin
 normal:polearm:Trident
 normal:polearm:Pike
 normal:polearm:Beaked Axe

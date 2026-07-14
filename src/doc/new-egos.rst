@@ -93,7 +93,7 @@ Chain/Plate, Adamantite Plate, Mace of Disruption, Scythe of Slicing.
 These are all now affixes (but see below for more to do on this).
 
 N.B. There is no base item called "Blade", so the "of Chaos" affix can be
-applied to the top three swords (Katana, Zweihander and Executioner IIRC).
+applied to the top three swords (Machaira, Zweihander and Executioner IIRC).
 Though there's no reason not to allow Daggers of Chaos, if we want to.
 
 *make_object* and *make_artifact*

@@ -772,7 +772,7 @@ attack:1d6:0:0
 armor:0:0
 desc:A long, thin thrusting blade, mainly used in duels.
 
-name:& Short Sword~
+name:& Xiphos~
 type:sword
 graphics:|:W
 level:5
@@ -781,7 +781,8 @@ cost:90
 alloc:20:5 to 100
 attack:1d7:0:0
 armor:0:0
-desc:A short thrusting sword.
+desc:A short, straight Greek sword made for close fighting after the spear
+desc: line breaks.
 
 name:& Cutlass~
 type:sword
@@ -806,7 +807,7 @@ attack:2d4:0:0
 armor:0:0
 desc:A wider-bladed cousin of the shamshir, with less of a curve.
 
-name:& Scimitar~
+name:& Kopis~
 type:sword
 graphics:|:W
 level:10
@@ -815,7 +816,7 @@ cost:300
 alloc:20:10 to 100
 attack:4d2:0:0
 armor:0:0
-desc:A long sabre with an extreme curve to the blade.
+desc:A heavy, forward-curving Greek blade that bites hard on the cut.
 
 name:& Long Sword~
 type:sword
@@ -852,7 +853,7 @@ armor:0:0
 desc:Also known as the hand-and-a-half blade.  A larger-than-normal straight-
 desc:sided sword with two cutting edges.
 
-name:& Katana~
+name:& Machaira~
 type:sword
 graphics:|:W
 level:20
@@ -861,8 +862,7 @@ cost:600
 alloc:20:20 to 100
 attack:3d5:0:0
 armor:0:0
-desc:A slightly curved long-handled slashing sword with a single-edged
-desc: blade and a chisel tip.
+desc:A curved single-edged sword, kin to the kopis but longer in the hand.
 
 name:& Zweihander~
 type:sword
@@ -1075,7 +1075,7 @@ flags:THROWING
 desc:The basic polearm, with a double-edged knife mounted on a light shaft.
 desc:  This weapon can be thrown effectively.
 
-name:& Awl-Pike~
+name:& Javelin~
 type:polearm
 graphics:/:s
 level:10
@@ -1084,9 +1084,9 @@ cost:340
 alloc:20:10 to 100
 attack:1d8:0:0
 armor:0:0
-desc:A more robust version of the basic polearm, with a double-edged knife
-desc: mounted on a sturdy shaft.  It cannot be thrown effectively, but offers
-desc: some protection to the wielder.
+flags:THROWING
+desc:A heavy battlefield javelin with a stout shaft and iron head, carried
+desc: for both a strong cast and hard close-quarters thrusting.
 
 name:& Trident~
 type:polearm
@@ -1573,7 +1573,7 @@ attack:0d0:0:0
 armor:2:0
 desc:A padded skullcap of boiled leather.
 
-name:& Metal Cap~
+name:& Bronze Cap~
 type:helm
 graphics:]:s
 level:10
@@ -1582,7 +1582,7 @@ cost:30
 alloc:20:10 to 100
 attack:1d1:0:0
 armor:3:0
-desc:A pot-helm of steel that protects the skull.
+desc:A simple bronze helm that protects the skull without enclosing the face.
 
 name:& Iron Helm~
 type:helm
@@ -1704,7 +1704,7 @@ armor:20:0
 desc:A tunic and skirt sewn with thick, overlapping scales of hardened
 desc: leather.
 
-name:Metal Scale Mail~
+name:Bronze Scale Armour~
 type:hard armor
 graphics:[:s
 level:25
@@ -1713,7 +1713,7 @@ cost:550
 alloc:20:25 to 100
 attack:1d4:-2:0
 armor:38:0
-desc:A heavy shirt of overlapping steel scales backed by leather, with
+desc:A heavy shirt of overlapping bronze scales backed by leather, with
 desc: matching skirt and sleeves.
 
 name:Chain Mail~
@@ -1981,7 +1981,7 @@ desc:Highly protective gloves designed for an alchemist's elemental magics.
 #P:1:1d1:0:0:0
 #D:A small round shield designed to be useful in deflecting enemy swords.
 
-name:& Wicker Shield~
+name:& Pelte~
 type:shield
 graphics:):U
 level:1
@@ -1990,9 +1990,9 @@ cost:20
 alloc:20:1 to 100
 attack:1d1:0:0
 armor:2:0
-desc:A light circular frame of wood surrounding fine-grained wickerwork.
+desc:A light crescent shield of wicker and hide, easy to carry in a skirmish.
 
-name:& Small Metal Shield~
+name:& Aspis~
 type:shield
 graphics:):s
 level:10
@@ -2001,7 +2001,8 @@ cost:80
 alloc:20:15 to 100
 attack:1d2:0:0
 armor:5:0
-desc:A round shield of wood reinforced with metal rims and central disk.
+desc:A broad round shield of wood and bronze, suited to the press of a
+desc: battle line.
 
 name:& Leather Shield~
 type:shield
@@ -2027,7 +2028,7 @@ armor:12:0
 desc:An oval shield of wood covered by leather and rimmed with metal.  A large
 desc: iron shield boss offers excellent hand protection.
 
-name:& Knight's Shield~
+name:& Spartan Shield~
 type:shield
 graphics:):W
 level:50
@@ -2036,8 +2037,8 @@ cost:750
 alloc:10:50 to 100
 attack:1d6:0:0
 armor:15:0
-desc:A kite-shaped shield with rounded corners that covers the wearer from
-desc: chest to toe, emblazoned with heraldic symbols.
+desc:A massive bronze-faced shield carried by elite hoplites, heavy enough to
+desc: turn aside arrows and break a charging foe.
 
 name:& Mithril Shield~
 type:shield

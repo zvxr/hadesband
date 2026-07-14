@@ -347,14 +347,14 @@ object:food:Draught of the Ents:0x82:0xAF
 object:sword:Dagger:0x8A:0x83
 object:sword:Main Gauche:0x8A:0x84
 object:sword:Rapier:0x8A:0x85
-object:sword:Short Sword:0x8A:0x88
+object:sword:Xiphos:0x8A:0x88
 object:sword:Cutlass:0x8A:0x8A
 object:sword:Tulwar:0x8A:0x89
-object:sword:Scimitar:0x8A:0x8B
+object:sword:Kopis:0x8A:0x8B
 object:sword:Long Sword:0x8A:0x8D
 object:sword:Broad Sword:0x8A:0x8C
 object:sword:Bastard Sword:0x8A:0x8E
-object:sword:Katana:0x8B:0x92
+object:sword:Machaira:0x8B:0x92
 object:sword:Zweihander:0x8A:0x8F
 object:sword:Executioner's Sword:0x8B:0x93
 object:sword:Blade of Chaos:0x8A:0x91
@@ -381,7 +381,7 @@ object:hafted:Mace of Disruption:0x8A:0x9B
 ### Spears ###
 
 object:polearm:Spear:0x8A:0x9C
-object:polearm:Awl-Pike:0x8A:0x9E
+object:polearm:Javelin:0x8A:0x9E
 object:polearm:Trident:0x8A:0x9D
 object:polearm:Halberd:0x8A:0xA6
 object:polearm:Pike:0x8A:0xA2
@@ -443,7 +443,7 @@ object:boots:Pair of Ethereal Slippers:0x80:0x93
 ### Headgear ###
 
 object:helm:Hard Leather Cap:0x80:0xC6
-object:helm:Metal Cap:0x80:0x8B
+object:helm:Bronze Cap:0x80:0x8B
 object:helm:Iron Helm:0x80:0x8C
 object:helm:Steel Helm:0x80:0x8D
 object:crown:Iron Crown:0x80:0x8F
@@ -457,7 +457,7 @@ object:soft armour:Soft Leather Armour:0x80:0xA6
 object:soft armour:Studded Leather Armour:0x80:0xA9
 object:soft armour:Hard Leather Armour:0x80:0xA8
 object:soft armour:Leather Scale Mail:0x80:0xAA
-object:hard armour:Metal Scale Mail:0x80:0xAB
+object:hard armour:Bronze Scale Armour:0x80:0xAB
 object:hard armour:Chain Mail:0x80:0xAD
 object:hard armour:Augmented Chain Mail:0x80:0xAF
 object:hard armour:Bar Chain Mail:0x80:0xB0
@@ -487,8 +487,8 @@ object:gloves:Set of Alchemist's Gloves:0x80:0x99
 
 ### The shields ###
 
-object:shield:Wicker Shield:0x80:0x9C
-object:shield:Small Metal Shield:0x80:0x9E
+object:shield:Pelte:0x80:0x9C
+object:shield:Aspis:0x80:0x9E
 object:shield:Leather Shield:0x80:0x9D
 object:shield:Large Metal Shield:0x80:0x9F
 object:shield:Mithril Shield:0x80:0xA0

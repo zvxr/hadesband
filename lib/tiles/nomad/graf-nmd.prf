@@ -360,12 +360,12 @@ object:sword:Broad Sword:0x8D:0x82
 object:sword:Cutlass:0x8D:0x83
 object:sword:Dagger:0x8D:0x84
 object:sword:Executioner's Sword:0x8D:0x85
-object:sword:Katana:0x8D:0x86
+object:sword:Machaira:0x8D:0x86
 object:sword:Long Sword:0x8D:0x87
 object:sword:Main Gauche:0x8D:0x88
 object:sword:Rapier:0x8D:0x89
-object:sword:Scimitar:0x8D:0x8A
-object:sword:Short Sword:0x8D:0x8B
+object:sword:Kopis:0x8D:0x8A
+object:sword:Xiphos:0x8D:0x8B
 object:sword:Tulwar:0x8D:0x8C
 object:sword:Zweihander:0x8D:0x8D
 
@@ -392,7 +392,7 @@ object:hafted:Whip:0x8F:0x8B
 
 ### Polearms ###
 
-object:polearm:Awl-Pike:0x8E:0x80
+object:polearm:Javelin:0x8E:0x80
 object:polearm:Battle Axe:0x8E:0x81
 object:polearm:Beaked Axe:0x8E:0x82
 object:polearm:Broad Axe:0x8E:0x83
@@ -461,7 +461,7 @@ object:hard armor:Chain Mail:0x95:0x93
 object:hard armor:Full Plate Armour:0x95:0x94
 object:hard armor:Metal Brigandine Armour:0x95:0x95
 object:hard armor:Metal Lamellar Armour:0x95:0x96
-object:hard armor:Metal Scale Mail:0x95:0x97
+object:hard armor:Bronze Scale Armour:0x95:0x97
 object:hard armor:Mithril Chain Mail:0x95:0x98
 object:hard armor:Mithril Plate Mail:0x95:0x99
 object:hard armor:Partial Plate Armour:0x95:0x9A
@@ -483,15 +483,15 @@ object:cloak:Fur Cloak:0x94:0x83
 object:shield:Large Metal Shield:0x92:0x81
 object:shield:Leather Shield:0x92:0x82
 object:shield:Mithril Shield:0x92:0x83
-object:shield:Small Metal Shield:0x92:0x84
-object:shield:Wicker Shield:0x92:0x85
+object:shield:Aspis:0x92:0x84
+object:shield:Pelte:0x92:0x85
 
 
 ### Headgear ###
 
 object:helm:Hard Leather Cap:0x92:0x90
 object:helm:Iron Helm:0x92:0x91
-object:helm:Metal Cap:0x92:0x92
+object:helm:Bronze Cap:0x92:0x92
 object:helm:Steel Helm:0x92:0x93
 
 object:crown:Golden Crown:0x92:0x98
