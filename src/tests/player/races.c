@@ -135,9 +135,11 @@ static int test_bonuses0(void *data)
 	require(player_has(player, PF_CYCLOPEAN_RAGE));
 	base_melee = calc_state.skills[SKILL_TO_HIT_MELEE];
 	player->timed[TMD_CYCLOPEAN_RAGE] = 10;
+	player->timed[TMD_RUNNING] = 10;
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.el_info[ELEM_SHARD].res_level, 1);
 	eq(calc_state.skills[SKILL_TO_HIT_MELEE], base_melee + 75);
+	eq(calc_state.num_moves, 1);
 
 	eq(player_make_simple("Demigod", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);

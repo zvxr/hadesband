@@ -52,15 +52,16 @@
 - Removed: Spartan was mistakenly added as a race; revisit Barbarian as a
   class/theme discussion instead.
 - Done: Half-Giant renamed to Cyclops.
-- Cyclops uses `x` for Cyclopean Rage: costs 5% maximum HP, alarms monsters,
-  grants berserk combat effects and temporary shard resistance.
+- Cyclops uses `x` for Cyclopean Rage: uses a 150-turn cooldown, alarms
+  monsters, grants berserk combat effects, temporary shard resistance, and
+  running for the same duration.
 - Hadesband command convention: `s` invokes a class Skill and `x` invokes a
   racial Expertise.
 - Active Skills and Expertise use the registry in `player-properties.c`;
   ownership checks class/race `pflags` directly, not derived player flags.
 - Removed Tactical's original-keyset `x -> w0` weapon-swap keymap so `x`
   consistently invokes racial Expertise.
-- Kobold uses `x` for Scurry: 20 turns of extra movement, then a 200-turn
+- Kobold uses `x` for Scurry: 20 turns of extra movement, then a 120-turn
   cooldown.
 - Fae replaced by Siren, with a shared-cooldown Siren Song Expertise.
 - Need preserve stats/XP unless a name implies changed mechanics.

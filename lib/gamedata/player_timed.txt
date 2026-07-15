@@ -326,6 +326,12 @@ msgt:BERSERK
 resist:SHARD
 flag-synonym:PROT_FEAR:0
 
+name:CYCLOPEAN_RAGE_COOLDOWN
+desc:gathering your fury
+grade:y:10000:Rage:Your fury gathers again.
+on-end:You are ready to unleash Cyclopean rage again.
+msgt:GENERIC
+
 name:SIREN_SONG_COOLDOWN
 desc:recovering your voice
 grade:y:10000:Song:-

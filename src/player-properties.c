@@ -253,7 +253,6 @@ static void use_mana_siphon(int dir)
 
 static void use_cyclopean_rage(int dir)
 {
-	int cost;
 	int duration;
 
 	if (player->timed[TMD_CYCLOPEAN_RAGE] || player->timed[TMD_SHERO]) {
@@ -261,19 +260,21 @@ static void use_cyclopean_rage(int dir)
 		return;
 	}
 
-	cost = MAX(1, player->mhp / 20);
-	if (player->chp <= cost) {
-		msg("You are too weak to unleash your Cyclopean rage.");
+	if (player->timed[TMD_CYCLOPEAN_RAGE_COOLDOWN]) {
+		msg("You need %d more turns before unleashing your Cyclopean rage again.",
+			player->timed[TMD_CYCLOPEAN_RAGE_COOLDOWN]);
 		return;
 	}
 
 	player->upkeep->energy_use = z_info->move_energy;
-	take_hit(player, cost, "the strain of Cyclopean rage");
 	(void)player_clear_timed(player, TMD_AFRAID, true, false);
 
 	duration = 10 + randint1(10) + player->lev / 2;
 	(void)player_inc_timed(player, TMD_CYCLOPEAN_RAGE, duration, true,
 		false, false);
+	(void)player_inc_timed(player, TMD_RUNNING, duration, true, false, false);
+	(void)player_set_timed(player, TMD_CYCLOPEAN_RAGE_COOLDOWN, 150, true,
+		false);
 	monsters_handle_player_noise(100);
 }
 
@@ -287,7 +288,7 @@ static void use_kobold_scurry(int dir)
 
 	player->upkeep->energy_use = z_info->move_energy;
 	(void)player_set_timed(player, TMD_RUNNING, 20, true, false);
-	(void)player_set_timed(player, TMD_SCURRY_COOLDOWN, 200, true, false);
+	(void)player_set_timed(player, TMD_SCURRY_COOLDOWN, 120, true, false);
 }
 
 static int siren_song_chance(const struct siren_song *song)
@@ -461,7 +462,7 @@ static void use_war_cry(int dir)
 
 	monster_desc(m_name, sizeof(m_name), mon, MDESC_TARG);
 	player->upkeep->energy_use = z_info->move_energy;
-	(void)player_set_timed(player, TMD_WAR_CRY_COOLDOWN, 70, true,
+	(void)player_set_timed(player, TMD_WAR_CRY_COOLDOWN, 60, true,
 		false);
 
 	if (randint1(player->lev + 10) < randint1(mon->race->level + 10)) {

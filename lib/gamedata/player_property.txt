@@ -60,14 +60,14 @@ desc:You can sense ore in the walls.
 type:player
 code:CYCLOPEAN_RAGE
 name:Cyclopean Rage
-desc:You can spend vitality to enter a Cyclopean fury, gaining
-desc: combat prowess, fear protection, and shard resistance.
+desc:You can enter a Cyclopean fury, gaining combat prowess,
+desc: fear protection, shard resistance, and a burst of running.
 
 type:player
 code:KOBOLD_SCURRY
 name:Scurry
 desc:You can move with frantic speed for 20 turns.  After using
-desc: Scurry, you must wait 200 turns before using it again.
+desc: Scurry, you must wait 120 turns before using it again.
 
 type:player
 code:SIREN_SONG
