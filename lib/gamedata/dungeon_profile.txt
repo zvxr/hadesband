@@ -104,9 +104,10 @@ room:large room:0:11:33:3:0:1:15
 room:crossed room:0:11:33:3:0:1:35
 room:circular room:0:22:22:1:0:1:50
 room:overlap room:0:11:33:1:0:1:70
-room:room template:1:11:33:1:0:1:95
-room:room template:2:11:33:10:0:1:99
-room:room template:3:11:33:30:0:1:100
+room:room template:1:11:33:1:0:1:94
+room:room template:2:11:33:10:0:1:98
+room:room template:3:11:33:30:0:1:99
+room:room template:4:11:33:10:0:1:100
 
 # Normal rooms (rarity = 0)
 room:simple room:0:11:33:1:0:0:100
@@ -142,9 +143,10 @@ room:large room:0:11:33:3:0:1:25
 room:crossed room:0:11:33:3:0:1:40
 room:circular room:0:22:22:1:0:1:55
 room:overlap room:0:11:33:1:0:1:70
-room:room template:1:11:33:1:0:1:95
-room:room template:2:11:33:10:0:1:99
-room:room template:3:11:33:30:0:1:100
+room:room template:1:11:33:1:0:1:94
+room:room template:2:11:33:10:0:1:98
+room:room template:3:11:33:30:0:1:99
+room:room template:4:11:33:10:0:1:100
 
 # Normal rooms (rarity = 0)
 room:simple room:0:11:33:1:0:0:100
@@ -210,9 +212,10 @@ room:large room:0:11:33:3:0:1:25
 room:crossed room:0:11:33:3:0:1:40
 room:circular room:0:22:22:1:0:1:55
 room:overlap room:0:11:33:1:0:1:70
-room:room template:1:11:33:1:0:1:95
-room:room template:2:11:33:10:0:1:99
-room:room template:3:11:33:30:0:1:100
+room:room template:1:11:33:1:0:1:94
+room:room template:2:11:33:10:0:1:98
+room:room template:3:11:33:30:0:1:99
+room:room template:4:11:33:10:0:1:100
 
 # Normal rooms (rarity = 0)
 room:simple room:0:11:33:1:0:0:100

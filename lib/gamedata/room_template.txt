@@ -61,6 +61,10 @@
 #        using persistent levels, with guardian monsters
 #    9 - place some monsters and treasures nearby
 #    [ - a treasure of the specified tval
+#    v - vegetation
+#    t - tree
+#    w - wood
+#    m - soil with a mushroom (60%), flying monster (30%), or nothing (10%)
 
 # 'flags' lines are optional and list the flags, from src/list-room-flags.h,
 # that should be applied to the room.  As many flags: lines may be used as
@@ -75,6 +79,226 @@
 ### Templated rooms ###
 
 # Standard rectangular rooms 
+
+name:Small Grove
+type:1
+rating:4
+rows:7
+columns:11
+doors:2
+tval:0
+D:%%%%###%%%%
+D:%...ttt...%
+D:%..ttwtt..%
+D:%...ttt...%
+D:#...vtv...%
+D:#.vvvmvvv.%
+D:%%%%%%%%%%%
+
+name:Small Grove Reversed
+type:1
+rating:4
+rows:7
+columns:11
+doors:2
+tval:0
+D:%%%%%%%%%%%
+D:#.vvvmvvv.%
+D:#...vtv...%
+D:%...ttt...%
+D:%..ttwtt..%
+D:%...ttt...%
+D:%%%%###%%%%
+
+name:Overgrown Thicket A
+type:1
+rating:4
+rows:5
+columns:22
+doors:1
+tval:0
+D:%%%%t%%%%%%%%%%%%%%%%%
+D:%vvtwtvvvmvvvvv..vvvv%
+D:%.vvtvvmvvvtvvvmvvvv.%
+D:%vvvv.vvvvtwtvvvvv.vv%
+D:%%%%%%%%%%%t%%%%%%%%%%
+
+name:Overgrown Thicket B
+type:1
+rating:4
+rows:7
+columns:17
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%
+D:%..vv..m..vv....%
+D:%.v.twtv.twt.v..%
+D:%...twwwt.v.....%
+D:%.m.vtwt.v..m...%
+D:%...vv...vv.....%
+D:%%%%%%%%%%%%%%%%%
+
+name:Overgrown Thicket C
+type:1
+rating:4
+rows:7
+columns:21
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%
+D:%.vvv...m...vvv.....%
+D:%..twt.vvv.twt.v....%
+D:%..twwwt..twwwt.....%
+D:%v..twt..m..twt.....%
+D:%....vvv...vv..m....%
+D:%%%%%%%%%%%%%%%%%%%%%
+
+name:Overgrown Thicket D
+type:1
+rating:4
+rows:7
+columns:15
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%
+D:%..v..m..v....%
+D:%.twt..twt.v..%
+D:%twwwt.twwwt..%
+D:%.twt..v.m....%
+D:%...vv........%
+D:%%%%%%%%%%%%%%%
+
+name:Overgrown Thicket E
+type:1
+rating:4
+rows:7
+columns:25
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%%%
+D:%v...m...vv.....m...v...%
+D:%.twt..v.twt.v..twt.....%
+D:%twwwt...twwwt.twwwt....%
+D:%.twt.v...twt...twtv....%
+D:%...vv..m.....vv........%
+D:%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name:Overgrown Thicket F
+type:1
+rating:4
+rows:7
+columns:19
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%
+D:%m..vv....vv..m...%
+D:%..twt.v.twt......%
+D:%v.twwwt.twwwt.v..%
+D:%..twt...v.twt....%
+D:%....m.vv.........%
+D:%%%%%%%%%%%%%%%%%%%
+
+name:Overgrown Thicket G
+type:1
+rating:4
+rows:7
+columns:23
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%
+D:%...v....m....v.......%
+D:%.twt.v.....v.twt.....%
+D:%twwwt..m...twwwt.....%
+D:%.twt...vv...twtv.....%
+D:%..v..m....vv.........%
+D:%%%%%%%%%%%%%%%%%%%%%%%
+
+name:Overgrown Thicket H
+type:1
+rating:4
+rows:7
+columns:17
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%
+D:%..m..vv..m.....%
+D:%.v.twt.twt.v...%
+D:%..twwwtwwwt....%
+D:%.v.twt.twt.m...%
+D:%.....vv........%
+D:%%%%%%%%%%%%%%%%%
+
+name:Large Grove A
+type:1
+rating:4
+rows:10
+columns:29
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+D:%...v.........v........t....%
+D:%.......twt........v..twwt..%
+D:%....v.twwwt..v..v....vtt...%
+D:%...vvv.tttm.....tv......mv.%
+D:%....v...tv....vtwtv.v......%
+D:%........v...vmtwwwt...v....%
+D:%......m......v..t.v.v......%
+D:%................v..........%
+D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name:Large Grove B
+type:1
+rating:4
+rows:10
+columns:29
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+D:%v....m.....v.......m.......%
+D:%...twt...v....twt..........%
+D:%..twwwt....m.twwwt..v......%
+D:%v..twt.v....v.twt..........%
+D:%.....v...twt....v..........%
+D:%..m....vtwwwtv....m........%
+D:%........vtwtv..............%
+D:%....v..........v...........%
+D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name:Large Grove C
+type:1
+rating:4
+rows:10
+columns:29
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+D:%....v...m....v.....m.......%
+D:%..twt......v..twt..........%
+D:%.twwwt.v.....twwwt.........%
+D:%..twt...vv....twt..v.......%
+D:%m.....v....m.....v.........%
+D:%...v..twt....v.............%
+D:%.....twwwt..m....vv........%
+D:%......twt.......v..........%
+D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name:Large Grove D
+type:1
+rating:4
+rows:10
+columns:29
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+D:%..m....v.....m....v........%
+D:%....twt...v....twt.........%
+D:%v..twwwt.....twwwt.........%
+D:%...tttm...v...mttt.........%
+D:%.....v..twtv...............%
+D:%..v....twwwt....v..m.......%
+D:%......vtwtv................%
+D:%...m.........v.............%
+D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 name:Tiny hidden room
 type:1

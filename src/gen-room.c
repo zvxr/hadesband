@@ -68,6 +68,86 @@ static struct room_template *random_room_template(int typ, int rating)
 }
 
 /**
+ * Place a forest-floor marker from a room template.  The square is always
+ * soil, with a chance of a mushroom or a flying monster above it.
+ */
+static void place_forest_marker(struct chunk *c, struct loc grid)
+{
+	static const int mushroom_tvals[] = { TV_MUSHROOM };
+	static const char * const monster_bases[] = {
+		"bat", "bird", "dragonfly", "dragon", "ancient dragon"
+	};
+	int roll = randint0(100);
+
+	square_set_feat(c, grid, FEAT_SOIL);
+
+	if (roll < 60) {
+		place_object_from_tvals(c, grid, c->depth, mushroom_tvals,
+								N_ELEMENTS(mushroom_tvals), ORIGIN_SPECIAL);
+	} else if (roll < 90) {
+		place_monster_from_bases(c, grid, c->depth, monster_bases,
+								 N_ELEMENTS(monster_bases), true,
+								 ORIGIN_DROP);
+	}
+}
+
+static void place_wood_nest_organic(struct chunk *c, struct loc grid)
+{
+	int roll;
+
+	if (!square_isempty(c, grid)) return;
+
+	roll = randint0(100);
+	if (roll < 30) {
+		square_set_feat(c, grid, FEAT_VEGETATION);
+	} else if (roll < 50) {
+		place_forest_marker(c, grid);
+	} else if (roll < 70) {
+		square_set_feat(c, grid, FEAT_TREE);
+	} else if (roll < 85) {
+		square_set_feat(c, grid, FEAT_SOIL);
+	} else {
+		square_set_feat(c, grid, FEAT_WOOD);
+	}
+}
+
+static void decorate_wood_nest(struct chunk *c, int y1, int x1, int y2,
+							   int x2, int nest_y1, int nest_x1,
+							   int nest_y2, int nest_x2, int layout)
+{
+	struct loc grid;
+
+	for (grid.y = y1; grid.y <= y2; grid.y++) {
+		for (grid.x = x1; grid.x <= x2; grid.x++) {
+			bool inner = (grid.y >= nest_y1 && grid.y <= nest_y2 &&
+						  grid.x >= nest_x1 && grid.x <= nest_x2);
+			bool edge = (grid.y == y1 || grid.y == y2 ||
+						 grid.x == x1 || grid.x == x2);
+
+			if (!square_isempty(c, grid)) continue;
+
+			if (inner) {
+				if (layout == 0) {
+					if (((grid.y + 2 * grid.x) % 7 == 0) || one_in_(16))
+						place_wood_nest_organic(c, grid);
+				} else {
+					if (((2 * grid.y + grid.x) % 9 == 0) || one_in_(18))
+						place_wood_nest_organic(c, grid);
+				}
+			} else if (edge) {
+				if (one_in_(2)) place_wood_nest_organic(c, grid);
+			} else if (layout == 0) {
+				if (((grid.y + grid.x) % 4 == 0) || one_in_(5))
+					place_wood_nest_organic(c, grid);
+			} else {
+				if (((grid.y - grid.x) % 5 == 0) || one_in_(4))
+					place_wood_nest_organic(c, grid);
+			}
+		}
+	}
+}
+
+/**
  * Chooses a vault of a particular kind at random.
  * \param depth the current depth, for vault boun checking
  * \param typ vault type
@@ -1180,6 +1260,10 @@ static bool build_room_template(struct chunk *c, struct loc centre, int ymax,
 				break;
 			}
 			case '#': set_marked_granite(c, grid, SQUARE_WALL_SOLID); break;
+			case 'v': square_set_feat(c, grid, FEAT_VEGETATION); break;
+			case 't': square_set_feat(c, grid, FEAT_TREE); break;
+			case 'w': square_set_feat(c, grid, FEAT_WOOD); break;
+			case 'm': place_forest_marker(c, grid); break;
 			case '+': place_closed_door(c, grid); break;
 			case '^': if (one_in_(4)) place_trap(c, grid, -1, c->depth); break;
 			case 'x': {
@@ -2642,6 +2726,7 @@ bool build_nest(struct chunk *c, struct loc centre, int rating)
 {
 	struct loc grid;
 	int y1, x1, y2, x2;
+	int room_y1, room_x1, room_y2, room_x2;
 	int i;
 	int alloc_obj;
 	struct monster_race *what[64];
@@ -2650,6 +2735,8 @@ bool build_nest(struct chunk *c, struct loc centre, int rating)
 	int size_vary = randint0(3);
 	int height = 9;
 	int width = 7 + 2 * size_vary;
+	bool wood_nest = one_in_(4);
+	int wood_layout = randint0(2);
 	struct monster_group_info info = {0, 0};
 
 	/* Find and reserve some space in the dungeon.  Get center of room. */
@@ -2674,6 +2761,10 @@ bool build_nest(struct chunk *c, struct loc centre, int rating)
 
 	/* Generate inner floors */
 	fill_rectangle(c, y1, x1, y2, x2, FEAT_FLOOR, SQUARE_NONE);
+	room_y1 = y1;
+	room_x1 = x1;
+	room_y2 = y2;
+	room_x2 = x2;
 
 	/* Advance to the center room */
 	y1 = y1 + 2;
@@ -2682,9 +2773,15 @@ bool build_nest(struct chunk *c, struct loc centre, int rating)
 	x2 = x2 - 2;
 
 	/* Generate inner walls; add one door as entrance */
-	draw_rectangle(c, y1 - 1, x1 - 1, y2 + 1, x2 + 1, FEAT_GRANITE,
+	draw_rectangle(c, y1 - 1, x1 - 1, y2 + 1, x2 + 1,
+		wood_nest ? FEAT_WOOD : FEAT_GRANITE,
 		SQUARE_WALL_INNER, false);
 	generate_hole(c, y1 - 1, x1 - 1, y2 + 1, x2 + 1, FEAT_CLOSED);
+
+	if (wood_nest) {
+		decorate_wood_nest(c, room_y1, room_x1, room_y2, room_x2,
+			y1, x1, y2, x2, wood_layout);
+	}
 
 	/* Decide on the pit type */
 	set_pit_type(c->depth, 2);
@@ -2712,7 +2809,8 @@ bool build_nest(struct chunk *c, struct loc centre, int rating)
 	if (empty) return false;
 
 	/* Describe */
-	ROOM_LOG("Monster nest (%s)", dun->pit_type->name);
+	ROOM_LOG("%s (%s)", wood_nest ? "Wood nest" : "Monster nest",
+		dun->pit_type->name);
 
 	/* Increase the level rating */
 	add_to_monster_rating(c, size_vary + dun->pit_type->ave / 20);
@@ -2722,10 +2820,12 @@ bool build_nest(struct chunk *c, struct loc centre, int rating)
 		for (grid.x = x1; grid.x <= x2; grid.x++) {
 			/* Figure out what monster is being used, and place that monster */
 			struct monster_race *race = what[randint0(64)];
+
+			if (!square_isempty(c, grid)) continue;
 			place_new_monster(c, grid, race, false, false, info,
 							  ORIGIN_DROP_PIT);
 
-			/* Occasionally place an item, making it good 1/3 of the time */
+			/* Occasionally place an item, making it good 1/3 of the time. */
 			if (randint0(100) < alloc_obj) 
 				place_object(c, grid, c->depth + 10, one_in_(3), false,
 							 ORIGIN_PIT, 0);

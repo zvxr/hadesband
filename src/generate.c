@@ -86,6 +86,45 @@ static const char *room_flags[] = {
 	NULL
 };
 
+static bool square_allows_organic_bloom(struct chunk *c, struct loc grid)
+{
+	if (!square_isroom(c, grid)) return false;
+	if (square_isvault(c, grid)) return false;
+	if (!square_isfloor(c, grid)) return false;
+	if (square(c, grid)->mon) return false;
+	if (square_istrap(c, grid)) return false;
+	if (square_object(c, grid)) return false;
+
+	return true;
+}
+
+static void apply_organic_bloom(struct chunk *c)
+{
+	int y, x;
+
+	if (c->depth != 10) return;
+
+	for (y = 0; y < c->height; y++) {
+		for (x = 0; x < c->width; x++) {
+			struct loc grid = loc(x, y);
+			int roll;
+
+			if (!square_allows_organic_bloom(c, grid)) continue;
+
+			roll = randint0(100);
+			if (roll < 45) {
+				square_set_feat(c, grid, FEAT_VEGETATION);
+			} else if (roll < 55) {
+				square_set_feat(c, grid, FEAT_TREE);
+			} else if (roll < 61) {
+				square_set_feat(c, grid, FEAT_WOOD);
+			} else if (roll < 66) {
+				square_set_feat(c, grid, FEAT_SOIL);
+			}
+		}
+	}
+}
+
 
 /**
  * Parsing functions for dungeon_profile.txt
@@ -1162,6 +1201,9 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 			event_signal_flag(EVENT_GEN_LEVEL_END, false);
 			continue;
 		}
+
+		/* Seed the first organic bloom while room flags are still available. */
+		apply_organic_bloom(chunk);
 
 		/* Ensure quest monsters */
 		if (dun->quest) {

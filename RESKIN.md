@@ -303,6 +303,26 @@
   `Grond's Blow` -> `Titan's Blow`,
   `Fume of Mordor` -> `Stygian Fume`.
 
+## Terrain and Generation
+- Implemented organic terrain family: tree, wood, vegetation, and removed
+  vegetation/soil.
+- Implemented `FLY` passability for vegetation and lava-like terrain, and
+  `CHOP_1`/`CHOP_2` weapon flags for removing organic obstacles.
+- Implemented room template symbols:
+  `v` vegetation,
+  `t` tree,
+  `w` wood,
+  `m` soil with a mushroom/flying-monster/nothing roll.
+- Implemented expanded rating-4 organic templates: `Small Grove`, `Small Grove
+  Reversed`, `Overgrown Thicket A-H`, and `Large Grove A-D`, with normal
+  dungeon-profile selection at about a 1% unusual-room slice.
+- Implemented wood nests as an occasional procedural monster-nest variant,
+  using wood enclosure walls and two organic decoration patterns while keeping
+  the usual `pit.txt` nest monster themes.
+- Implemented a hard-coded depth-10 organic bloom for early manual testing;
+  it affects eligible non-vault room floors only, leaving corridors and stairs
+  untouched.
+
 ## Stores and Town
 - Dungeon Organics can remain or be reframed later.
 - Town store owner names should eventually shift to Greco-Roman or underworld flavor.
