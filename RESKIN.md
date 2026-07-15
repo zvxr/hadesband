@@ -99,7 +99,7 @@
 | Paladin | Paladin | Pending | Not reviewed |
 | Rogue | Rogue | Pending; likely retain | Skill command migrated; balance not reviewed |
 | Ranger | Ranger | Pending; likely retain | Not reviewed |
-| New | Mystagogue | Done | Reviewed initial implementation; display rename and class titles updated |
+| New | Mystagogue | Done | Reviewed; INT-forward warrior-caster, stats +1/+2/-2/-1/+0, 20% XP |
 | Blackguard | Stygian Warrior | Done | Display rename and class titles updated; mechanics retained |
 
 ## Monsters

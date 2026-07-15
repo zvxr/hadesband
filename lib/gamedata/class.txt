@@ -1639,7 +1639,7 @@ desc: slay, is broken, or is cursed.
 
 ############### RED MAGE ###############
 name:Mystagogue
-stats:2:2:-1:1:0
+stats:1:2:-2:-1:0
 skill-disarm-phys:20:7
 skill-disarm-magic:34:11
 skill-device:34:11
@@ -1651,7 +1651,7 @@ skill-shoot:30:20
 skill-throw:35:20
 skill-dig:0:0
 hitdie:4
-exp:40
+exp:20
 max-attacks:5
 min-weight:35
 strength-multiplier:4
