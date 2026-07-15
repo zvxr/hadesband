@@ -51,6 +51,35 @@
 #include "store.h"
 #include "trap.h"
 
+static bool msg_organic_blocker(struct chunk *c, struct loc grid, bool known,
+		bool path)
+{
+	const char *text = NULL;
+
+	switch (square(c, grid)->feat) {
+		case FEAT_TREE:
+			text = known ? (path ? "There is a tree in the way!" :
+				"There is a tree blocking your way.") :
+				"You feel a tree blocking your way.";
+			break;
+		case FEAT_WOOD:
+			text = known ? (path ? "There is wood in the way!" :
+				"There is wood blocking your way.") :
+				"You feel wood blocking your way.";
+			break;
+		case FEAT_VEGETATION:
+			text = known ? (path ? "Dense vegetation blocks your path!" :
+				"Dense vegetation blocks your way.") :
+				"You feel dense vegetation blocking your way.";
+			break;
+		default:
+			return false;
+	}
+
+	msgt(MSG_HITWALL, text);
+	return true;
+}
+
 /**
  * Go up one level
  */
@@ -497,12 +526,16 @@ static void maybe_spawn_from_chopped_terrain(struct loc grid, int feat)
 	static const int food_tvals[] = {
 		TV_FOOD, TV_MUSHROOM
 	};
+	struct monster *mon = NULL;
+	char m_name[80];
 
 	if (feat == FEAT_VEGETATION) {
 		if (randint0(100) < 15) {
-			place_monster_from_bases(cave, grid, player->depth,
-				vegetation_bases, N_ELEMENTS(vegetation_bases), true,
-				ORIGIN_DROP);
+			if (place_monster_from_bases(cave, grid, player->depth,
+					vegetation_bases, N_ELEMENTS(vegetation_bases), true,
+					ORIGIN_DROP)) {
+				mon = square_monster(cave, grid);
+			}
 		}
 		if (randint0(100) < 5) {
 			place_object_from_tvals(cave, grid, player->depth, food_tvals,
@@ -515,9 +548,17 @@ static void maybe_spawn_from_chopped_terrain(struct loc grid, int feat)
 		}
 	} else if (feat == FEAT_TREE) {
 		if (randint0(100) < 15) {
-			place_monster_from_bases(cave, grid, player->depth, tree_bases,
-				N_ELEMENTS(tree_bases), true, ORIGIN_DROP);
+			if (place_monster_from_bases(cave, grid, player->depth, tree_bases,
+					N_ELEMENTS(tree_bases), true, ORIGIN_DROP)) {
+				mon = square_monster(cave, grid);
+			}
 		}
+	}
+
+	if (mon && square_isseen(cave, grid)) {
+		monster_desc(m_name, sizeof(m_name), mon,
+			MDESC_SHOW | MDESC_IND_VIS | MDESC_CAPITAL);
+		msg("%s pops out of the cleared debris!", m_name);
 	}
 }
 
@@ -1159,6 +1200,9 @@ void move_player(int dir, bool disarm)
 				msgt(MSG_HITWALL, "You feel a door blocking your way.");
 				square_memorize(cave, grid);
 				square_light_spot(cave, grid);
+			} else if (msg_organic_blocker(cave, grid, false, false)) {
+				square_memorize(cave, grid);
+				square_light_spot(cave, grid);
 			} else {
 				msgt(MSG_HITWALL, "You feel a wall blocking your way.");
 				square_memorize(cave, grid);
@@ -1175,6 +1219,12 @@ void move_player(int dir, bool disarm)
 			} else if (square_iscloseddoor(cave, grid)) {
 				msgt(MSG_HITWALL, "There is a door blocking your way.");
 				if (!square_iscloseddoor(player->cave, grid)) {
+					square_memorize(cave, grid);
+					square_light_spot(cave, grid);
+				}
+			} else if (msg_organic_blocker(cave, grid, true, false)) {
+				if (square(player->cave, grid)->feat !=
+						square(cave, grid)->feat) {
 					square_memorize(cave, grid);
 					square_light_spot(cave, grid);
 				}
@@ -1307,6 +1357,12 @@ static bool do_cmd_walk_test(struct player *p, struct loc grid)
 		} else if (square_iscloseddoor(cave, grid)) {
 			/* Door */
 			return true;
+		} else if (msg_organic_blocker(cave, grid, true, true)) {
+			/* Organic terrain */
+			if (square(p->cave, grid)->feat != square(cave, grid)->feat) {
+				square_memorize(cave, grid);
+				square_light_spot(cave, grid);
+			}
 		} else {
 			/* Wall */
 			msgt(MSG_HITWALL, "There is a wall in the way!");

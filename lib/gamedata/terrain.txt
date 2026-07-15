@@ -403,7 +403,7 @@ desc: creatures can pass over it.  It can be chopped down or burned away.
 
 code:SOIL
 name:soil
-graphics:::y
+graphics:.:y
 priority:5
 flags:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | TRAP | TORCH | ORGANIC
 desc:Cleared earth where organic growth once stood.  For movement and combat,
