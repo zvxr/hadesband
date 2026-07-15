@@ -794,6 +794,7 @@ const char *prefix_pref[] = {
     "damage reduction",
     "slow dig",
     "feather fall",
+    "flight",
     "regen",
     "see inv",
     "infravision",
@@ -1300,6 +1301,8 @@ static void borg_notice_equipment(void)
         borg.trait[BI_SDIG] = true;
     if (of_has(f, OF_FEATHER) || of_has(f, OF_FLY))
         borg.trait[BI_FEATH] = true;
+    if (of_has(f, OF_FLY))
+        borg.trait[BI_FLY] = true;
     if (of_has(f, OF_REGEN))
         borg.trait[BI_REG] = true;
     if (of_has(f, OF_TELEPATHY))
@@ -1635,6 +1638,8 @@ static void borg_notice_equipment(void)
             borg.trait[BI_SINV] = true;
         if (of_has(item->flags, OF_FEATHER) || of_has(item->flags, OF_FLY))
             borg.trait[BI_FEATH] = true;
+        if (of_has(item->flags, OF_FLY))
+            borg.trait[BI_FLY] = true;
         if (of_has(item->flags, OF_FREE_ACT))
             borg.trait[BI_FRACT] = true;
         if (of_has(item->flags, OF_HOLD_LIFE))
@@ -2914,10 +2919,16 @@ void borg_notice(bool notice_swap)
     borg.trait[BI_CARRY] = borg_adj_str_wgt[borg.trait[BI_STR_INDEX]] * 100;
 
     /* Apply "encumbrance" from weight */
-    if (borg.trait[BI_WEIGHT] > borg.trait[BI_CARRY] / 2)
-        borg.trait[BI_SPEED]
-            -= ((borg.trait[BI_WEIGHT] - (borg.trait[BI_CARRY] / 2))
+    {
+        int effective_weight = MAX(0, borg.trait[BI_WEIGHT]
+            - (borg.trait[BI_FLY] ? 200 : 0));
+
+        if (effective_weight > borg.trait[BI_CARRY] / 2) {
+            borg.trait[BI_SPEED] -= ((effective_weight
+                - (borg.trait[BI_CARRY] / 2))
                 / (borg.trait[BI_CARRY] / 10));
+        }
+    }
 
     /* top speed */
     if (borg.trait[BI_SPEED] > 199)

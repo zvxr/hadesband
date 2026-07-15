@@ -113,6 +113,7 @@ enum {
     BI_DAM_RED,
     BI_SDIG,
     BI_FEATH,
+    BI_FLY,
     BI_REG,
     BI_SINV,
     BI_INFRA,

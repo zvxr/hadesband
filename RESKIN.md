@@ -308,6 +308,9 @@
   vegetation/soil.
 - Implemented `FLY` passability for vegetation and lava-like terrain, and
   `CHOP_1`/`CHOP_2` weapon flags for removing organic obstacles.
+- Implemented `FLY` carried-weight forgiveness: speed penalties treat the
+  character as carrying 20.0 lb less, without changing displayed burden,
+  inventory limits, or caster armor encumbrance.
 - Implemented room template symbols:
   `v` vegetation,
   `t` tree,

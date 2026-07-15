@@ -2250,6 +2250,9 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 
 	/* Analyze weight */
 	j = p->upkeep->total_weight;
+	if (of_has(state->flags, OF_FLY)) {
+		j = MAX(0, j - 200);
+	}
 	i = weight_limit(state);
 	if (j > i / 2)
 		state->speed -= ((j - (i / 2)) / (i / 10));

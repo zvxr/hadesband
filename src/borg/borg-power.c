@@ -1831,7 +1831,10 @@ static int32_t borg_power_inventory(void)
     /* Apply "encumbrance" from weight */
 
     /* XXX XXX XXX Apply "encumbrance" from weight */
-    if (borg.trait[BI_WEIGHT] > borg.trait[BI_CARRY] / 2) {
+    int effective_weight = MAX(0, borg.trait[BI_WEIGHT]
+        - (borg.trait[BI_FLY] ? 200 : 0));
+
+    if (effective_weight > borg.trait[BI_CARRY] / 2) {
         /* *HACK*  when testing items, the borg puts them in the last empty */
         /* slot so this is POSSIBLY just a test item */
         borg_item *item = NULL;
@@ -1866,7 +1869,7 @@ static int32_t borg_power_inventory(void)
                         || item->sval == sv_potion_inc_all)))) {
             /* No encumbrance penalty for purchasing these items */
         } else {
-            value -= ((borg.trait[BI_WEIGHT] - (borg.trait[BI_CARRY] / 2))
+            value -= ((effective_weight - (borg.trait[BI_CARRY] / 2))
                       / (borg.trait[BI_CARRY] / 10) * 1000L);
         }
     }
