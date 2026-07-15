@@ -470,10 +470,12 @@ static bool do_cmd_tunnel_test(struct player *p, struct loc grid)
 	}
 
 	/* Must be a wall/door/etc */
-	if (!(square_isdiggable(cave, grid) || square_iscloseddoor(cave, grid))) {
-		msg("You see nothing there to tunnel.");
+	if (!(square_isdiggable(cave, grid) || square_iscloseddoor(cave, grid) ||
+			square_ischoppable(cave, grid))) {
+		msg("You see nothing there to tunnel or chop.");
 		if (square_isdiggable(p->cave, grid)
-				|| square_iscloseddoor(p->cave, grid)) {
+				|| square_iscloseddoor(p->cave, grid)
+				|| square_ischoppable(p->cave, grid)) {
 			square_forget(cave, grid);
 			square_light_spot(cave, grid);
 		}
@@ -482,6 +484,62 @@ static bool do_cmd_tunnel_test(struct player *p, struct loc grid)
 
 	/* Okay */
 	return (true);
+}
+
+static void maybe_spawn_from_chopped_terrain(struct loc grid, int feat)
+{
+	static const char * const vegetation_bases[] = {
+		"ant", "centipede", "insect", "mold", "mushroom", "reptile", "snake"
+	};
+	static const char * const tree_bases[] = {
+		"bat", "bird", "dragonfly", "insect"
+	};
+	static const int food_tvals[] = {
+		TV_FOOD, TV_MUSHROOM
+	};
+
+	if (feat == FEAT_VEGETATION) {
+		if (randint0(100) < 15) {
+			place_monster_from_bases(cave, grid, player->depth,
+				vegetation_bases, N_ELEMENTS(vegetation_bases), true,
+				ORIGIN_DROP);
+		}
+		if (randint0(100) < 5) {
+			place_object_from_tvals(cave, grid, player->depth, food_tvals,
+				N_ELEMENTS(food_tvals), ORIGIN_RUBBLE);
+			if (square_object(cave, grid) &&
+					!ignore_item_ok(player, square_object(cave, grid)) &&
+					square_isseen(cave, grid)) {
+				msg("You have found something!");
+			}
+		}
+	} else if (feat == FEAT_TREE) {
+		if (randint0(100) < 15) {
+			place_monster_from_bases(cave, grid, player->depth, tree_bases,
+				N_ELEMENTS(tree_bases), true, ORIGIN_DROP);
+		}
+	}
+}
+
+static bool chop_wall(struct loc grid)
+{
+	/* Paranoia -- Require choppable terrain. */
+	if (!square_ischoppable(cave, grid)) return false;
+
+	/* Sound */
+	sound(MSG_DIG);
+
+	/* Forget the terrain. */
+	square_forget(cave, grid);
+
+	/* Remove the feature. */
+	square_chop_terrain(cave, grid);
+
+	/* Update the visuals. */
+	player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+
+	/* Result */
+	return true;
 }
 
 
@@ -532,6 +590,7 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 	bool okay = false;
 	bool gold = square_hasgoldvein(cave, grid);
 	bool rubble = square_isrubble(cave, grid);
+	bool choppable = square_ischoppable(cave, grid);
 	bool digger_swapped = false;
 	int weapon_slot = slot_by_name(player, "weapon");
 	struct object *current_weapon = slot_object(player, weapon_slot);
@@ -539,17 +598,20 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 	struct player_state local_state;
 	struct player_state *used_state = &player->state;
 	int oldn = 1, dig_idx;
+	int original_feat = square(cave, grid)->feat;
 	const char *with_clause = current_weapon == NULL ? "with your hands" : "with your weapon";
 
 	/* Verify legality */
 	if (!do_cmd_tunnel_test(player, grid)) return (false);
 
 	/* Find what we're digging with and our chance of success */
-	best_digger = player_best_digger(player, false);
+	best_digger = choppable ? player_best_chopper(player, false) :
+		player_best_digger(player, false);
 	if (best_digger != current_weapon &&
 			(!current_weapon || obj_can_takeoff(current_weapon))) {
 		digger_swapped = true;
-		with_clause = "with your swap digger";
+		with_clause = choppable ? "with your swap chopper" :
+			"with your swap digger";
 		/* Use only one without the overhead of gear_obj_for_use(). */
 		if (best_digger) {
 			oldn = best_digger->number;
@@ -566,15 +628,21 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 		calc_bonuses(player, &local_state, false, false);
 		used_state = &local_state;
 	}
-	calc_digging_chances(used_state, digging_chances);
+	if (choppable) {
+		calc_chopping_chances(used_state, digging_chances);
+	} else {
+		calc_digging_chances(used_state, digging_chances);
+	}
 
 	/* Do we succeed? */
-	dig_idx = square_digging(cave, grid);
+	dig_idx = choppable ? square_chopping(cave, grid) :
+		square_digging(cave, grid);
 	if (dig_idx < 1 || dig_idx > DIGGING_MAX) {
-		msg("%s has misconfigured digging chance; please report this bug.",
+		msg("%s has misconfigured %s chance; please report this bug.",
 			(square_feat(cave, grid)->name) ?
 			square_feat(cave, grid)->name :
-			format("Terrain index %d", square_feat(cave, grid)->fidx));
+			format("Terrain index %d", square_feat(cave, grid)->fidx),
+			choppable ? "chopping" : "digging");
 		dig_idx = DIGGING_GRANITE + 1;
 	}
 	chance = digging_chances[dig_idx - 1];
@@ -589,7 +657,15 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 	}
 
 	/* Success */
-	if (okay && twall(grid)) {
+	if (choppable && okay && chop_wall(grid)) {
+		msg("You have cleared the %s %s.",
+			f_info[original_feat].name, with_clause);
+		maybe_spawn_from_chopped_terrain(grid, original_feat);
+		if (cave->depth == 0) expose_to_sun(cave, grid, is_daytime());
+		square_memorize(cave, grid);
+		square_light_spot(cave, grid);
+		player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+	} else if (!choppable && okay && twall(grid)) {
 		/* Rubble is a special case - could be handled more generally NRM */
 		if (rubble) {
 			/* Message */
@@ -624,7 +700,10 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 		player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
 	} else if (chance > 0) {
 		/* Failure, continue digging */
-		if (rubble)
+		if (choppable)
+			msg("You chop at the %s %s.",
+				square_apparent_name(player->cave, grid), with_clause);
+		else if (rubble)
 			msg("You dig in the rubble %s.", with_clause);
 		else
 			msg("You tunnel into the %s %s.",
@@ -634,6 +713,9 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 		/* Don't automatically repeat if there's no hope. */
 		if (rubble) {
 			msg("You dig in the rubble %s with little effect.", with_clause);
+		} else if (choppable) {
+			msg("You hack futilely %s at the %s.", with_clause,
+				square_apparent_name(player->cave, grid));
 		} else {
 			msg("You chip away futilely %s at the %s.", with_clause,
 				square_apparent_name(player->cave, grid));
@@ -976,8 +1058,8 @@ static void do_cmd_alter_aux(int dir)
 	if (square(cave, grid)->mon > 0) {
 		/* Attack monster */
 		py_attack(player, grid);
-	} else if (square_isdiggable(cave, grid)) {
-		/* Tunnel through walls and rubble */
+	} else if (square_isdiggable(cave, grid) || square_ischoppable(cave, grid)) {
+		/* Tunnel through walls and rubble or chop organic terrain. */
 		more = do_cmd_tunnel_aux(grid);
 	} else if (square_iscloseddoor(cave, grid)) {
 		/* Open closed doors */
@@ -1063,7 +1145,7 @@ void move_player(int dir, bool disarm)
 		disturb(player);
 		/* No move made so no energy spent. */
 		player->upkeep->energy_use = 0;
-	} else if (!square_ispassable(cave, grid)) {
+	} else if (!square_ispassable_for_player(cave, grid, player)) {
 		disturb(player);
 
 		/* Notice unknown obstacles, mention known obstacles */
@@ -1098,7 +1180,7 @@ void move_player(int dir, bool disarm)
 				}
 			} else {
 				msgt(MSG_HITWALL, "There is a wall blocking your way.");
-				if (square_ispassable(player->cave, grid)
+				if (square_ispassable_for_player(player->cave, grid, player)
 						|| square_isrubble(player->cave, grid)
 						|| square_iscloseddoor(player->cave, grid)) {
 					square_forget(cave, grid);
@@ -1214,7 +1296,7 @@ static bool do_cmd_walk_test(struct player *p, struct loc grid)
 	 * that does not agree with the player's memory then update the
 	 * player's memory
 	 */
-	if (!square_ispassable(cave, grid)) {
+	if (!square_ispassable_for_player(cave, grid, p)) {
 		if (square_isrubble(cave, grid)) {
 			/* Rubble */
 			msgt(MSG_HITWALL, "There is a pile of rubble in the way!");
@@ -1228,7 +1310,7 @@ static bool do_cmd_walk_test(struct player *p, struct loc grid)
 		} else {
 			/* Wall */
 			msgt(MSG_HITWALL, "There is a wall in the way!");
-			if (square_ispassable(p->cave, grid)
+			if (square_ispassable_for_player(p->cave, grid, p)
 					|| square_isrubble(p->cave, grid)
 					|| square_iscloseddoor(p->cave, grid)) {
 				square_forget(cave, grid);
@@ -1874,7 +1956,7 @@ void do_cmd_mon_command(struct command *cmd)
 				} else {
 					can_move = false;
 				}
-			} else if (square_ispassable(cave, grid)) {
+			} else if (square_is_monster_walkable_for(cave, grid, mon)) {
 				/* Floor is open? */
 				can_move = true;
 			} else if (square_isperm(cave, grid)) {

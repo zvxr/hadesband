@@ -126,6 +126,7 @@ enum {
 	SKILL_TO_HIT_BOW,		/* To hit (shooting) */
 	SKILL_TO_HIT_THROW,		/* To hit (throwing) */
 	SKILL_DIGGING,			/* Digging */
+	SKILL_CHOPPING,			/* Chopping */
 
 	SKILL_MAX
 };

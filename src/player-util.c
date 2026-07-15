@@ -737,11 +737,8 @@ void player_update_light(struct player *p)
 	p->upkeep->update |= (PU_TORCH);
 }
 
-/**
- * Find the player's best digging tool.  If forbid_stack is true, ignores
- * stacks of more than one item.
- */
-struct object *player_best_digger(struct player *p, bool forbid_stack)
+static struct object *player_best_removal_tool(struct player *p,
+		bool forbid_stack, int skill)
 {
 	int weapon_slot = slot_by_name(p, "weapon");
 	struct object *current_weapon = slot_object(p, weapon_slot);
@@ -771,7 +768,7 @@ struct object *player_best_digger(struct player *p, bool forbid_stack)
 		local_state.stat_ind[STAT_STR] = 0;
 		local_state.stat_ind[STAT_DEX] = 0;
 		calc_bonuses(p, &local_state, true, false);
-		score = local_state.skills[SKILL_DIGGING];
+		score = local_state.skills[skill];
 
 		/* Swap back. */
 		if (obj != current_weapon) {
@@ -786,6 +783,24 @@ struct object *player_best_digger(struct player *p, bool forbid_stack)
 	}
 
 	return best;
+}
+
+/**
+ * Find the player's best digging tool.  If forbid_stack is true, ignores
+ * stacks of more than one item.
+ */
+struct object *player_best_digger(struct player *p, bool forbid_stack)
+{
+	return player_best_removal_tool(p, forbid_stack, SKILL_DIGGING);
+}
+
+/**
+ * Find the player's best chopping tool.  If forbid_stack is true, ignores
+ * stacks of more than one item.
+ */
+struct object *player_best_chopper(struct player *p, bool forbid_stack)
+{
+	return player_best_removal_tool(p, forbid_stack, SKILL_CHOPPING);
 }
 
 /**
@@ -930,6 +945,14 @@ int player_check_terrain_damage(struct player *p, struct loc grid, bool actual)
 	if (square_isfiery(cave, grid)) {
 		int base_dam = 100 + randint1(100);
 		int res = p->state.el_info[ELEM_FIRE].res_level;
+
+		/* Flight avoids contact with the terrain. */
+		if (player_of_has(p, OF_FLY)) {
+			if (actual) {
+				equip_learn_flag(p, OF_FLY);
+			}
+			return 0;
+		}
 
 		/* Fire damage */
 		dam_taken = adjust_dam(p, ELEM_FIRE, base_dam, RANDOMISE, res,

@@ -87,6 +87,7 @@ static int16_t art_idx_allarmor[] = {
 static int16_t art_idx_boot[] = {
 	ART_IDX_BOOT_AC,
 	ART_IDX_BOOT_FEATHER,
+	ART_IDX_BOOT_FLY,
 	ART_IDX_BOOT_STEALTH,
 	ART_IDX_BOOT_TRAP_IMM,
 	ART_IDX_BOOT_SPEED,
@@ -133,6 +134,7 @@ static int16_t art_idx_gen[] = {
 	ART_IDX_GEN_FA,
 	ART_IDX_GEN_HLIFE,
 	ART_IDX_GEN_FEATHER,
+	ART_IDX_GEN_FLY,
 	ART_IDX_GEN_LIGHT,
 	ART_IDX_GEN_SINV,
 	ART_IDX_GEN_ESP,
@@ -982,7 +984,16 @@ static void count_abilities(const struct artifact *art, struct artifact_set_data
 		}
 	}
 
-	if (of_has(art->flags, OF_FEATHER)) {
+	if (of_has(art->flags, OF_FLY)) {
+		/* Flight - handle boots separately */
+		if (art->tval == TV_BOOTS) {
+			file_putf(log_file, "Adding 1 for flight on boots.\n");
+			(data->art_probs[ART_IDX_BOOT_FLY])++;
+		} else {
+			file_putf(log_file, "Adding 1 for flight - general.\n");
+			(data->art_probs[ART_IDX_GEN_FLY])++;
+		}
+	} else if (of_has(art->flags, OF_FEATHER)) {
 		/* Feather fall - handle boots separately */
 		if (art->tval == TV_BOOTS) {
 			file_putf(log_file, "Adding 1 for feather fall on boots.\n");
@@ -2242,6 +2253,11 @@ static void add_ability_aux(struct artifact *art, int r, int32_t target_power,
 		case ART_IDX_BOOT_FEATHER:
 		case ART_IDX_GEN_FEATHER:
 			add_flag(art, OF_FEATHER);
+			break;
+
+		case ART_IDX_BOOT_FLY:
+		case ART_IDX_GEN_FLY:
+			add_flag(art, OF_FLY);
 			break;
 
 		case ART_IDX_BOOT_STEALTH:

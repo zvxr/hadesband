@@ -935,7 +935,7 @@ alloc:2:15 to 127
 attack:4d6:15:15
 armor:0:0
 # F:DRAIN_MANA | 
-flags:FEATHER | SEE_INVIS | BLESSED | 
+flags:FLY | SEE_INVIS | BLESSED | 
 values:INT[4] | SPEED[4] | INFRA[4] | LIGHT[1] | RES_FIRE[1] | RES_LIGHT[1]
 brand:FIRE_3
 slay:GIANT_3
@@ -1979,7 +1979,7 @@ cost:40000
 alloc:3:55 to 127
 attack:1d1:0:0
 armor:3:14
-flags:FREE_ACT | FEATHER | AGGRAVATE
+flags:FREE_ACT | FLY | AGGRAVATE
 values:INT[3] | RES_ELEC[1] | RES_DARK[1] | RES_POIS[1] | RES_FIRE[3]
 act:MANA_BOLT
 time:30+d30
@@ -2187,7 +2187,7 @@ alloc:1:90 to 127
 attack:0d0:5:5
 armor:0:0
 flags:HOLD_LIFE | FREE_ACT | SEE_INVIS
-flags:FEATHER | SLOW_DIGEST | REGEN | TELEPATHY
+flags:FLY | SLOW_DIGEST | REGEN | TELEPATHY
 flags:SUST_DEX | SUST_INT | SUST_CON
 act:HEAL2
 time:200+2d50

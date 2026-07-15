@@ -1644,24 +1644,38 @@ static void calc_light(struct player *p, struct player_state *state,
 	}
 }
 
+static void calc_removal_chances(int skill, int chances[DIGGING_MAX])
+{
+	int i;
+
+	chances[DIGGING_RUBBLE] = skill * 8;
+	chances[DIGGING_MAGMA] = (skill - 10) * 4;
+	chances[DIGGING_QUARTZ] = (skill - 20) * 2;
+	chances[DIGGING_GRANITE] = (skill - 40) * 1;
+	/* Approximate a 1/1200 chance per skill point over 30 */
+	chances[DIGGING_DOORS] = (skill * 4 - 119) / 3;
+
+	/* Don't let any negative chances through */
+	for (i = 0; i < DIGGING_MAX; i++)
+		chances[i] = MAX(0, chances[i]);
+}
+
 /**
  * Populates `chances` with the player's chance of digging through
  * the diggable terrain types in one turn out of 1600.
  */
 void calc_digging_chances(struct player_state *state, int chances[DIGGING_MAX])
 {
-	int i;
+	calc_removal_chances(state->skills[SKILL_DIGGING], chances);
+}
 
-	chances[DIGGING_RUBBLE] = state->skills[SKILL_DIGGING] * 8;
-	chances[DIGGING_MAGMA] = (state->skills[SKILL_DIGGING] - 10) * 4;
-	chances[DIGGING_QUARTZ] = (state->skills[SKILL_DIGGING] - 20) * 2;
-	chances[DIGGING_GRANITE] = (state->skills[SKILL_DIGGING] - 40) * 1;
-	/* Approximate a 1/1200 chance per skill point over 30 */
-	chances[DIGGING_DOORS] = (state->skills[SKILL_DIGGING] * 4 - 119) / 3;
-
-	/* Don't let any negative chances through */
-	for (i = 0; i < DIGGING_MAX; i++)
-		chances[i] = MAX(0, chances[i]);
+/**
+ * Populates `chances` with the player's chance of chopping through
+ * choppable terrain types in one turn out of 1600.
+ */
+void calc_chopping_chances(struct player_state *state, int chances[DIGGING_MAX])
+{
+	calc_removal_chances(state->skills[SKILL_CHOPPING], chances);
 }
 
 /*
@@ -1827,6 +1841,7 @@ static void calc_shapechange(struct player_state *state, bool vuln[ELEM_MAX],
 	state->skills[SKILL_SEARCH] += (shape->modifiers[OBJ_MOD_SEARCH] * 5);
 	state->see_infra += shape->modifiers[OBJ_MOD_INFRA];
 	state->skills[SKILL_DIGGING] += (shape->modifiers[OBJ_MOD_TUNNEL] * 20);
+	state->skills[SKILL_CHOPPING] += (shape->modifiers[OBJ_MOD_TUNNEL] * 20);
 	state->speed += shape->modifiers[OBJ_MOD_SPEED];
 	state->dam_red += shape->modifiers[OBJ_MOD_DAM_RED];
 	*blows += shape->modifiers[OBJ_MOD_BLOWS];
@@ -1904,6 +1919,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	for (i = 0; i < SKILL_MAX; i++) {
 		state->skills[i] = p->race->r_skills[i]	+ p->class->c_skills[i];
 	}
+	state->skills[SKILL_CHOPPING] = state->skills[SKILL_DIGGING];
 	for (i = 0; i < ELEM_MAX; i++) {
 		vuln[i] = false;
 		if (p->race->el_info[i].res_level == -1) {
@@ -1928,7 +1944,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		struct curse_data *curse = obj ? obj->curses : NULL;
 
 		while (obj) {
-			int dig = 0;
+			int dig = 0, chop = 0;
 
 			/* Extract the item flags */
 			if (known_only) {
@@ -1967,6 +1983,11 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 			dig += obj->modifiers[OBJ_MOD_TUNNEL]
 				* p->obj_k->modifiers[OBJ_MOD_TUNNEL];
 			state->skills[SKILL_DIGGING] += (dig * 20);
+			if (of_has(obj->flags, OF_CHOP_1))
+				chop = 1;
+			else if (of_has(obj->flags, OF_CHOP_2))
+				chop = 2;
+			state->skills[SKILL_CHOPPING] += (chop * 20);
 			state->speed += obj->modifiers[OBJ_MOD_SPEED]
 				* p->obj_k->modifiers[OBJ_MOD_SPEED];
 			state->dam_red += obj->modifiers[OBJ_MOD_DAM_RED]
@@ -2250,10 +2271,14 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	state->skills[SKILL_DEVICE] += adj_int_dev[state->stat_ind[STAT_INT]];
 	state->skills[SKILL_SAVE] += adj_wis_sav[state->stat_ind[STAT_WIS]];
 	state->skills[SKILL_DIGGING] += adj_str_dig[state->stat_ind[STAT_STR]];
+	state->skills[SKILL_CHOPPING] += adj_str_dig[state->stat_ind[STAT_STR]];
 	for (i = 0; i < SKILL_MAX; i++)
 		state->skills[i] += (p->class->x_skills[i] * p->lev / 10);
+	state->skills[SKILL_CHOPPING] +=
+		(p->class->x_skills[SKILL_DIGGING] * p->lev / 10);
 
 	if (state->skills[SKILL_DIGGING] < 1) state->skills[SKILL_DIGGING] = 1;
+	if (state->skills[SKILL_CHOPPING] < 1) state->skills[SKILL_CHOPPING] = 1;
 	if (state->skills[SKILL_STEALTH] > 30) state->skills[SKILL_STEALTH] = 30;
 	if (state->skills[SKILL_STEALTH] < 0) state->skills[SKILL_STEALTH] = 0;
 	hold = adj_str_hold[state->stat_ind[STAT_STR]];
@@ -2312,6 +2337,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		if (!state->heavy_wield) {
 			state->num_blows = calc_blows(p, weapon, state, extra_blows);
 			state->skills[SKILL_DIGGING] += weapon_weight / 10;
+			state->skills[SKILL_CHOPPING] += weapon_weight / 10;
 		}
 
 		/* Divine weapon bonus for blessed weapons */

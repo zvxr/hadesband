@@ -254,6 +254,12 @@ name:Feather Falling
 desc:You fall lightly.
 
 type:object
+code:FLY
+bindui:flight_ui_compact_0:0:1
+name:Flight
+desc:You can fly.
+
+type:object
 code:REGEN
 bindui:regen_ui_compact_0:0:1
 name:Regeneration

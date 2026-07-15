@@ -1298,7 +1298,7 @@ static void borg_notice_equipment(void)
     /* Good flags */
     if (of_has(f, OF_SLOW_DIGEST))
         borg.trait[BI_SDIG] = true;
-    if (of_has(f, OF_FEATHER))
+    if (of_has(f, OF_FEATHER) || of_has(f, OF_FLY))
         borg.trait[BI_FEATH] = true;
     if (of_has(f, OF_REGEN))
         borg.trait[BI_REG] = true;
@@ -1633,7 +1633,7 @@ static void borg_notice_equipment(void)
             borg.trait[BI_ESP] = true;
         if (of_has(item->flags, OF_SEE_INVIS))
             borg.trait[BI_SINV] = true;
-        if (of_has(item->flags, OF_FEATHER))
+        if (of_has(item->flags, OF_FEATHER) || of_has(item->flags, OF_FLY))
             borg.trait[BI_FEATH] = true;
         if (of_has(item->flags, OF_FREE_ACT))
             borg.trait[BI_FRACT] = true;

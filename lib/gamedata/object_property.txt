@@ -305,6 +305,16 @@ msg:Your {name} slows your fall.
 bindui:feather_falling_ui_compact_0:0
 desc:Feather Falling
 
+name:flight
+type:flag
+subtype:misc ability
+id-type:on effect
+code:FLY
+power:8
+msg:Your {name} lets you fly.
+bindui:flight_ui_compact_0:0
+desc:Flight
+
 name:regeneration
 type:flag
 subtype:misc ability
@@ -674,6 +684,22 @@ code:DIG_3
 power:9
 bindui:tunneling_ui_compact_0:0:3
 
+name:power 1 chopping
+type:flag
+subtype:misc ability
+id-type:on wield
+code:CHOP_1
+power:3
+bindui:chopping_ui_compact_0:0:1
+
+name:power 2 chopping
+type:flag
+subtype:misc ability
+id-type:on wield
+code:CHOP_2
+power:6
+bindui:chopping_ui_compact_0:0:2
+
 name:explode
 type:flag
 subtype:light
@@ -904,4 +930,3 @@ type:immunity
 code:COLD
 power:43
 bindui:resist_ui_compact_0<COLD>:0
-

@@ -317,7 +317,7 @@ void borg_notice_weapon_swap(void)
                 weapon_swap_light = true;
             if (of_has(item->flags, OF_SEE_INVIS))
                 weapon_swap_see_invis = true;
-            if (of_has(item->flags, OF_FEATHER))
+            if (of_has(item->flags, OF_FEATHER) || of_has(item->flags, OF_FLY))
                 weapon_swap_ffall = true;
             if (of_has(item->flags, OF_FREE_ACT))
                 weapon_swap_free_act = true;
@@ -685,7 +685,7 @@ void borg_notice_weapon_swap(void)
         weapon_swap_light = true;
     if (of_has(item->flags, OF_SEE_INVIS))
         weapon_swap_see_invis = true;
-    if (of_has(item->flags, OF_FEATHER))
+    if (of_has(item->flags, OF_FEATHER) || of_has(item->flags, OF_FLY))
         weapon_swap_ffall = true;
     if (of_has(item->flags, OF_FREE_ACT))
         weapon_swap_free_act = true;
@@ -897,7 +897,7 @@ void borg_notice_armour_swap(void)
                 armour_swap_light = true;
             if (of_has(item->flags, OF_SEE_INVIS))
                 armour_swap_see_invis = true;
-            if (of_has(item->flags, OF_FEATHER))
+            if (of_has(item->flags, OF_FEATHER) || of_has(item->flags, OF_FLY))
                 armour_swap_ffall = true;
             if (of_has(item->flags, OF_FREE_ACT))
                 armour_swap_free_act = true;
@@ -1222,7 +1222,7 @@ void borg_notice_armour_swap(void)
         armour_swap_light = true;
     if (of_has(item->flags, OF_SEE_INVIS))
         armour_swap_see_invis = true;
-    if (of_has(item->flags, OF_FEATHER))
+    if (of_has(item->flags, OF_FEATHER) || of_has(item->flags, OF_FLY))
         armour_swap_ffall = true;
     if (of_has(item->flags, OF_FREE_ACT))
         armour_swap_free_act = true;

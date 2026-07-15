@@ -427,6 +427,10 @@ void rand_dir(struct loc *offset);
 bool new_player_spot(struct chunk *c, struct player *p);
 void place_object(struct chunk *c, struct loc grid, int level, bool good,
 	bool great, uint8_t origin, int tval);
+bool place_object_from_tvals(struct chunk *c, struct loc grid, int level,
+	const int *tvals, size_t n_tvals, uint8_t origin);
+bool place_monster_from_bases(struct chunk *c, struct loc grid, int level,
+	const char * const *bases, size_t n_bases, bool sleep, uint8_t origin);
 void place_gold(struct chunk *c, struct loc grid, int level, uint8_t origin);
 void place_secret_door(struct chunk *c, struct loc grid);
 void place_closed_door(struct chunk *c, struct loc grid);

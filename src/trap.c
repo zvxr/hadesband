@@ -532,11 +532,15 @@ extern void hit_trap(struct loc grid, int delayed)
 		/* Test for save due to flag */
 		for (flag = of_next(trap->kind->save_flags, FLAG_START);
 			 flag != FLAG_END;
-			 flag = of_next(trap->kind->save_flags, flag + 1))
+			 flag = of_next(trap->kind->save_flags, flag + 1)) {
 			if (player_of_has(player, flag)) {
 				saved = true;
 				equip_learn_flag(player, flag);
+			} else if (flag == OF_FEATHER && player_of_has(player, OF_FLY)) {
+				saved = true;
+				equip_learn_flag(player, OF_FLY);
 			}
+		}
 
 		/* Test for save due to armor */
 		if (trf_has(trap->kind->flags, TRF_SAVE_ARMOR)
@@ -550,8 +554,18 @@ extern void hit_trap(struct loc grid, int delayed)
 
 		/* Save, or fire off the trap */
 		if (saved) {
-			if (trap->kind->msg_good)
+			if (player_of_has(player, OF_FLY) &&
+					of_has(trap->kind->save_flags, OF_FEATHER)) {
+				if (trf_has(trap->kind->flags, TRF_DOWN)) {
+					msg("You fly over the trap door.");
+				} else if (trf_has(trap->kind->flags, TRF_PIT)) {
+					msg("You fly over the pit.");
+				} else if (trap->kind->msg_good) {
+					msg("%s", trap->kind->msg_good);
+				}
+			} else if (trap->kind->msg_good) {
 				msg("%s", trap->kind->msg_good);
+			}
 		} else {
 			if (trap->kind->msg_bad)
 				msg("%s", trap->kind->msg_bad);
@@ -751,4 +765,3 @@ int square_door_power(struct chunk *c, struct loc grid)
 
 	return 0;
 }
-

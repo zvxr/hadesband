@@ -28,6 +28,7 @@
 #include "init.h"
 #include "mon-make.h"
 #include "mon-spell.h"
+#include "mon-util.h"
 #include "obj-make.h"
 #include "obj-pile.h"
 #include "obj-tval.h"
@@ -538,6 +539,122 @@ void place_object(struct chunk *c, struct loc grid, int level, bool good,
 			c->obj_rating = UINT32_MAX;
 		}
 	}
+}
+
+/**
+ * Place a random object from one of the supplied tvals.
+ */
+bool place_object_from_tvals(struct chunk *c, struct loc grid, int level,
+		const int *tvals, size_t n_tvals, uint8_t origin)
+{
+	int32_t rating = 0;
+	struct object *new_obj = NULL;
+	bool dummy = true;
+	int attempts = 20;
+
+	if (!square_in_bounds(c, grid)) return false;
+	if (!square_canputitem(c, grid)) return false;
+	if (!tvals || !n_tvals) return false;
+
+	while (attempts--) {
+		int tval = tvals[randint0(n_tvals)];
+
+		new_obj = make_object(c, level, false, false, false, &rating, tval);
+		if (new_obj) break;
+	}
+	if (!new_obj) return false;
+
+	new_obj->origin = origin;
+	new_obj->origin_depth = convert_depth_to_origin(c->depth);
+	if (!floor_carry(c, grid, new_obj, &dummy)) {
+		if (new_obj->artifact) {
+			mark_artifact_created(new_obj->artifact, false);
+		}
+		object_delete(c, NULL, &new_obj);
+		return false;
+	}
+
+	list_object(c, new_obj);
+	if (new_obj->artifact) {
+		c->good_item = true;
+	}
+	if (rating) {
+		uint32_t sqrating;
+
+		if (rating > 2500000) {
+			rating = 2500000;
+		} else if (rating < -2500000) {
+			rating = -2500000;
+		}
+		sqrating = (rating / 100) * (rating / 100);
+		if (c->obj_rating < UINT32_MAX - sqrating) {
+			c->obj_rating += sqrating;
+		} else {
+			c->obj_rating = UINT32_MAX;
+		}
+	}
+
+	return true;
+}
+
+static struct monster_base **organic_spawn_bases;
+static size_t organic_spawn_base_count;
+
+static bool organic_spawn_monster_okay(struct monster_race *race)
+{
+	size_t i;
+
+	if (rf_has(race->flags, RF_UNIQUE)) return false;
+	for (i = 0; i < organic_spawn_base_count; i++) {
+		if (race->base == organic_spawn_bases[i]) return true;
+	}
+
+	return false;
+}
+
+/**
+ * Place a random non-unique monster from one of the supplied monster bases.
+ */
+bool place_monster_from_bases(struct chunk *c, struct loc grid, int level,
+		const char * const *bases, size_t n_bases, bool sleep, uint8_t origin)
+{
+	size_t i, valid_bases = 0;
+	struct monster_base **base_list;
+	struct monster_race *race;
+	bool placed = false;
+
+	if (!square_in_bounds(c, grid)) return false;
+	if (!square_isempty(c, grid)) return false;
+	if (!bases || !n_bases) return false;
+
+	base_list = mem_zalloc(n_bases * sizeof(*base_list));
+	for (i = 0; i < n_bases; i++) {
+		struct monster_base *base = lookup_monster_base(bases[i]);
+
+		if (base) base_list[valid_bases++] = base;
+	}
+	if (!valid_bases) {
+		mem_free(base_list);
+		return false;
+	}
+
+	organic_spawn_bases = base_list;
+	organic_spawn_base_count = valid_bases;
+	get_mon_num_prep(organic_spawn_monster_okay);
+	race = get_mon_num(level, c->depth);
+	get_mon_num_prep(NULL);
+	organic_spawn_bases = NULL;
+	organic_spawn_base_count = 0;
+
+	if (race) {
+		struct monster_group_info group_info = { 0, 0 };
+
+		placed = place_new_monster(c, grid, race, sleep, false, group_info,
+			origin);
+	}
+
+	mem_free(base_list);
+	return placed;
 }
 
 

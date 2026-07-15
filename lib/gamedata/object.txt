@@ -781,6 +781,7 @@ cost:90
 alloc:20:5 to 100
 attack:1d7:0:0
 armor:0:0
+flags:CHOP_1
 desc:A short, straight Greek sword made for close fighting after the spear
 desc: line breaks.
 
@@ -793,6 +794,7 @@ cost:120
 alloc:20:5 to 100
 attack:1d8:0:0
 armor:0:0
+flags:CHOP_1
 desc:A thicker and slightly longer dagger, the cutlass is a slashing sword.  It
 desc: possesses a slight curve and only one side is sharp.
 
@@ -805,6 +807,7 @@ cost:170
 alloc:20:5 to 100
 attack:2d4:0:0
 armor:0:0
+flags:CHOP_1
 desc:A wider-bladed cousin of the shamshir, with less of a curve.
 
 name:& Kopis~
@@ -816,6 +819,7 @@ cost:300
 alloc:20:10 to 100
 attack:4d2:0:0
 armor:0:0
+flags:CHOP_1
 desc:A heavy, forward-curving Greek blade that bites hard on the cut.
 
 name:& Long Sword~
@@ -827,6 +831,7 @@ cost:300
 alloc:20:10 to 100
 attack:2d5:0:0
 armor:0:0
+flags:CHOP_1
 desc:A long, straight, two-edged blade, with two hand guards projecting out
 desc: from the hilt to form a perfect cross.
 
@@ -839,6 +844,7 @@ cost:300
 alloc:20:10 to 100
 attack:2d5:0:0
 armor:0:0
+flags:CHOP_1
 desc:A heavy, single-edged sword with a strong grip.
 
 name:& Bastard Sword~
@@ -850,6 +856,7 @@ cost:400
 alloc:20:15 to 100
 attack:3d4:0:0
 armor:0:0
+flags:CHOP_1
 desc:Also known as the hand-and-a-half blade.  A larger-than-normal straight-
 desc:sided sword with two cutting edges.
 
@@ -862,6 +869,7 @@ cost:600
 alloc:20:20 to 100
 attack:3d5:0:0
 armor:0:0
+flags:CHOP_1
 desc:A curved single-edged sword, kin to the kopis but longer in the hand.
 
 name:& Zweihander~
@@ -873,6 +881,7 @@ cost:700
 alloc:20:30 to 100
 attack:3d6:0:0
 armor:0:0
+flags:CHOP_1
 desc:A sword designed for two hands.
 
 name:& Executioner's Sword~
@@ -884,6 +893,7 @@ cost:850
 alloc:20:40 to 100
 attack:4d5:0:0
 armor:0:0
+flags:CHOP_1
 desc:A giant, curved blade designed to cleave the head cleanly from the body.
 
 name:& Blade~ of Chaos
@@ -1136,7 +1146,7 @@ cost:150
 alloc:10:25 to 100
 attack:2d3:0:0
 armor:0:0
-flags:THROWING
+flags:THROWING | CHOP_2
 desc:A short-handled hatchet, balanced for throwing.  A classic skirmisher's
 desc: weapon.
 
@@ -1149,6 +1159,7 @@ cost:408
 alloc:20:15 to 100
 attack:2d6:0:0
 armor:0:0
+flags:CHOP_2
 desc:A narrow axe head opposed by a crow's beak for penetrating armour.
 
 name:& Broad Axe~
@@ -1160,6 +1171,7 @@ cost:304
 alloc:20:15 to 100
 attack:2d6:0:0
 armor:0:0
+flags:CHOP_2
 desc:A simple, single-bladed war axe capable of chopping though limbs or armour.
 
 name:& Battle Axe~
@@ -1171,6 +1183,7 @@ cost:334
 alloc:20:15 to 100
 attack:2d8:0:0
 armor:0:0
+flags:CHOP_2
 desc:A double-bladed axe, favored by heavy infantry and forge-trained warriors.
 
 name:& Lochaber Axe~
@@ -1182,6 +1195,7 @@ cost:750
 alloc:20:45 to 100
 attack:3d8:0:0
 armor:0:0
+flags:CHOP_2
 desc:A long shaft with a long narrow blade.
 
 name:& Great Axe~
@@ -1193,6 +1207,7 @@ cost:500
 alloc:20:40 to 100
 attack:4d4:0:0
 armor:0:0
+flags:CHOP_2
 desc:An enormous two-handed battle axe, carried by brutal champions who
 desc: compete to see who can split the most shields and helms.
 
@@ -2379,14 +2394,16 @@ cost:250
 alloc:30:10 to 50
 flags:SLOW_DIGEST | EASY_KNOW
 
-name:Feather Falling
+name:Flight
 type:ring
 graphics:=:d
-level:5
+level:15
 weight:2
-cost:200
+cost:1000
 alloc:20:10 to 50
-flags:FEATHER | EASY_KNOW
+flags:FLY | EASY_KNOW
+desc:A light band that lifts its bearer above treacherous ground and sudden
+desc: drops.
 
 name:Free Action
 type:ring

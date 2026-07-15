@@ -26,6 +26,7 @@
 #include "obj-pile.h"
 #include "obj-util.h"
 #include "object.h"
+#include "player-util.h"
 #include "player-quest.h"
 #include "player-timed.h"
 #include "trap.h"
@@ -165,6 +166,38 @@ bool feat_is_bright(int feat)
 bool feat_is_fiery(int feat)
 {
 	return tf_has(f_info[feat].flags, TF_FIERY);
+}
+
+/**
+ * True if the feature can be passed by flying creatures.
+ */
+bool feat_is_fly_passable(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_FLY_PASSABLE);
+}
+
+/**
+ * True if the feature is organic terrain.
+ */
+bool feat_is_organic(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_ORGANIC);
+}
+
+/**
+ * True if the feature can be chopped down.
+ */
+bool feat_ischoppable(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_CHOPPABLE);
+}
+
+/**
+ * True if the feature can burn away.
+ */
+bool feat_isflammable(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_FLAMMABLE);
 }
 
 /**
@@ -656,6 +689,27 @@ bool square_isdiggable(struct chunk *c, struct loc grid) {
 }
 
 /**
+ * True if the square can be chopped.
+ */
+bool square_ischoppable(struct chunk *c, struct loc grid) {
+	return feat_ischoppable(square(c, grid)->feat);
+}
+
+/**
+ * True if the square is organic terrain.
+ */
+bool square_isorganic(struct chunk *c, struct loc grid) {
+	return feat_is_organic(square(c, grid)->feat);
+}
+
+/**
+ * True if the square can burn away.
+ */
+bool square_isflammable(struct chunk *c, struct loc grid) {
+	return feat_isflammable(square(c, grid)->feat);
+}
+
+/**
  * True if the square is a floor with no traps.
  */
 bool square_iswebbable(struct chunk *c, struct loc grid) {
@@ -676,11 +730,39 @@ bool square_is_monster_walkable(struct chunk *c, struct loc grid)
 }
 
 /**
+ * True if the square can be entered by the given monster.
+ */
+bool square_is_monster_walkable_for(struct chunk *c, struct loc grid,
+	struct monster *mon)
+{
+	int feat;
+
+	assert(square_in_bounds(c, grid));
+	feat = square(c, grid)->feat;
+	if (feat_is_monster_walkable(feat)) return true;
+	return mon && rf_has(mon->race->flags, RF_FLY) && feat_is_fly_passable(feat);
+}
+
+/**
  * True if the square is passable by the player.
  */
 bool square_ispassable(struct chunk *c, struct loc grid) {
 	assert(square_in_bounds(c, grid));
 	return feat_is_passable(square(c, grid)->feat);
+}
+
+/**
+ * True if the square can be entered by the given player.
+ */
+bool square_ispassable_for_player(struct chunk *c, struct loc grid,
+	const struct player *p)
+{
+	int feat;
+
+	assert(square_in_bounds(c, grid));
+	feat = square(c, grid)->feat;
+	if (feat_is_passable(feat)) return true;
+	return p && player_of_has(p, OF_FLY) && feat_is_fly_passable(feat);
 }
 
 /**
@@ -1433,6 +1515,21 @@ void square_tunnel_wall(struct chunk *c, struct loc grid)
 	square_set_feat(c, grid, FEAT_FLOOR);
 }
 
+void square_chop_terrain(struct chunk *c, struct loc grid)
+{
+	square_set_feat(c, grid, FEAT_SOIL);
+}
+
+bool square_burn_terrain(struct chunk *c, struct loc grid)
+{
+	int feat = square(c, grid)->feat;
+
+	if (!feat_isflammable(feat)) return false;
+	if (feat == FEAT_WOOD && randint0(100) >= 30) return false;
+	square_set_feat(c, grid, FEAT_SOIL);
+	return true;
+}
+
 void square_destroy_wall(struct chunk *c, struct loc grid)
 {
 	square_set_feat(c, grid, FEAT_FLOOR);
@@ -1536,6 +1633,12 @@ int square_shopnum(struct chunk *c, struct loc grid) {
 
 int square_digging(struct chunk *c, struct loc grid) {
 	if (square_isdiggable(c, grid) || square_iscloseddoor(c, grid))
+		return f_info[square(c, grid)->feat].dig;
+	return 0;
+}
+
+int square_chopping(struct chunk *c, struct loc grid) {
+	if (square_ischoppable(c, grid))
 		return f_info[square(c, grid)->feat].dig;
 	return 0;
 }

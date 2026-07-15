@@ -385,7 +385,7 @@ static void borg_notice_home_aux(borg_item *in_item, bool no_items)
             num_telepathy += item->iqty;
         if (of_has(item->flags, OF_SEE_INVIS))
             num_see_inv += item->iqty;
-        if (of_has(item->flags, OF_FEATHER))
+        if (of_has(item->flags, OF_FEATHER) || of_has(item->flags, OF_FLY))
             num_ffall += item->iqty;
         if (of_has(item->flags, OF_FREE_ACT))
             num_free_act += item->iqty;
@@ -856,7 +856,7 @@ static void borg_notice_home_aux(borg_item *in_item, bool no_items)
     /* Good flags */
     if (of_has(f, OF_SLOW_DIGEST))
         num_slow_digest++;
-    if (of_has(f, OF_FEATHER))
+    if (of_has(f, OF_FEATHER) || of_has(f, OF_FLY))
         num_ffall++;
     if (of_has(f, OF_LIGHT_2) || rf_has(f, OF_LIGHT_3))
         num_LIGHT++;

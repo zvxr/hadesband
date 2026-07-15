@@ -514,7 +514,7 @@ static struct loc get_move_random(struct monster *mon)
 		struct loc trygrid;
 
 		trygrid = loc_sum(mon->grid, ddgrid_ddd[attempts[itry]]);
-		if (square_is_monster_walkable(cave, trygrid) &&
+		if (square_is_monster_walkable_for(cave, trygrid, mon) &&
 				!monster_hates_grid(mon, trygrid)) {
 			return ddgrid_ddd[attempts[itry]];
 		} else {
@@ -566,7 +566,7 @@ static bool get_move_find_safety(struct monster *mon)
 			if (!square_in_bounds_fully(cave, grid)) continue;
 
 			/* Skip locations in a wall */
-			if (!square_ispassable(cave, grid)) continue;
+			if (!square_is_monster_walkable_for(cave, grid, mon)) continue;
 
 			/* Ignore too-distant grids */
 			if (cave->noise.grids[grid.y][grid.x] >
@@ -894,7 +894,8 @@ static bool get_move(struct monster *mon, int *dir, bool *good)
 			/* Check grid around the player for room interior (room walls count)
 			 * or other empty space */
 			struct loc test = loc_sum(target, ddgrid_ddd[i]);
-			if (square_ispassable(cave, test) || square_isroom(cave, test)) {
+			if (square_is_monster_walkable_for(cave, test, mon) ||
+					square_isroom(cave, test)) {
 				/* One more open grid */
 				open++;
 			}
@@ -1154,7 +1155,7 @@ static bool monster_turn_can_move(struct monster *mon, const char *m_name,
 	}
 
 	/* Floor is open? */
-	if (square_ispassable(cave, new)) {
+	if (square_is_monster_walkable_for(cave, new, mon)) {
 		return true;
 	}
 
@@ -1334,7 +1335,7 @@ static bool monster_turn_try_push(struct monster *mon, const char *m_name,
 	/* Move weaker monsters if they can swap places */
 	/* (not in a wall) */
 	int move_ok = (monster_can_move(mon, new) &&
-				   square_ispassable(cave, mon->grid));
+				   square_is_monster_walkable_for(cave, mon->grid, mon));
 
 	if (kill_ok || move_ok) {
 		/* Get the names of the monsters involved */

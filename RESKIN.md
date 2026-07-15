@@ -398,6 +398,9 @@
   assumption.
 - Renamed food consumable `Handful of Dried Fruits` to `Wild Morels`, keeping
   its normal food mechanics unchanged.
+- Began organic terrain support for future dungeon generation: added tree,
+  wood, vegetation, and soil terrain, plus chopping, flight passability,
+  flammability, and targeted clear-spawn hooks.
 
 ## Text, UI, and Help
 - Splash/news and death screens should match Hadesband premise.

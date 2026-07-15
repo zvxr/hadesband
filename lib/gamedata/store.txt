@@ -197,7 +197,7 @@ owner:40000:Selene Star-Bright (High-Elf)
 slots:4:14
 turnover:9
 normal:ring:Searching
-normal:ring:Feather Falling
+normal:ring:Flight
 normal:ring:Protection
 normal:ring:Open Wounds
 normal:amulet:Slow Digestion

@@ -356,6 +356,23 @@ static void project_feature_handler_FIRE(project_feature_handler_context_t *cont
 		square_remove_all_traps_of_type(cave, context->grid, web->tidx);
 	}
 
+	/* Burns away organic terrain. */
+	if (square_isflammable(cave, context->grid)) {
+		bool seen = square_isseen(cave, context->grid);
+		const char *name = square_apparent_name(player->cave, context->grid);
+
+		if (square_burn_terrain(cave, context->grid)) {
+			if (seen) msg("The %s burns away.", name);
+			square_unmark(cave, context->grid);
+			if (cave->depth == 0)
+				expose_to_sun(cave, context->grid, is_daytime());
+			push_object(context->grid);
+			context->obvious = context->obvious || seen;
+			player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+		}
+		return;
+	}
+
 	/* Can create lava if extremely powerful. */
 	if ((context->dam > randint1(900) + 300) &&
 		square_isfloor(cave, context->grid)) {
@@ -774,4 +791,3 @@ bool project_f(struct source origin, int r, struct loc grid, int dam, int typ)
 	/* Return "Anything seen?" */
 	return context.obvious;
 }
-
