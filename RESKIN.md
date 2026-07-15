@@ -396,6 +396,8 @@
 - Replaced the intro `news.txt` Angband ASCII art and old Tolkien quote with
   horizontal two-font Hadesband ASCII art fitted to the 80x23 splash screen
   assumption.
+- Renamed food consumable `Handful of Dried Fruits` to `Wild Morels`, keeping
+  its normal food mechanics unchanged.
 
 ## Text, UI, and Help
 - Splash/news and death screens should match Hadesband premise.

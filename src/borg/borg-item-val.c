@@ -270,7 +270,7 @@ void borg_init_item_val(void)
     sv_food_waybread = borg_lookup_sval_fail(tval, "Ambrosia");
     sv_food_honey_cake = borg_lookup_sval_fail(tval, "Honey-cake");
     sv_food_slice      = borg_lookup_sval_fail(tval, "Moon-cured Pork");
-    sv_food_handful    = borg_lookup_sval_fail(tval, "Handful of Dried Fruits");
+    sv_food_handful    = borg_lookup_sval_fail(tval, "Wild Morels");
 
     tval               = tval_find_idx("mushroom");
     sv_mush_second_sight  = borg_lookup_sval_fail(tval, "Second Sight");

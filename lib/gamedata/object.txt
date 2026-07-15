@@ -261,7 +261,7 @@ effect:NOURISH:INC_BY
 dice:10
 desc:Wrinkled, but sound and sweet.
 
-name:& Handful~ of Dried Fruits
+name:& Wild Morel~
 type:food
 graphics:,:u
 level:0
@@ -272,8 +272,8 @@ power:0
 msg:That tastes good.
 effect:NOURISH:INC_BY
 dice:15
-desc:Fruit roughly chopped and sun-dried, prepared as marching rations for the
-desc: rangers of Ithilien.
+desc:Savory forest mushrooms, dried carefully and carried as simple trail
+desc: provisions.
 
 name:& Slime Mold~
 type:food
