@@ -175,13 +175,13 @@ static void wr_item(const struct object *obj)
 	/* Write sentient personality if any */
 	if (obj->sentient) {
 		const struct sentient *sentient = &sentients[obj->sentient->index];
-		int i;
+		int event;
 
 		wr_byte(1);
 		wr_string(sentient->name);
-		for (i = 0; i < sentient->event_count; i++) {
+		for (event = 0; event < sentient->event_count; event++) {
 			wr_u16b(obj->sentient->timeouts ?
-				obj->sentient->timeouts[i] : 0);
+				obj->sentient->timeouts[event] : 0);
 		}
 	} else {
 		wr_byte(0);

@@ -919,7 +919,7 @@ static void process_player_cleanup(void)
 		/* Use some energy */
 		player->energy -= player->upkeep->energy_use;
 
-		int old_tick = player->total_energy / 100;
+		uint32_t old_tick = player->total_energy / 100;
 
 		/* Increment the total energy counter */
 		player->total_energy += player->upkeep->energy_use;
@@ -1249,8 +1249,6 @@ void run_game_loop(void)
 				if (player->is_dead || !player->upkeep->playing)
 					return;
 			}
-
-			const int32_t old_energy = player->energy;
 
 			/* Give the player some energy */
 			player->energy += turn_energy(player->state.speed);
