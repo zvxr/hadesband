@@ -63,6 +63,9 @@ spawn:10:100:100:100
 seed-room-tag:organic:80
 ```
 
+The same infrastructure is also used by Round Halls, which appears at depths
+6 and 66 and prefers `round` templates 66% of the time.
+
 Semantics:
 
 - Before normal room-profile selection, active level themes may roll their tag
