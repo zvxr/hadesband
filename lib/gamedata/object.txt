@@ -368,7 +368,7 @@ type:food
 graphics:,:B
 level:5
 weight:3
-cost:10
+cost:150
 alloc:20:30 to 100
 pile:10:1d3
 power:4
