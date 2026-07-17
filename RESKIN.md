@@ -111,7 +111,7 @@
 - Respect display letters where practical.
 - Monster `base` affects `friends-base` and `S_KIN`; monster base `glyph` affects ASCII/default display.
 - Current `G` is `ghost`; current `W` is `wraith`; current `X` is `xorn`.
-- Likely strategy: free `G` for `god`, move ghosts/spirits into `W` or another undead/spirit bucket, and eventually replace `xorn`/`X` with a more mythic earth/stone creature family.
+- Likely strategy: free `G` for `god`, move ghosts/spirits into `W` or another undead/spirit bucket.
 - Existing `ainu` base and `S_AINU` summon/pit hooks are likely the safest migration path for a future `god` base and `S_GOD` naming.
 - Added `god` as a new monster base with glyph `G`; old bases remain available during migration.
 - Zeus, Ares, and Hecate now use `base:god`; Hades remains on the special final-boss base for now.
@@ -121,22 +121,22 @@
 - Purpose: track monster family/glyph work separately from individual unique renames.
 - Rule: create new bases first, then move monsters one by one; leave old bases available until their roster is intentionally migrated.
 - Status: `god` exists with glyph `G`; Zeus, Ares, and Hecate use it.
-- Status: `ghost` still exists with glyph `G`; existing ghosts/spirits have not been migrated.
+- Implemented: `ghost` base removed; former ghosts/spirits merged into `wraith`, leaving `G` clear for gods.
 - Status: `Morgoth` still exists with glyph `P`; Hades remains there for final-boss handling.
 - Open: decide whether future god summons use `S_GOD`/`SUM_GOD` or keep old summon hooks until more gods exist.
-- Open: decide whether ghosts move into `wraith`, a new `spirit` base, or another bucket.
-- Open: decide replacement direction for `xorn`/`X`, likely a mythic earth/stone family.
+- Decision: former ghosts and spirits use `wraith`; keep the high-danger `W` psychology for draining undead.
+- Decision: keep `quylthulg` and `xorn` as-is for the initial pass.
 - Planning: avoid over-splitting mythic taxonomy; prefer fitting myths into existing bases unless kin/summon behavior needs a distinct family.
 - Planning: Cyclopes can likely use `giant`; demigods can use `person` for heroic mortals or `god` for divine-tier beings.
 - Planning: demi-humans can usually use `humanoid`, `hybrid`, or specific creature bases; only create a new base if a repeatable summon/kin family emerges.
 - Planning: centaurs, fauns, harpies, gorgons, and nymphs are candidates to map onto existing `hybrid`, `person`, `bird`, `snake`, `feline`, `tree`, or `elemental` buckets before adding new bases.
-- Potential new bases: `spirit` for ghosts/shades if `wraith` is too narrow; `construct`/`automaton` for bronze guardians; `earthborn` for xorn-style stone/earth monsters.
+- Potential new bases: `spirit` for ghosts/shades if `wraith` is too narrow; `construct`/`automaton` for bronze guardians.
 - Low-hanging fit: harpies already use `hybrid`/`H`; this is a good model for winged demi-human monsters.
 - Low-hanging fit: minotaur and manticore already use `hybrid`; keep unless a broader hybrid split becomes necessary.
 - Current `hybrid` roster: white harpy, black harpy, hippogriff, griffon, chimaera, gorgimaera, manticore, minotaur, Baphomet the Minotaur Lord, jabberwock.
 - Low-hanging fit: cyclops, lesser titan, and greater titan already use `giant`; keep Greco-Roman giants/titans there for now.
 - Low-hanging fit: hydras already have a dedicated `hydra` base; keep.
-- Open: consider expanding glyph `M` from `hydra` to broader `monstrous`/`monster` usage for minotaur, manticore, chimaera, etc.
+- Implemented: glyph `M` now represents the `monstrous` base for composite beasts; hydras moved to glyph `H` while retaining hydra-specific base behavior.
 - Caution: hydras have dedicated `HYDRA` summon, Hydra pit, and Serpents pit hooks; changing glyph only is low-risk, but merging hydras into `hybrid` would change summon/pit behavior unless those hooks are updated.
 - Verified: duplicate glyphs are allowed; `base:hydra` could use glyph `H` while retaining `HYDRA` summon, hydra pits, and hydra kin behavior.
 - Implemented: hydras keep `base:hydra` but now use glyph `H`; `HYDRA` summons, hydra pits, and hydra kin behavior remain base-driven.
@@ -177,7 +177,7 @@
 | `eye` | `e` | Done for current pass; Stygian beholder and Argus renamed |
 | `elemental` | `E` | Done for current unique pass; primordial elemental deity names added |
 | `feline` | `f` | Done for current pass; The Nemean Lion renamed, generics retained |
-| `ghost` | `G` | Untouched; conflicts with new god glyph |
+| `ghost` | `G` | Removed; former roster merged into `wraith`, leaving `G` clean for gods |
 | `giant` | `P` | Done for initial unique pass; generics retained |
 | `golem` | `g` | Done for current pass; several constructs given mythic material names and Talos made unique |
 | `humanoid` | `h` | Done for current pass; Greek humanoid generics and uniques reskinned |
@@ -201,7 +201,7 @@
 | `orc` | `o` | Done for current pass; generic orcs kept, uniques reskinned |
 | `person` | `p` | Done for current pass; Greek person generics and uniques reskinned |
 | `quadruped` | `q` | Done for current pass; Ayula, sacred deer, odontotyrannos, and Stygian mare renamed |
-| `quylthulg` | `Q` | Pending |
+| `quylthulg` | `Q` | Done; keep existing names, glyph, and mechanics |
 | `reptile` | `R` | Done for current pass; The Tarrasque became Cetus, the Sea Beast |
 | `rodent` | `r` | Done; keep existing names, glyph, and mechanics |
 | `skeleton` | `s` | Done for current pass; Minos renamed, other skeletons retained |
@@ -213,8 +213,8 @@
 | `vampire` | `V` | Done for current pass; Empusa renamed and Sauron shape cleaned to Vampire-Zeus |
 | `vortex` | `v` | Done for current pass; Aeolus, storm of Lethe, and Darude sandstorm renamed |
 | `worm` | `w` | Done for current pass; Stygian worm mass renamed, other worms retained |
-| `wraith` | `W` | Pending; candidate home for some spirits |
-| `xorn` | `X` | Pending; likely replacement candidate |
+| `wraith` | `W` | Done; absorbs former ghost roster, no ordinary color overlap |
+| `xorn` | `X` | Done; keep existing names, glyph, and mechanics |
 | `satyr` | `y` | Done for initial pass; yeeks replaced with satyrs and Pan |
 | `yeti` | `Y` | Done; keep existing names, glyph, and mechanics |
 | `zephyr hound` | `Z` | Done for current pass; lightning and underworld hound names added |

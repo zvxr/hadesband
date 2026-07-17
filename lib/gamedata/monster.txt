@@ -1199,25 +1199,6 @@ flags:RAND_25 | RAND_50
 flags:IM_ACID | IM_POIS | HURT_COLD | NO_CONF | NO_SLEEP
 desc:It's green and it's oozing.
 
-name:poltergeist
-base:ghost
-color:W
-speed:130
-hit-points:6
-hearing:8
-armor-class:18
-sleepiness:10
-depth:3
-rarity:1
-experience:8
-blow:TOUCH:TERRIFY
-flags:DROP_40 | DROP_60
-flags:RAND_25 | RAND_50 | TAKE_ITEM
-flags:HURT_LIGHT
-spell-freq:15
-spells:BLINK
-desc:It is a ghastly, ghostly form.
-
 name:metallic blue centipede
 base:centipede
 color:b
@@ -1747,23 +1728,6 @@ flags:RAND_25 | RAND_50
 flags:IM_COLD | NO_CONF | NO_SLEEP
 desc:It's blue and it's oozing.
 
-name:green glutton ghost
-base:ghost
-color:g
-speed:130
-hit-points:8
-hearing:10
-armor-class:24
-sleepiness:10
-depth:5
-rarity:1
-experience:15
-blow:TOUCH:EAT_FOOD:1d1
-flags:DROP_40 | DROP_60
-flags:RAND_25 | RAND_50
-flags-off:IM_COLD
-desc:It is a very ugly green ghost with a voracious appetite.
-
 name:green jelly
 plural:green jellies
 base:jelly
@@ -2245,25 +2209,6 @@ flags:EMPTY_MIND
 flags:NO_FEAR
 desc:It is an animated kobold corpse.  Flesh falls off in large chunks as it
 desc: shambles forward.
-
-name:lost soul
-base:ghost
-color:B
-speed:110
-hit-points:9
-hearing:12
-armor-class:12
-sleepiness:10
-depth:7
-rarity:2
-experience:18
-blow:HIT:HURT:2d2
-blow:TOUCH:LOSE_WIS
-flags:DROP_40 | DROP_60
-flags:RAND_50 | TAKE_ITEM
-spell-freq:15
-spells:DRAIN_MANA | TPORT
-desc:It is almost insubstantial.
 
 name:servant of Hephaestus
 plural:servants of Hephaestus
@@ -3516,26 +3461,6 @@ blow:BITE:HURT:1d6
 flags:BASH_DOOR
 desc:One of the largest of its species, a sleek orange and black shape creeps
 desc: towards you, ready to pounce.
-
-name:moaning spirit
-base:ghost
-color:u
-speed:120
-hit-points:23
-hearing:14
-armor-class:24
-sleepiness:10
-depth:12
-rarity:2
-experience:44
-blow:WAIL:TERRIFY
-blow:TOUCH:LOSE_DEX:1d8
-flags:DROP_40 | DROP_60
-flags:RAND_25
-flags:FORCE_SLEEP
-spell-freq:15
-spells:SCARE | TPORT
-desc:A ghostly apparition that shrieks horribly.
 
 name:hoplite
 base:person
@@ -5876,9 +5801,9 @@ friends:100:1d1:Eurytus, the Molionid
 desc:One of the famed Molionid twins, Cteatus moves in uncanny concert with
 desc: Eurytus, turning every duel into a brutal two-against-one trial.
 
-name:banshee
-base:ghost
-color:b
+name:wailing banshee
+base:wraith
+color:u
 speed:120
 hit-points:27
 hearing:20
@@ -5894,7 +5819,8 @@ flags:DROP_1
 flags:RAND_50 | TAKE_ITEM
 spell-freq:15
 spells:DRAIN_MANA | TPORT
-desc:It is a ghostly woman's form that wails mournfully.
+desc:A woman's wailing form drifts out of death, keening with a voice that
+desc: freezes courage and calls old grief back into the blood.
 
 name:werebear
 base:quadruped
@@ -7382,8 +7308,8 @@ desc: Brontes and Steropes.
 
 ### Dungeon level 31 ###
 
-name:ghost
-base:ghost
+name:wandering wraith
+base:wraith
 color:w
 speed:120
 hit-points:59
@@ -7402,7 +7328,8 @@ flags:RAND_25 | TAKE_ITEM
 flags:FORCE_SLEEP
 spell-freq:15
 spells:BLIND | DRAIN_MANA | HOLD
-desc:You don't believe in it.  But it believes in you...
+desc:A wandering wraith slips through the dungeon in search of warmth,
+desc: memory, and the living soul it no longer possesses.
 
 name:death watch beetle
 base:killer beetle
@@ -8091,9 +8018,9 @@ friends-base:100:3d4:troll
 desc:A half-smart, vicious troll from the sunless roads below.  It knows a few
 desc: cruel charms and uses them only to close for the kill.
 
-name:shade
-base:ghost
-color:D
+name:wan shade
+base:wraith
+color:d
 speed:120
 hit-points:147
 light:-2
@@ -8111,8 +8038,8 @@ flags:RAND_25 | TAKE_ITEM
 flags:FORCE_SLEEP
 spell-freq:15
 spells:BLIND | DRAIN_MANA | HOLD
-desc:A shadowy form clutches at you from the darkness.  A powerful undead
-desc: creature with a deadly touch.
+desc:A wan shade clutches at you from the darkness, its pallid outline barely
+desc: separate from the cold gloom around it.
 
 name:master cutpurse
 plural:master cutpurses
@@ -8914,8 +8841,8 @@ flags:NO_FEAR
 desc:It is a massive figure clothed in wrappings.  You are wary of its massive
 desc: fists.
 
-name:spectre
-base:ghost
+name:wailing spectre
+base:wraith
 color:U
 speed:120
 hit-points:167
@@ -8933,8 +8860,8 @@ flags:RAND_25 | TAKE_ITEM
 flags:FORCE_SLEEP
 spell-freq:15
 spells:BLIND | DRAIN_MANA | HOLD
-desc:A phantasmal shrieking spirit.  Its wail drives the intense cold of pure
-desc: evil deep within your body.
+desc:A wailing spectre hangs in the air.  Its cry drives the intense cold of
+desc: pure evil deep within your body.
 
 name:magma elemental
 base:elemental
@@ -9249,7 +9176,7 @@ desc: waking monsters from their slumber.
 
 name:white wraith
 base:wraith
-color:w
+color:W
 speed:120
 hit-points:450
 hearing:20
@@ -9524,7 +9451,7 @@ desc:It is a strange mass of squirming worms.  Magical energy crackles around
 desc: its disgusting form.
 
 name:spirit troll
-base:ghost
+base:troll
 color:G
 speed:110
 hit-points:880
@@ -9542,9 +9469,9 @@ flags:DROP_60
 flags:IM_ELEC
 desc:A weird ghostly troll-like being.
 
-name:phantom
-base:ghost
-color:P
+name:phantom menace
+base:wraith
+color:p
 speed:120
 hit-points:260
 hearing:30
@@ -9561,8 +9488,8 @@ flags:DROP_1 | ONLY_ITEM
 flags:FORCE_SLEEP
 spell-freq:5
 spells:FORGET
-desc:An unholy creature of darkness, the aura emanating from this evil being
-desc: saps your very soul.
+desc:A hauntingly bad prequel to your death.  Its wooden menace and spectral
+desc: theatrics still somehow sap your very soul.
 
 name:7-headed hydra
 base:hydra
@@ -10419,7 +10346,7 @@ spells:BR_FIRE | BR_POIS | BR_ACID
 desc:A 7-headed hydra with an extra head which reeks of death.
 
 name:dread
-base:ghost
+base:wraith
 color:o
 speed:120
 hit-points:263
@@ -11151,8 +11078,8 @@ desc:A master of the Eleusinian mysteries, deadly with empty hands and able
 desc: to call wild creatures from the dark.
 
 name:shadow
-base:ghost
-color:D
+base:wraith
+color:L
 speed:120
 hit-points:175
 light:-2
@@ -11651,7 +11578,7 @@ spells:S_DEMON | S_UNDEAD
 desc:A lich who is partially immaterial, on its way to a new, ethereal form.
 
 name:dreadmaster
-base:ghost
+base:wraith
 color:y
 speed:120
 hit-points:1056
@@ -12017,7 +11944,7 @@ spells:BRAIN_SMASH | WOUND | DARKNESS | DRAIN_MANA
 spells:BO_NETH
 spells:S_UNDEAD
 spells:HOLD | SCARE
-friends-base:30:1d3:ghost
+friends-base:30:1d3:wraith
 desc:A terrible robed undead figure, this creature has existed in its unlife for
 desc: many centuries by stealing the life of others.  It can summon the very
 desc: shades of its victims from beyond the grave to come enslaved to its aid.
@@ -12283,8 +12210,8 @@ desc: you have ever experienced.
 ### Dungeon level 62 ###
 
 name:dreadlord
-base:ghost
-color:r
+base:wraith
+color:R
 speed:120
 hit-points:2640
 hearing:20
@@ -12763,8 +12690,8 @@ desc:"Beware the Jabberwock, my son!  The jaws that bite, the claws that catch!"
 desc:  Run and run quickly, for death incarnate chases behind you!
 
 name:Tselakus, the Dreadlord
-base:ghost
-color:R
+base:wraith
+color:B
 speed:130
 hit-points:6500
 hearing:20

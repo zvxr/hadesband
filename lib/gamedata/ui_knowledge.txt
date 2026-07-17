@@ -81,8 +81,8 @@ mcat-include-base:eye
 monster-category:Felines
 mcat-include-base:feline
 
-monster-category:Ghosts
-mcat-include-base:ghost
+monster-category:Wraiths
+mcat-include-base:wraith
 
 monster-category:Giants/Ogres
 mcat-include-base:ogre

@@ -1764,6 +1764,21 @@ static int weight_limit(struct player_state *state)
 }
 
 
+static int weight_flight_allowance_state(const struct player_state *state)
+{
+	return of_has(state->flags, OF_FLY) ? 200 : 0;
+}
+
+
+/**
+ * Computes the weight allowance, in tenths of pounds, granted by flight.
+ */
+int weight_flight_allowance(const struct player *p)
+{
+	return weight_flight_allowance_state(&p->state);
+}
+
+
 /**
  * Computes weight remaining before burdened.
  */
@@ -1773,10 +1788,46 @@ int weight_remaining(struct player *p)
 
 	/* Weight limit based only on strength */
 	i = 60 * adj_str_wgt[p->state.stat_ind[STAT_STR]]
+		+ weight_flight_allowance(p)
 		- p->upkeep->total_weight - 1;
 
 	/* Return the result */
 	return (i);
+}
+
+
+static void format_signed_weight(char *buf, size_t max, int weight)
+{
+	if (weight < 0) {
+		strnfmt(buf, max, "-%d.%d", abs(weight) / 10, abs(weight) % 10);
+	} else {
+		strnfmt(buf, max, "%d.%d", weight / 10, weight % 10);
+	}
+}
+
+
+/**
+ * Describes remaining carrying capacity for burden displays.
+ */
+void weight_remaining_description(char *buf, size_t max, struct player *p)
+{
+	int diff = weight_remaining(p);
+	int flight = weight_flight_allowance(p);
+
+	if (flight && diff >= 0) {
+		char base[24];
+
+		format_signed_weight(base, sizeof(base), diff - flight);
+		strnfmt(buf, max, "%s + %d.%d lb remaining", base,
+				flight / 10, flight % 10);
+	} else if (flight) {
+		strnfmt(buf, max, "%d.%d lb overweight, %d.%d lb flight",
+				abs(diff) / 10, abs(diff) % 10,
+				flight / 10, flight % 10);
+	} else {
+		strnfmt(buf, max, "%d.%d lb %s", abs(diff) / 10, abs(diff) % 10,
+				(diff < 0 ? "overweight" : "remaining"));
+	}
 }
 
 
@@ -2250,8 +2301,8 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 
 	/* Analyze weight */
 	j = p->upkeep->total_weight;
-	if (of_has(state->flags, OF_FLY)) {
-		j = MAX(0, j - 200);
+	if (weight_flight_allowance_state(state)) {
+		j = MAX(0, j - weight_flight_allowance_state(state));
 	}
 	i = weight_limit(state);
 	if (j > i / 2)

@@ -217,7 +217,7 @@ static int context_menu_player_2(int mx, int my)
 
 static void context_menu_player_display_floor(void)
 {
-	int diff = weight_remaining(player);
+	char burden[80];
 	struct object *obj;
 
 	/* There is an item on the floor, select from there */
@@ -227,11 +227,11 @@ static void context_menu_player_display_floor(void)
 	screen_save();
 
 	/* Prompt for a command */
-	prt(format("(Inventory) Burden %d.%d lb (%d.%d lb %s). Item for command: ",
+	weight_remaining_description(burden, sizeof(burden), player);
+	prt(format("(Inventory) Burden %d.%d lb (%s). Item for command: ",
 			   player->upkeep->total_weight / 10,
 			   player->upkeep->total_weight % 10,
-			   abs(diff) / 10, abs(diff) % 10,
-			   (diff < 0 ? "overweight" : "remaining")), 0, 0);
+			   burden), 0, 0);
 
 
 	/* Get an item to use a context command on */

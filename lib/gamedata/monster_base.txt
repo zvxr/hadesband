@@ -160,16 +160,6 @@ pain:6
 flags:ANIMAL | CLEAR_WEB
 desc:Feline (Cat)
 
-# Wall-passing invisible spirits, frequently drain experience and/or stats.
-# Relatively weak to compensate for being hard to escape
-name:ghost
-glyph:G
-pain:1
-flags:UNDEAD | EVIL | INVISIBLE | COLD_BLOOD | SPIRIT
-flags:PASS_WALL
-flags:IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN | NO_HOLD
-desc:Ghost
-
 # Giants are big, strong humanoids which hit hard and throw boulders.  They
 # may be associated with an element and have some spells, but their focus is
 # powerful melee.

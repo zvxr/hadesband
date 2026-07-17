@@ -127,6 +127,8 @@ void notice_stuff(struct player *p);
 void update_stuff(struct player *p);
 void redraw_stuff(struct player *p);
 void handle_stuff(struct player *p);
+int weight_flight_allowance(const struct player *p);
 int weight_remaining(struct player *p);
+void weight_remaining_description(char *buf, size_t max, struct player *p);
 
 #endif /* !PLAYER_CALCS_H */

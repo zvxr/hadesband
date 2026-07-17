@@ -476,7 +476,7 @@ static void show_obj_list(olist_detail_t mode)
 void show_inven(int mode, item_tester tester)
 {
 	int i, last_slot = -1;
-	int diff = weight_remaining(player);
+	char burden[80];
 
 	bool in_term = (mode & OLIST_WINDOW) ? true : false;
 
@@ -485,12 +485,12 @@ void show_inven(int mode, item_tester tester)
 
 	/* Include burden for term windows */
 	if (in_term) {
+		weight_remaining_description(burden, sizeof(burden), player);
 		strnfmt(items[num_obj].label, sizeof(items[num_obj].label),
-		        "Burden %d.%d lb (%d.%d lb %s) ",
+		        "Burden %d.%d lb (%s) ",
 		        player->upkeep->total_weight / 10,
 				player->upkeep->total_weight % 10,
-		        abs(diff) / 10, abs(diff) % 10,
-		        (diff < 0 ? "overweight" : "remaining"));
+		        burden);
 
 		items[num_obj].object = NULL;
 		num_obj++;
@@ -1842,4 +1842,3 @@ void textui_cmd_toggle_ignore(void)
 	player->upkeep->notice |= PN_IGNORE;
 	do_cmd_redraw();
 }
-
