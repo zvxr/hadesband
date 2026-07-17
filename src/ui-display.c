@@ -546,6 +546,11 @@ static void prt_level_theme(int row, int col)
 {
 	struct level_theme *theme = level_theme_by_depth(player->depth);
 
+	if ((!theme || !theme->label) && cave && cave->feat_count &&
+			cave->feat_count[FEAT_STORE_DUNGEON] > 0) {
+		theme = level_theme_for_seed_terrain(FEAT_STORE_DUNGEON);
+	}
+
 	if (theme && theme->label) {
 		c_put_str(theme->label_color, format("%-13s", theme->label), row, col);
 	} else {

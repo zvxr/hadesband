@@ -102,13 +102,6 @@
 # 'resist-flag' is the race flag a monster must have to be able to enter
 # damaging terrain
 
-# 'spawn' controls fixed-depth placement of dungeon room features that have the
-# DUNGEON_ROOM flag.  The first value is the exact dungeon level.  The
-# remaining values are percent chances for Classic, Recall, and Nightmare
-# modes.
-# For spawn:20:5:50:100, the feature has a 5% chance on floor 20 in Classic,
-# a 50% chance in Recall, and a 100% chance in Nightmare.
-
 # 'desc' is for description. As many desc: lines may be used as are needed
 # to describe the terrain. Note that lines will need spaces at their
 # ends or the beginning of the next line to prevent words from running
@@ -256,8 +249,6 @@ name:Dungeon Organics
 graphics:9:g
 priority:20
 flags:SHOP | LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY | DUNGEON_ROOM
-spawn:20:5:50:100
-spawn:60:5:50:100
 look-prefix:the entrance to
 look-in-preposition:at
 desc:A strange underground trader of mushrooms, potions, scrolls, and amulets.

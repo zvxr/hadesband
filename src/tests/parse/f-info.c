@@ -22,14 +22,7 @@ int setup_tests(void **state) {
 int teardown_tests(void *state) {
 	struct parser *p = (struct parser*) state;
 	struct feature *f = (struct feature*) parser_priv(p);
-	struct feature_spawn *spawn = f ? f->spawns : NULL;
 
-	while (spawn) {
-		struct feature_spawn *next = spawn->next;
-
-		mem_free(spawn);
-		spawn = next;
-	}
 	string_free(f->look_in_preposition);
 	string_free(f->look_prefix);
 	string_free(f->confused_msg);
@@ -80,8 +73,6 @@ static int test_missing_header_record0(void *state) {
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "resist-flag:IM_FIRE");
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
-	r = parser_parse(p, "spawn:20:5:50:100");
-	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	ok;
 }
 
@@ -119,7 +110,6 @@ static int test_code0(void *state) {
 	null(f->look_prefix);
 	null(f->look_in_preposition);
 	eq(f->resist_flag, 0);
-	null(f->spawns);
 	ok;
 }
 
@@ -439,49 +429,6 @@ static int test_resist_flag_bad0(void *state) {
 	ok;
 }
 
-static int test_spawn0(void *state) {
-	struct parser *p = (struct parser*) state;
-	enum parser_error r = parser_parse(p, "spawn:20:5:50:100");
-	struct feature *f;
-
-	eq(r, PARSE_ERROR_NONE);
-	f = (struct feature*) parser_priv(p);
-	notnull(f);
-	notnull(f->spawns);
-	eq(f->spawns->depth, 20);
-	eq(f->spawns->classic_chance, 5);
-	eq(f->spawns->recall_chance, 50);
-	eq(f->spawns->nightmare_chance, 100);
-	null(f->spawns->next);
-	ok;
-}
-
-static int test_spawn_multiple0(void *state) {
-	struct parser *p = (struct parser*) state;
-	enum parser_error r = parser_parse(p, "spawn:60:5:50:100");
-	struct feature *f;
-
-	eq(r, PARSE_ERROR_NONE);
-	f = (struct feature*) parser_priv(p);
-	notnull(f);
-	notnull(f->spawns);
-	notnull(f->spawns->next);
-	eq(f->spawns->next->depth, 60);
-	eq(f->spawns->next->classic_chance, 5);
-	eq(f->spawns->next->recall_chance, 50);
-	eq(f->spawns->next->nightmare_chance, 100);
-	null(f->spawns->next->next);
-	ok;
-}
-
-static int test_spawn_bad0(void *state) {
-	struct parser *p = (struct parser*) state;
-	enum parser_error r = parser_parse(p, "spawn:20:5:50:101");
-
-	eq(r, PARSE_ERROR_OUT_OF_BOUNDS);
-	ok;
-}
-
 const char *suite_name = "parse/f-info";
 /*
  * test_missing_header_record0() and test_code_bad0() have to be before
@@ -511,8 +458,5 @@ struct test tests[] = {
 	{ "look_in_preposition0", test_look_in_preposition0 },
 	{ "resist_flag0", test_resist_flag0 },
 	{ "resist_flag_bad0", test_resist_flag_bad0 },
-	{ "spawn0", test_spawn0 },
-	{ "spawn_multiple0", test_spawn_multiple0 },
-	{ "spawn_bad0", test_spawn_bad0 },
 	{ NULL, NULL }
 };

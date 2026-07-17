@@ -285,11 +285,17 @@ struct vault {
 /**
  * Information about template room generation
  */
+struct room_template_tag {
+	char *name;                 /*!< Tag name */
+	struct room_template_tag *next;
+};
+
 struct room_template {
     struct room_template *next; /*!< Pointer to next room template */
 
     char *name;         /*!< Room name */
     char *text;         /*!< Grid by grid description of room layout */
+    struct room_template_tag *tags; /*!< Semantic room tags */
 
     bitflag flags[ROOMF_SIZE];	/*!< Room flags */
 

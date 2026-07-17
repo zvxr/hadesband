@@ -1,16 +1,24 @@
 # file: level_theme.txt
 
-# Named themes for specific dungeon levels.  These can provide both a sidebar
-# label and generation adjustments for distinctive floors.
+# Named themes for specific dungeon levels.  These can provide a sidebar label
+# and, as the theme system expands, generation rules for distinctive floors.
 
-# depth: internal dungeon level (500 ft is depth 10)
+# theme: named generation theme
+# spawn: exact depth : Classic chance : Recall chance : Nightmare chance
 # label: sidebar label to show below the depth
 # label-color: Angband color character
-# organic-bloom: vegetation : tree : wood : soil
-# The organic bloom percentages are rolled independently for each suitable room
-# floor grid.  Any remainder up to 100 leaves the grid unchanged.
+# seed-room-tag:room-template tag:percent chance
+# seed-terrain:terrain feature code
 
-depth:10
+theme:Forest
 label:Forest
 label-color:g
-organic-bloom:45:10:6:5
+spawn:10:100:100:100
+seed-room-tag:organic:80
+
+theme:Dungeon Store
+label:Dungeon Store
+label-color:y
+spawn:20:5:50:100
+spawn:60:5:50:100
+seed-terrain:STORE_DUNGEON

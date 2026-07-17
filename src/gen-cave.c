@@ -149,9 +149,11 @@ static bool build_dungeon_store_room(struct chunk *c)
 {
 	int attempt;
 	const struct feature *feat = &f_info[FEAT_STORE_DUNGEON];
+	struct level_theme *theme = NULL;
 
 	if (!tf_has(feat->flags, TF_DUNGEON_ROOM)) return false;
-	if (!feat_spawns_at_depth(FEAT_STORE_DUNGEON, c->depth, player)) {
+	if (!level_theme_seed_terrain_spawns(FEAT_STORE_DUNGEON, c->depth,
+			player, &theme)) {
 		return false;
 	}
 
@@ -201,7 +203,8 @@ static bool build_dungeon_store_room(struct chunk *c)
 			dun->cent_n++;
 		}
 
-		ROOM_LOG("Dungeon Organics");
+		ROOM_LOG("%s", theme && theme->label ? theme->label :
+			"Dungeon Organics");
 		return true;
 	}
 

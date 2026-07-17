@@ -32,6 +32,7 @@
 #include "obj-knowledge.h"
 #include "obj-tval.h"
 #include "obj-util.h"
+#include "player.h"
 #include "player-calcs.h"
 #include "player-timed.h"
 #include "player-util.h"
@@ -126,19 +127,81 @@ struct level_theme *level_theme_by_depth(int depth)
 	struct level_theme *theme = level_themes;
 
 	while (theme) {
+		struct level_theme_spawn *spawn = theme->spawns;
+
 		if (theme->depth == depth) {
 			break;
+		}
+		while (spawn) {
+			if (spawn->depth == depth && spawn->classic_chance == 100 &&
+					spawn->recall_chance == 100 &&
+					spawn->nightmare_chance == 100) {
+				return theme;
+			}
+			spawn = spawn->next;
 		}
 		theme = theme->next;
 	}
 	return theme;
 }
 
-bool level_theme_has_organic_bloom(const struct level_theme *theme)
+struct level_theme *level_theme_for_seed_terrain(int fidx)
 {
-	return theme && (theme->organic_vegetation > 0 ||
-		theme->organic_tree > 0 || theme->organic_wood > 0 ||
-		theme->organic_soil > 0);
+	struct level_theme *theme = level_themes;
+
+	while (theme) {
+		if (theme->seed_terrain == fidx) return theme;
+		theme = theme->next;
+	}
+	return NULL;
+}
+
+bool level_theme_seed_terrain_spawns(int fidx, int depth,
+	const struct player *p, struct level_theme **matched_theme)
+{
+	struct level_theme *theme = level_themes;
+	enum player_game_mode mode;
+
+	if (matched_theme) *matched_theme = NULL;
+	if (!depth) return false;
+
+	mode = player_get_game_mode(p);
+	while (theme) {
+		struct level_theme_spawn *spawn;
+
+		if (theme->seed_terrain != fidx) {
+			theme = theme->next;
+			continue;
+		}
+
+		for (spawn = theme->spawns; spawn; spawn = spawn->next) {
+			uint8_t chance;
+
+			if (spawn->depth != depth) continue;
+			switch (mode) {
+				case PLAYER_GAME_MODE_CLASSIC:
+					chance = spawn->classic_chance;
+					break;
+				case PLAYER_GAME_MODE_RECALL:
+					chance = spawn->recall_chance;
+					break;
+				case PLAYER_GAME_MODE_NIGHTMARE:
+					chance = spawn->nightmare_chance;
+					break;
+				default:
+					chance = 0;
+					break;
+			}
+			if (randint0(100) < chance) {
+				if (matched_theme) *matched_theme = theme;
+				return true;
+			}
+			return false;
+		}
+
+		theme = theme->next;
+	}
+	return false;
 }
 
 /**

@@ -1185,6 +1185,27 @@ static enum parser_error parse_level_theme_depth(struct parser *p)
 
 	theme->depth = depth;
 	theme->label_color = COLOUR_WHITE;
+	theme->seed_terrain = -1;
+	parser_setpriv(p, theme);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_level_theme_name(struct parser *p)
+{
+	const char *name = parser_getstr(p, "name");
+	struct level_theme *last = parser_priv(p);
+	struct level_theme *theme = mem_zalloc(sizeof *theme);
+
+	if (last) {
+		last->next = theme;
+	} else {
+		level_themes = theme;
+	}
+
+	theme->name = string_make(name);
+	theme->depth = -1;
+	theme->label_color = COLOUR_WHITE;
+	theme->seed_terrain = -1;
 	parser_setpriv(p, theme);
 	return PARSE_ERROR_NONE;
 }
@@ -1213,15 +1234,68 @@ static enum parser_error parse_level_theme_label_color(struct parser *p)
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_level_theme_organic_bloom(struct parser *p)
+static enum parser_error parse_level_theme_spawn(struct parser *p)
 {
 	struct level_theme *theme = parser_priv(p);
+	struct level_theme_spawn *spawn;
+	struct level_theme_spawn **tail;
+	int depth = parser_getint(p, "depth");
+	int classic = parser_getint(p, "classic");
+	int recall = parser_getint(p, "recall");
+	int nightmare = parser_getint(p, "nightmare");
 
 	if (!theme) return PARSE_ERROR_MISSING_RECORD_HEADER;
-	theme->organic_vegetation = parser_getint(p, "vegetation");
-	theme->organic_tree = parser_getint(p, "tree");
-	theme->organic_wood = parser_getint(p, "wood");
-	theme->organic_soil = parser_getint(p, "soil");
+	if (depth < 0 || depth > 255 || classic < 0 || classic > 100 ||
+			recall < 0 || recall > 100 || nightmare < 0 ||
+			nightmare > 100) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
+
+	spawn = mem_zalloc(sizeof *spawn);
+	spawn->depth = depth;
+	spawn->classic_chance = classic;
+	spawn->recall_chance = recall;
+	spawn->nightmare_chance = nightmare;
+
+	tail = &theme->spawns;
+	while (*tail) {
+		tail = &(*tail)->next;
+	}
+	*tail = spawn;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_level_theme_prefer_room_tag(struct parser *p)
+{
+	struct level_theme *theme = parser_priv(p);
+	struct level_theme_seed_room_tag *tag;
+	struct level_theme_seed_room_tag **tail;
+	int chance = parser_getint(p, "chance");
+
+	if (!theme) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (chance < 0 || chance > 100) return PARSE_ERROR_INVALID_VALUE;
+
+	tag = mem_zalloc(sizeof *tag);
+	tag->tag = string_make(parser_getstr(p, "tag"));
+	tag->chance = chance;
+
+	tail = &theme->seed_room_tags;
+	while (*tail) {
+		tail = &(*tail)->next;
+	}
+	*tail = tag;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_level_theme_seed_terrain(struct parser *p)
+{
+	struct level_theme *theme = parser_priv(p);
+	const char *code = parser_getsym(p, "code");
+	int fidx = lookup_feat_code(code);
+
+	if (!theme) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (fidx < 0) return PARSE_ERROR_INVALID_VALUE;
+	theme->seed_terrain = fidx;
 	return PARSE_ERROR_NONE;
 }
 
@@ -1230,10 +1304,14 @@ static struct parser *init_parse_level_theme(void)
 	struct parser *p = parser_new();
 
 	parser_reg(p, "depth int depth", parse_level_theme_depth);
+	parser_reg(p, "theme str name", parse_level_theme_name);
 	parser_reg(p, "label str label", parse_level_theme_label);
 	parser_reg(p, "label-color sym color", parse_level_theme_label_color);
-	parser_reg(p, "organic-bloom int vegetation int tree int wood int soil",
-		parse_level_theme_organic_bloom);
+	parser_reg(p, "spawn int depth int classic int recall int nightmare",
+		parse_level_theme_spawn);
+	parser_reg(p, "seed-room-tag str tag int chance",
+		parse_level_theme_prefer_room_tag);
+	parser_reg(p, "seed-terrain sym code", parse_level_theme_seed_terrain);
 	return p;
 }
 
@@ -1254,7 +1332,23 @@ static void cleanup_level_theme(void)
 
 	while (theme) {
 		struct level_theme *old = theme;
+		struct level_theme_spawn *spawn = theme->spawns;
+		struct level_theme_seed_room_tag *tag = theme->seed_room_tags;
 
+		while (spawn) {
+			struct level_theme_spawn *next = spawn->next;
+
+			mem_free(spawn);
+			spawn = next;
+		}
+		while (tag) {
+			struct level_theme_seed_room_tag *next = tag->next;
+
+			string_free(tag->tag);
+			mem_free(tag);
+			tag = next;
+		}
+		string_free(theme->name);
 		string_free(theme->label);
 		theme = theme->next;
 		mem_free(old);
@@ -2300,37 +2394,6 @@ static enum parser_error parse_feat_look_in_preposition(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_feat_spawn(struct parser *p) {
-	struct feature *f = parser_priv(p);
-	unsigned int depth = parser_getuint(p, "depth");
-	unsigned int classic = parser_getuint(p, "classic");
-	unsigned int recall = parser_getuint(p, "recall");
-	unsigned int nightmare = parser_getuint(p, "nightmare");
-	struct feature_spawn *spawn;
-	struct feature_spawn **tail;
-
-	if (!f) {
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	}
-	if (depth > 255 || classic > 100 || recall > 100 || nightmare > 100) {
-		return PARSE_ERROR_OUT_OF_BOUNDS;
-	}
-
-	spawn = mem_zalloc(sizeof(*spawn));
-	spawn->depth = depth;
-	spawn->classic_chance = classic;
-	spawn->recall_chance = recall;
-	spawn->nightmare_chance = nightmare;
-
-	tail = &f->spawns;
-	while (*tail) {
-		tail = &(*tail)->next;
-	}
-	*tail = spawn;
-
-	return PARSE_ERROR_NONE;
-}
-
 static enum parser_error parse_feat_resist_flag(struct parser *p) {
 	struct feature *f = parser_priv(p);
 	int flag = lookup_flag(mon_race_flags, parser_getsym(p, "flag"));
@@ -2364,8 +2427,6 @@ static struct parser *init_parse_feat(void) {
 	parser_reg(p, "confused-msg str text", parse_feat_confused_msg);
 	parser_reg(p, "look-prefix str text", parse_feat_look_prefix);
 	parser_reg(p, "look-in-preposition str text", parse_feat_look_in_preposition);
-	parser_reg(p, "spawn uint depth uint classic uint recall uint nightmare",
-		parse_feat_spawn);
 	parser_reg(p, "resist-flag sym flag", parse_feat_resist_flag);
 
 	/*
@@ -2417,14 +2478,6 @@ static errr finish_parse_feat(struct parser *p) {
 static void cleanup_feat(void) {
 	int idx;
 	for (idx = 0; idx < FEAT_MAX; idx++) {
-		struct feature_spawn *spawn = f_info[idx].spawns;
-
-		while (spawn) {
-			struct feature_spawn *next = spawn->next;
-
-			mem_free(spawn);
-			spawn = next;
-		}
 		string_free(f_info[idx].look_in_preposition);
 		string_free(f_info[idx].look_prefix);
 		string_free(f_info[idx].confused_msg);

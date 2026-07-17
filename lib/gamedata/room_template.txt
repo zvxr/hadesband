@@ -19,6 +19,7 @@
 # doors:number of possible door positions
 # tval:tval of treasure to place
 # flags:flag | ...
+# tags:tag | ...
 # D:lines giving full layout of room using symbols below
 
 # The value set on 'type' lines should be one.  You could use another
@@ -32,6 +33,13 @@
 # The value set on the 'rating' line allows for selection of a subset
 # of the room templates by a dungeon profile in dungeon_profile.txt.
 # The current profiles use values of 1, 2, or 3 for the rating.
+#
+# 'tags' lines are optional and provide semantic labels for future themed
+# generation.  For example, tags:organic | grove marks a room as available
+# to a Forest theme with seed-room-tag:organic.  Room-template tags are
+# parsed in src/generate.c; template choice is in src/gen-room.c's
+# random_room_template() and build_template(); dungeon-level theme rules
+# are parsed from level_theme.txt in src/init.c.
 #
 # Where doors is set to n, the generator will pick a number between
 # 1 and n and place secret doors at squares marked with that number.

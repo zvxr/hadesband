@@ -86,52 +86,6 @@ static const char *room_flags[] = {
 	NULL
 };
 
-static bool square_allows_organic_bloom(struct chunk *c, struct loc grid)
-{
-	if (!square_isroom(c, grid)) return false;
-	if (square_isvault(c, grid)) return false;
-	if (!square_isfloor(c, grid)) return false;
-	if (square(c, grid)->mon) return false;
-	if (square_istrap(c, grid)) return false;
-	if (square_object(c, grid)) return false;
-
-	return true;
-}
-
-static void apply_organic_bloom(struct chunk *c)
-{
-	const struct level_theme *theme = level_theme_by_depth(c->depth);
-	int y, x;
-	int vegetation, tree, wood, soil;
-
-	if (!level_theme_has_organic_bloom(theme)) return;
-
-	vegetation = theme->organic_vegetation;
-	tree = vegetation + theme->organic_tree;
-	wood = tree + theme->organic_wood;
-	soil = wood + theme->organic_soil;
-
-	for (y = 0; y < c->height; y++) {
-		for (x = 0; x < c->width; x++) {
-			struct loc grid = loc(x, y);
-			int roll;
-
-			if (!square_allows_organic_bloom(c, grid)) continue;
-
-			roll = randint0(100);
-			if (roll < vegetation) {
-				square_set_feat(c, grid, FEAT_VEGETATION);
-			} else if (roll < tree) {
-				square_set_feat(c, grid, FEAT_TREE);
-			} else if (roll < wood) {
-				square_set_feat(c, grid, FEAT_WOOD);
-			} else if (roll < soil) {
-				square_set_feat(c, grid, FEAT_SOIL);
-			}
-		}
-	}
-}
-
 
 /**
  * Parsing functions for dungeon_profile.txt
@@ -465,6 +419,34 @@ static enum parser_error parse_room_flags(struct parser *p) {
 	return st ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_room_tags(struct parser *p) {
+	struct room_template *t = parser_priv(p);
+	struct room_template_tag **tail;
+	char *s, *st;
+
+	if (!t)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	tail = &t->tags;
+	while (*tail) {
+		tail = &(*tail)->next;
+	}
+
+	s = string_make(parser_getstr(p, "tags"));
+	st = strtok(s, " |");
+	while (st) {
+		struct room_template_tag *tag = mem_zalloc(sizeof *tag);
+
+		tag->name = string_make(st);
+		*tail = tag;
+		tail = &tag->next;
+		st = strtok(NULL, " |");
+	}
+	mem_free(s);
+
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_room_d(struct parser *p) {
 	struct room_template *t = parser_priv(p);
 
@@ -485,6 +467,7 @@ static struct parser *init_parse_room(void) {
 	parser_reg(p, "doors uint doors", parse_room_doors);
 	parser_reg(p, "tval sym tval", parse_room_tval);
 	parser_reg(p, "flags str flags", parse_room_flags);
+	parser_reg(p, "tags str tags", parse_room_tags);
 	parser_reg(p, "D str text", parse_room_d);
 	return p;
 }
@@ -503,7 +486,16 @@ static void cleanup_room(void)
 {
 	struct room_template *t, *next;
 	for (t = room_templates; t; t = next) {
+		struct room_template_tag *tag = t->tags;
+
 		next = t->next;
+		while (tag) {
+			struct room_template_tag *tag_next = tag->next;
+
+			string_free(tag->name);
+			mem_free(tag);
+			tag = tag_next;
+		}
 		mem_free(t->name);
 		mem_free(t->text);
 		mem_free(t);
@@ -1208,9 +1200,6 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 			event_signal_flag(EVENT_GEN_LEVEL_END, false);
 			continue;
 		}
-
-		/* Seed the first organic bloom while room flags are still available. */
-		apply_organic_bloom(chunk);
 
 		/* Ensure quest monsters */
 		if (dun->quest) {

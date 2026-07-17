@@ -21,6 +21,8 @@
 
 #include "cave.h"
 
+struct player;
+
 struct level {
 	int depth;
 	char *name;
@@ -29,14 +31,28 @@ struct level {
 	struct level *next;
 };
 
+struct level_theme_seed_room_tag {
+	char *tag;
+	uint8_t chance;
+	struct level_theme_seed_room_tag *next;
+};
+
+struct level_theme_spawn {
+	struct level_theme_spawn *next;
+	uint8_t depth;
+	uint8_t classic_chance;
+	uint8_t recall_chance;
+	uint8_t nightmare_chance;
+};
+
 struct level_theme {
+	char *name;
 	int depth;
 	char *label;
 	uint8_t label_color;
-	int organic_vegetation;
-	int organic_tree;
-	int organic_wood;
-	int organic_soil;
+	struct level_theme_spawn *spawns;
+	struct level_theme_seed_room_tag *seed_room_tags;
+	int seed_terrain;
 	struct level_theme *next;
 };
 
@@ -53,7 +69,9 @@ extern struct level_theme *level_themes;
 struct level *level_by_name(const char *name);
 struct level *level_by_depth(int depth);
 struct level_theme *level_theme_by_depth(int depth);
-bool level_theme_has_organic_bloom(const struct level_theme *theme);
+struct level_theme *level_theme_for_seed_terrain(int fidx);
+bool level_theme_seed_terrain_spawns(int fidx, int depth,
+	const struct player *p, struct level_theme **matched_theme);
 bool is_daytime(void);
 int turn_energy(int speed);
 void play_ambient_sound(void);
