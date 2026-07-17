@@ -156,6 +156,19 @@ struct level_theme *level_theme_for_seed_terrain(int fidx)
 	return NULL;
 }
 
+const char *level_theme_roll_seed_room_tag(int depth)
+{
+	struct level_theme *theme = level_theme_by_depth(depth);
+	struct level_theme_seed_room_tag *tag;
+
+	if (!theme) return NULL;
+
+	for (tag = theme->seed_room_tags; tag; tag = tag->next) {
+		if (randint0(100) < tag->chance) return tag->tag;
+	}
+	return NULL;
+}
+
 bool level_theme_seed_terrain_spawns(int fidx, int depth,
 	const struct player *p, struct level_theme **matched_theme)
 {

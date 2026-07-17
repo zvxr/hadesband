@@ -1172,6 +1172,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 		dun->join = NULL;
 		dun->one_off_above = NULL;
 		dun->one_off_below = NULL;
+		dun->seed_room_tag = NULL;
 		dun->curr_join = NULL;
 		dun->nstair_room = 0;
 		dun->quest = is_quest(p, p->depth);

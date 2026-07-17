@@ -168,6 +168,9 @@ struct dun_data {
     /*!< Current pit profile in use */
     struct pit_profile *pit_type;
 
+    /*!< Requested room template tag for the room currently being built */
+    const char *seed_room_tag;
+
     /*!< Info for connecting to persistent levels */
     struct connector *join;
 

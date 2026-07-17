@@ -211,6 +211,31 @@ static bool build_dungeon_store_room(struct chunk *c)
 	return false;
 }
 
+static bool build_seed_room_tagged_template(struct chunk *c, int by, int bx,
+											int key, bool finds_own_space,
+											const char *tag)
+{
+	int i;
+
+	if (!tag) return false;
+
+	for (i = 0; i < dun->profile->n_room_profiles; i++) {
+		struct room_profile profile = dun->profile->room_profiles[i];
+
+		if (profile.builder != build_template) continue;
+		if (profile.cutoff <= key) continue;
+
+		dun->seed_room_tag = tag;
+		if (room_build(c, by, bx, profile, finds_own_space)) {
+			dun->seed_room_tag = NULL;
+			return true;
+		}
+		dun->seed_room_tag = NULL;
+	}
+
+	return false;
+}
+
 
 /**
  * Reset entrance data for rooms in global dun.
@@ -1297,6 +1322,12 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width,
 		while (i == rarity && i < dun->profile->max_rarity) {
 			if (randint0(dun_unusual) < 50 + c->depth / 2) rarity++;
 			i++;
+		}
+
+		if (build_seed_room_tagged_template(c, by, bx, key, false,
+				level_theme_roll_seed_room_tag(c->depth))) {
+			built++;
+			continue;
 		}
 
 		/* Once we have a key and a rarity, we iterate through out list of
@@ -2883,6 +2914,11 @@ static struct chunk *modified_chunk(struct player *p, int depth, int height,
 			i++;
 		}
 
+		if (build_seed_room_tagged_template(c, by, bx, key, true,
+				level_theme_roll_seed_room_tag(c->depth))) {
+			continue;
+		}
+
 		/* Once we have a key and a rarity, we iterate through out list of
 		 * room profiles looking for a match (whose cutoff > key and whose
 		 * rarity > this rarity). We try building the room, and if it works
@@ -3134,6 +3170,11 @@ static struct chunk *moria_chunk(struct player *p, int depth, int height,
 		while (i == rarity && i < dun->profile->max_rarity) {
 			if (randint0(dun_unusual) < 50 + c->depth / 2) rarity++;
 			i++;
+		}
+
+		if (build_seed_room_tagged_template(c, by, bx, key, true,
+				level_theme_roll_seed_room_tag(c->depth))) {
+			continue;
 		}
 
 		/* Once we have a key and a rarity, we iterate through out list of

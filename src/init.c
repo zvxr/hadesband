@@ -1276,7 +1276,7 @@ static enum parser_error parse_level_theme_prefer_room_tag(struct parser *p)
 	if (chance < 0 || chance > 100) return PARSE_ERROR_INVALID_VALUE;
 
 	tag = mem_zalloc(sizeof *tag);
-	tag->tag = string_make(parser_getstr(p, "tag"));
+	tag->tag = string_make(parser_getsym(p, "tag"));
 	tag->chance = chance;
 
 	tail = &theme->seed_room_tags;
@@ -1309,7 +1309,7 @@ static struct parser *init_parse_level_theme(void)
 	parser_reg(p, "label-color sym color", parse_level_theme_label_color);
 	parser_reg(p, "spawn int depth int classic int recall int nightmare",
 		parse_level_theme_spawn);
-	parser_reg(p, "seed-room-tag str tag int chance",
+	parser_reg(p, "seed-room-tag sym tag int chance",
 		parse_level_theme_prefer_room_tag);
 	parser_reg(p, "seed-terrain sym code", parse_level_theme_seed_terrain);
 	return p;

@@ -88,6 +88,349 @@
 
 # Standard rectangular rooms 
 
+name:Organic Small Round
+type:1
+rating:1
+tags:organic | round
+rows:8
+columns:13
+doors:1
+tval:0
+flags:FEW_ENTRANCES
+D:   ##%%%##   
+D: #%#..v..#%# 
+D:##..ttt....##
+D:%..vtwtv....%
+D:%...vtm.....%
+D:##....tt...##
+D: #%#..v..#%# 
+D:   ##%%%##   
+
+name:Organic Pillars
+type:1
+rating:1
+tags:organic
+rows:10
+columns:22
+doors:1
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%
+D:%......v.......v.....%
+D:%.ttt......m.....ttt.%
+D:%.twt..v......v..twt.%
+D:%..t.....ttt.....t...%
+D:%...t....twt....t....%
+D:%.twt..v......v..twt.%
+D:%.ttt.....m......ttt.%
+D:%.....v.......v......%
+D:%%%%%%%%%%%%%%%%%%%%%%
+
+name:Organic Oval
+type:1
+rating:1
+tags:organic
+rows:10
+columns:21
+doors:1
+tval:0
+flags:FEW_ENTRANCES
+D:      #%%%%%%%#      
+D:   #%%#...v...#%%#   
+D: #%#.....ttt.....#%# 
+D:%#..v..ttwtt..v....#%
+D:%.....v.ttt...m.....%
+D:%...m....v..ttt.....%
+D:%#...v..ttwtt..v...#%
+D: #%#.....ttt.....#%# 
+D:   #%%#...v...#%%#   
+D:      #%%%%%%%#      
+
+name:Organic Dumb-bell
+type:1
+rating:1
+tags:organic
+rows:7
+columns:28
+doors:1
+tval:0
+D: ##%%%%##          ##%%%%## 
+D:##..v...##        ##...v..##
+D:%..ttt...#%%%%%%%%#...ttt..%
+D:%..twt...(.v..m..v(...twt..%
+D:%..ttt...#%%%%%%%%#...ttt..%
+D:##...m..##        ##..m...##
+D: ##%%%%##          ##%%%%## 
+
+name:Organic Hidden Grove
+type:1
+rating:1
+tags:organic
+rows:7
+columns:7
+doors:4
+tval:0
+flags:FEW_ENTRANCES
+D:%%#%#%%
+D:%.(v(.%
+D:#t#t#t#
+D:%.wmv.%
+D:#t#t#t#
+D:%.(v(.%
+D:%%#%#%%
+
+name:Organic Ladder
+type:1
+rating:1
+tags:organic
+rows:11
+columns:7
+doors:1
+tval:0
+D:%%%%%%%
+D:%..v..%
+D:%.ttt.%
+D:%.twt.%
+D:%..m..%
+D:%.ttt.%
+D:%.twt.%
+D:%..v..%
+D:%.ttt.%
+D:%..m..%
+D:%%%%%%%
+
+name:Organic Thin Square
+type:1
+rating:1
+tags:organic
+rows:11
+columns:8
+doors:4
+tval:0
+D:%%%%%%%%
+D:%..v...%
+D:%.ttt..%
+D:%.twt..%
+D:%..m...%
+D:#(tttt(#
+D:%...m..%
+D:%..twt.%
+D:%..ttt.%
+D:%...v..%
+D:%%%%%%%%
+
+name:Organic Mini Moat
+type:1
+rating:1
+tags:organic
+rows:8
+columns:15
+doors:2
+tval:0
+D:%%%%%%%%%%%%%%%
+D:%.....v.......%
+D:%.ttttttttttt.%
+D:%.twv...m..wt.%
+D:%.tw..m...vwt.%
+D:%.ttttttttttt.%
+D:%.......v.....%
+D:%%%%%%%%%%%%%%%
+
+name:Organic Two Copses
+type:1
+rating:1
+tags:organic
+rows:9
+columns:15
+doors:4
+tval:0
+D:%%%%%%%%%%%%%%%
+D:%.....v.......%
+D:%.ttt.....ttt.%
+D:%.twt..m..twt.%
+D:%..ttt.v.ttt..%
+D:%.twt..m..twt.%
+D:%.ttt.....ttt.%
+D:%.......v.....%
+D:%%%%%%%%%%%%%%%
+
+name:Organic Winding Path
+type:1
+rating:1
+tags:organic
+rows:11
+columns:15
+doors:3
+tval:0
+D:%%#####%%%%%%%%
+D:%.#...#..v....%
+D:%.t...t.ttt...%
+D:%..tmt..twt...%
+D:%.##t##.ttt.v.%
+D:%.#...#(..m...%
+D:%.ttt...##t##.%
+D:%.twt.v.#...#.%
+D:%.ttt...t...t.%
+D:%....v..#...#.%
+D:%%%%%%%%#####%%
+
+name:Organic Root Gate
+type:1
+rating:1
+tags:organic
+rows:11
+columns:15
+doors:2
+tval:0
+flags:FEW_ENTRANCES
+D:%%%%%%#%#%%%%%%
+D:%.....(.(.....%
+D:###ttt...ttt###
+D:#..twt.v.twt..#
+D:#..ttt.m.ttt..#
+D:###1###.###1###
+D:#..ttt.m.ttt..#
+D:#..twt.v.twt..#
+D:###ttt...ttt###
+D:%.....(.(.....%
+D:%%%%%%#%#%%%%%%
+
+name:Organic Staggered Chambers
+type:1
+rating:1
+tags:organic
+rows:11
+columns:16
+doors:2
+tval:0
+D:#%%#%%#%%#%%#%%#
+D:%..v..v..v..v..%
+D:%..ttt...ttt...%
+D:#ttwt..m.twt..t#
+D:%..ttt...ttt...%
+D:%....v.mm.v....%
+D:%...ttt...ttt..%
+D:#t..twt.m..twtt#
+D:%...ttt...ttt..%
+D:%..v..v..v..v..%
+D:#%%#%%#%%#%%#%%#
+
+name:Organic Long Hall
+type:1
+rating:1
+tags:organic
+rows:7
+columns:23
+doors:4
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%
+D:%..v....ttt.....v.....%
+D:%.ttt...twt...ttt.....%
+D:#..t..m.ttt.m..t......#
+D:%.ttt...v.....ttt.....%
+D:%....v.....m....v.....%
+D:%%%%%%%%%%%%%%%%%%%%%%%
+
+name:Great Tree
+type:1
+rating:2
+tags:organic | round
+rows:11
+columns:25
+doors:2
+tval:0
+flags:FEW_ENTRANCES
+D:     #%%%%%###%%%%%#     
+D:   #%#.....vv.....#%#    
+D:   ##..v...ttt...v..##   
+D:  ##.....ttwwwtt.....##  
+D:  %..v..ttwwwwwtt..v..%  
+D:  %.....ttwwmwwtt.....%  
+D:  %..v..ttwwwwwtt..v..%  
+D:  ##.....ttwwwtt.....##  
+D:   ##..v...ttt...m..##   
+D:   #%#.....vv.....#%#    
+D:     #%%%%%###%%%%%#     
+
+name:Intertwined Groves
+type:1
+rating:2
+tags:organic | round
+rows:11
+columns:25
+doors:2
+tval:0
+flags:FEW_ENTRANCES
+D:     #%%%%%# #%%%%%#     
+D:   #%#..v..###..v..#%#   
+D:  ##...ttt.....ttt...##  
+D: ##...ttwtt...ttwtt...## 
+D: %..v..ttt..m..ttt..v..% 
+D: %......v..ttt..v......% 
+D: %..v..ttt..m..ttt..v..% 
+D: ##...ttwtt...ttwtt...## 
+D:  ##...ttt.....ttt...##  
+D:   #%#..v..###..v..#%#   
+D:     #%%%%%# #%%%%%#     
+
+name:Hidden Root Cellar
+type:1
+rating:2
+tags:organic
+rows:11
+columns:17
+doors:4
+tval:0
+D:%%%%%%%%%%%%%%%%%
+D:%...v.......v...%
+D:%.ttt.#####.ttt.%
+D:%.twt.#...#.twt.%
+D:%.ttt.#2#.#.ttt.%
+D:%..v..+m1m+..v..%
+D:%.ttt.#4#.#.ttt.%
+D:%.twt.#...#.twt.%
+D:%.ttt.#####.ttt.%
+D:%...v.......v...%
+D:%%%%%%%%%%%%%%%%%
+
+name:Organic Larder
+type:1
+rating:3
+tags:organic
+rows:9
+columns:17
+doors:2
+tval:mushroom
+D:%%%%%%%%%%%%%%%%%
+D:%..m..v...m..v..%
+D:%.ttt...m...ttt.%
+D:%.twt.[...].twt.%
+D:%..ttt..m..ttt..%
+D:%.twt.[...].twt.%
+D:%.ttt...v...ttt.%
+D:%..v..m...v..m..%
+D:%%%%%%%%%%%%%%%%%
+
+name:Organic Ring Chamber
+type:1
+rating:3
+tags:organic | round
+rows:11
+columns:17
+doors:2
+tval:ring
+flags:FEW_ENTRANCES
+D:    #%%%%%%%#    
+D:  ###...v...###  
+D: ##...ttttt...## 
+D:##..ttwwwwwtt..##
+D:%..ttw..9..wtt..%
+D:%..ttw.[8].wtt..%
+D:%..ttw..9..wtt..%
+D:##..ttwwwwwtt..##
+D: ##...ttttt...## 
+D:  ###...v...###  
+D:    #%%%%%%%#    
+
 name:Small Grove
 type:1
 rating:4

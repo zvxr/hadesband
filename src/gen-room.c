@@ -67,6 +67,43 @@ static struct room_template *random_room_template(int typ, int rating)
 	return r;
 }
 
+static bool room_template_has_tag(const struct room_template *t,
+								  const char *tag)
+{
+	const struct room_template_tag *template_tag;
+
+	if (!tag) return true;
+	for (template_tag = t->tags; template_tag; template_tag = template_tag->next) {
+		if (streq(template_tag->name, tag)) return true;
+	}
+	return false;
+}
+
+/**
+ * Chooses a tagged room template of a particular kind at random.
+ * \param typ template room type to select
+ * \param rating template room rating to select
+ * \param tag required semantic room tag
+ * \return a pointer to the room template
+ */
+static struct room_template *random_room_template_tagged(int typ, int rating,
+														const char *tag)
+{
+	struct room_template *t = room_templates;
+	struct room_template *r = NULL;
+	int n = 1;
+
+	do {
+		if ((t->typ == typ) && (t->rat == rating) &&
+				room_template_has_tag(t, tag)) {
+			if (one_in_(n)) r = t;
+			n++;
+		}
+		t = t->next;
+	} while(t);
+	return r;
+}
+
 /**
  * Place a forest-floor marker from a room template.  The square is always
  * soil, with a chance of a mushroom or a flying monster above it.
@@ -1427,7 +1464,9 @@ static bool build_room_template(struct chunk *c, struct loc centre, int ymax,
 static bool build_room_template_type(struct chunk *c, struct loc centre,
 									 int typ, int rating)
 {
-	struct room_template *room = random_room_template(typ, rating);
+	struct room_template *room = dun->seed_room_tag ?
+		random_room_template_tagged(typ, rating, dun->seed_room_tag) :
+		random_room_template(typ, rating);
 	
 	if (room == NULL)
 		return false;
