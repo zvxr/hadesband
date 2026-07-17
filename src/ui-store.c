@@ -117,6 +117,37 @@ struct store_context {
 	unsigned int scr_places_y[LOC_MAX];
 };
 
+/**
+ * Make a temporary, fully revealed view of an item for normal stores.
+ * This does not teach the player runes or alter the actual store stock.
+ */
+static struct object *store_display_object(struct store *store,
+	struct object *obj, struct object *view, struct object *known)
+{
+	if (store->feat == FEAT_HOME) {
+		return obj;
+	}
+
+	object_copy(view, obj);
+	object_copy(known, obj);
+	view->known = known;
+	known->known = NULL;
+	known->notice |= OBJ_NOTICE_ASSESSED;
+
+	return view;
+}
+
+static void store_display_object_wipe(struct store *store, struct object *view,
+	struct object *known)
+{
+	if (store->feat == FEAT_HOME) {
+		return;
+	}
+
+	object_wipe(known);
+	object_wipe(view);
+}
+
 /* Return a random hint from the global hints list */
 static const char *random_hint(void)
 {
@@ -266,7 +297,8 @@ static void store_display_recalc(struct store_context *ctx)
 static void store_display_entry(struct menu *menu, int oid, bool cursor, int row,
 								int col, int width)
 {
-	struct object *obj;
+	struct object *obj, *display_obj;
+	struct object object_body = OBJECT_NULL, known_object_body = OBJECT_NULL;
 	int32_t x;
 	uint32_t desc = ODESC_PREFIX;
 
@@ -281,6 +313,8 @@ static void store_display_entry(struct menu *menu, int oid, bool cursor, int row
 
 	/* Get the object */
 	obj = ctx->list[oid];
+	display_obj = store_display_object(store, obj, &object_body,
+		&known_object_body);
 
 	/* Describe the object - preserving insriptions in the home */
 	if (store->feat == FEAT_HOME) {
@@ -288,7 +322,7 @@ static void store_display_entry(struct menu *menu, int oid, bool cursor, int row
 	} else {
 		desc |= ODESC_FULL | ODESC_STORE;
 	}
-	object_desc(o_name, sizeof(o_name), obj, desc, player);
+	object_desc(o_name, sizeof(o_name), display_obj, desc, player);
 
 	/* Display the object */
 	c_put_str(obj->kind->base->attr, o_name, row, col);
@@ -317,6 +351,8 @@ static void store_display_entry(struct menu *menu, int oid, bool cursor, int row
 
 		c_put_str(colour, out_val, row, ctx->scr_places_x[LOC_PRICE]);
 	}
+
+	store_display_object_wipe(store, &object_body, &known_object_body);
 }
 
 
@@ -748,33 +784,39 @@ static bool store_purchase(struct store_context *ctx, int item, bool single)
  */
 static void store_examine(struct store_context *ctx, int item)
 {
-	struct object *obj;
+	struct object *obj, *display_obj;
+	struct object object_body = OBJECT_NULL, known_object_body = OBJECT_NULL;
 	char header[120];
 	textblock *tb;
 	region area = { 0, 0, 0, 0 };
 	uint32_t odesc_flags = ODESC_PREFIX | ODESC_FULL;
+	oinfo_detail_t oinfo_flags = OINFO_NONE;
 
 	if (item < 0) return;
 
 	/* Get the actual object */
 	obj = ctx->list[item];
+	display_obj = store_display_object(ctx->store, obj, &object_body,
+		&known_object_body);
 
 	/* Items in the home get less description */
 	if (ctx->store->feat == FEAT_HOME) {
 		odesc_flags |= ODESC_CAPITAL;
 	} else {
 		odesc_flags |= ODESC_STORE;
+		oinfo_flags |= OINFO_SPOIL;
 	}
 
 	/* No flush needed */
 	msg_flag = false;
 
 	/* Show full info in most stores, but normal info in player home */
-	tb = object_info(obj, OINFO_NONE);
-	object_desc(header, sizeof(header), obj, odesc_flags, player);
+	tb = object_info(display_obj, oinfo_flags);
+	object_desc(header, sizeof(header), display_obj, odesc_flags, player);
 
 	textui_textblock_show(tb, area, header);
 	textblock_free(tb);
+	store_display_object_wipe(ctx->store, &object_body, &known_object_body);
 
 	/* Browse book, then prompt for a command */
 	if (obj_can_browse(obj))
@@ -968,13 +1010,19 @@ static bool context_menu_store_item(struct store_context *ctx, const int oid, in
 
 	struct menu *m = menu_dynamic_new();
 	struct object *obj = ctx->list[oid];
+	struct object *display_obj;
+	struct object object_body = OBJECT_NULL, known_object_body = OBJECT_NULL;
 	menu_iter mod_iter;
 	int selected;
 	char *labels;
 	char header[120];
 
-	object_desc(header, sizeof(header), obj,
+	display_obj = store_display_object(store, obj, &object_body,
+		&known_object_body);
+
+	object_desc(header, sizeof(header), display_obj,
 		ODESC_PREFIX | ODESC_FULL | ((home) ? 0 : ODESC_STORE), player);
+	store_display_object_wipe(store, &object_body, &known_object_body);
 
 	labels = string_make(lower_case);
 	m->selections = labels;

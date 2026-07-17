@@ -375,12 +375,14 @@ static size_t obj_desc_chest(const struct object *obj, char *buf, size_t max,
 static size_t obj_desc_combat(const struct object *obj, char *buf, size_t max, 
 		size_t end, uint32_t mode, const struct player *p)
 {
+	bool store = mode & ODESC_STORE ? true : false;
 	bool spoil = mode & ODESC_SPOIL ? true : false;
+	bool show_all = !p || store || spoil;
 	int to_h, to_d, to_a;
 
 	/* Display damage dice if they are known */
 	if (kf_has(obj->kind->kind_flags, KF_SHOW_DICE) &&
-		(!p || (p->obj_k->dd && p->obj_k->ds))) {
+		(show_all || (p->obj_k->dd && p->obj_k->ds))) {
 		strnfcat(buf, max, &end, " (%dd%d)", obj->dd, obj->ds);
 	}
 
@@ -398,7 +400,7 @@ static size_t obj_desc_combat(const struct object *obj, char *buf, size_t max,
 	to_a = object_to_ac(obj);
 
 	/* Show weapon bonuses if we know of any */
-	if ((!p || (p->obj_k->to_h && p->obj_k->to_d))
+	if ((show_all || (p->obj_k->to_h && p->obj_k->to_d))
 			&& (tval_is_weapon(obj) || to_d
 			|| (to_h && !tval_is_body_armor(obj))
 			|| ((!object_has_standard_to_h(obj)
@@ -409,16 +411,16 @@ static size_t obj_desc_combat(const struct object *obj, char *buf, size_t max,
 	} else if (obj->to_h < 0 && object_has_standard_to_h(obj)) {
 		/* Special treatment for body armor with only a to-hit penalty */
 		strnfcat(buf, max, &end, " (%+d)", obj->to_h);
-	} else if (to_d != 0 && (!p || p->obj_k->to_d)) {
+	} else if (to_d != 0 && (show_all || p->obj_k->to_d)) {
 		/* To-dam rune known only */
 		strnfcat(buf, max, &end, " (%+d)", to_d);
-	} else if (to_h != 0 && (!p || p->obj_k->to_h)) {
+	} else if (to_h != 0 && (show_all || p->obj_k->to_h)) {
 		/* To-hit rune known only */
 		strnfcat(buf, max, &end, " (%+d)", to_h);
 	}
 
 	/* Show armor bonuses */
-	if (!p || p->obj_k->to_a) {
+	if (show_all || p->obj_k->to_a) {
 		if (obj_desc_show_armor(obj, p))
 			strnfcat(buf, max, &end, " [%d,%+d]", obj->ac, to_a);
 		else if (to_a)

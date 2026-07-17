@@ -100,9 +100,16 @@ static bool square_allows_organic_bloom(struct chunk *c, struct loc grid)
 
 static void apply_organic_bloom(struct chunk *c)
 {
+	const struct level_theme *theme = level_theme_by_depth(c->depth);
 	int y, x;
+	int vegetation, tree, wood, soil;
 
-	if (c->depth != 10) return;
+	if (!level_theme_has_organic_bloom(theme)) return;
+
+	vegetation = theme->organic_vegetation;
+	tree = vegetation + theme->organic_tree;
+	wood = tree + theme->organic_wood;
+	soil = wood + theme->organic_soil;
 
 	for (y = 0; y < c->height; y++) {
 		for (x = 0; x < c->width; x++) {
@@ -112,13 +119,13 @@ static void apply_organic_bloom(struct chunk *c)
 			if (!square_allows_organic_bloom(c, grid)) continue;
 
 			roll = randint0(100);
-			if (roll < 45) {
+			if (roll < vegetation) {
 				square_set_feat(c, grid, FEAT_VEGETATION);
-			} else if (roll < 55) {
+			} else if (roll < tree) {
 				square_set_feat(c, grid, FEAT_TREE);
-			} else if (roll < 61) {
+			} else if (roll < wood) {
 				square_set_feat(c, grid, FEAT_WOOD);
-			} else if (roll < 66) {
+			} else if (roll < soil) {
 				square_set_feat(c, grid, FEAT_SOIL);
 			}
 		}

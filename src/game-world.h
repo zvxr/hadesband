@@ -29,6 +29,17 @@ struct level {
 	struct level *next;
 };
 
+struct level_theme {
+	int depth;
+	char *label;
+	uint8_t label_color;
+	int organic_vegetation;
+	int organic_tree;
+	int organic_wood;
+	int organic_soil;
+	struct level_theme *next;
+};
+
 extern uint16_t daycount;
 extern uint32_t seed_randart;
 extern uint32_t seed_flavor;
@@ -37,9 +48,12 @@ extern bool character_generated;
 extern bool character_dungeon;
 extern const uint8_t extract_energy[200];
 extern struct level *world;
+extern struct level_theme *level_themes;
 
 struct level *level_by_name(const char *name);
 struct level *level_by_depth(int depth);
+struct level_theme *level_theme_by_depth(int depth);
+bool level_theme_has_organic_bloom(const struct level_theme *theme);
 bool is_daytime(void);
 int turn_energy(int speed);
 void play_ambient_sound(void);

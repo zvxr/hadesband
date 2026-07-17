@@ -1,0 +1,16 @@
+# file: level_theme.txt
+
+# Named themes for specific dungeon levels.  These can provide both a sidebar
+# label and generation adjustments for distinctive floors.
+
+# depth: internal dungeon level (500 ft is depth 10)
+# label: sidebar label to show below the depth
+# label-color: Angband color character
+# organic-bloom: vegetation : tree : wood : soil
+# The organic bloom percentages are rolled independently for each suitable room
+# floor grid.  Any remainder up to 100 leaves the grid unchanged.
+
+depth:10
+label:Forest
+label-color:g
+organic-bloom:45:10:6:5

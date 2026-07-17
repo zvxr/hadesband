@@ -539,6 +539,20 @@ static void prt_depth(int row, int col)
 	put_str(format("%-13s", depths), row, col);
 }
 
+/**
+ * Prints the named theme for a dungeon level in the stat area.
+ */
+static void prt_level_theme(int row, int col)
+{
+	struct level_theme *theme = level_theme_by_depth(player->depth);
+
+	if (theme && theme->label) {
+		c_put_str(theme->label_color, format("%-13s", theme->label), row, col);
+	} else {
+		put_str("             ", row, col);
+	}
+}
+
 
 
 
@@ -827,9 +841,9 @@ static const struct side_handler_t
 	{ NULL,        21, 0 },
 	{ prt_health,  12, EVENT_MONSTERHEALTH },
 	{ NULL,        20, 0 },
-	{ NULL,        22, 0 },
 	{ prt_speed,   13, EVENT_PLAYERSPEED }, /* Slow (-NN) / Fast (+NN) */
 	{ prt_depth,   14, EVENT_DUNGEONLEVEL }, /* Lev NNN / NNNN ft */
+	{ prt_level_theme, 22, EVENT_DUNGEONLEVEL },
 };
 
 

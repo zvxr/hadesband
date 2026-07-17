@@ -47,6 +47,7 @@ int32_t turn;			/* Current game turn */
 bool character_generated;	/* The character exists */
 bool character_dungeon;		/* The character has a dungeon */
 struct level *world;
+struct level_theme *level_themes;
 
 /**
  * This table allows quick conversion from "speed" to "energy"
@@ -118,6 +119,26 @@ struct level *level_by_depth(int depth)
 		lev = lev->next;
 	}
 	return lev;
+}
+
+struct level_theme *level_theme_by_depth(int depth)
+{
+	struct level_theme *theme = level_themes;
+
+	while (theme) {
+		if (theme->depth == depth) {
+			break;
+		}
+		theme = theme->next;
+	}
+	return theme;
+}
+
+bool level_theme_has_organic_bloom(const struct level_theme *theme)
+{
+	return theme && (theme->organic_vegetation > 0 ||
+		theme->organic_tree > 0 || theme->organic_wood > 0 ||
+		theme->organic_soil > 0);
 }
 
 /**

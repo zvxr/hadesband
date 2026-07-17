@@ -1167,6 +1167,109 @@ struct file_parser world_parser = {
 	cleanup_world
 };
 
+/**
+ * ------------------------------------------------------------------------
+ * Initialize named level themes
+ * ------------------------------------------------------------------------ */
+static enum parser_error parse_level_theme_depth(struct parser *p)
+{
+	const int depth = parser_getint(p, "depth");
+	struct level_theme *last = parser_priv(p);
+	struct level_theme *theme = mem_zalloc(sizeof *theme);
+
+	if (last) {
+		last->next = theme;
+	} else {
+		level_themes = theme;
+	}
+
+	theme->depth = depth;
+	theme->label_color = COLOUR_WHITE;
+	parser_setpriv(p, theme);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_level_theme_label(struct parser *p)
+{
+	struct level_theme *theme = parser_priv(p);
+
+	if (!theme) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	string_free(theme->label);
+	theme->label = string_make(parser_getstr(p, "label"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_level_theme_label_color(struct parser *p)
+{
+	struct level_theme *theme = parser_priv(p);
+	const char *color = parser_getsym(p, "color");
+	int attr;
+
+	if (!theme) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (strlen(color) != 1) return PARSE_ERROR_INVALID_COLOR;
+	attr = color_char_to_attr(color[0]);
+	if (attr < 0) return PARSE_ERROR_INVALID_COLOR;
+	theme->label_color = attr;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_level_theme_organic_bloom(struct parser *p)
+{
+	struct level_theme *theme = parser_priv(p);
+
+	if (!theme) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	theme->organic_vegetation = parser_getint(p, "vegetation");
+	theme->organic_tree = parser_getint(p, "tree");
+	theme->organic_wood = parser_getint(p, "wood");
+	theme->organic_soil = parser_getint(p, "soil");
+	return PARSE_ERROR_NONE;
+}
+
+static struct parser *init_parse_level_theme(void)
+{
+	struct parser *p = parser_new();
+
+	parser_reg(p, "depth int depth", parse_level_theme_depth);
+	parser_reg(p, "label str label", parse_level_theme_label);
+	parser_reg(p, "label-color sym color", parse_level_theme_label_color);
+	parser_reg(p, "organic-bloom int vegetation int tree int wood int soil",
+		parse_level_theme_organic_bloom);
+	return p;
+}
+
+static errr run_parse_level_theme(struct parser *p)
+{
+	return parse_file_quit_not_found(p, "level_theme");
+}
+
+static errr finish_parse_level_theme(struct parser *p)
+{
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_level_theme(void)
+{
+	struct level_theme *theme = level_themes;
+
+	while (theme) {
+		struct level_theme *old = theme;
+
+		string_free(theme->label);
+		theme = theme->next;
+		mem_free(old);
+	}
+	level_themes = NULL;
+}
+
+struct file_parser level_theme_parser = {
+	"level_theme",
+	init_parse_level_theme,
+	run_parse_level_theme,
+	finish_parse_level_theme,
+	cleanup_level_theme
+};
+
 
 /**
  * ------------------------------------------------------------------------
@@ -4392,6 +4495,7 @@ static struct {
 	struct file_parser *parser;
 } pl[] = {
 	{ "world", &world_parser },
+	{ "level themes", &level_theme_parser },
 	{ "projections", &projection_parser },
 	{ "ui renderers", &ui_entry_renderer_parser },
 	{ "ui entries", &ui_entry_parser },
