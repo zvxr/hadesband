@@ -13,7 +13,9 @@
 theme:Forest
 label:Forest
 label-color:g
-spawn:10:100:100:100
+spawn:10:10:100:100
+spawn:30:10:100:100
+spawn:50:10:100:100
 seed-room-tag:organic:80
 
 theme:Dungeon Store

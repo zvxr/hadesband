@@ -145,12 +145,16 @@ struct level_theme *level_theme_by_depth(int depth)
 	return theme;
 }
 
-struct level_theme *level_theme_for_seed_terrain(int fidx)
+struct level_theme *level_theme_for_present_seed_terrain(const struct chunk *c)
 {
 	struct level_theme *theme = level_themes;
 
+	if (!c || !c->feat_count) return NULL;
 	while (theme) {
-		if (theme->seed_terrain == fidx) return theme;
+		if (theme->seed_terrain >= 0 &&
+				c->feat_count[theme->seed_terrain] > 0) {
+			return theme;
+		}
 		theme = theme->next;
 	}
 	return NULL;

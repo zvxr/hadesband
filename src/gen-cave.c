@@ -143,19 +143,21 @@ static void build_streamer(struct chunk *c, int feat, int chance)
 }
 
 /**
+ * Type for special terrain builders triggered by level themes.
+ */
+typedef bool (*seed_terrain_builder)(struct chunk *c, int feat,
+									 struct level_theme *theme);
+
+/**
  * Try to add a small dungeon store room.
  */
-static bool build_dungeon_store_room(struct chunk *c)
+static bool build_dungeon_store_room(struct chunk *c, int feat,
+									 struct level_theme *theme)
 {
 	int attempt;
-	const struct feature *feat = &f_info[FEAT_STORE_DUNGEON];
-	struct level_theme *theme = NULL;
+	const struct feature *feature = &f_info[feat];
 
-	if (!tf_has(feat->flags, TF_DUNGEON_ROOM)) return false;
-	if (!level_theme_seed_terrain_spawns(FEAT_STORE_DUNGEON, c->depth,
-			player, &theme)) {
-		return false;
-	}
+	if (!tf_has(feature->flags, TF_DUNGEON_ROOM)) return false;
 
 	for (attempt = 0; attempt < 200; attempt++) {
 		int y, x;
@@ -195,7 +197,7 @@ static bool build_dungeon_store_room(struct chunk *c)
 		/* Build the shop as a permanent structure within the chamber. */
 		fill_rectangle(c, centre.y - 1, centre.x - 2,
 			centre.y + 1, centre.x + 2, FEAT_PERM, SQUARE_NONE);
-		square_set_feat(c, entrance, FEAT_STORE_DUNGEON);
+		square_set_feat(c, entrance, feat);
 		sqinfo_on(square(c, entrance)->info, SQUARE_ROOM);
 
 		if (dun->cent_n < z_info->level_room_max) {
@@ -209,6 +211,29 @@ static bool build_dungeon_store_room(struct chunk *c)
 	}
 
 	return false;
+}
+
+static const struct {
+	int feat;
+	seed_terrain_builder builder;
+} seed_terrain_builders[] = {
+	{ FEAT_STORE_DUNGEON, build_dungeon_store_room },
+};
+
+static void build_seed_terrain_rooms(struct chunk *c)
+{
+	size_t i;
+
+	for (i = 0; i < N_ELEMENTS(seed_terrain_builders); i++) {
+		struct level_theme *theme = NULL;
+		int feat = seed_terrain_builders[i].feat;
+
+		if (!level_theme_seed_terrain_spawns(feat, c->depth, player,
+				&theme)) {
+			continue;
+		}
+		seed_terrain_builders[i].builder(c, feat, theme);
+	}
 }
 
 static bool build_seed_room_tagged_template(struct chunk *c, int by, int bx,
@@ -1347,7 +1372,7 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width,
 		}
 	}
 
-	build_dungeon_store_room(c);
+	build_seed_terrain_rooms(c);
 
 	for (i = 0; i < dun->row_blocks; i++){
 		mem_free(blocks_tried[i]);
@@ -2932,7 +2957,7 @@ static struct chunk *modified_chunk(struct player *p, int depth, int height,
 		}
 	}
 
-	build_dungeon_store_room(c);
+	build_seed_terrain_rooms(c);
 
 	for (i = 0; i < dun->row_blocks; i++)
 		mem_free(dun->room_map[i]);
@@ -3190,7 +3215,7 @@ static struct chunk *moria_chunk(struct player *p, int depth, int height,
 		}
 	}
 
-	build_dungeon_store_room(c);
+	build_seed_terrain_rooms(c);
 
 	for (i = 0; i < dun->row_blocks; i++)
 		mem_free(dun->room_map[i]);
