@@ -471,7 +471,7 @@ level:0
 weight:1
 cost:200
 alloc:10:5 to 100
-pile:70:2d4
+pile:70:1d3
 power:10
 effect:CURE:BLIND
 effect:TIMED_INC:TELEPATHY
@@ -486,7 +486,7 @@ level:0
 weight:1
 cost:200
 alloc:10:5 to 40
-pile:70:2d4
+pile:70:1d3
 power:7
 effect:HEAL_HP
 dice:30
@@ -504,7 +504,7 @@ level:0
 weight:1
 cost:200
 alloc:25:20 to 100
-pile:13:2d3
+pile:13:1d3
 power:15
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:INT
@@ -521,7 +521,7 @@ level:0
 weight:1
 cost:200
 alloc:10:5 to 40
-pile:70:2d4
+pile:70:1d3
 power:8
 effect:RESTORE_MANA
 dice:20
@@ -540,7 +540,7 @@ level:0
 weight:1
 cost:60
 alloc:10:5 to 100
-pile:70:2d4
+pile:70:1d3
 power:7
 effect:SET_VALUE
 dice:25+5d5
@@ -560,7 +560,7 @@ level:0
 weight:1
 cost:60
 alloc:10:5 to 40
-pile:70:2d4
+pile:70:1d3
 power:5
 effect:TIMED_SET:TERROR
 dice:25+5d5
@@ -575,7 +575,7 @@ level:0
 weight:1
 cost:60
 alloc:10:10 to 40
-pile:70:2d4
+pile:70:2d2
 power:5
 effect:TIMED_SET:STONESKIN
 dice:50+7d7
@@ -590,7 +590,7 @@ level:0
 weight:1
 cost:20
 alloc:10:10 to 40
-pile:70:2d4
+pile:70:1d3
 power:5
 effect:RESTORE_MANA
 effect:NOURISH:INC_BY
@@ -607,7 +607,7 @@ level:0
 weight:1
 cost:100
 alloc:1:15 to 100
-pile:70:2d4
+pile:70:2d2
 power:5
 effect:TIMED_INC:SPRINT
 dice:100
@@ -622,7 +622,7 @@ level:0
 weight:1
 cost:60
 alloc:1:15 to 100
-pile:70:2d4
+pile:70:1d3
 power:5
 msg:Your stomach heaves.
 effect:NOURISH:SET_TO
@@ -639,7 +639,7 @@ level:0
 weight:1
 cost:300
 alloc:20:50 to 100
-pile:70:2d4
+pile:70:1d3
 power:9
 effect:NOURISH:INC_BY
 dice:5
@@ -654,7 +654,7 @@ level:0
 weight:1
 cost:300
 alloc:10:10 to 80
-pile:70:1d4
+pile:70:1d3
 power:10
 effect:HEAL_HP
 dice:80
@@ -673,7 +673,7 @@ level:0
 weight:1
 cost:300
 alloc:10:10 to 80
-pile:70:2d4
+pile:70:1d3
 power:8
 msg:Strange patterns shimmer before your eyes.
 effect:LEARN_FLAVOR
