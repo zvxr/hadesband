@@ -5,7 +5,7 @@
 
 # theme: named generation theme
 # spawn: exact depth : Classic chance : Recall chance : Nightmare chance
-# label: sidebar label to show below the depth
+# label: sidebar label to show below the depth; keep to 13 characters or fewer
 # label-color: Angband color character
 # seed-room-tag:room-template tag:percent chance
 # seed-terrain:terrain feature code
@@ -30,8 +30,8 @@ spawn:66:100:100:100
 seed-room-tag:round:66
 
 theme:Chiron's School
-label:Chiron's School
-label-color:w
+label:Chiron's Hall
+label-color:p
 spawn:22:100:100:100
 unique:Kerwyn Foehammer
 unique-block-down-stairs:Chiron, the Wounded Teacher
