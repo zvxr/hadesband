@@ -1866,17 +1866,32 @@ void object_learn_unknown_rune(struct player *p, struct object *obj)
  */
 void object_reveal_relic(struct player *p, struct object *obj)
 {
+	struct object *known;
+	struct object *prev, *next;
+	struct loc grid;
+	int oidx;
+
 	if (!obj) return;
 	if (!obj->known) obj->known = object_new();
+	known = obj->known;
 
 	if (obj->kind && obj->kind->flavor && !object_flavor_is_aware(obj)) {
 		object_flavor_aware(p, obj);
 	}
 
-	object_wipe(obj->known);
-	object_copy(obj->known, obj);
-	obj->known->known = NULL;
-	obj->known->notice |= OBJ_NOTICE_ASSESSED;
+	prev = known->prev;
+	next = known->next;
+	oidx = known->oidx;
+	grid = known->grid;
+
+	object_wipe(known);
+	object_copy(known, obj);
+	known->known = NULL;
+	known->prev = prev;
+	known->next = next;
+	known->oidx = oidx;
+	known->grid = grid;
+	known->notice |= OBJ_NOTICE_ASSESSED;
 
 	if (obj->ego) {
 		obj->ego->everseen = true;
