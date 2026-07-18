@@ -544,10 +544,13 @@ static void prt_depth(int row, int col)
  */
 static void prt_level_theme(int row, int col)
 {
-	struct level_theme *theme = level_theme_by_depth(player->depth);
+	struct level_theme *theme = cave ? cave->active_theme : NULL;
 
 	if (!theme || !theme->label) {
 		theme = level_theme_for_present_seed_terrain(cave);
+	}
+	if (!theme || !theme->label) {
+		theme = level_theme_by_depth(player->depth);
 	}
 
 	if (theme && theme->label) {

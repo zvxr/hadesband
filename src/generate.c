@@ -1137,6 +1137,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 		/* Allocate new known level, light it if requested */
 		p->cave = cave_new(chunk->height, chunk->width);
 		p->cave->depth = chunk->depth;
+		p->cave->active_theme = chunk->active_theme;
 		p->cave->objects = mem_realloc(p->cave->objects, (chunk->obj_max + 1)
 									   * sizeof(struct object*));
 		p->cave->obj_max = chunk->obj_max;
@@ -1176,6 +1177,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 		dun->curr_join = NULL;
 		dun->nstair_room = 0;
 		dun->quest = is_quest(p, p->depth);
+		dun->active_theme = level_theme_choose(p->depth, p);
 
 		/* Get connector info for persistent levels */
 		if (OPT(p, birth_levels_persist)) {
@@ -1279,6 +1281,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 	/* Allocate new known level, light it if requested */
 	p->cave = cave_new(chunk->height, chunk->width);
 	p->cave->depth = chunk->depth;
+	p->cave->active_theme = chunk->active_theme;
 	p->cave->objects = mem_realloc(p->cave->objects, (chunk->obj_max + 1)
 								   * sizeof(struct object*));
 	p->cave->obj_max = chunk->obj_max;

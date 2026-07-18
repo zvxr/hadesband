@@ -68,9 +68,10 @@ extern struct level_theme *level_themes;
 
 struct level *level_by_name(const char *name);
 struct level *level_by_depth(int depth);
+struct level_theme *level_theme_choose(int depth, const struct player *p);
 struct level_theme *level_theme_by_depth(int depth);
 struct level_theme *level_theme_for_present_seed_terrain(const struct chunk *c);
-const char *level_theme_roll_seed_room_tag(int depth);
+const char *level_theme_roll_seed_room_tag(const struct level_theme *theme);
 bool level_theme_seed_terrain_spawns(int fidx, int depth,
 	const struct player *p, struct level_theme **matched_theme);
 bool is_daytime(void);

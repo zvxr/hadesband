@@ -25,6 +25,7 @@
 struct player;
 struct monster;
 struct monster_group;
+struct level_theme;
 
 extern const int16_t ddd[9];
 extern const int16_t ddx[10];
@@ -182,6 +183,7 @@ struct chunk {
 	char *name;
 	int32_t turn;
 	int depth;
+	struct level_theme *active_theme;
 
 	uint8_t feeling;
 	uint32_t obj_rating;

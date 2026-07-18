@@ -145,6 +145,53 @@ struct level_theme *level_theme_by_depth(int depth)
 	return theme;
 }
 
+struct level_theme *level_theme_choose(int depth, const struct player *p)
+{
+	struct level_theme *theme = level_themes;
+	enum player_game_mode mode;
+
+	if (!depth) return NULL;
+
+	mode = player_get_game_mode(p);
+	while (theme) {
+		struct level_theme_spawn *spawn = theme->spawns;
+
+		if (theme->depth == depth) {
+			return theme;
+		}
+
+		while (spawn) {
+			uint8_t chance;
+
+			if (spawn->depth != depth) {
+				spawn = spawn->next;
+				continue;
+			}
+
+			switch (mode) {
+				case PLAYER_GAME_MODE_CLASSIC:
+					chance = spawn->classic_chance;
+					break;
+				case PLAYER_GAME_MODE_RECALL:
+					chance = spawn->recall_chance;
+					break;
+				case PLAYER_GAME_MODE_NIGHTMARE:
+					chance = spawn->nightmare_chance;
+					break;
+				default:
+					chance = 0;
+					break;
+			}
+			if (randint0(100) < chance) {
+				return theme;
+			}
+			break;
+		}
+		theme = theme->next;
+	}
+	return NULL;
+}
+
 struct level_theme *level_theme_for_present_seed_terrain(const struct chunk *c)
 {
 	struct level_theme *theme = level_themes;
@@ -160,9 +207,8 @@ struct level_theme *level_theme_for_present_seed_terrain(const struct chunk *c)
 	return NULL;
 }
 
-const char *level_theme_roll_seed_room_tag(int depth)
+const char *level_theme_roll_seed_room_tag(const struct level_theme *theme)
 {
-	struct level_theme *theme = level_theme_by_depth(depth);
 	struct level_theme_seed_room_tag *tag;
 
 	if (!theme) return NULL;

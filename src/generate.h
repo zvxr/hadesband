@@ -9,6 +9,8 @@
 
 #include "monster.h"
 
+struct level_theme;
+
 #if  __STDC_VERSION__ < 199901L
 #define ROOM_LOG  if (OPT(player, cheat_room)) msg
 #else
@@ -170,6 +172,9 @@ struct dun_data {
 
     /*!< Requested room template tag for the room currently being built */
     const char *seed_room_tag;
+
+    /*!< Level theme selected for this generation attempt */
+    struct level_theme *active_theme;
 
     /*!< Info for connecting to persistent levels */
     struct connector *join;

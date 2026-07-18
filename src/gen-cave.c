@@ -225,13 +225,10 @@ static void build_seed_terrain_rooms(struct chunk *c)
 	size_t i;
 
 	for (i = 0; i < N_ELEMENTS(seed_terrain_builders); i++) {
-		struct level_theme *theme = NULL;
 		int feat = seed_terrain_builders[i].feat;
+		struct level_theme *theme = c->active_theme;
 
-		if (!level_theme_seed_terrain_spawns(feat, c->depth, player,
-				&theme)) {
-			continue;
-		}
+		if (!theme || theme->seed_terrain != feat) continue;
 		seed_terrain_builders[i].builder(c, feat, theme);
 	}
 }
@@ -1273,6 +1270,7 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width,
 	dun->block_wid = dun->profile->block_size;
 	c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->active_theme = dun->active_theme;
 	ROOM_LOG("height=%d  width=%d  nrooms=%d", c->height, c->width, num_rooms);
 
 	/* Fill cave area with basic granite */
@@ -1350,7 +1348,7 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width,
 		}
 
 		if (build_seed_room_tagged_template(c, by, bx, key, false,
-				level_theme_roll_seed_room_tag(c->depth))) {
+				level_theme_roll_seed_room_tag(c->active_theme))) {
 			built++;
 			continue;
 		}
@@ -2865,6 +2863,7 @@ static struct chunk *modified_chunk(struct player *p, int depth, int height,
 	/* Make the cave */
 	struct chunk *c = cave_new(height, width);
 	c->depth = depth;
+	c->active_theme = dun->active_theme;
 
 	/* Set the intended number of floor grids based on cave floor area */
 	num_floors = c->height * c->width / 7;
@@ -2940,7 +2939,7 @@ static struct chunk *modified_chunk(struct player *p, int depth, int height,
 		}
 
 		if (build_seed_room_tagged_template(c, by, bx, key, true,
-				level_theme_roll_seed_room_tag(c->depth))) {
+				level_theme_roll_seed_room_tag(c->active_theme))) {
 			continue;
 		}
 
@@ -3122,6 +3121,7 @@ static struct chunk *moria_chunk(struct player *p, int depth, int height,
 	/* Make the cave */
 	struct chunk *c = cave_new(height, width);
 	c->depth = depth;
+	c->active_theme = dun->active_theme;
 
 	/* Set the intended number of floor grids based on cave floor area */
 	num_floors = c->height * c->width / 7;
@@ -3198,7 +3198,7 @@ static struct chunk *moria_chunk(struct player *p, int depth, int height,
 		}
 
 		if (build_seed_room_tagged_template(c, by, bx, key, true,
-				level_theme_roll_seed_room_tag(c->depth))) {
+				level_theme_roll_seed_room_tag(c->active_theme))) {
 			continue;
 		}
 
