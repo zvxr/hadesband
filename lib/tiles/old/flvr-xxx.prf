@@ -178,6 +178,9 @@ flavor:59:0xB6:0x8C
 # Carved Oak amulet
 flavor:60:0xB6:0x84
 
+# Olive Wood amulet
+flavor:314:0xB6:0x84
+
 # Dragon Tooth amulet
 flavor:61:0xB6:0x88
 

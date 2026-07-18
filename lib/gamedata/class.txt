@@ -619,7 +619,7 @@ effect:SHAPECHANGE:bear
 desc:Allows you to take the form of a great bear of the mountains, sweeping
 desc: aside your enemies with your mighty paws.
 
-book:nature book:dungeon:[Nature Craft]:5:nature
+book:nature book:dungeon:[Nature Craft]:6:nature
 book-graphics:?:o
 book-properties:30000:42:40 to 100
 
@@ -636,6 +636,10 @@ effect:TIMED_INC:FAST:0:5
 dice:$B+d20
 expr:B:PLAYER_LEVEL:+ 0
 desc:Hastes you (+10 to speed) for a level-dependent duration.
+
+spell:Call Tree:30:25:70:50
+effect:CREATE_TREE
+desc:Calls a tree into being on an adjacent clear floor.
 
 spell:Revitalize:35:70:90:90
 effect:RESTORE_STAT:STR

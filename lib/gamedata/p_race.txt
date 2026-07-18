@@ -125,6 +125,7 @@ age:75:75
 height:73:7
 weight:90:10
 obj-flags:SUST_DEX
+player-flags:FLETCH_AMMO
 values:RES_LIGHT[1]
 
 name:Hobbit

@@ -3548,6 +3548,38 @@ bool effect_handler_CREATE_ARROWS(effect_handler_context_t *context)
 }
 
 /**
+ * Call a tree into being on an adjacent clear floor.
+ */
+bool effect_handler_CREATE_TREE(effect_handler_context_t *context)
+{
+	struct loc grid;
+
+	/* This is intentionally adjacent-only, even if used from activations. */
+	if (context->dir <= DIR_UNKNOWN || context->dir == DIR_TARGET ||
+			context->dir > DIR_NE) {
+		msg("You must call the tree into an adjacent place.");
+		return false;
+	}
+
+	grid = loc_sum(player->grid, ddgrid[context->dir]);
+
+	if (!square_in_bounds_fully(cave, grid) || !square_isempty(cave, grid)) {
+		msg("There is no clear ground for roots to take hold.");
+		return false;
+	}
+
+	square_set_feat(cave, grid, FEAT_TREE);
+	if (cave->depth == 0) expose_to_sun(cave, grid, is_daytime());
+
+	msg("A tree rises from the ground.");
+	context->ident = true;
+	player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+	player->upkeep->redraw |= (PR_MONLIST | PR_ITEMLIST);
+
+	return true;
+}
+
+/**
  * Draw energy from a magical device
  */
 bool effect_handler_TAP_DEVICE(effect_handler_context_t *context)

@@ -548,6 +548,7 @@ object:scroll:Light:0x87:0xD3
 object:scroll:Word of Recall:0x87:0xDF
 object:scroll:Recharging:0x87:0xDB
 object:scroll:Door Destruction:0x87:0xF2
+object:scroll:Tree Creation:0x87:0xDA
 object:scroll:Deep Descent:0x87:0xF7
 
 ### "Holy" spells ###

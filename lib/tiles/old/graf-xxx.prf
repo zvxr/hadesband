@@ -697,6 +697,7 @@ object:scroll:Light:0x86:0x80
 object:scroll:Word of Recall:0x86:0x80
 object:scroll:Recharging:0x86:0x81
 object:scroll:Door Destruction:0x86:0x80
+object:scroll:Tree Creation:0x86:0x82
 object:scroll:Deep Descent:0x86:0x80
 
 

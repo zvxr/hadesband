@@ -125,6 +125,7 @@ flavor:65:Slate:Flint Stone
 flavor:66:Light Blue:Sea Shell
 flavor:67:Light Slate:Mother-of-Pearl
 flavor:313:Light Blue:Lapis
+flavor:314:Orange:Olive Wood
 
 # Azure
 # Bead

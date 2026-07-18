@@ -164,6 +164,10 @@ static int test_bonuses0(void *data)
 	calc_bonuses(player, &calc_state, false, false);
 	require(player_has(player, PF_SIREN_SONG));
 
+	eq(player_make_simple("Elf", "Warrior", "Tester"), true);
+	calc_bonuses(player, &calc_state, false, false);
+	require(player_has(player, PF_FLETCH_AMMO));
+
 	ok;
 }
 
@@ -208,6 +212,10 @@ static int test_power_ownership0(void *data)
 	eq(player_make_simple("Demigod", "Warrior", "Tester"), true);
 	require(streq(player_power_name(PLAYER_POWER_RACE), "Taunt"));
 	require(!player_power_needs_direction(PLAYER_POWER_RACE));
+
+	eq(player_make_simple("Elf", "Warrior", "Tester"), true);
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Fletch Ammo"));
+	require(player_power_needs_direction(PLAYER_POWER_RACE));
 
 	eq(player_make_simple("Human", "Warrior", "Tester"), true);
 	null(player_power_name(PLAYER_POWER_RACE));

@@ -21,6 +21,7 @@
 #include "player-properties.h"
 #include "effects.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "init.h"
 #include "mon-desc.h"
 #include "mon-move.h"
@@ -28,6 +29,12 @@
 #include "mon-spell.h"
 #include "mon-timed.h"
 #include "mon-util.h"
+#include "obj-desc.h"
+#include "obj-make.h"
+#include "obj-pile.h"
+#include "obj-tval.h"
+#include "obj-util.h"
+#include "player-calcs.h"
 #include "player-timed.h"
 #include "player-util.h"
 #include "project.h"
@@ -52,6 +59,7 @@ static void use_war_cry(int dir);
 static void use_cure_confusion(int dir);
 static void use_stone_lore(int dir);
 static void use_demigod_taunt(int dir);
+static void use_fletch_ammo(int dir);
 
 static const struct player_power player_powers[] = {
 	{ PF_STEAL, PLAYER_POWER_CLASS, "Steal", true, use_steal },
@@ -69,7 +77,9 @@ static const struct player_power player_powers[] = {
 	{ PF_STONE_LORE, PLAYER_POWER_RACE, "Stone Lore", false,
 		use_stone_lore },
 	{ PF_DEMIGOD_TAUNT, PLAYER_POWER_RACE, "Taunt", false,
-		use_demigod_taunt }
+		use_demigod_taunt },
+	{ PF_FLETCH_AMMO, PLAYER_POWER_RACE, "Fletch Ammo", true,
+		use_fletch_ammo }
 };
 
 struct siren_song {
@@ -553,6 +563,64 @@ static void use_demigod_taunt(int dir)
 	(void)player_set_timed(player, TMD_DEMIGOD_TAUNT_COOLDOWN, 120,
 		true, false);
 	monsters_handle_player_noise(100);
+}
+
+static void use_fletch_ammo(int dir)
+{
+	const char *choices[] = { "Arrows", "Bolts" };
+	int choice, tval, sval, quantity;
+	struct object_kind *kind;
+	struct object *ammo;
+	struct loc grid;
+	int feat;
+	char o_name[80];
+
+	if (player_confuse_dir(player, &dir, false)) {
+		/* Direction may have changed. */
+	}
+
+	grid = loc_sum(player->grid, ddgrid[dir]);
+	if (!square_in_bounds_fully(cave, grid)) {
+		msg("There is no wood there to fletch.");
+		return;
+	}
+
+	feat = square(cave, grid)->feat;
+	if (feat != FEAT_WOOD && feat != FEAT_TREE) {
+		msg("You need adjacent wood or a tree to fletch ammunition.");
+		return;
+	}
+
+	choice = get_power_menu("Fletch which ammunition? ", choices,
+		N_ELEMENTS(choices));
+	if (choice < 0 || choice >= (int)N_ELEMENTS(choices)) {
+		return;
+	}
+
+	tval = choice == 0 ? TV_ARROW : TV_BOLT;
+	sval = lookup_sval(tval, choice == 0 ? "Arrow" : "Bolt");
+	kind = lookup_kind(tval, sval);
+	if (!kind) {
+		msg("You cannot find a suitable pattern for that ammunition.");
+		return;
+	}
+
+	ammo = object_new();
+	object_prep(ammo, kind, 0, MAXIMISE);
+	quantity = 10 + randint1(MAX(1, player->lev / 2));
+	ammo->number = MIN(quantity, ammo->kind->base->max_stack);
+	ammo->origin = ORIGIN_NONE;
+	ammo->origin_depth = 0;
+
+	player->upkeep->energy_use = z_info->move_energy;
+	square_chop_terrain(cave, grid);
+	if (cave->depth == 0) expose_to_sun(cave, grid, is_daytime());
+	player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+	player->upkeep->redraw |= (PR_MONLIST | PR_ITEMLIST);
+
+	object_desc(o_name, sizeof(o_name), ammo, ODESC_BASE, player);
+	msg("You fletch %s from the wood.", o_name);
+	drop_near(cave, &ammo, 0, player->grid, true, true);
 }
 
 /**

@@ -2619,6 +2619,19 @@ values:MOVES[1]
 
 ### Powers ###
 
+name:Verdure
+type:amulet
+graphics:":d
+level:30
+weight:3
+cost:5000
+alloc:10:30 to 100
+flags:EASY_KNOW
+power:8
+effect:CREATE_TREE
+time:400
+desc:It can be activated to call a tree into being on adjacent clear ground.
+
 name:Teleportation
 type:amulet
 graphics:":d
@@ -3023,6 +3036,19 @@ pile:20:2
 power:19
 effect:DEEP_DESCENT
 desc:The page smells of cold stone and opens the way to a deeper dark.
+
+name:Tree Creation
+type:scroll
+graphics:?:w
+level:40
+weight:5
+cost:1500
+alloc:20:40 to 100
+pile:10:1
+power:20
+effect:CREATE_TREE
+desc:Green signs crawl over the vellum, promising sudden shade where no seed
+desc: was planted.
 
 
 ### "Holy" spells ###

@@ -96,6 +96,11 @@ code:DEMIGOD_TAUNT
 name:Taunt
 desc:You can challenge nearby creatures and draw their anger.
 
+type:player
+code:FLETCH_AMMO
+name:Fletch Ammo
+desc:You can carve adjacent wood or trees into ordinary arrows or bolts.
+
 ## Class player flags
 
 type:player

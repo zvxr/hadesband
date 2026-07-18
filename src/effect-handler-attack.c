@@ -122,12 +122,16 @@ static bool project_touch(int dam, int rad, int typ, bool aware,
 /**
  * Cast a bolt spell
  * Stop if we hit a monster, as a bolt
- * Affect monsters (not grids or objects)
+ * Affect monsters.  Fire bolts also affect grids and objects.
  */
 bool effect_handler_BOLT(effect_handler_context_t *context)
 {
 	int dam = effect_calculate_value(context, true);
 	int flg = PROJECT_STOP | PROJECT_KILL;
+
+	if (context->subtype == PROJ_FIRE)
+		flg |= PROJECT_GRID | PROJECT_ITEM;
+
 	(void) project_aimed(context->origin, context->subtype, context->dir, dam,
 						 flg, context->obj);
 	if (!player->timed[TMD_BLIND])
@@ -138,12 +142,16 @@ bool effect_handler_BOLT(effect_handler_context_t *context)
 /**
  * Cast a beam spell
  * Pass through monsters, as a beam
- * Affect monsters (not grids or objects)
+ * Affect monsters.  Fire beams also affect grids and objects.
  */
 bool effect_handler_BEAM(effect_handler_context_t *context)
 {
 	int dam = effect_calculate_value(context, true);
 	int flg = PROJECT_BEAM | PROJECT_KILL;
+
+	if (context->subtype == PROJ_FIRE)
+		flg |= PROJECT_GRID | PROJECT_ITEM;
+
 	(void) project_aimed(context->origin, context->subtype, context->dir, dam,
 						 flg, context->obj);
 	if (!player->timed[TMD_BLIND])
