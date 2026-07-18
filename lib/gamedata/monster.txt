@@ -1952,6 +1952,24 @@ blow:BITE:HURT:1d3
 flags:RAND_50
 desc:It screeches as it attacks.
 
+name:young centaur
+base:centaur
+color:y
+speed:110
+hit-points:28
+hearing:20
+smell:20
+armor-class:24
+sleepiness:20
+depth:6
+rarity:2
+experience:22
+blow:HIT:HURT:1d6
+innate-freq:15
+spells:ARROW
+desc:A young centaur paws the stone nervously, loosing arrows before closing
+desc: with an awkward spear-thrust.
+
 name:creeping silver coins
 plural:piles of creeping silver coins
 base:creeping coins
@@ -2850,6 +2868,26 @@ friends:100:2d5:satyr:servant
 friends:50:1d3:satyr elder:servant
 desc:A proud piper whose defiant song twists courage into confusion.
 
+name:centaur hunter
+base:centaur
+color:G
+speed:110
+hit-points:48
+hearing:25
+smell:25
+armor-class:30
+sleepiness:20
+depth:10
+rarity:2
+experience:45
+blow:HIT:HURT:1d8
+flags:DROP_40 | ONLY_ITEM
+innate-freq:8
+spells:ARROW
+friends:50:1d2:satyr
+desc:A green-cloaked centaur hunter circles lightly, drawing and firing with the
+desc: calm rhythm of a creature born to the open hillside.
+
 name:forge guard of Hephaestus
 base:humanoid
 color:u
@@ -3336,6 +3374,7 @@ spells:BA_POIS
 spells:S_MONSTER
 drop-base:magic book:5:1:1
 drop-base:magic book:5:1:1
+friends:30:1d1:centaur hunter:servant
 desc:A small humanoid that radiates some power.
 
 name:temple priest
@@ -3586,6 +3625,7 @@ spells:S_KIN | S_MONSTER
 friends:50:2d6:frenzied satyr:servant
 friends:100:2d6:satyr:servant
 friends:100:2d4:satyr elder:servant
+friends:30:1d1:centaur caster:servant
 friends:100:1d1:Marsyas, the Defiant Piper
 desc:The wild god's music rises into a terrifying revel, drawing every nearby
 desc: satyr into his dance.
@@ -3803,6 +3843,28 @@ flags:EVIL | GROUP_AI
 flags:RAND_25 | BASH_DOOR
 friends:100:2d7:Same
 desc:It is a hardened war dog, trained to fight in disciplined packs.
+
+name:centaur skirmisher
+base:centaur
+color:u
+speed:110
+hit-points:82
+hearing:25
+smell:25
+armor-class:42
+sleepiness:20
+depth:14
+rarity:2
+experience:75
+blow:HIT:HURT:2d4
+blow:HIT:HURT:1d8
+flags:DROP_40 | ONLY_ITEM
+innate-freq:7
+spells:ARROW
+friends:50:1d2:centaur hunter
+friends:50:1d3:satyr
+desc:A hard-riding centaur skirmisher keeps just enough distance to punish
+desc: pursuit, then wheels back with spear and bow.
 
 name:sphinx
 base:sphinx
@@ -4465,6 +4527,29 @@ flags:MOVE_BODY
 flags:IM_FIRE
 desc:A filmy-winged insect born from flame.  It flickers like a coal in the
 desc: air, and its feverish bite makes the room swim.
+
+name:centaur caster
+base:centaur
+color:b
+speed:110
+hit-points:70
+light:1
+hearing:25
+smell:20
+armor-class:30
+sleepiness:30
+depth:18
+rarity:3
+experience:95
+blow:HIT:HURT:1d8
+flags:DROP_40 | ONLY_ITEM
+flags:FORCE_SLEEP
+spell-freq:5
+spells:CONF | HEAL | SLOW
+friends:50:1d2:satyr elder
+friends:50:1d2:centaur hunter
+desc:A dark-robed centaur caster raises a carved staff, weaving old hillside
+desc: charms into hesitation, confusion, and sudden recovery.
 
 name:orc captain
 base:orc
@@ -5347,6 +5432,46 @@ spells:SHRIEK
 desc:A divine nuisance sent to sting the cruel.  Unfortunately, it is not very
 desc: careful about checking its target.
 
+name:Chiron, the Wounded Teacher
+base:centaur
+color:w
+speed:120
+hit-points:520
+light:1
+hearing:30
+smell:30
+armor-class:60
+sleepiness:10
+depth:22
+rarity:3
+experience:850
+blow:HIT:HURT:2d6
+blow:HIT:HURT:2d4
+flags:UNIQUE | MALE | NAME_COMMA | SMART
+flags:DROP_2 | DROP_GOOD | ONLY_ITEM
+flags:FORCE_SLEEP
+innate-freq:8
+spell-freq:4
+spells:ARROW
+spells:BLINK | CONF | HASTE | HEAL | SLOW
+spells:S_KIN
+message-vis:BLINK:{name} demonstrates the Socratic method of leaving.
+message-vis:CONF:{name} asks you to define virtue in sixteen contradictory ways.
+message-vis:HASTE:{name} calls for a brisk constitutional.
+message-vis:HEAL:{name} lectures briefly on medicine, then looks much better.
+message-vis:S_KIN:{name} says, "Class is in session."
+message-vis:SLOW:{name} says, "Better to be Ionic than a Doric."
+friends:100:1d4:young centaur:servant
+friends:100:1d3:centaur hunter:servant
+friends:100:1d2:centaur skirmisher:bodyguard
+friends:60:1d2:satyr:servant
+friends:40:1d1:satyr elder:servant
+friends:100:1d1:centaur caster:servant
+friends:100:1d1:centaur outrider:bodyguard
+desc:The old master of Pelion bears an unhealed wound and a school that will
+desc: not stop following him.  His bow is steady, his remedies are bitter,
+desc: and his lectures somehow make battle more confusing.
+
 name:Kerwyn Foehammer
 base:orc
 color:b
@@ -5638,6 +5763,28 @@ flags:FORCE_SLEEP
 spell-freq:10
 spells:DRAIN_MANA | SCARE
 desc:It is a ghostly apparition with a humanoid form.
+
+name:centaur outrider
+base:centaur
+color:U
+speed:120
+hit-points:130
+hearing:30
+smell:30
+armor-class:54
+sleepiness:20
+depth:24
+rarity:3
+experience:170
+blow:HIT:HURT:2d6
+blow:HIT:HURT:2d5
+flags:DROP_40 | ONLY_ITEM
+innate-freq:6
+spells:ARROW
+friends:50:1d2:centaur skirmisher
+friends:50:1d2:centaur hunter
+desc:A weathered centaur outrider moves with terrifying economy, hooves
+desc: striking sparks as arrows fall ahead of his charge.
 
 name:Veni
 base:humanoid

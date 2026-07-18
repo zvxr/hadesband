@@ -129,7 +129,7 @@
 - Planning: avoid over-splitting mythic taxonomy; prefer fitting myths into existing bases unless kin/summon behavior needs a distinct family.
 - Planning: Cyclopes can likely use `giant`; demigods can use `person` for heroic mortals or `god` for divine-tier beings.
 - Planning: demi-humans can usually use `humanoid`, `hybrid`, or specific creature bases; only create a new base if a repeatable summon/kin family emerges.
-- Planning: centaurs, fauns, harpies, gorgons, and nymphs are candidates to map onto existing `hybrid`, `person`, `bird`, `snake`, `feline`, `tree`, or `elemental` buckets before adding new bases.
+- Planning: fauns, harpies, gorgons, and nymphs are candidates to map onto existing `hybrid`, `person`, `bird`, `snake`, `feline`, `tree`, or `elemental` buckets before adding new bases.  Centaurs are a likely future dedicated family on `N`.
 - Potential new bases: `spirit` for ghosts/shades if `wraith` is too narrow; `construct`/`automaton` for bronze guardians.
 - Low-hanging fit: harpies already use `hybrid`/`H`; this is a good model for winged demi-human monsters.
 - Low-hanging fit: minotaur and manticore already use `hybrid`; keep unless a broader hybrid split becomes necessary.
@@ -159,68 +159,156 @@
 - Implemented: canine pass renamed Tolkien dogs/wolves to Argos, Maera, War dog, alpha wolf, guard dog of Hephaestus, Laelaps, Golden Dog, and Cerberus; generic wolves/werewolves/hellhounds remain.
 - Implemented: giant uniques `Gilim` and `Nan` became Typhon and Antiphates; generic giants stay unchanged on `P`.
 - Orc note: generic orcs remain unchanged; unique orcs are seeded with Dimension 20 easter-egg names.
-- Possible future fit: centaurs and fauns probably use `hybrid`, `humanoid`, or `person` rather than new bases.
+- Glyph reservation: keep `H` specifically for harpies and hydras.  Centaurs
+  need a separate design pass rather than being folded into `hybrid`.
+- Centaur note: possible future player race and monster base.  Avoid using
+  `H`; reserve currently-unused `N` for centaurs and keep sphinx on `x`.
+
+### Centaur Planning
+
+- Monster glyph: reserve `N` for centaurs.
+- Family role: low-mid depth mobile archers and skirmishers, adjacent to satyrs
+  thematically but less magical and more martial.
+- Color language: yellow for the lowest/common form, light green for young or
+  nature-touched fighters, dark blue for caster/wise types, umber/brown for
+  hardened warriors.
+- Player race direction: Strength and Dexterity positive, Wisdom and Stealth
+  lower for fighter types, missile identity, and a carefully controlled
+  movement/speed hook.  XP should sit near Satyr, slightly higher only if speed
+  is granted directly.
+- Expertise candidates: Gallop, Trample, or a missile-focused skill.  Prefer a
+  reusable movement or archery mechanic if one fits cleanly.
+
+| Monster idea | Depth | Color | Role sketch |
+| --- | --- | --- | --- |
+| young centaur | 6 | yellow | First contact; quick but fragile, light melee or weak arrow pressure. |
+| centaur hunter | 10 | light green | Core early archer; faster than player, uses `ARROW`, appears with satyrs later. |
+| centaur skirmisher | 14 | umber | Tougher fighter-archer; more HP/AC, maybe `MOVE_BODY`, still missile first. |
+| centaur caster | 18 | dark blue | Rare wise/caster variant; limited slow/confusion/heal rather than heavy magic. |
+| centaur outrider | 24 | brown | Hardened warrior; speed/missiles with meaningful melee if cornered. |
+
+## Future Greek Unique Candidates
+- Goal: add more recognizable ancient Greek uniques over time, especially in
+  underrepresented glyph families, while preserving readable monster behavior.
+- Depth planning: dungeon floors advance by two levels / 100 feet, so new fixed
+  unique depths should prefer even numbers unless there is a specific reason to
+  break the pattern.
+- Already represented: Pan (`y`, satyr), Ares (`G`, god), Hecate (`G`, god),
+  Zeus (`G`, god), Arachne (`S`, spider), Talos (`g`, golem), Cerberus (`C`,
+  canine), Nemean Lion (`f`, feline), Minos (`s`, skeleton), Chiron (`N`,
+  centaur), Medea (`p`, person), Odysseus (`p`, person), Agamemnon (`p`,
+  person), Hector (`p`, person), Typhon (`P`, giant), Phoenix (`B`, bird),
+  and several named dragons.
+
+### Early-Game Shortlist
+
+| Candidate | Depth | Suggested glyph/base | Role idea |
+| --- | --- | --- | --- |
+| Atalanta | 14 | `p` / person | Fast Artemisian archer; pressure through speed, archery, and hunting escorts. |
+| The Minotaur of Crete | 18 | `M` / monstrous | Recognizable labyrinth brute; dangerous melee without much spell complexity. |
+| Chiron, the Wounded Teacher | 22 | `N` / centaur | Implemented; caster-teacher with archery, healing, quips, and a mixed centaur/satyr retinue. |
+| The Sphinx of Thebes | 28 | `x` / sphinx | Riddle-themed disabler; sleep, confusion, and fear without raw burst damage. |
+| Medusa | 32 | `n` / naga | Early capstone gorgon; gaze/paralysis/fear threat with poison support. |
+
+| Candidate | Suggested glyph/base | Role idea |
+| --- | --- | --- |
+| Medusa | `n` / naga | High-profile gorgon unique; gaze, fear/confusion/paralysis, poison or shard bite. |
+| Stheno | `n` / naga | More martial gorgon sister; physical pressure with poison/fear. |
+| Euryale | `n` / naga | Screaming gorgon sister; sound/fear/confusion emphasis. |
+| Echidna | `n` / naga or `M` / monstrous | Mother of monsters; summoner with serpent/demon/monstrous escorts. |
+| Scylla | `M` / monstrous | Sea-cave horror; multi-bite melee, summons aquatic/serpentine monsters. |
+| Charybdis | `v` / vortex | Whirlpool unique; gravity/water displacement and terrain pressure. |
+| The Minotaur of Crete | `M` / monstrous | Replace or supplement Baphomet flavor; labyrinth-adjacent melee brute. |
+| Theseus | `p` / person | Heroic duelist; possible anti-monster/maze flavor, high melee and mobility. |
+| Perseus | `p` / person | Slayer of Medusa; mobile hero with light/blade tricks. |
+| Heracles | `p` / person or `P` / giant | Iconic late-game hero; huge melee, resistance, animal/monster trophy flavor. |
+| Atalanta | `p` / person | Fast archer/hunter; Artemisian flavor, speed and ranged pressure. |
+| Achilles | `p` / person | Dangerous warrior unique; extreme melee/speed, possible vulnerability hook. |
+| Ajax | `p` / person | Shield-wall bruiser; high AC, melee, knockback/stun feel. |
+| Helen of Troy | `p` / person | Enchantress/social unique; confusion/charm-adjacent effects if supported. |
+| Circe | `p` / person | Witch unique; polymorph, slowing, sleep/confusion. |
+| Calypso | `p` / person or `y` / satyr-adjacent | Island nymph; sleep, hold, water/illusion support. |
+| Tiresias | `h` / humanoid | Blind prophet; detection/curse/psychic spell profile. |
+| Chiron | `N` / centaur | Implemented as a wise archer/healer with a teaching-warband retinue. |
+| Pegasus | `q` / quadruped | Flying sacred mount; speed, evasive movement, light/air flavor. |
+| Chimera Queen | `M` / monstrous | Upgrade path for chimaera family; fire/poison/multi-breath. |
+| The Sphinx of Thebes | `x` / sphinx | Riddle/sleep/confusion caster; makes sphinx base more iconic. |
+| Nyx | `G` / god or `E` / elemental | Primordial night; darkness, nether, sleep, fear. |
+| Thanatos | `G` / god or `W` / wraith | Death personified; late-game drain/nether pressure. |
+| Hypnos | `G` / god | Sleep-focused divine unique; safer than raw damage, strong tactical disruption. |
+| Nemesis | `G` / god | Retribution theme; punishes buffs, summons/banishes, high resist profile. |
+| Nike | `G` / god | Swift victory goddess; speed, morale/haste support, evasive combat. |
+| Dionysus | `G` / god | Confusion, fearlessness, summons satyrs/revelers, chaos-adjacent flavor. |
+| Artemis | `G` / god | Archer/hunter goddess; ranged pressure, animal escorts. |
+| Apollo | `G` / god | Light, archery, healing, prophecy; anti-undead or blindness effects. |
+| Poseidon | `G` / god | Water/gravity/earthquake style; sea creature escorts. |
+| Athena | `G` / god | Tactical warrior-caster; buffs, summons champions, high AC. |
+| Hephaestus | `G` / god or `g` / golem | Forge god; constructs, fire resistance, summoned automata. |
+| Hera | `G` / god | Royal curse/enchantment unique; summons divine servants. |
+| Demeter | `G` / god | Nature/earth unique; strong hook with organic terrain later. |
+| Persephone | `G` / god or `W` / wraith | Underworld queen; seasonal/life-death spell mix. |
 
 | Base | Glyph | Migration Status |
 | --- | --- | --- |
-| `ancient dragon` | `D` | Done for current unique pass; generic dragons retained |
-| `ainu` | `A` | Old divine/spirit base; keep for now |
-| `god` | `G` | Done for initial pass; Zeus/Ares/Hecate moved |
+| `player` | `@` | Out of scope |
+| `creeping coins` | `$` | Done; keep existing names, glyph, and mechanics |
+| `mimic` | `?` | Done; keep existing names, descriptions, glyphs, and mechanics |
+| `mushroom` | `,` | Done for current pass; light lotus descriptors added |
 | `ant` | `a` | Done for current pass; myrmidon ant and Queen of the Myrmekes |
+| `ainu` | `A` | Old divine/spirit base; keep for now |
 | `bat` | `b` | Keep base/mechanics; renamed bat of Gorgoroth and doombat |
 | `bird` | `B` | Done for initial pass; Greek bird reskins complete |
-| `canine` | `C` | Done for initial pass; Greek dog/wolf reskins complete |
 | `centipede` | `c` | Done; keep existing names, glyph, and mechanics |
-| `creeping coins` | `$` | Done; keep existing names, glyph, and mechanics |
+| `canine` | `C` | Done for initial pass; Greek dog/wolf reskins complete |
 | `dragon` | `d` | Done for current unique pass; generic dragons retained |
-| `dragonfly` | `F` | Done for current pass; spelling normalized, mechanics unchanged |
+| `ancient dragon` | `D` | Done for current unique pass; generic dragons retained |
 | `eye` | `e` | Done for current pass; Stygian beholder and Argus renamed |
 | `elemental` | `E` | Done for current unique pass; primordial elemental deity names added |
 | `feline` | `f` | Done for current pass; The Nemean Lion renamed, generics retained |
-| `ghost` | `G` | Removed; former roster merged into `wraith`, leaving `G` clean for gods |
-| `giant` | `P` | Done for initial unique pass; generics retained |
+| `dragonfly` | `F` | Done for current pass; spelling normalized, mechanics unchanged |
 | `golem` | `g` | Done for current pass; several constructs given mythic material names and Talos made unique |
+| `ghost` | `G` | Removed; former roster merged into `wraith`, leaving `G` clean for gods |
+| `god` | `G` | Done for initial pass; Zeus/Ares/Hecate moved |
 | `humanoid` | `h` | Done for current pass; Greek humanoid generics and uniques reskinned |
 | `hybrid` | `H` | Done for current pass; harpies remain here |
-| `monstrous` | `M` | Done for current pass; major composite beasts moved here |
 | `hydra` | `H` | Done for current pass; base retained, glyph changed from `M` |
 | `ichor` | `i` | Done for current pass; base renamed from icky thing, glyph retained |
 | `insect` | `I` | Done for current pass; pyrausta, gadfly, and Elysian firefly renamed |
 | `jelly` | `j` | Done for current pass; kept generic, black ooze became Stygian ooze |
-| `killer beetle` | `K` | Done; keep existing names, glyph, pits, and mechanics |
+| `snake` | `J` | Done for current pass; python, Pythian serpent, Stygian crawler, and Ophion serpent renamed |
 | `kobold` | `k` | Done for current pass; Mary Ann Skuttle renamed, generics retained |
+| `killer beetle` | `K` | Done; keep existing names, glyph, pits, and mechanics |
+| `tree` | `l` | Done for initial pass; Living Wood/dryads complete |
 | `lich` | `L` | Done for current pass; Mormo renamed, Vecna retained |
-| `sphinx` | `x` | Done for current pass; base renamed from lurker, old tile coordinates reused |
-| `major demon` | `U` | Done for current unique pass; Greek demon uniques renamed, generic demons retained |
-| `mimic` | `?` | Done; keep existing names, descriptions, glyphs, and mechanics |
-| `minor demon` | `u` | Done for current unique pass; Gello renamed, generic demons retained |
 | `mold` | `m` | Done; keep existing names, glyph, and mechanics |
-| `mushroom` | `,` | Done for current pass; light lotus descriptors added |
+| `monstrous` | `M` | Done for current pass; major composite beasts moved here |
 | `naga` | `n` | Done for current pass; temple naga and lamia renamed, gorgon retained |
-| `ogre` | `O` | Done for current pass; Polyphemus renamed, generic ogres retained |
+| `centaur` | `N` | Added for low-mid missile skirmishers; future player race and Chiron support |
 | `orc` | `o` | Done for current pass; generic orcs kept, uniques reskinned |
+| `ogre` | `O` | Done for current pass; Polyphemus renamed, generic ogres retained |
 | `person` | `p` | Done for current pass; Greek person generics and uniques reskinned |
+| `Morgoth` | `P` | Special; retained for Hades/final boss |
+| `giant` | `P` | Done for initial unique pass; generics retained |
 | `quadruped` | `q` | Done for current pass; Ayula, sacred deer, odontotyrannos, and Stygian mare renamed |
 | `quylthulg` | `Q` | Done; keep existing names, glyph, and mechanics |
-| `reptile` | `R` | Done for current pass; The Tarrasque became Cetus, the Sea Beast |
 | `rodent` | `r` | Done; keep existing names, glyph, and mechanics |
+| `reptile` | `R` | Done for current pass; The Tarrasque became Cetus, the Sea Beast |
 | `skeleton` | `s` | Done for current pass; Minos renamed, other skeletons retained |
-| `snake` | `J` | Done for current pass; python, Pythian serpent, Stygian crawler, and Ophion serpent renamed |
 | `spider` | `S` | Done for current pass; Tolkien names replaced, glyph/web/summon mechanics retained |
 | `townsfolk` | `t` | Done for current pass; polis residents renamed, mechanics retained |
-| `tree` | `l` | Done for initial pass; Living Wood/dryads complete |
 | `troll` | `T` | Done for current pass; generics retained, uniques and underworld troll renamed |
-| `vampire` | `V` | Done for current pass; Empusa renamed and Sauron shape cleaned to Vampire-Zeus |
+| `minor demon` | `u` | Done for current unique pass; Gello renamed, generic demons retained |
+| `major demon` | `U` | Done for current unique pass; Greek demon uniques renamed, generic demons retained |
 | `vortex` | `v` | Done for current pass; Aeolus, storm of Lethe, and Darude sandstorm renamed |
+| `vampire` | `V` | Done for current pass; Empusa renamed and Sauron shape cleaned to Vampire-Zeus |
 | `worm` | `w` | Done for current pass; Stygian worm mass renamed, other worms retained |
 | `wraith` | `W` | Done; absorbs former ghost roster, no ordinary color overlap |
+| `sphinx` | `x` | Done for current pass; base renamed from lurker, old tile coordinates reused |
 | `xorn` | `X` | Done; keep existing names, glyph, and mechanics |
 | `satyr` | `y` | Done for initial pass; yeeks replaced with satyrs and Pan |
 | `yeti` | `Y` | Done; keep existing names, glyph, and mechanics |
-| `zephyr hound` | `Z` | Done for current pass; lightning and underworld hound names added |
 | `zombie` | `z` | Done for current pass; mummified cyclops added |
-| `player` | `@` | Out of scope |
-| `Morgoth` | `P` | Special; retained for Hades/final boss |
+| `zephyr hound` | `Z` | Done for current pass; lightning and underworld hound names added |
 
 ## Objects
 - Most mundane weapons/armor stay.

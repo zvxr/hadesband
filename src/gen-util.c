@@ -454,16 +454,18 @@ static void place_rubble(struct chunk *c, struct loc grid)
  *
  * \param c current chunk
  * \param grid location
- * \param quest is whether or not this is a quest level.
+ * \param block_down_stairs is whether down stairs are blocked.
  * \param feat stair terrain type
  *
- * All stairs from town go down. All stairs on an unfinished quest level go up.
+ * All stairs from town go down. All stairs on a level blocking down stairs go
+ * up.
  */
-static void place_stairs(struct chunk *c, struct loc grid, bool quest, int feat)
+static void place_stairs(struct chunk *c, struct loc grid,
+	bool block_down_stairs, int feat)
 {
 	if (!c->depth) {
 		square_set_feat(c, grid, FEAT_MORE);
-	} else if (quest || c->depth >= z_info->max_depth - 1) {
+	} else if (block_down_stairs || c->depth >= z_info->max_depth - 1) {
 		square_set_feat(c, grid, FEAT_LESS);
 	} else {
 		square_set_feat(c, grid, feat);
@@ -476,13 +478,14 @@ static void place_stairs(struct chunk *c, struct loc grid, bool quest, int feat)
  *
  * \param c current chunk
  * \param grid location
- * \param quest is whether or not this is a quest level.
+ * \param block_down_stairs is whether down stairs are blocked.
  */
-void place_random_stairs(struct chunk *c, struct loc grid, bool quest)
+void place_random_stairs(struct chunk *c, struct loc grid,
+	bool block_down_stairs)
 {
 	int feat = randint0(100) < 50 ? FEAT_LESS : FEAT_MORE;
 	if (square_canputitem(c, grid))
-		place_stairs(c, grid, quest, feat);
+		place_stairs(c, grid, block_down_stairs, feat);
 }
 
 
@@ -741,10 +744,10 @@ void place_random_door(struct chunk *c, struct loc grid)
  * to staircases of the same type.
  * \param avoid_list If not NULL and minsep is greater than zero, also avoid
  * the locations in avoid_list which have staircases of the opposite type.
- * \param quest is whether or not this is a quest level.
+ * \param block_down_stairs is whether down stairs are blocked.
  */
 void alloc_stairs(struct chunk *c, int feat, int num, int minsep, bool sepany,
-		const struct connector *avoid_list, bool quest)
+		const struct connector *avoid_list, bool block_down_stairs)
 {
 	int i, navalloc, nav, walls;
 	struct loc *av;
@@ -832,7 +835,7 @@ void alloc_stairs(struct chunk *c, int feat, int num, int minsep, bool sepany,
 				av[nav++] = grid;
 			}
 
-			place_stairs(c, grid, quest, feat);
+			place_stairs(c, grid, block_down_stairs, feat);
 			assert(square_isstairs(c, grid));
 			++i;
 		}

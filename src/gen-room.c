@@ -1332,7 +1332,7 @@ static bool build_room_template(struct chunk *c, struct loc centre, int ymax,
 					place_object(c, grid, c->depth, false, false,
 								 ORIGIN_SPECIAL, 0);
 				} else {
-					place_random_stairs(c, grid, dun->quest);
+					place_random_stairs(c, grid, dun->block_down_stairs);
 				}
 				/* Place nearby guards in second pass. */
 				break;
@@ -1609,7 +1609,7 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 			case '>': {
 				if (dun->persist) break;
 				/* No down stairs at bottom or on quests */
-				if (dun->quest || c->depth
+				if (dun->block_down_stairs || c->depth
 						>= z_info->max_depth - 1) {
 					square_set_feat(c, grid, FEAT_LESS);
 				} else {
@@ -2594,7 +2594,7 @@ bool build_large(struct chunk *c, struct loc centre, int rating)
 		if (randint0(100) < 80 || dun->persist) {
 			place_object(c, centre, c->depth, false, false, ORIGIN_SPECIAL, 0);
 		} else {
-			place_random_stairs(c, centre, dun->quest);
+			place_random_stairs(c, centre, dun->block_down_stairs);
 		}
 
 		/* Traps to protect the treasure */

@@ -1056,8 +1056,8 @@ static void build_staircase_rooms(struct chunk *c, const char *label)
  * Add stairs to a level, taking into account the special treatment needed
  * for persistent levels.
  */
-static void handle_level_stairs(struct chunk *c, bool persistent, bool quest,
-		int down_count, int up_count)
+static void handle_level_stairs(struct chunk *c, bool persistent,
+		bool block_down_stairs, int down_count, int up_count)
 {
 	/*
 	 * For persistent levels, require that the stairs be at least four
@@ -1074,11 +1074,11 @@ static void handle_level_stairs(struct chunk *c, bool persistent, bool quest,
 
 	if (!persistent || !chunk_find_adjacent(c->depth, false)) {
 		alloc_stairs(c, FEAT_MORE, down_count, minsep, false,
-			dun->one_off_below, quest);
+			dun->one_off_below, block_down_stairs);
 	}
 	if (!persistent || !chunk_find_adjacent(c->depth, true)) {
 		alloc_stairs(c, FEAT_LESS, up_count, minsep, false,
-			dun->one_off_above, quest);
+			dun->one_off_above, block_down_stairs);
 	}
 }
 
@@ -1396,7 +1396,7 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width,
 		build_streamer(c, FEAT_QUARTZ, dun->profile->str.qc);
 
 	/* Place 3 or 4 down stairs and 1 or 2 up stairs near some walls */
-	handle_level_stairs(c, dun->persist, dun->quest,
+	handle_level_stairs(c, dun->persist, dun->block_down_stairs,
 		rand_range(3, 4), rand_range(1, 2));
 
 	/* General amount of rubble, traps and monsters */
@@ -1676,11 +1676,11 @@ struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width,
 
 	/* Generate a single set of stairs up if necessary. */
 	if (!cave_find(c, &grid, square_isupstairs))
-		alloc_stairs(c, FEAT_LESS, 1, 0, false, NULL, dun->quest);
+		alloc_stairs(c, FEAT_LESS, 1, 0, false, NULL, dun->block_down_stairs);
 
 	/* Generate a single set of stairs down if necessary. */
 	if (!cave_find(c, &grid, square_isdownstairs))
-		alloc_stairs(c, FEAT_MORE, 1, 0, false, NULL, dun->quest);
+		alloc_stairs(c, FEAT_MORE, 1, 0, false, NULL, dun->block_down_stairs);
 
 	/* General some rubble, traps and monsters */
 	k = MAX(MIN(c->depth / 3, 10), 2);
@@ -2309,7 +2309,7 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width,
 	draw_rectangle(c, 0, 0, h - 1, w - 1, FEAT_PERM, SQUARE_NONE, true);
 
 	/* Place 1-3 down stairs and 1-2 up stairs near some walls */
-	handle_level_stairs(c, dun->persist, dun->quest,
+	handle_level_stairs(c, dun->persist, dun->block_down_stairs,
 		rand_range(1, 3), rand_range(1, 2));
 
 	/* General some rubble, traps and monsters */
@@ -3051,7 +3051,7 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width,
 		build_streamer(c, FEAT_QUARTZ, dun->profile->str.qc);
 
 	/* Place 3 or 4 down stairs and 1 or 2 up stairs near some walls */
-	handle_level_stairs(c, dun->persist, dun->quest,
+	handle_level_stairs(c, dun->persist, dun->block_down_stairs,
 		rand_range(3, 4), rand_range(1, 2));
 
 	/* General amount of rubble, traps and monsters */
@@ -3301,7 +3301,7 @@ struct chunk *moria_gen(struct player *p, int min_height, int min_width,
 		build_streamer(c, FEAT_QUARTZ, dun->profile->str.qc);
 
 	/* Place 3 or 4 down stairs and 1 or 2 up stairs near some walls */
-	handle_level_stairs(c, dun->persist, dun->quest,
+	handle_level_stairs(c, dun->persist, dun->block_down_stairs,
 		rand_range(3, 4), rand_range(1, 2));
 
 	/* General amount of rubble, traps and monsters */
@@ -3622,11 +3622,11 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width,
 
 	/* Place 2-3 down stairs near some walls */
 	alloc_stairs(c, FEAT_MORE, rand_range(1, 3), 0, false, NULL,
-		dun->quest);
+		dun->block_down_stairs);
 
 	/* Place 1-2 up stairs near some walls */
 	alloc_stairs(c, FEAT_LESS, rand_range(1, 2), 0, false, NULL,
-		dun->quest);
+		dun->block_down_stairs);
 
 	/* Generate some rubble, traps and monsters */
 	k = MAX(MIN(c->depth / 3, 10), 2);
@@ -3844,7 +3844,7 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width,
 	ensure_connectedness(c, true);
 
 	/* Place 3 or 4 down stairs and 1 or 2 up stairs near some walls */
-	handle_level_stairs(c, dun->persist, dun->quest,
+	handle_level_stairs(c, dun->persist, dun->block_down_stairs,
 		rand_range(3, 4), rand_range(1, 2));
 
 	/* Put some rubble in corridors */
@@ -3953,11 +3953,11 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width,
 
 	/* Place down stairs in the right cavern */
 	alloc_stairs(right, FEAT_MORE, rand_range(2, 3), 0, false, NULL,
-		dun->quest);
+		dun->block_down_stairs);
 
 	/* Place up stairs in the left cavern */
 	alloc_stairs(left, FEAT_LESS, rand_range(1, 3), 0, false, NULL,
-		dun->quest);
+		dun->block_down_stairs);
 
 	/*
 	 * Open the ends of the gauntlet.  Make sure the opening is

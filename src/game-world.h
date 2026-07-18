@@ -37,6 +37,12 @@ struct level_theme_seed_room_tag {
 	struct level_theme_seed_room_tag *next;
 };
 
+struct level_theme_unique {
+	struct monster_race *race;
+	bool block_down_stairs;
+	struct level_theme_unique *next;
+};
+
 struct level_theme_spawn {
 	struct level_theme_spawn *next;
 	uint8_t depth;
@@ -52,6 +58,7 @@ struct level_theme {
 	uint8_t label_color;
 	struct level_theme_spawn *spawns;
 	struct level_theme_seed_room_tag *seed_room_tags;
+	struct level_theme_unique *uniques;
 	int seed_terrain;
 	struct level_theme *next;
 };
@@ -72,6 +79,9 @@ struct level_theme *level_theme_choose(int depth, const struct player *p);
 struct level_theme *level_theme_by_depth(int depth);
 struct level_theme *level_theme_for_present_seed_terrain(const struct chunk *c);
 const char *level_theme_roll_seed_room_tag(const struct level_theme *theme);
+bool level_theme_has_unique_block_down_stairs(const struct level_theme *theme);
+bool level_theme_blocks_down_stairs(const struct chunk *c);
+bool level_theme_check_guardian_death(struct player *p, const struct monster *m);
 bool level_theme_seed_terrain_spawns(int fidx, int depth,
 	const struct player *p, struct level_theme **matched_theme);
 bool is_daytime(void);

@@ -1006,6 +1006,9 @@ void monster_death(struct monster *mon, struct player *p, bool stats)
 
 	/* Check if we finished a quest */
 	quest_check(p, mon);
+
+	/* Check if a level-theme stair guardian was defeated */
+	level_theme_check_guardian_death(p, mon);
 }
 
 /**

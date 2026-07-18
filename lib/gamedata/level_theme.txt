@@ -9,6 +9,10 @@
 # label-color: Angband color character
 # seed-room-tag:room-template tag:percent chance
 # seed-terrain:terrain feature code
+# unique:unique monster to place on the level if still alive
+# unique-block-down-stairs:unique monster to place on the level if still alive;
+#   while present, generated down stairs are replaced with up stairs, and a down
+#   stair appears when the unique is slain
 
 theme:Forest
 label:Forest
@@ -24,6 +28,13 @@ label-color:u
 spawn:6:100:100:100
 spawn:66:100:100:100
 seed-room-tag:round:66
+
+theme:Chiron's School
+label:Chiron's School
+label-color:w
+spawn:22:100:100:100
+unique:Kerwyn Foehammer
+unique-block-down-stairs:Chiron, the Wounded Teacher
 
 theme:Dungeon Store
 label:Dungeon Store

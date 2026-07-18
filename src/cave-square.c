@@ -1437,7 +1437,8 @@ void square_add_stairs(struct chunk *c, struct loc grid, int depth) {
 	int down = randint0(100) < 50;
 	if (depth == 0)
 		down = 1;
-	else if (is_quest(player, depth) || depth >= z_info->max_depth - 1)
+	else if (is_quest(player, depth) || level_theme_blocks_down_stairs(c) ||
+			depth >= z_info->max_depth - 1)
 		down = 0;
 
 	square_set_feat(c, grid, down ? FEAT_MORE : FEAT_LESS);

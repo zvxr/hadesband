@@ -26,6 +26,7 @@
 #include "mon-move.h"
 #include "mon-util.h"
 #include "obj-curse.h"
+#include "obj-pile.h"
 #include "obj-sentient.h"
 #include "obj-desc.h"
 #include "obj-gear.h"
@@ -217,6 +218,72 @@ const char *level_theme_roll_seed_room_tag(const struct level_theme *theme)
 		if (randint0(100) < tag->chance) return tag->tag;
 	}
 	return NULL;
+}
+
+bool level_theme_has_unique_block_down_stairs(const struct level_theme *theme)
+{
+	struct level_theme_unique *unique;
+
+	if (!theme) return false;
+	for (unique = theme->uniques; unique; unique = unique->next) {
+		if (unique->block_down_stairs && unique->race->max_num > 0 &&
+				unique->race->cur_num == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool level_theme_blocks_down_stairs(const struct chunk *c)
+{
+	struct level_theme_unique *unique;
+
+	if (!c || !c->active_theme) return false;
+	for (unique = c->active_theme->uniques; unique; unique = unique->next) {
+		if (unique->block_down_stairs && unique->race->cur_num > 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+static void build_level_theme_guardian_stairs(struct player *p, struct loc grid)
+{
+	struct loc new_grid = p->grid;
+
+	while (!square_changeable(cave, grid) &&
+		   square_ispassable(cave, grid) &&
+		   !square_isdoor(cave, grid)) {
+		scatter(cave, &new_grid, grid, 1, false);
+		grid = new_grid;
+	}
+
+	push_object(grid);
+	msg("A hidden way opens downward...");
+	square_set_feat(cave, grid, FEAT_MORE);
+	p->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+}
+
+bool level_theme_check_guardian_death(struct player *p, const struct monster *m)
+{
+	struct level_theme *theme = cave ? cave->active_theme : NULL;
+	struct level_theme_unique *unique;
+	bool was_guardian = false;
+
+	if (!theme || !m || !m->race) return false;
+
+	for (unique = theme->uniques; unique; unique = unique->next) {
+		if (!unique->block_down_stairs) continue;
+		if (unique->race == m->race) {
+			was_guardian = true;
+			continue;
+		}
+		if (unique->race->cur_num > 0) return false;
+	}
+
+	if (!was_guardian) return false;
+	build_level_theme_guardian_stairs(p, m->grid);
+	return true;
 }
 
 bool level_theme_seed_terrain_spawns(int fidx, int depth,

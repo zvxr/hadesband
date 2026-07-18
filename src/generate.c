@@ -1112,6 +1112,26 @@ static void cleanup_dun_data(struct dun_data *dd)
 	mem_free(dun->tunn);
 }
 
+static void place_level_theme_uniques(struct chunk *chunk,
+	const struct level_theme *theme)
+{
+	struct level_theme_unique *unique;
+
+	if (!theme) return;
+
+	for (unique = theme->uniques; unique; unique = unique->next) {
+		struct monster_group_info info = { 0, 0 };
+		struct loc grid;
+
+		if (unique->race->max_num == 0 || unique->race->cur_num > 0) {
+			continue;
+		}
+		if (!find_empty(chunk, &grid)) continue;
+		place_new_monster(chunk, grid, unique->race, true, true, info,
+			ORIGIN_DROP);
+	}
+}
+
 
 /**
  * Generate a random level.
@@ -1178,6 +1198,8 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 		dun->nstair_room = 0;
 		dun->quest = is_quest(p, p->depth);
 		dun->active_theme = level_theme_choose(p->depth, p);
+		dun->block_down_stairs = dun->quest ||
+			level_theme_has_unique_block_down_stairs(dun->active_theme);
 
 		/* Get connector info for persistent levels */
 		if (OPT(p, birth_levels_persist)) {
@@ -1224,6 +1246,9 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 				}
 			}
 		}
+
+		/* Ensure fixed level-theme uniques */
+		place_level_theme_uniques(chunk, dun->active_theme);
 
 		/* Clear generation flags, add connecting info */
 		for (y = 0; y < chunk->height; y++) {

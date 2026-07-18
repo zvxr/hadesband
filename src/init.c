@@ -1299,6 +1299,44 @@ static enum parser_error parse_level_theme_seed_terrain(struct parser *p)
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_level_theme_unique_common(struct parser *p,
+	bool block_down_stairs)
+{
+	struct level_theme *theme = parser_priv(p);
+	struct level_theme_unique *unique;
+	struct level_theme_unique **tail;
+	struct monster_race *race;
+	const char *name = parser_getstr(p, "name");
+
+	if (!theme) return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	race = lookup_monster(name);
+	if (!race) return PARSE_ERROR_INVALID_MONSTER;
+	if (!rf_has(race->flags, RF_UNIQUE)) return PARSE_ERROR_INVALID_VALUE;
+
+	unique = mem_zalloc(sizeof *unique);
+	unique->race = race;
+	unique->block_down_stairs = block_down_stairs;
+
+	tail = &theme->uniques;
+	while (*tail) {
+		tail = &(*tail)->next;
+	}
+	*tail = unique;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_level_theme_unique(struct parser *p)
+{
+	return parse_level_theme_unique_common(p, false);
+}
+
+static enum parser_error parse_level_theme_unique_block_down_stairs(
+	struct parser *p)
+{
+	return parse_level_theme_unique_common(p, true);
+}
+
 static struct parser *init_parse_level_theme(void)
 {
 	struct parser *p = parser_new();
@@ -1312,6 +1350,9 @@ static struct parser *init_parse_level_theme(void)
 	parser_reg(p, "seed-room-tag sym tag int chance",
 		parse_level_theme_prefer_room_tag);
 	parser_reg(p, "seed-terrain sym code", parse_level_theme_seed_terrain);
+	parser_reg(p, "unique str name", parse_level_theme_unique);
+	parser_reg(p, "unique-block-down-stairs str name",
+		parse_level_theme_unique_block_down_stairs);
 	return p;
 }
 
@@ -1334,6 +1375,7 @@ static void cleanup_level_theme(void)
 		struct level_theme *old = theme;
 		struct level_theme_spawn *spawn = theme->spawns;
 		struct level_theme_seed_room_tag *tag = theme->seed_room_tags;
+		struct level_theme_unique *unique = theme->uniques;
 
 		while (spawn) {
 			struct level_theme_spawn *next = spawn->next;
@@ -1347,6 +1389,12 @@ static void cleanup_level_theme(void)
 			string_free(tag->tag);
 			mem_free(tag);
 			tag = next;
+		}
+		while (unique) {
+			struct level_theme_unique *next = unique->next;
+
+			mem_free(unique);
+			unique = next;
 		}
 		string_free(theme->name);
 		string_free(theme->label);
@@ -4548,7 +4596,6 @@ static struct {
 	struct file_parser *parser;
 } pl[] = {
 	{ "world", &world_parser },
-	{ "level themes", &level_theme_parser },
 	{ "projections", &projection_parser },
 	{ "ui renderers", &ui_entry_renderer_parser },
 	{ "ui entries", &ui_entry_parser },
@@ -4578,6 +4625,7 @@ static struct {
 	{ "blow effects", &eff_parser },
 	{ "monster spells", &mon_spell_parser },
 	{ "monsters", &monster_parser },
+	{ "level themes", &level_theme_parser },
 	{ "monster pits" , &pit_parser },
 	{ "monster lore" , &lore_parser },
 	{ "traps", &trap_parser },
