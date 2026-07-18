@@ -113,6 +113,7 @@ EFFECT(BRAND_AMMO,					false,	NULL,		0,		EFINFO_NONE,	"brands a stack of ammunit
 EFFECT(BRAND_BOLTS,					false,	NULL,		0,		EFINFO_NONE,	"brands bolts with fire, in an unbalanced fashion",	"brand bolts")
 EFFECT(CREATE_ARROWS,				false,	NULL,		0,		EFINFO_NONE,	"uses a staff to create a stack of arrows",	"use staff for arrows")
 EFFECT(CREATE_TREE,					true,	NULL,		0,		EFINFO_NONE,	"calls a tree into being on an adjacent clear floor",	"call tree")
+EFFECT(WILD_GROWTH,					false,	NULL,		0,		EFINFO_QUAKE,	"causes wild growth around you of radius %d",	"cause wild growth")
 EFFECT(TAP_DEVICE,					false,	NULL,		0,		EFINFO_NONE,	"drains magical energy from a staff or wand",	"tap device")
 EFFECT(TAP_UNLIFE,					false,	"dam",		1,		EFINFO_DICE,	"drains %s mana from the closest undead monster, damaging it",	"tap unlife")
 EFFECT(SHAPECHANGE,					false,	NULL,		0,		EFINFO_NONE,	"changes the player's shape",	"change shape")

@@ -3580,6 +3580,57 @@ bool effect_handler_CREATE_TREE(effect_handler_context_t *context)
 }
 
 /**
+ * Fill nearby clear floor with vegetation, trees, and wood.
+ */
+bool effect_handler_WILD_GROWTH(effect_handler_context_t *context)
+{
+	int radius = context->radius ? context->radius : 5;
+	int count = 0;
+	int y, x;
+
+	for (y = player->grid.y - radius; y <= player->grid.y + radius; y++) {
+		for (x = player->grid.x - radius; x <= player->grid.x + radius; x++) {
+			struct loc grid = loc(x, y);
+			int feat;
+			int roll;
+
+			if (!square_in_bounds_fully(cave, grid)) continue;
+			if (loc_eq(grid, player->grid)) continue;
+			if (distance(player->grid, grid) > radius) continue;
+			if (!square_isempty(cave, grid)) continue;
+
+			feat = square(cave, grid)->feat;
+			if (feat != FEAT_FLOOR && feat != FEAT_SOIL) continue;
+
+			roll = randint0(100);
+			if (roll < 45) continue;
+			if (roll < 80) {
+				square_set_feat(cave, grid, FEAT_VEGETATION);
+			} else if (roll < 95) {
+				square_set_feat(cave, grid, FEAT_TREE);
+			} else {
+				square_set_feat(cave, grid, FEAT_WOOD);
+			}
+
+			if (cave->depth == 0) expose_to_sun(cave, grid, is_daytime());
+			count++;
+		}
+	}
+
+	if (!count) {
+		msg("No wild growth takes hold.");
+		return false;
+	}
+
+	msg("Wild growth erupts from the ground!");
+	context->ident = true;
+	player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+	player->upkeep->redraw |= (PR_MONLIST | PR_ITEMLIST);
+
+	return true;
+}
+
+/**
  * Draw energy from a magical device
  */
 bool effect_handler_TAP_DEVICE(effect_handler_context_t *context)

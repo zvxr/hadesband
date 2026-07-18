@@ -4400,6 +4400,21 @@ charges:3+d5
 power:5
 effect:EARTHQUAKE:NONE:10
 
+name:Wild Growth
+type:staff
+graphics:_:d
+level:35
+weight:50
+cost:1200
+desc:Living grain twists through the staff, eager to turn stone back into
+desc: wild ground.
+alloc:20:35 to 100
+attack:1d2:0:0
+armor:0:0
+charges:2+d4
+power:9
+effect:WILD_GROWTH:NONE:5
+
 name:*Destruction*
 type:staff
 graphics:_:d

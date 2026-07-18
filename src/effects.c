@@ -233,8 +233,9 @@ int effect_subtype(int index, const char *type)
 		case EF_SHAPECHANGE:
 			return shape_name_to_idx(type);
 
-		/* Targeted earthquake */
+		/* Radius effects with optional targeting. */
 		case EF_EARTHQUAKE:
+		case EF_WILD_GROWTH:
 			if (streq(type, "TARGETED")) {
 				return 1;
 			} else if (streq(type, "NONE")) {
