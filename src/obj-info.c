@@ -853,8 +853,10 @@ static void get_known_elements(const struct object *obj,
 
 	/* Grab the element info */
 	for (i = 0; i < ELEM_MAX; i++) {
-		/* Report fake egos or known element info */
-		if (player->obj_k->el_info[i].res_level || (mode & OINFO_SPOIL))
+		/* Report fake egos, spoilers, or locally known element info. */
+		if (obj->known->el_info[i].res_level ||
+				player->obj_k->el_info[i].res_level ||
+				(mode & OINFO_SPOIL))
 			el_info[i].res_level = obj->known->el_info[i].res_level;
 		else
 			el_info[i].res_level = 0;
