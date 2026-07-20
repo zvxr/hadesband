@@ -35,12 +35,13 @@
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "player-calcs.h"
+#include "player-spell.h"
 #include "player-timed.h"
 #include "player-util.h"
 #include "project.h"
 #include "target.h"
 
-typedef void (*player_power_handler)(int dir);
+typedef void (*player_power_handler)(int dir, struct command *cmd);
 
 struct player_power {
 	int flag;
@@ -50,23 +51,26 @@ struct player_power {
 	player_power_handler handler;
 };
 
-static void use_steal(int dir);
-static void use_mana_siphon(int dir);
-static void use_prayer(int dir);
-static void use_cyclopean_rage(int dir);
-static void use_kobold_scurry(int dir);
-static void use_siren_song(int dir);
-static void use_war_cry(int dir);
-static void use_cure_confusion(int dir);
-static void use_stone_lore(int dir);
-static void use_demigod_taunt(int dir);
-static void use_fletch_ammo(int dir);
+static void use_steal(int dir, struct command *cmd);
+static void use_mana_siphon(int dir, struct command *cmd);
+static void use_prayer(int dir, struct command *cmd);
+static void use_signature_spell(int dir, struct command *cmd);
+static void use_cyclopean_rage(int dir, struct command *cmd);
+static void use_kobold_scurry(int dir, struct command *cmd);
+static void use_siren_song(int dir, struct command *cmd);
+static void use_war_cry(int dir, struct command *cmd);
+static void use_cure_confusion(int dir, struct command *cmd);
+static void use_stone_lore(int dir, struct command *cmd);
+static void use_demigod_taunt(int dir, struct command *cmd);
+static void use_fletch_ammo(int dir, struct command *cmd);
 
 static const struct player_power player_powers[] = {
 	{ PF_STEAL, PLAYER_POWER_CLASS, "Steal", true, use_steal },
 	{ PF_MANA_STEAL, PLAYER_POWER_CLASS, "Siphon Mana", true,
 		use_mana_siphon },
 	{ PF_PRAYER, PLAYER_POWER_CLASS, "Prayer", false, use_prayer },
+	{ PF_SIGNATURE_SPELL, PLAYER_POWER_CLASS, "Signature Spell", false,
+		use_signature_spell },
 	{ PF_CYCLOPEAN_RAGE, PLAYER_POWER_RACE, "Cyclopean Rage", false,
 		use_cyclopean_rage },
 	{ PF_KOBOLD_SCURRY, PLAYER_POWER_RACE, "Scurry", false,
@@ -205,7 +209,7 @@ void use_player_power(enum player_power_source source, struct command *cmd)
 		return;
 	}
 
-	power->handler(dir);
+	power->handler(dir, cmd);
 }
 
 static struct monster *power_target_monster(int *dir)
@@ -225,9 +229,10 @@ static struct monster *power_target_monster(int *dir)
 	return mon;
 }
 
-static void use_steal(int dir)
+static void use_steal(int dir, struct command *cmd)
 {
 	struct monster *mon = power_target_monster(&dir);
+	(void)cmd;
 
 	if (mon) {
 		steal_monster_item(mon, -1);
@@ -236,12 +241,13 @@ static void use_steal(int dir)
 	}
 }
 
-static void use_mana_siphon(int dir)
+static void use_mana_siphon(int dir, struct command *cmd)
 {
 	struct monster *mon = power_target_monster(&dir);
 	char m_name[80];
 	int mlevel, spell_power, chance, roll;
 	int missing_mana, mana;
+	(void)cmd;
 
 	if (!mon) {
 		msg("You spin around.");
@@ -378,11 +384,13 @@ static void prayer_apply(enum prayer_boon boon)
 	}
 }
 
-static void use_prayer(int dir)
+static void use_prayer(int dir, struct command *cmd)
 {
 	enum prayer_boon boon;
 	int choices[N_ELEMENTS(prayer_boons)];
 	int i;
+	(void)dir;
+	(void)cmd;
 
 	if (player->timed[TMD_PRAYER_COOLDOWN]) {
 		msg("You need %d more turns before another prayer.",
@@ -428,9 +436,127 @@ static void use_prayer(int dir)
 	(void)player_set_timed(player, TMD_PRAYER_COOLDOWN, 120, true, false);
 }
 
-static void use_cyclopean_rage(int dir)
+static int signature_spell_cooldown(const struct class_spell *spell)
+{
+	return 30 + spell->slevel * 4 + spell->smana * 3;
+}
+
+static bool signature_spell_is_learned(int spell_index)
+{
+	const struct class_spell *spell = spell_by_index(player, spell_index);
+
+	return spell && spell->slevel <= player->lev &&
+		(player->spell_flags[spell_index] & PY_SPELL_LEARNED) &&
+		!(player->spell_flags[spell_index] & PY_SPELL_FORGOTTEN);
+}
+
+static bool choose_signature_spell(void)
+{
+	int total_spells = player->class->magic.total_spells;
+	const char **choices = mem_zalloc(total_spells * sizeof(*choices));
+	char (*entries)[160] = mem_zalloc(total_spells * sizeof(*entries));
+	int *choice_map = mem_zalloc(total_spells * sizeof(*choice_map));
+	int i, count = 0, choice;
+
+	for (i = 0; i < total_spells; i++) {
+		const struct class_spell *spell;
+		char info[80];
+
+		if (!signature_spell_is_learned(i)) continue;
+
+		spell = spell_by_index(player, i);
+		get_spell_info(i, info, sizeof(info));
+		strnfmt(entries[count], sizeof(entries[count]),
+			"%-24s Lv %2d  Rchg %3d  Fail %2d%%  %s",
+			spell->name, spell->slevel, signature_spell_cooldown(spell),
+			spell_chance_free(i), info);
+		choices[count] = entries[count];
+		choice_map[count++] = i;
+	}
+
+	if (!count) {
+		msg("You do not know any spells to bind.");
+		mem_free(choice_map);
+		mem_free(entries);
+		mem_free(choices);
+		return false;
+	}
+
+	choice = get_power_menu("Choose your signature spell: ", choices, count);
+	if (choice >= 0 && choice < count) {
+		player->signature_spell = choice_map[choice];
+		msg("You bind the spell to the architecture of your mind.");
+	}
+
+	mem_free(choice_map);
+	mem_free(entries);
+	mem_free(choices);
+
+	return choice >= 0 && choice < count;
+}
+
+static void use_signature_spell(int dir, struct command *cmd)
+{
+	const struct class_spell *spell;
+	int cooldown;
+
+	(void)dir;
+
+	if (player->lev < 30) {
+		msg("You must reach level 30 to bind a signature spell.");
+		return;
+	}
+
+	if (player->timed[TMD_SIGNATURE_SPELL_COOLDOWN]) {
+		msg("Your mind needs %d more turns to re-form the pattern.",
+			player->timed[TMD_SIGNATURE_SPELL_COOLDOWN]);
+		return;
+	}
+
+	if (player->signature_spell < 0) {
+		(void)choose_signature_spell();
+		return;
+	}
+
+	spell = spell_by_index(player, player->signature_spell);
+	if (!spell) {
+		player->signature_spell = -1;
+		msg("Your signature spell has slipped from memory.");
+		return;
+	}
+
+	if (!player_can_cast(player, true)) {
+		return;
+	}
+
+	if (spell_needs_aim(player->signature_spell)) {
+		if (cmd_get_target(cmd, "target", &dir) == CMD_OK) {
+			player_confuse_dir(player, &dir, false);
+		} else {
+			return;
+		}
+	}
+
+	target_fix();
+	msg("You release your signature spell.");
+	if (spell_cast_free(player->signature_spell, dir, cmd)) {
+		if (player->timed[TMD_FASTCAST]) {
+			player->upkeep->energy_use = (z_info->move_energy * 3) / 4;
+		} else {
+			player->upkeep->energy_use = z_info->move_energy;
+		}
+		cooldown = signature_spell_cooldown(spell);
+		(void)player_set_timed(player, TMD_SIGNATURE_SPELL_COOLDOWN,
+			cooldown, true, false);
+	}
+	target_release();
+}
+
+static void use_cyclopean_rage(int dir, struct command *cmd)
 {
 	int duration;
+	(void)dir;
+	(void)cmd;
 
 	if (player->timed[TMD_CYCLOPEAN_RAGE] || player->timed[TMD_SHERO]) {
 		msg("You are already consumed by rage.");
@@ -455,8 +581,11 @@ static void use_cyclopean_rage(int dir)
 	monsters_handle_player_noise(100);
 }
 
-static void use_kobold_scurry(int dir)
+static void use_kobold_scurry(int dir, struct command *cmd)
 {
+	(void)dir;
+	(void)cmd;
+
 	if (player->timed[TMD_SCURRY_COOLDOWN]) {
 		msg("You need %d more turns before you can scurry again.",
 			player->timed[TMD_SCURRY_COOLDOWN]);
@@ -533,7 +662,7 @@ static struct monster *siren_song_target(int dir)
 	return NULL;
 }
 
-static void use_siren_song(int dir)
+static void use_siren_song(int dir, struct command *cmd)
 {
 	const struct siren_song *song;
 	const char *choices[N_ELEMENTS(siren_songs)];
@@ -543,6 +672,7 @@ static void use_siren_song(int dir)
 	char m_name[80];
 	int choice, chance, duration, count = 0;
 	size_t i;
+	(void)cmd;
 
 	if (player->timed[TMD_SIREN_SONG_COOLDOWN]) {
 		msg("You need %d more turns before your voice recovers.",
@@ -616,10 +746,11 @@ static void use_siren_song(int dir)
 	mon_inc_timed(mon, song->effect, duration, 0);
 }
 
-static void use_war_cry(int dir)
+static void use_war_cry(int dir, struct command *cmd)
 {
 	struct monster *mon;
 	char m_name[80];
+	(void)cmd;
 
 	if (player->timed[TMD_WAR_CRY_COOLDOWN]) {
 		msg("You need %d more turns before another war cry.",
@@ -650,8 +781,11 @@ static void use_war_cry(int dir)
 	mon_inc_timed(mon, MON_TMD_FEAR, 10 + player->lev, 0);
 }
 
-static void use_cure_confusion(int dir)
+static void use_cure_confusion(int dir, struct command *cmd)
 {
+	(void)dir;
+	(void)cmd;
+
 	if (player->timed[TMD_CURE_CONFUSION_COOLDOWN]) {
 		msg("You need %d more turns before clearing your thoughts again.",
 			player->timed[TMD_CURE_CONFUSION_COOLDOWN]);
@@ -669,7 +803,7 @@ static void use_cure_confusion(int dir)
 		true, false);
 }
 
-static void use_stone_lore(int dir)
+static void use_stone_lore(int dir, struct command *cmd)
 {
 	const char *choices[N_ELEMENTS(stone_lore)];
 	char entries[N_ELEMENTS(stone_lore)][96];
@@ -678,6 +812,8 @@ static void use_stone_lore(int dir)
 	int choice, count = 0;
 	size_t i;
 	bool ident = false;
+	(void)dir;
+	(void)cmd;
 
 	if (player->timed[TMD_STONE_LORE_COOLDOWN]) {
 		msg("You need %d more turns before reading the stone again.",
@@ -716,8 +852,11 @@ static void use_stone_lore(int dir)
 	}
 }
 
-static void use_demigod_taunt(int dir)
+static void use_demigod_taunt(int dir, struct command *cmd)
 {
+	(void)dir;
+	(void)cmd;
+
 	if (player->timed[TMD_DEMIGOD_TAUNT_COOLDOWN]) {
 		msg("You need %d more turns before another divine challenge.",
 			player->timed[TMD_DEMIGOD_TAUNT_COOLDOWN]);
@@ -732,7 +871,7 @@ static void use_demigod_taunt(int dir)
 	monsters_handle_player_noise(100);
 }
 
-static void use_fletch_ammo(int dir)
+static void use_fletch_ammo(int dir, struct command *cmd)
 {
 	const char *choices[] = { "Arrows", "Bolts" };
 	int choice, tval, sval, quantity;
@@ -741,6 +880,7 @@ static void use_fletch_ammo(int dir)
 	struct loc grid;
 	int feat;
 	char o_name[80];
+	(void)cmd;
 
 	if (player_confuse_dir(player, &dir, false)) {
 		/* Direction may have changed. */

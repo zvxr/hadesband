@@ -112,8 +112,9 @@ desc:Your shooting speed improves every 3 levels.
 type:player
 code:BRAVERY_30
 bindui:pfear_ui_compact_0:0:special
-name:Relentless [30]
-desc:You become immune to fear at level 30.
+name:Relentless
+desc:At level 30, your battle-hardened courage becomes absolute;
+desc: you are immune to fear.
 
 type:player
 code:BLESS_WEAPON
@@ -194,6 +195,12 @@ code:PRAYER
 name:Prayer
 desc:You can pray for divine aid, receiving a random boon.
 desc: At level 30, your deity grants you a choice of three boons.
+
+type:player
+code:SIGNATURE_SPELL
+name:Signature Spell
+desc:At level 30, you can bind one learned spell to the architecture of
+desc: your mind, then release it without a book or spell point cost.
 
 
 # Object flags

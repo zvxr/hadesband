@@ -727,6 +727,8 @@ void wr_player_spells(void)
 
 	for (i = 0; i < player->class->magic.total_spells; i++)
 		wr_byte(player->spell_order[i]);
+
+	wr_s16b(player->signature_spell);
 }
 
 static void wr_gear_aux(struct object *gear)

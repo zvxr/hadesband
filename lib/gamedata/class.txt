@@ -194,7 +194,7 @@ equip:soft armour:Soft Leather Armour:1:1:none
 equip:shield:Pelte:1:1:none
 equip:scroll:Word of Recall:1:1:birth_no_recall
 #equip:scroll:Deep Descent:1:1:none
-player-flags:ZERO_FAIL | BEAM | CHOOSE_SPELLS
+player-flags:ZERO_FAIL | BEAM | CHOOSE_SPELLS | SIGNATURE_SPELL
 title:Novice
 title:Apprentice
 title:Trickster

@@ -1109,10 +1109,7 @@ int rd_player_hp(void)
 }
 
 
-/**
- * Read the player spells
- */
-int rd_player_spells(void)
+static int rd_player_spells_aux(bool has_signature_spell)
 {
 	int i;
 	uint16_t tmp16u;
@@ -1136,9 +1133,36 @@ int rd_player_spells(void)
 	/* Read the spell order */
 	for (i = 0, cnt = 0; i < tmp16u; i++, cnt++)
 		rd_byte(&player->spell_order[cnt]);
+
+	if (has_signature_spell) {
+		rd_s16b(&player->signature_spell);
+		if (player->signature_spell < 0 ||
+				player->signature_spell >=
+				player->class->magic.total_spells) {
+			player->signature_spell = -1;
+		}
+	} else {
+		player->signature_spell = -1;
+	}
 	
 	/* Success */
 	return (0);
+}
+
+/**
+ * Read the player spells, version 1
+ */
+int rd_player_spells(void)
+{
+	return rd_player_spells_aux(false);
+}
+
+/**
+ * Read the player spells, version 2
+ */
+int rd_player_spells_2(void)
+{
+	return rd_player_spells_aux(true);
 }
 
 

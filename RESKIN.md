@@ -89,13 +89,16 @@
 - Discuss Priest/Paladin/Necromancer/Druid naming in Greco-Roman terms.
 - Mystagogue replaced Red Mage as a mystery-cult warrior mage; mechanics retained.
 - Avoid changing spell lists until class names/themes are settled.
+- Level 30 should become a meaningful milestone for every class; this may be
+  an existing passive, a class-skill upgrade, a spell behavior upgrade, or a
+  new active skill depending on class identity.
 
 | Tactical class | Hadesband class | Reskin | Balance |
 | --- | --- | --- | --- |
-| Warrior | Warrior | Pending; likely retain | Not reviewed |
-| Mage | Mage | Pending; likely retain | Not reviewed |
+| Warrior | Warrior | Pending; likely retain | Reviewed; level 30 milestone is existing Relentless fear immunity, text polished |
+| Mage | Mage | Pending; likely retain | Reviewed; added Signature Spell level-30 class skill, binding one learned spell for bookless, SP-free casting on spell-based cooldown |
 | Druid | Druid | Pending | Not reviewed |
-| Priest | Priest | Pending | Not reviewed |
+| Priest | Priest | Pending | Reviewed; added Prayer class skill, random divine boon before level 30 and choice of three boons at level 30+ |
 | Necromancer | Necromancer | Pending | Not reviewed |
 | Paladin | Paladin | Pending | Not reviewed |
 | Rogue | Rogue | Pending; likely retain | Skill command migrated; balance not reviewed |

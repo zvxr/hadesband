@@ -140,6 +140,8 @@ void player_spells_init(struct player *p)
 {
 	int i, num_spells = p->class->magic.total_spells;
 
+	p->signature_spell = -1;
+
 	/* None */
 	if (!num_spells) return;
 
@@ -376,10 +378,7 @@ static int min_fail(struct player *p, const struct class_spell *spell)
 	return adj_mag_fail[p->state.stat_ind[stat]];
 }
 
-/**
- * Returns chance of failure for a spell
- */
-int16_t spell_chance(int spell_index)
+static int16_t spell_chance_aux(int spell_index, bool free_mana)
 {
 	int chance = 100, minfail;
 
@@ -402,7 +401,7 @@ int16_t spell_chance(int spell_index)
 	chance -= fail_adjust(player, spell);
 
 	/* Not enough mana to cast */
-	if (spell->smana > player->csp)
+	if (!free_mana && spell->smana > player->csp)
 		chance += 5 * (spell->smana - player->csp);
 
 	/* Get the minimum failure rate for the casting stat level */
@@ -448,6 +447,22 @@ int16_t spell_chance(int spell_index)
 	return (chance);
 }
 
+/**
+ * Returns chance of failure for a spell
+ */
+int16_t spell_chance(int spell_index)
+{
+	return spell_chance_aux(spell_index, false);
+}
+
+/**
+ * Returns chance of failure for a free spell cast.
+ */
+int16_t spell_chance_free(int spell_index)
+{
+	return spell_chance_aux(spell_index, true);
+}
+
 
 /**
  * Learn the specified spell.
@@ -489,10 +504,8 @@ static int beam_chance(void)
 	return (player_has(player, PF_BEAM) ? plev : (plev / 2));
 }
 
-/**
- * Cast the specified spell
- */
-bool spell_cast(int spell_index, int dir, struct command *cmd)
+static bool spell_cast_aux(int spell_index, int dir, struct command *cmd,
+	bool free_mana)
 {
 	int chance;
 	bool ident = false;
@@ -502,7 +515,7 @@ bool spell_cast(int spell_index, int dir, struct command *cmd)
 	const struct class_spell *spell = spell_by_index(player, spell_index);
 
 	/* Spell failure chance */
-	chance = spell_chance(spell_index);
+	chance = spell_chance_aux(spell_index, free_mana);
 
 	/* Fail or succeed */
 	if (randint0(100) < chance) {
@@ -537,6 +550,8 @@ bool spell_cast(int spell_index, int dir, struct command *cmd)
 		}
 	}
 
+	if (free_mana) return true;
+
 	/* Sufficient mana? */
 	if (spell->smana <= player->csp) {
 		/* Use some mana */
@@ -557,6 +572,24 @@ bool spell_cast(int spell_index, int dir, struct command *cmd)
 	player->upkeep->redraw |= (PR_MANA);
 
 	return true;
+}
+
+
+/**
+ * Cast the specified spell
+ */
+bool spell_cast(int spell_index, int dir, struct command *cmd)
+{
+	return spell_cast_aux(spell_index, dir, cmd, false);
+}
+
+
+/**
+ * Cast the specified spell without spending mana or over-exerting.
+ */
+bool spell_cast_free(int spell_index, int dir, struct command *cmd)
+{
+	return spell_cast_aux(spell_index, dir, cmd, true);
 }
 
 
