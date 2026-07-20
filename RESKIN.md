@@ -97,10 +97,10 @@
 | --- | --- | --- | --- |
 | Warrior | Warrior | Pending; likely retain | Reviewed; level 30 milestone is existing Relentless fear immunity, text polished |
 | Mage | Mage | Pending; likely retain | Reviewed; added Signature Spell level-30 class skill, binding one learned spell for bookless, SP-free casting on spell-based cooldown |
-| Druid | Druid | Pending | Not reviewed |
+| Druid | Druid | Pending | Reviewed; level 30 strengthens animal charms and displays nature-flavor milestone text |
 | Priest | Priest | Pending | Reviewed; added Prayer class skill, random divine boon before level 30 and choice of three boons at level 30+ |
-| Necromancer | Necromancer | Pending | Not reviewed |
-| Paladin | Paladin | Pending | Not reviewed |
+| Necromancer | Necromancer | Pending | Reviewed; added Soul Harvest level-30 passive, restoring small SP on qualifying necromantic kills |
+| Paladin | Paladin | Pending | Reviewed; added Battle Prayer level-30 class skill, healing and curing minor wounds before granting a random battle miracle on a long cooldown |
 | Rogue | Rogue | Pending; likely retain | Skill command migrated; balance not reviewed |
 | Ranger | Ranger | Pending; likely retain | Not reviewed |
 | New | Mystagogue | Done | Reviewed; INT-forward warrior-caster, stats +1/+2/-2/-1/+0, 20% XP |

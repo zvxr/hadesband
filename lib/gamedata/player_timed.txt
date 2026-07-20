@@ -652,6 +652,12 @@ grade:y:10000:SigSpell:Your mind finishes re-forming the pattern.
 on-end:Your signature spell is ready again.
 msgt:GENERIC
 
+name:BATTLE_PRAYER_COOLDOWN
+desc:waiting for another battle prayer
+grade:y:10000:BatPray:Your battle prayer has been answered.
+on-end:You are ready to pray for battle again.
+msgt:GENERIC
+
 name:OPP_CHAOS
 desc:chaos resistance
 grade:v:10000:RChaos:You feel resistant to chaos!

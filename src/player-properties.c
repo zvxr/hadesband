@@ -54,6 +54,7 @@ struct player_power {
 static void use_steal(int dir, struct command *cmd);
 static void use_mana_siphon(int dir, struct command *cmd);
 static void use_prayer(int dir, struct command *cmd);
+static void use_battle_prayer(int dir, struct command *cmd);
 static void use_signature_spell(int dir, struct command *cmd);
 static void use_cyclopean_rage(int dir, struct command *cmd);
 static void use_kobold_scurry(int dir, struct command *cmd);
@@ -69,6 +70,8 @@ static const struct player_power player_powers[] = {
 	{ PF_MANA_STEAL, PLAYER_POWER_CLASS, "Siphon Mana", true,
 		use_mana_siphon },
 	{ PF_PRAYER, PLAYER_POWER_CLASS, "Prayer", false, use_prayer },
+	{ PF_BATTLE_PRAYER, PLAYER_POWER_CLASS, "Battle Prayer", false,
+		use_battle_prayer },
 	{ PF_SIGNATURE_SPELL, PLAYER_POWER_CLASS, "Signature Spell", false,
 		use_signature_spell },
 	{ PF_CYCLOPEAN_RAGE, PLAYER_POWER_RACE, "Cyclopean Rage", false,
@@ -134,6 +137,14 @@ enum prayer_boon {
 	PRAYER_CLEANSE,
 	PRAYER_SANCTUARY,
 	PRAYER_ELEMENTAL_AEGIS
+};
+
+enum battle_prayer_boon {
+	BATTLE_PRAYER_SMITE,
+	BATTLE_PRAYER_REBUKE,
+	BATTLE_PRAYER_CONSECRATE,
+	BATTLE_PRAYER_WARD,
+	BATTLE_PRAYER_BANE
 };
 
 static const char *prayer_boons[] = {
@@ -434,6 +445,92 @@ static void use_prayer(int dir, struct command *cmd)
 	msg("You pray for divine aid.");
 	prayer_apply(boon);
 	(void)player_set_timed(player, TMD_PRAYER_COOLDOWN, 120, true, false);
+}
+
+static bool battle_prayer_cure(void)
+{
+	bool changed = false;
+
+	changed |= player_clear_timed(player, TMD_AFRAID, true, false);
+	changed |= player_dec_timed(player, TMD_CUT, 30, true, false);
+	changed |= player_dec_timed(player, TMD_STUN, 20, true, false);
+
+	return changed;
+}
+
+static void battle_prayer_apply(enum battle_prayer_boon boon)
+{
+	int wis = prayer_wis_bonus();
+	int duration, dam;
+	bool ident = false;
+
+	switch (boon) {
+		case BATTLE_PRAYER_SMITE:
+			dam = 40 + player->lev * 2 + wis * 2;
+			msg("A holy force smites the wicked around you.");
+			effect_simple(EF_PROJECT_LOS_AWARE, source_player(),
+				format("%d", dam), PROJ_DISP_EVIL, 0, 0, 0, 0, &ident);
+			break;
+
+		case BATTLE_PRAYER_REBUKE:
+			dam = 40 + player->lev + wis * 2;
+			msg("Your prayer rebukes evil.");
+			effect_simple(EF_PROJECT_LOS, source_player(), format("%d", dam),
+				PROJ_TURN_EVIL, 0, 0, 0, 0, &ident);
+			break;
+
+		case BATTLE_PRAYER_CONSECRATE:
+			duration = 20 + player->lev / 2 + wis;
+			msg("Your weapon shines with sacred purpose.");
+			(void)player_inc_timed(player, TMD_ATT_EVIL, duration, true,
+				false, false);
+			break;
+
+		case BATTLE_PRAYER_WARD:
+			duration = 25 + player->lev + wis;
+			msg("A warding light surrounds you.");
+			(void)player_inc_timed(player, TMD_PROTEVIL, duration, true,
+				false, false);
+			break;
+
+		case BATTLE_PRAYER_BANE:
+			duration = 20 + player->lev / 2 + wis;
+			msg("Your vow burns against demons.");
+			(void)player_inc_timed(player, TMD_ATT_DEMON, duration, true,
+				false, false);
+			break;
+	}
+}
+
+static void use_battle_prayer(int dir, struct command *cmd)
+{
+	enum battle_prayer_boon boon = randint0(5);
+	int wis = prayer_wis_bonus();
+	int heal = 30 + player->lev * 2 + wis * 2;
+	bool ident = false;
+	(void)dir;
+	(void)cmd;
+
+	if (player->lev < 30) {
+		msg("You must reach level 30 to offer a battle prayer.");
+		return;
+	}
+
+	if (player->timed[TMD_BATTLE_PRAYER_COOLDOWN]) {
+		msg("You need %d more turns before another battle prayer.",
+			player->timed[TMD_BATTLE_PRAYER_COOLDOWN]);
+		return;
+	}
+
+	player->upkeep->energy_use = z_info->move_energy;
+	msg("You offer a battle prayer.");
+
+	effect_simple(EF_HEAL_HP, source_player(), format("%d", heal),
+		0, 0, 0, 0, 0, &ident);
+	(void)battle_prayer_cure();
+	battle_prayer_apply(boon);
+	(void)player_set_timed(player, TMD_BATTLE_PRAYER_COOLDOWN, 240, true,
+		false);
 }
 
 static int signature_spell_cooldown(const struct class_spell *spell)

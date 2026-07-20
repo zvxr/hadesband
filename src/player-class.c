@@ -18,6 +18,7 @@
 
 
 #include "player.h"
+#include "z-util.h"
 
 struct player_class *player_id2class(guid id)
 {
@@ -26,4 +27,22 @@ struct player_class *player_id2class(guid id)
 		if (guid_eq(c->cidx, id))
 			break;
 	return c;
+}
+
+const char *player_class_level_30_milestone(const struct player_class *c)
+{
+	if (!c) return NULL;
+
+	if (streq(c->name, "Warrior")) return "Relentless";
+	if (streq(c->name, "Mage")) return "Signature Spell";
+	if (streq(c->name, "Druid")) return "Greater Charms";
+	if (streq(c->name, "Priest")) return "Guided Prayer";
+	if (streq(c->name, "Necromancer")) return "Soul Harvest";
+	if (streq(c->name, "Paladin")) return "Battle Prayer";
+	if (streq(c->name, "Rogue")) return "Swap Places";
+	if (streq(c->name, "Ranger")) return "Decoy";
+	if (streq(c->name, "Mystagogue")) return "Theurgist status";
+	if (streq(c->name, "Stygian Warrior")) return "Bloodlust";
+
+	return NULL;
 }

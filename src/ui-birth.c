@@ -379,7 +379,8 @@ static void class_help(int i, void *db, const region *l)
 
 	struct player_ability *ability;
 	int n_flags = 0;
-	int flag_space = 5;
+	int flag_space = 4;
+	const char *milestone;
 
 	if (!c) return;
 
@@ -456,6 +457,11 @@ static void class_help(int i, void *db, const region *l)
 	while (n_flags < flag_space) {
 		text_out_e("\n");
 		n_flags++;
+	}
+
+	milestone = player_class_level_30_milestone(c);
+	if (milestone) {
+		text_out_c(COLOUR_L_TEAL, "\nGains %s at level 30.", milestone);
 	}
 
 	/* Reset text_out() indentation */

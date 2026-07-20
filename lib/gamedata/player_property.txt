@@ -144,7 +144,8 @@ desc:You cannot cast spells.
 type:player
 code:CHARM
 name:Charms
-desc:You are extra persuasive to monsters.
+desc:Your charms are stronger against animals.
+desc: At level 30, they become stronger still.
 
 type:player
 code:UNLIGHT
@@ -201,6 +202,17 @@ code:SIGNATURE_SPELL
 name:Signature Spell
 desc:At level 30, you can bind one learned spell to the architecture of
 desc: your mind, then release it without a book or spell point cost.
+
+type:player
+code:SOUL_HARVEST
+name:Soul Harvest
+desc:At level 30, your necromantic attacks restore a little spell energy
+desc: when they slay living, natural creatures.
+
+type:player
+code:BATTLE_PRAYER
+name:Battle Prayer
+desc:At level 30, you can pray for healing and a random battle miracle.
 
 
 # Object flags

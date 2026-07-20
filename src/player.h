@@ -631,6 +631,7 @@ extern struct player *player;
 
 /* player-class.c */
 struct player_class *player_id2class(guid id);
+const char *player_class_level_30_milestone(const struct player_class *c);
 
 /* player.c */
 int stat_name_to_idx(const char *name);

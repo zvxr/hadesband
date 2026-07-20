@@ -43,7 +43,7 @@ message:DROP:w
 message:KILL:w
 
 # MSG_LEVEL
-message:LEVEL:w
+message:LEVEL:T
 
 # MSG_DEATH
 message:DEATH:w

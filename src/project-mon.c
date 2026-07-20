@@ -259,6 +259,50 @@ typedef struct project_monster_handler_context_s {
 } project_monster_handler_context_t;
 typedef void (*project_monster_handler_f)(project_monster_handler_context_t *);
 
+static void project_monster_charm_animal(project_monster_handler_context_t *context)
+{
+	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
+		context->dam += (player->lev >= 30) ? context->dam : context->dam / 2;
+	}
+}
+
+static bool project_monster_soul_harvest_type(int typ)
+{
+	return typ == PROJ_NETHER || typ == PROJ_DARK ||
+		typ == PROJ_MON_DRAIN || typ == PROJ_MON_CRUSH;
+}
+
+static int project_monster_soul_harvest_mana(
+	project_monster_handler_context_t *context)
+{
+	struct monster *mon = context->mon;
+
+	if (context->origin.what != SRC_PLAYER) return 0;
+	if (!player_has(player, PF_SOUL_HARVEST) || player->lev < 30) return 0;
+	if (player->csp >= player->msp) return 0;
+	if (!project_monster_soul_harvest_type(context->type)) return 0;
+	if (monster_is_unique(mon)) return 0;
+	if (!monster_is_living(mon)) return 0;
+	if (rf_has(mon->race->flags, RF_EVIL) || rf_has(mon->race->flags, RF_DEMON)) {
+		return 0;
+	}
+
+	return MIN(player->msp - player->csp,
+		1 + MIN(4, MAX(0, mon->race->level / 20)));
+}
+
+static void project_monster_soul_harvest_restore(int mana)
+{
+	if (mana <= 0) return;
+
+	player->csp += mana;
+	if (player->csp > player->msp) {
+		player->csp = player->msp;
+	}
+	player->upkeep->redraw |= PR_MANA;
+	msg("You draw a fading soul into your own.");
+}
+
 static int adjust_radius(project_monster_handler_context_t *context, int amount)
 {
 	return (amount + context->r) / (context->r + 1);
@@ -487,9 +531,7 @@ static void project_monster_sleep(project_monster_handler_context_t *context, in
 		context->dam = 0;
 	}
 
-	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
-		context->dam += context->dam / 2;
-	}
+	project_monster_charm_animal(context);
 	context->mon_timed[MON_TMD_SLEEP] = context->dam;
 	if (context->dam > 0 && context->seen) context->obvious = true;
 	context->dam = 0;
@@ -945,9 +987,7 @@ static void project_monster_handler_MON_CLONE(project_monster_handler_context_t 
 /* Polymorph monster (Use "dam" as "power") */
 static void project_monster_handler_MON_POLY(project_monster_handler_context_t *context)
 {
-	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
-		context->dam += context->dam / 2;
-	}
+	project_monster_charm_animal(context);
 	/* Polymorph later */
 	context->do_poly = context->dam;
 
@@ -986,9 +1026,7 @@ static void project_monster_handler_MON_SPEED(project_monster_handler_context_t 
 /* Slow Monster (Use "dam" as "power") */
 static void project_monster_handler_MON_SLOW(project_monster_handler_context_t *context)
 {
-	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
-		context->dam += context->dam / 2;
-	}
+	project_monster_charm_animal(context);
 	context->mon_timed[MON_TMD_SLOW] = context->dam;
 	context->dam = 0;
 }
@@ -996,9 +1034,7 @@ static void project_monster_handler_MON_SLOW(project_monster_handler_context_t *
 /* Confusion (Use "dam" as "power") */
 static void project_monster_handler_MON_CONF(project_monster_handler_context_t *context)
 {
-	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
-		context->dam += context->dam / 2;
-	}
+	project_monster_charm_animal(context);
 	context->mon_timed[MON_TMD_CONF] = context->dam;
 	context->dam = 0;
 }
@@ -1006,9 +1042,7 @@ static void project_monster_handler_MON_CONF(project_monster_handler_context_t *
 /* Hold (Use "dam" as "power") */
 static void project_monster_handler_MON_HOLD(project_monster_handler_context_t *context)
 {
-	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
-		context->dam += context->dam / 2;
-	}
+	project_monster_charm_animal(context);
 	context->mon_timed[MON_TMD_HOLD] = context->dam;
 	context->dam = 0;
 }
@@ -1016,9 +1050,7 @@ static void project_monster_handler_MON_HOLD(project_monster_handler_context_t *
 /* Stun (Use "dam" as "power") */
 static void project_monster_handler_MON_STUN(project_monster_handler_context_t *context)
 {
-	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
-		context->dam += context->dam / 2;
-	}
+	project_monster_charm_animal(context);
 	context->mon_timed[MON_TMD_STUN] = context->dam;
 	context->dam = 0;
 }
@@ -1150,6 +1182,7 @@ static bool project_m_player_attack(project_monster_handler_context_t *context)
 	struct monster *mon = context->mon;
 	bool display_dam = context->origin.what == SRC_PLAYER
 		&& OPT(player, show_damage);
+	int soul_harvest_mana = 0;
 
 	/* The monster is going to be killed, so display a specific death message.
 	 * If the monster is not visible to the player, use a generic message.
@@ -1158,6 +1191,8 @@ static bool project_m_player_attack(project_monster_handler_context_t *context)
 	 * ensures it doesn't print any death message and allows correct ordering
 	 * of messages. */
 	if (dam > mon->hp) {
+		soul_harvest_mana = project_monster_soul_harvest_mana(context);
+
 		/* Shapechanged monsters revert on death */
 		if (mon->original_race) {
 			monster_revert_shape(mon);
@@ -1176,6 +1211,9 @@ static bool project_m_player_attack(project_monster_handler_context_t *context)
 	 * is not woken or released from holding */
 	if (dam) {
 		mon_died = mon_take_hit(mon, player, dam, &fear, "");
+		if (mon_died) {
+			project_monster_soul_harvest_restore(soul_harvest_mana);
+		}
 	}
 
 	/* If the monster didn't die, provide additional messages about how it was
@@ -1523,4 +1561,3 @@ void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 	/* Return "Anything seen?" */
 	*was_obvious = !!obvious;
 }
-

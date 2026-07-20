@@ -248,6 +248,14 @@ static void adjust_level(struct player *p, bool verbose)
 
 			/* Message */
 			msgt(MSG_LEVEL, "Welcome to level %d.",	p->lev);
+			if (p->lev == 30) {
+				const char *milestone =
+					player_class_level_30_milestone(p->class);
+
+				if (milestone) {
+					msgt(MSG_LEVEL, "You gain %s.", milestone);
+				}
+			}
 		}
 
 		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_STR, 0, 0, 0, 0, NULL);
