@@ -1941,8 +1941,8 @@ desc:Strikes a target from above with a lightning bolt, followed by a clap
 desc: of thunder.  If targeting a direction or the target is not a passable
 desc: grid in the line of sight, the player will be the target.
 
-book:magic book:dungeon:[The Platonic Forms]:4:arcane
-book-graphics:?:V
+book:other book:dungeon:[The Platonic Forms]:4:arcane
+book-graphics:?:b
 book-properties:50000:0:30 to 30
 book-flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 

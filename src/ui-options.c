@@ -1683,7 +1683,7 @@ static tval_desc sval_dependent[] =
 	{ TV_PRAYER_BOOK,	"Prayer books" },
 	{ TV_NATURE_BOOK,	"Nature books" },
 	{ TV_SHADOW_BOOK,	"Shadow books" },
-	{ TV_OTHER_BOOK,	"Mystery books" },
+	{ TV_OTHER_BOOK,	"Classic texts" },
 	{ TV_LIGHT,			"Lights" },
 	{ TV_FLASK,			"Flasks of oil" },
 	{ TV_GOLD,			"Money" },

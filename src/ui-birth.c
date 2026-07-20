@@ -178,6 +178,7 @@ static struct menu race_menu, class_menu, roller_menu, game_mode_menu;
 #define HIST_INSTRUCT_ROW 18
 
 #define MENU_ROWS TABLE_ROW + 14
+#define CLASS_MILESTONE_ROW (MENU_ROWS - 1)
 
 /**
  * upper left column and row, width, and lower column
@@ -381,6 +382,8 @@ static void class_help(int i, void *db, const region *l)
 	int n_flags = 0;
 	int flag_space = 4;
 	const char *milestone;
+	int cur_col;
+	int cur_row;
 
 	if (!c) return;
 
@@ -440,6 +443,8 @@ static void class_help(int i, void *db, const region *l)
 
 	for (ability = player_abilities; ability; ability = ability->next) {
 		if (n_flags >= flag_space) break;
+		Term_locate(&cur_col, &cur_row);
+		if (cur_row + 1 >= CLASS_MILESTONE_ROW) break;
 		if (streq(ability->type, "object") &&
 			!of_has(c->flags, ability->index)) {
 			continue;
@@ -454,14 +459,18 @@ static void class_help(int i, void *db, const region *l)
 		n_flags++;
 	}
 
-	while (n_flags < flag_space) {
+	Term_locate(&cur_col, &cur_row);
+	while (n_flags < flag_space && cur_row + 1 < CLASS_MILESTONE_ROW) {
 		text_out_e("\n");
 		n_flags++;
+		Term_locate(&cur_col, &cur_row);
 	}
 
 	milestone = player_class_level_30_milestone(c);
+	Term_erase(CLASS_AUX_COL, CLASS_MILESTONE_ROW, 255);
+	Term_gotoxy(CLASS_AUX_COL, CLASS_MILESTONE_ROW);
 	if (milestone) {
-		text_out_c(COLOUR_L_TEAL, "\nGains %s at level 30.", milestone);
+		text_out_c(COLOUR_L_TEAL, "Gains %s at level 30.", milestone);
 	}
 
 	/* Reset text_out() indentation */

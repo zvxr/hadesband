@@ -213,7 +213,7 @@ bool player_stat_dec(struct player *p, int stat, bool permanent)
 
 static void player_grant_platonic_forms(struct player *p, bool verbose)
 {
-	int tval = tval_find_idx("magic book");
+	int tval = tval_find_idx("other book");
 	int sval = lookup_sval(tval, "[The Platonic Forms]");
 	struct object_kind *kind = lookup_kind(tval, sval);
 	struct object *obj;

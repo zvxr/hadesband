@@ -121,7 +121,7 @@ static const grouper group_item[] =
 	{ TV_PRAYER_BOOK,	"Holy Books" },
 	{ TV_NATURE_BOOK,	"Nature Books" },
 	{ TV_SHADOW_BOOK,	"Shadow Books" },
-	{ TV_OTHER_BOOK,	"Mystery Books" },
+	{ TV_OTHER_BOOK,	"Classic Texts" },
 
 	{ TV_CHEST,		"Chests" },
 
