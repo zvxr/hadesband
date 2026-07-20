@@ -845,6 +845,7 @@ bool py_attack_real(struct player *p, struct loc grid, int num_blows_x100, bool 
 	} else {
 		dmg = o_melee_damage(p, mon, obj, tohit_chance, b, s, &msg_type);
 	}
+	dmg = player_marked_quarry_damage(p, mon, dmg, false);
 
 	/* Splash damage and earthquakes */
 	splash = (weight * dmg) / 100;
@@ -1345,6 +1346,7 @@ struct attack_result make_ranged_shot(struct player *p,
 	} else {
 		result.dmg = o_ranged_damage(p, mon, ammo, bow, b, s, &result.msg_type);
 	}
+	result.dmg = player_marked_quarry_damage(p, mon, result.dmg, true);
 
 	missile_learn_on_ranged_attack(p, bow);
 	learn_brand_slay_from_launch(p, ammo, bow, mon);
@@ -1385,6 +1387,7 @@ struct attack_result make_ranged_throw(struct player *p,
 	} else {
 		result.dmg = o_ranged_damage(p, mon, obj, NULL, b, s, &result.msg_type);
 	}
+	result.dmg = player_marked_quarry_damage(p, mon, result.dmg, true);
 
 	/* Direct adjustment for exploding things (flasks of oil) */
 	if (of_has(obj->flags, OF_EXPLODE))

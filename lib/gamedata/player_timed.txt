@@ -658,6 +658,18 @@ grade:y:10000:BatPray:Your battle prayer has been answered.
 on-end:You are ready to pray for battle again.
 msgt:GENERIC
 
+name:SHADOWSTEP_COOLDOWN
+desc:waiting to shadowstep again
+grade:D:10000:ShdStep:You slip back into shadow.
+on-end:You are ready to shadowstep again.
+msgt:GENERIC
+
+name:INNATE_BLOODLUST_COOLDOWN
+desc:recovering from bloodlust
+grade:r:10000:BloodCD:Your blood cools.
+on-end:You are ready to call up bloodlust again.
+msgt:GENERIC
+
 name:OPP_CHAOS
 desc:chaos resistance
 grade:v:10000:RChaos:You feel resistant to chaos!

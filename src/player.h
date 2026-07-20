@@ -575,6 +575,7 @@ struct player {
 	uint8_t *spell_flags;			/* Spell flags */
 	uint8_t *spell_order;			/* Spell order */
 	int16_t signature_spell;		/* Signature spell index, or -1 */
+	char marked_quarry[32];		/* Mark Quarry monster base name */
 
 	char full_name[PLAYER_NAME_LEN];	/* Full name */
 	char died_from[80];					/* Cause of death */
@@ -646,6 +647,10 @@ void player_flags_timed(struct player *p, bitflag f[OF_SIZE]);
 uint8_t player_hp_attr(struct player *p);
 uint8_t player_sp_attr(struct player *p);
 bool player_restore_mana(struct player *p, int amt);
+bool player_marked_quarry_matches(const struct player *p,
+	const struct monster *mon);
+int player_marked_quarry_damage(struct player *p, const struct monster *mon,
+	int dmg, bool range);
 size_t player_random_name(char *buf, size_t buflen);
 void player_safe_name(char *safe, size_t safelen, const char *name, bool strip_suffix);
 void player_cleanup_members(struct player *p);

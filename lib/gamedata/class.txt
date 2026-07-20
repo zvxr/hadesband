@@ -34,6 +34,7 @@
 # book:tval:quality:name:spells:realm
 # book-graphics:symbol:color
 # book-properties:cost:commonness:min to max
+# book-flags:object or elemental flags
 # spell:name:level:mana:fail:exp
 # effect:effect:subtype (if needed):radius (if needed):parameter (if needed)
 # effect-yx:yrange:xrange
@@ -100,6 +101,10 @@
 # and minimum and maximum depths of occurrence.
 # 'book-properties:' lines refer to the previous book line, and need not be
 # included if a book of the same name has been defined earlier.
+#
+# 'book-flags' is for object or elemental flags on a book.
+# 'book-flags:' lines refer to the previous book line, and need not be
+# included for every book.
 
 # 'spell' defines an individual spell - name, level, mana required,
 # fail-rate, experience for first casting.    'spell:' lines always refer to
@@ -1450,7 +1455,7 @@ equip:shield:Pelte:1:1:none
 equip:scroll:Word of Recall:1:1:birth_no_recall
 #equip:scroll:Deep Descent:1:1:none
 equip:magic book:[First Spells]:1:1:none
-player-flags:CHOOSE_SPELLS | STEAL | ASSASSIN
+player-flags:CHOOSE_SPELLS | STEAL | ASSASSIN | SHADOWSTEP
 title:Vagabond
 title:Cutpurse
 title:Footpad
@@ -1556,7 +1561,7 @@ equip:shield:Pelte:1:1:none
 equip:scroll:Word of Recall:1:1:birth_no_recall
 #equip:scroll:Deep Descent:1:1:none
 equip:nature book:[Lesser Charms]:1:1:none
-player-flags:FAST_SHOT | CHOOSE_SPELLS
+player-flags:FAST_SHOT | CHOOSE_SPELLS | MARK_QUARRY
 title:Runner
 title:Strider
 title:Scout
@@ -1679,7 +1684,7 @@ title:Hierophant
 title:Veiled Magus
 title:High Mystagogue
 
-magic:3:450:6
+magic:3:450:7
 
 # Higher spell level, cost, fail rate
 # lv - spell
@@ -1711,6 +1716,10 @@ magic:3:450:6
 # 21 - Sense Surroundings
 # 22 - Reveal Monsters
 # 24 - Lightning Strike
+# 30 - Identify Relic
+# 31 - Parse Form
+# 35 - Perfected Form
+# 35 - Anamnesis
 
 
 book:magic book:town:[First Spells]:6:arcane
@@ -1932,6 +1941,38 @@ desc:Strikes a target from above with a lightning bolt, followed by a clap
 desc: of thunder.  If targeting a direction or the target is not a passable
 desc: grid in the line of sight, the player will be the target.
 
+book:magic book:dungeon:[The Platonic Forms]:4:arcane
+book-graphics:?:V
+book-properties:50000:0:30 to 30
+book-flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+
+spell:Identify Relic:30:18:55:20
+effect:IDENTIFY_RELIC
+desc:Reveals the nature of a single relic without teaching its runes to
+desc: your memory.
+
+spell:Parse Form:31:18:50:18
+effect:PROBE
+desc:Discerns the true form of every visible monster, revealing its health
+desc: and abilities.
+
+spell:Perfected Form:35:32:70:24
+effect:HEAL_HP
+dice:$B
+expr:B:PLAYER_LEVEL:+ 30
+effect:CURE:CONFUSED
+effect:CURE:AFRAID
+effect:TIMED_INC:SHIELD
+dice:10+d15
+desc:Restores the body toward its ideal form, healing wounds, clearing fear
+desc: and confusion, and briefly surrounding you with perfect symmetry.
+
+spell:Anamnesis:35:30:75:24
+effect:LEARN_RUNE
+dice:2
+desc:Recalls hidden principles of craft and enchantment, revealing two
+desc: unknown runes.
+
 
 ############### BLACKGUARD ###############
 name:Stygian Warrior
@@ -1960,7 +2001,7 @@ equip:scroll:Word of Recall:1:1:birth_no_recall
 #equip:scroll:Deep Descent:1:1:none
 equip:potion:Cure Light Wounds:1:1:none
 obj-flags:IMPAIR_HP
-player-flags:CHOOSE_SPELLS | SHIELD_BASH | COMBAT_REGEN
+player-flags:CHOOSE_SPELLS | SHIELD_BASH | COMBAT_REGEN | INNATE_BLOODLUST
 title:Initiate
 title:Graveblade
 title:Blooded

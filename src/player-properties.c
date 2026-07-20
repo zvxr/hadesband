@@ -40,22 +40,27 @@
 #include "player-util.h"
 #include "project.h"
 #include "target.h"
+#include "ui-target.h"
 
 typedef void (*player_power_handler)(int dir, struct command *cmd);
 
 struct player_power {
 	int flag;
 	enum player_power_source source;
+	int level;
 	const char *name;
 	bool needs_direction;
 	player_power_handler handler;
 };
 
 static void use_steal(int dir, struct command *cmd);
+static void use_shadowstep(int dir, struct command *cmd);
+static void use_mark_quarry(int dir, struct command *cmd);
 static void use_mana_siphon(int dir, struct command *cmd);
 static void use_prayer(int dir, struct command *cmd);
 static void use_battle_prayer(int dir, struct command *cmd);
 static void use_signature_spell(int dir, struct command *cmd);
+static void use_innate_bloodlust(int dir, struct command *cmd);
 static void use_cyclopean_rage(int dir, struct command *cmd);
 static void use_kobold_scurry(int dir, struct command *cmd);
 static void use_siren_song(int dir, struct command *cmd);
@@ -66,28 +71,34 @@ static void use_demigod_taunt(int dir, struct command *cmd);
 static void use_fletch_ammo(int dir, struct command *cmd);
 
 static const struct player_power player_powers[] = {
-	{ PF_STEAL, PLAYER_POWER_CLASS, "Steal", true, use_steal },
-	{ PF_MANA_STEAL, PLAYER_POWER_CLASS, "Siphon Mana", true,
+	{ PF_STEAL, PLAYER_POWER_CLASS, 1, "Steal", true, use_steal },
+	{ PF_SHADOWSTEP, PLAYER_POWER_CLASS, 30, "Shadowstep", false,
+		use_shadowstep },
+	{ PF_MARK_QUARRY, PLAYER_POWER_CLASS, 30, "Mark Quarry", false,
+		use_mark_quarry },
+	{ PF_MANA_STEAL, PLAYER_POWER_CLASS, 1, "Siphon Mana", true,
 		use_mana_siphon },
-	{ PF_PRAYER, PLAYER_POWER_CLASS, "Prayer", false, use_prayer },
-	{ PF_BATTLE_PRAYER, PLAYER_POWER_CLASS, "Battle Prayer", false,
+	{ PF_PRAYER, PLAYER_POWER_CLASS, 1, "Prayer", false, use_prayer },
+	{ PF_BATTLE_PRAYER, PLAYER_POWER_CLASS, 30, "Battle Prayer", false,
 		use_battle_prayer },
-	{ PF_SIGNATURE_SPELL, PLAYER_POWER_CLASS, "Signature Spell", false,
+	{ PF_SIGNATURE_SPELL, PLAYER_POWER_CLASS, 30, "Signature Spell", false,
 		use_signature_spell },
-	{ PF_CYCLOPEAN_RAGE, PLAYER_POWER_RACE, "Cyclopean Rage", false,
+	{ PF_INNATE_BLOODLUST, PLAYER_POWER_CLASS, 30, "Bloodlust", false,
+		use_innate_bloodlust },
+	{ PF_CYCLOPEAN_RAGE, PLAYER_POWER_RACE, 1, "Cyclopean Rage", false,
 		use_cyclopean_rage },
-	{ PF_KOBOLD_SCURRY, PLAYER_POWER_RACE, "Scurry", false,
+	{ PF_KOBOLD_SCURRY, PLAYER_POWER_RACE, 1, "Scurry", false,
 		use_kobold_scurry },
-	{ PF_SIREN_SONG, PLAYER_POWER_RACE, "Siren Song", false,
+	{ PF_SIREN_SONG, PLAYER_POWER_RACE, 1, "Siren Song", false,
 		use_siren_song },
-	{ PF_WAR_CRY, PLAYER_POWER_RACE, "War Cry", false, use_war_cry },
-	{ PF_CURE_CONFUSION, PLAYER_POWER_RACE, "Cure Confusion", false,
+	{ PF_WAR_CRY, PLAYER_POWER_RACE, 1, "War Cry", false, use_war_cry },
+	{ PF_CURE_CONFUSION, PLAYER_POWER_RACE, 1, "Cure Confusion", false,
 		use_cure_confusion },
-	{ PF_STONE_LORE, PLAYER_POWER_RACE, "Stone Lore", false,
+	{ PF_STONE_LORE, PLAYER_POWER_RACE, 1, "Stone Lore", false,
 		use_stone_lore },
-	{ PF_DEMIGOD_TAUNT, PLAYER_POWER_RACE, "Taunt", false,
+	{ PF_DEMIGOD_TAUNT, PLAYER_POWER_RACE, 1, "Taunt", false,
 		use_demigod_taunt },
-	{ PF_FLETCH_AMMO, PLAYER_POWER_RACE, "Fletch Ammo", true,
+	{ PF_FLETCH_AMMO, PLAYER_POWER_RACE, 1, "Fletch Ammo", true,
 		use_fletch_ammo }
 };
 
@@ -174,6 +185,11 @@ static bool player_owns_power(const struct player_power *power)
 	return pf_has(player->race->pflags, power->flag);
 }
 
+static bool player_can_use_power(const struct player_power *power)
+{
+	return player_owns_power(power) && player->lev >= power->level;
+}
+
 static const struct player_power *find_player_power(
 		enum player_power_source source)
 {
@@ -181,7 +197,7 @@ static const struct player_power *find_player_power(
 
 	for (i = 0; i < N_ELEMENTS(player_powers); i++) {
 		if (player_powers[i].source == source &&
-				player_owns_power(&player_powers[i])) {
+				player_can_use_power(&player_powers[i])) {
 			return &player_powers[i];
 		}
 	}
@@ -189,11 +205,33 @@ static const struct player_power *find_player_power(
 	return NULL;
 }
 
+static int player_power_choices(enum player_power_source source,
+		const struct player_power **choices)
+{
+	int count = 0;
+	size_t i;
+
+	for (i = 0; i < N_ELEMENTS(player_powers); i++) {
+		if (player_powers[i].source == source &&
+				player_can_use_power(&player_powers[i])) {
+			choices[count++] = &player_powers[i];
+		}
+	}
+
+	return count;
+}
+
 const char *player_power_name(enum player_power_source source)
 {
-	const struct player_power *power = find_player_power(source);
+	const struct player_power *choices[N_ELEMENTS(player_powers)];
+	int count = player_power_choices(source, choices);
 
-	return power ? power->name : NULL;
+	if (count > 1) {
+		return source == PLAYER_POWER_CLASS ? "Class Skill" :
+			"Racial Expertise";
+	}
+
+	return count ? choices[0]->name : NULL;
 }
 
 bool player_power_needs_direction(enum player_power_source source)
@@ -205,14 +243,37 @@ bool player_power_needs_direction(enum player_power_source source)
 
 void use_player_power(enum player_power_source source, struct command *cmd)
 {
-	const struct player_power *power = find_player_power(source);
+	const struct player_power *choices[N_ELEMENTS(player_powers)];
+	const struct player_power *power = NULL;
+	const char *names[N_ELEMENTS(player_powers)];
+	int count = player_power_choices(source, choices);
 	int dir = 0;
+	int i;
 
-	if (!power) {
+	if (!count) {
 		msg(source == PLAYER_POWER_CLASS ?
 			"You have no class skill to use." :
 			"You have no racial expertise to use.");
 		return;
+	}
+
+	if (count == 1) {
+		power = choices[0];
+	} else {
+		int choice;
+
+		for (i = 0; i < count; i++) {
+			names[i] = choices[i]->name;
+		}
+
+		choice = get_power_menu(source == PLAYER_POWER_CLASS ?
+			"Use which class skill? " : "Use which racial expertise? ",
+			names, count);
+		if (choice < 0 || choice >= count) {
+			return;
+		}
+
+		power = choices[choice];
 	}
 
 	if (power->needs_direction &&
@@ -250,6 +311,62 @@ static void use_steal(int dir, struct command *cmd)
 	} else {
 		msg("You spin around.");
 	}
+}
+
+static void use_shadowstep(int dir, struct command *cmd)
+{
+	bool ident = false;
+	int duration = damroll(10, 2);
+	(void)dir;
+	(void)cmd;
+
+	if (player->timed[TMD_SHADOWSTEP_COOLDOWN]) {
+		msg("You need %d more turns before another shadowstep.",
+			player->timed[TMD_SHADOWSTEP_COOLDOWN]);
+		return;
+	}
+
+	player->upkeep->energy_use = z_info->move_energy;
+	msg("You slip through a fold of shadow.");
+	effect_simple(EF_TELEPORT, source_player(), "5", 0, 0, 0, 0, 0,
+		&ident);
+	(void)player_inc_timed(player, TMD_COVERTRACKS, duration, true, false,
+		false);
+	(void)player_set_timed(player, TMD_SHADOWSTEP_COOLDOWN, 100, true,
+		false);
+}
+
+static void use_mark_quarry(int dir, struct command *cmd)
+{
+	struct monster *mon;
+	char m_name[80];
+	(void)dir;
+	(void)cmd;
+
+	if (player->marked_quarry[0]) {
+		msg("You have already marked %s as your quarry.",
+			player->marked_quarry);
+		return;
+	}
+
+	msg("Choose a quarry to mark.");
+	if (!target_set_interactive(TARGET_KILL, -1, -1, false)) {
+		return;
+	}
+
+	mon = target_get_monster();
+	if (!mon || !target_able(mon) || !mon->race || !mon->race->base) {
+		msg("You have not chosen a worthy quarry.");
+		return;
+	}
+
+	monster_desc(m_name, sizeof(m_name), mon, MDESC_TARG);
+	my_strcpy(player->marked_quarry, mon->race->base->name,
+		sizeof(player->marked_quarry));
+
+	player->upkeep->energy_use = z_info->move_energy;
+	msg("You study %s, committing its kind to the long memory of the hunt.",
+		m_name);
 }
 
 static void use_mana_siphon(int dir, struct command *cmd)
@@ -647,6 +764,34 @@ static void use_signature_spell(int dir, struct command *cmd)
 			cooldown, true, false);
 	}
 	target_release();
+}
+
+static void use_innate_bloodlust(int dir, struct command *cmd)
+{
+	(void)dir;
+	(void)cmd;
+
+	if (player->lev < 30) {
+		msg("You must reach level 30 to call up bloodlust.");
+		return;
+	}
+
+	if (player->timed[TMD_BLOODLUST]) {
+		msg("The red mist already rules you.");
+		return;
+	}
+
+	if (player->timed[TMD_INNATE_BLOODLUST_COOLDOWN]) {
+		msg("You need %d more turns before calling up bloodlust again.",
+			player->timed[TMD_INNATE_BLOODLUST_COOLDOWN]);
+		return;
+	}
+
+	player->upkeep->energy_use = z_info->move_energy;
+	msg("You call the red mist into your blood.");
+	(void)player_set_timed(player, TMD_BLOODLUST, 10, true, false);
+	(void)player_set_timed(player, TMD_INNATE_BLOODLUST_COOLDOWN, 360,
+		true, false);
 }
 
 static void use_cyclopean_rage(int dir, struct command *cmd)

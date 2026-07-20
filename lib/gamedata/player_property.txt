@@ -214,6 +214,24 @@ code:BATTLE_PRAYER
 name:Battle Prayer
 desc:At level 30, you can pray for healing and a random battle miracle.
 
+type:player
+code:SHADOWSTEP
+name:Shadowstep
+desc:At level 30, you can slip through shadow to phase door and cover
+desc: your tracks for a brief time.
+
+type:player
+code:MARK_QUARRY
+name:Mark Quarry
+desc:At level 30, you can permanently mark one monster kind as your
+desc: quarry, dealing extra damage to that kind.
+
+type:player
+code:INNATE_BLOODLUST
+name:Innate Bloodlust
+desc:At level 30, you can call up bloodlust without a book or spell point
+desc: cost, but only after a long recovery.
+
 
 # Object flags
 

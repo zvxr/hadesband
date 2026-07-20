@@ -18,8 +18,14 @@
 
 #include "effects.h"
 #include "init.h"
+#include "monster.h"
+#include "obj-gear.h"
+#include "obj-knowledge.h"
+#include "obj-make.h"
 #include "obj-pile.h"
+#include "obj-tval.h"
 #include "obj-util.h"
+#include "object.h"
 #include "player-birth.h"
 #include "player-calcs.h"
 #include "player-history.h"
@@ -205,6 +211,38 @@ bool player_stat_dec(struct player *p, int stat, bool permanent)
 	return res;
 }
 
+static void player_grant_platonic_forms(struct player *p, bool verbose)
+{
+	int tval = tval_find_idx("magic book");
+	int sval = lookup_sval(tval, "[The Platonic Forms]");
+	struct object_kind *kind = lookup_kind(tval, sval);
+	struct object *obj;
+
+	if (!kind) return;
+
+	obj = object_new();
+	object_prep(obj, kind, 0, MINIMISE);
+	obj->number = 1;
+	obj->origin = ORIGIN_ACQUIRE;
+	obj->origin_depth = p->depth;
+	obj->known = object_new();
+	object_set_base_known(p, obj);
+	object_flavor_aware(p, obj);
+	obj->known->pval = obj->pval;
+	obj->known->effect = obj->effect;
+	obj->known->notice |= OBJ_NOTICE_ASSESSED;
+	kind->everseen = true;
+
+	if (verbose) {
+		msg("A perfect text resolves itself in your hands.");
+	}
+	if (inven_carry_num(p, obj) > 0) {
+		inven_carry(p, obj, true, verbose);
+	} else {
+		drop_near(cave, &obj, 0, p->grid, false, verbose);
+	}
+}
+
 static void adjust_level(struct player *p, bool verbose)
 {
 	if (p->exp < 0)
@@ -234,11 +272,13 @@ static void adjust_level(struct player *p, bool verbose)
 	while ((p->lev < PY_MAX_LEVEL) &&
 	       (p->exp >= (player_exp[p->lev-1] * p->expfact / 100L))) {
 		char buf[80];
+		bool first_time_level;
 
 		p->lev++;
 
 		/* Save the highest level */
-		if (p->lev > p->max_lev)
+		first_time_level = p->lev > p->max_lev;
+		if (first_time_level)
 			p->max_lev = p->lev;
 
 		if (verbose) {
@@ -256,6 +296,11 @@ static void adjust_level(struct player *p, bool verbose)
 					msgt(MSG_LEVEL, "You gain %s.", milestone);
 				}
 			}
+		}
+
+		if (first_time_level && p->lev == 30 &&
+				streq(p->class->name, "Mystagogue")) {
+			player_grant_platonic_forms(p, verbose);
 		}
 
 		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_STR, 0, 0, 0, 0, NULL);
@@ -368,6 +413,29 @@ bool player_restore_mana(struct player *p, int amt) {
 	msg("You feel some of your energies returning.");
 
 	return p->csp != old_csp;
+}
+
+bool player_marked_quarry_matches(const struct player *p,
+	const struct monster *mon)
+{
+	if (!p || !mon || !mon->race || !mon->race->base) return false;
+	if (!player_has(p, PF_MARK_QUARRY)) return false;
+	if (p->lev < 30) return false;
+	if (!p->marked_quarry[0]) return false;
+
+	return streq(p->marked_quarry, mon->race->base->name);
+}
+
+int player_marked_quarry_damage(struct player *p, const struct monster *mon,
+	int dmg, bool range)
+{
+	if (dmg <= 0 || !player_marked_quarry_matches(p, mon)) return dmg;
+
+	if (one_in_(8)) {
+		msg("Your quarry mark guides the %s.", range ? "shot" : "strike");
+	}
+
+	return dmg + dmg / 2;
 }
 
 /**

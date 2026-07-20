@@ -169,6 +169,8 @@ static int test_missing_record_header0(void *state) {
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "book-properties:25:40:1 to 100");
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
+	r = parser_parse(p, "book-flags:IGNORE_ACID | IGNORE_FIRE");
+	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "spell:Light Room:1:2:26:4");
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "effect:LIGHT_AREA");
@@ -658,6 +660,8 @@ static int test_missing_magic0(void *state) {
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "book-properties:25:40:1 to 100");
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
+	r = parser_parse(p, "book-flags:IGNORE_ACID | IGNORE_FIRE");
+	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "spell:Light Room:1:2:26:4");
 	eq(r, PARSE_ERROR_TOO_MANY_ENTRIES);
 	r = parser_parse(p, "effect:LIGHT_AREA");
@@ -701,6 +705,8 @@ static int test_missing_book0(void *state) {
 
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "book-properties:25:40:1 to 100");
+	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
+	r = parser_parse(p, "book-flags:IGNORE_ACID | IGNORE_FIRE");
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "spell:Light Room:1:2:26:4");
 	eq(r, PARSE_ERROR_TOO_MANY_ENTRIES);
@@ -828,6 +834,37 @@ static int test_book_properties_bad0(void *state) {
 	enum parser_error r = parser_parse(p, "book-properties:25:40:1 100");
 
 	eq(r, PARSE_ERROR_INVALID_ALLOCATION);
+	ok;
+}
+
+static int test_book_flags0(void *state) {
+	struct parser *p = (struct parser*) state;
+	enum parser_error r = parser_parse(p,
+		"book-flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD");
+	struct player_class *c;
+	struct object_kind *bk;
+
+	eq(r, PARSE_ERROR_NONE);
+	c = (struct player_class*) parser_priv(p);
+	notnull(c);
+	notnull(c->magic.books);
+	require(c->magic.num_books > 0);
+	bk = lookup_kind(c->magic.books[c->magic.num_books - 1].tval,
+		c->magic.books[c->magic.num_books - 1].sval);
+	notnull(bk);
+	require(bk->el_info[ELEM_ACID].flags & EL_INFO_IGNORE);
+	require(bk->el_info[ELEM_ELEC].flags & EL_INFO_IGNORE);
+	require(bk->el_info[ELEM_FIRE].flags & EL_INFO_IGNORE);
+	require(bk->el_info[ELEM_COLD].flags & EL_INFO_IGNORE);
+	ok;
+}
+
+static int test_book_flags_bad0(void *state) {
+	struct parser *p = (struct parser*) state;
+	/* Try an unrecognized object flag. */
+	enum parser_error r = parser_parse(p, "book-flags:XYZZY");
+
+	eq(r, PARSE_ERROR_INVALID_FLAG);
 	ok;
 }
 
@@ -1323,6 +1360,8 @@ struct test tests[] = {
 	{ "book_graphics0", test_book_graphics0 },
 	{ "book_properties0", test_book_properties0 },
 	{ "book_properties_bad0", test_book_properties_bad0 },
+	{ "book_flags0", test_book_flags0 },
+	{ "book_flags_bad0", test_book_flags_bad0 },
 	{ "missing_spell0", test_missing_spell0 },
 	{ "spell0", test_spell0 },
 	{ "missing_effect0", test_missing_effect0 },

@@ -861,8 +861,11 @@ int rd_player(void)
 	/* # of turns spent resting */
 	rd_u32b(&player->resting_turn);
 
-	/* Future use */
-	strip_bytes(32);
+	/* Mark Quarry and future use */
+	for (i = 0; i < (int)sizeof(player->marked_quarry); i++) {
+		rd_byte((uint8_t *)&player->marked_quarry[i]);
+	}
+	player->marked_quarry[sizeof(player->marked_quarry) - 1] = '\0';
 
 	return 0;
 }

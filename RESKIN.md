@@ -101,8 +101,8 @@
 | Priest | Priest | Pending | Reviewed; added Prayer class skill, random divine boon before level 30 and choice of three boons at level 30+ |
 | Necromancer | Necromancer | Pending | Reviewed; added Soul Harvest level-30 passive, restoring small SP on qualifying necromantic kills |
 | Paladin | Paladin | Pending | Reviewed; added Battle Prayer level-30 class skill, healing and curing minor wounds before granting a random battle miracle on a long cooldown |
-| Rogue | Rogue | Pending; likely retain | Skill command migrated; balance not reviewed |
-| Ranger | Ranger | Pending; likely retain | Not reviewed |
+| Rogue | Rogue | Pending; likely retain | Reviewed; existing Steal retained, added Shadowstep level-30 class skill for short phase movement with brief Cover Tracks on cooldown |
+| Ranger | Ranger | Pending; likely retain | Reviewed; added Mark Quarry level-30 class skill, permanently choosing one monster kind for extra stacking damage |
 | New | Mystagogue | Done | Reviewed; INT-forward warrior-caster, stats +1/+2/-2/-1/+0, 20% XP |
 | Blackguard | Stygian Warrior | Done | Display rename and class titles updated; mechanics retained |
 

@@ -4032,6 +4032,67 @@ static enum parser_error parse_class_book_properties(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_class_book_flags(struct parser *p) {
+	struct player_class *c = parser_priv(p);
+	struct class_book *b;
+	struct object_kind *k;
+	char *flags;
+	char *s;
+
+	if (!c) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	if (c->magic.num_books < 1) {
+		/*
+		 * Either missing a magic directive for the class or didn't
+		 * have a book directive after the magic directive.
+		 */
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	if (!parser_hasval(p, "flags")) {
+		return PARSE_ERROR_NONE;
+	}
+
+	assert(c->magic.books && c->magic.num_books <= class_max_books);
+	b = &c->magic.books[c->magic.num_books - 1];
+	k = lookup_kind(b->tval, b->sval);
+	assert(k);
+
+	flags = string_make(parser_getstr(p, "flags"));
+	s = strtok(flags, " |");
+	while (s) {
+		char *under = strchr(s, '_');
+		bool found = false;
+
+		if (!grab_flag(k->flags, OF_SIZE, list_obj_flag_names, s)) {
+			found = true;
+		}
+		if (under) {
+			int i;
+
+			for (i = 0; i < ELEM_MAX; i++) {
+				if (streq(under + 1, list_element_names[i])) {
+					if (!strncmp(s, "IGNORE", under - s)) {
+						k->el_info[i].flags |= EL_INFO_IGNORE;
+						found = true;
+					} else if (!strncmp(s, "HATES", under - s)) {
+						k->el_info[i].flags |= EL_INFO_HATES;
+						found = true;
+					}
+					break;
+				}
+			}
+		}
+		if (!found) {
+			break;
+		}
+		s = strtok(NULL, " |");
+	}
+
+	string_free(flags);
+	return s ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_class_spell(struct parser *p) {
 	struct player_class *c = parser_priv(p);
 	struct class_book *book;
@@ -4355,6 +4416,7 @@ static struct parser *init_parse_class(void) {
 			   parse_class_book_graphics);
 	parser_reg(p, "book-properties int cost int common str minmax",
 			   parse_class_book_properties);
+	parser_reg(p, "book-flags ?str flags", parse_class_book_flags);
 	parser_reg(p, "spell sym name int level int mana int fail int exp",
 			   parse_class_spell);
 	parser_reg(p, "effect sym eff ?sym type ?int radius ?int other", parse_class_effect);

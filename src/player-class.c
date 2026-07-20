@@ -39,10 +39,10 @@ const char *player_class_level_30_milestone(const struct player_class *c)
 	if (streq(c->name, "Priest")) return "Guided Prayer";
 	if (streq(c->name, "Necromancer")) return "Soul Harvest";
 	if (streq(c->name, "Paladin")) return "Battle Prayer";
-	if (streq(c->name, "Rogue")) return "Swap Places";
-	if (streq(c->name, "Ranger")) return "Decoy";
-	if (streq(c->name, "Mystagogue")) return "Theurgist status";
-	if (streq(c->name, "Stygian Warrior")) return "Bloodlust";
+	if (streq(c->name, "Rogue")) return "Shadowstep";
+	if (streq(c->name, "Ranger")) return "Mark Quarry";
+	if (streq(c->name, "Mystagogue")) return "The Platonic Forms";
+	if (streq(c->name, "Stygian Warrior")) return "Innate Bloodlust";
 
 	return NULL;
 }
