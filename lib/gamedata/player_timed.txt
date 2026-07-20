@@ -640,6 +640,12 @@ grade:y:10000:ScurryCD:You catch your breath.
 on-end:You are ready to scurry again.
 msgt:GENERIC
 
+name:PRAYER_COOLDOWN
+desc:waiting for another prayer
+grade:y:10000:PrayerCD:Your prayer has been heard.
+on-end:You are ready to pray again.
+msgt:GENERIC
+
 name:OPP_CHAOS
 desc:chaos resistance
 grade:v:10000:RChaos:You feel resistant to chaos!

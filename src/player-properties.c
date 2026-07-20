@@ -52,6 +52,7 @@ struct player_power {
 
 static void use_steal(int dir);
 static void use_mana_siphon(int dir);
+static void use_prayer(int dir);
 static void use_cyclopean_rage(int dir);
 static void use_kobold_scurry(int dir);
 static void use_siren_song(int dir);
@@ -65,6 +66,7 @@ static const struct player_power player_powers[] = {
 	{ PF_STEAL, PLAYER_POWER_CLASS, "Steal", true, use_steal },
 	{ PF_MANA_STEAL, PLAYER_POWER_CLASS, "Siphon Mana", true,
 		use_mana_siphon },
+	{ PF_PRAYER, PLAYER_POWER_CLASS, "Prayer", false, use_prayer },
 	{ PF_CYCLOPEAN_RAGE, PLAYER_POWER_RACE, "Cyclopean Rage", false,
 		use_cyclopean_rage },
 	{ PF_KOBOLD_SCURRY, PLAYER_POWER_RACE, "Scurry", false,
@@ -119,6 +121,33 @@ static const struct stone_lore stone_lore[] = {
 		"detect doors and stairs" },
 	{ "Deep Sense", 30, 400, EF_DETECT_OBJECTS, EF_NONE,
 		"detect nearby objects" }
+};
+
+enum prayer_boon {
+	PRAYER_MEND,
+	PRAYER_RENEW_SPIRIT,
+	PRAYER_BLESSING,
+	PRAYER_CLEANSE,
+	PRAYER_SANCTUARY,
+	PRAYER_ELEMENTAL_AEGIS
+};
+
+static const char *prayer_boons[] = {
+	"Mend",
+	"Renew Spirit",
+	"Blessing",
+	"Cleanse",
+	"Sanctuary",
+	"Elemental Aegis"
+};
+
+static const char *prayer_descs[] = {
+	"heal hit points",
+	"restore spell points",
+	"gain blessing",
+	"cure ailments",
+	"gain protection from evil",
+	"gain one elemental resistance"
 };
 
 static bool player_owns_power(const struct player_power *power)
@@ -259,6 +288,144 @@ static void use_mana_siphon(int dir)
 	monster_wake(mon, true, 100);
 	monster_desc(m_name, sizeof(m_name), mon, MDESC_STANDARD);
 	msg("%s cries out in anger!", m_name);
+}
+
+static int prayer_wis_bonus(void)
+{
+	return MAX(0, (player->state.stat_ind[STAT_WIS] - 10) / 2);
+}
+
+static bool prayer_cleanse(void)
+{
+	bool changed = false;
+
+	changed |= player_clear_timed(player, TMD_AFRAID, true, false);
+	changed |= player_clear_timed(player, TMD_POISONED, true, false);
+	changed |= player_clear_timed(player, TMD_CONFUSED, true, false);
+	changed |= player_clear_timed(player, TMD_CUT, true, false);
+	changed |= player_clear_timed(player, TMD_STUN, true, false);
+
+	return changed;
+}
+
+static void prayer_apply(enum prayer_boon boon)
+{
+	int wis = prayer_wis_bonus();
+	int duration;
+	bool ident = false;
+
+	switch (boon) {
+		case PRAYER_MEND: {
+			int heal = 25 + player->lev * 3 + wis * 2;
+
+			msg("A gentle mercy answers your prayer.");
+			if (player->chp >= player->mhp) {
+				msg("You feel no different.");
+				return;
+			}
+			effect_simple(EF_HEAL_HP, source_player(), format("%d", heal),
+				0, 0, 0, 0, 0, &ident);
+			break;
+		}
+
+		case PRAYER_RENEW_SPIRIT: {
+			int mana = 4 + player->lev / 4 + wis / 2;
+
+			msg("Your spirit is renewed.");
+			if (!player_restore_mana(player, mana)) {
+				msg("You feel no different.");
+			}
+			break;
+		}
+
+		case PRAYER_BLESSING:
+			duration = 20 + player->lev + wis;
+			msg("A blessing settles over you.");
+			(void)player_inc_timed(player, TMD_BLESSED, duration, true,
+				false, false);
+			break;
+
+		case PRAYER_CLEANSE:
+			msg("A cleansing light passes through you.");
+			if (!prayer_cleanse()) {
+				msg("You feel no different.");
+			}
+			break;
+
+		case PRAYER_SANCTUARY:
+			duration = 20 + player->lev * 2 + wis;
+			msg("A sanctuary of faith surrounds you.");
+			(void)player_inc_timed(player, TMD_PROTEVIL, duration, true,
+				false, false);
+			break;
+
+		case PRAYER_ELEMENTAL_AEGIS: {
+			static const int resists[] = {
+				TMD_OPP_ACID,
+				TMD_OPP_ELEC,
+				TMD_OPP_FIRE,
+				TMD_OPP_COLD,
+				TMD_OPP_POIS
+			};
+			int resist = resists[randint0(N_ELEMENTS(resists))];
+
+			duration = 20 + player->lev + wis;
+			msg("An elemental aegis forms around you.");
+			(void)player_inc_timed(player, resist, duration, true,
+				false, false);
+			break;
+		}
+	}
+}
+
+static void use_prayer(int dir)
+{
+	enum prayer_boon boon;
+	int choices[N_ELEMENTS(prayer_boons)];
+	int i;
+
+	if (player->timed[TMD_PRAYER_COOLDOWN]) {
+		msg("You need %d more turns before another prayer.",
+			player->timed[TMD_PRAYER_COOLDOWN]);
+		return;
+	}
+
+	for (i = 0; i < (int)N_ELEMENTS(choices); i++) {
+		choices[i] = i;
+	}
+
+	if (player->lev >= 30) {
+		const char *menu_choices[3];
+		char entries[3][80];
+		int choice;
+
+		for (i = (int)N_ELEMENTS(choices) - 1; i > 0; i--) {
+			int j = randint0(i + 1);
+			int tmp = choices[i];
+
+			choices[i] = choices[j];
+			choices[j] = tmp;
+		}
+
+		for (i = 0; i < 3; i++) {
+			strnfmt(entries[i], sizeof(entries[i]), "%-16s %s",
+				prayer_boons[choices[i]], prayer_descs[choices[i]]);
+			menu_choices[i] = entries[i];
+		}
+
+		choice = get_power_menu("Choose a divine boon: ", menu_choices, 3);
+		if (choice < 0 || choice >= 3) {
+			return;
+		}
+		boon = choices[choice];
+	} else {
+		boon = randint0(N_ELEMENTS(prayer_boons));
+	}
+
+	player->upkeep->energy_use = z_info->move_energy;
+	msg("You pray for divine aid.");
+	prayer_apply(boon);
+	(void)player_set_timed(player, TMD_PRAYER_COOLDOWN, 120, true, false);
 }
 
 static void use_cyclopean_rage(int dir)

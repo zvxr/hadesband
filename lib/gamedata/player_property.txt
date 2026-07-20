@@ -189,6 +189,12 @@ code:MANA_STEAL
 name:Mana Steal
 desc:You can steal mana from adjacent spellcasting monsters.
 
+type:player
+code:PRAYER
+name:Prayer
+desc:You can pray for divine aid, receiving a random boon.
+desc: At level 30, your deity grants you a choice of three boons.
+
 
 # Object flags
 

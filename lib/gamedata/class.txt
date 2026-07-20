@@ -741,7 +741,7 @@ equip:soft armour:Soft Leather Armour:1:1:none
 equip:shield:Pelte:1:1:none
 equip:scroll:Word of Recall:1:1:birth_no_recall
 #equip:scroll:Deep Descent:1:1:none
-player-flags:BLESS_WEAPON | ZERO_FAIL
+player-flags:BLESS_WEAPON | ZERO_FAIL | PRAYER
 title:Believer
 title:Acolyte
 title:Devotee
