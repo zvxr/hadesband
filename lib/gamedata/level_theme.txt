@@ -14,6 +14,8 @@
 #   while present, generated down stairs are replaced with up stairs, and a down
 #   stair appears when the unique is slain
 
+# Floor Generation Themes
+
 theme:Forest
 label:Forest
 label-color:g
@@ -29,16 +31,26 @@ spawn:6:100:100:100
 spawn:66:100:100:100
 seed-room-tag:round:66
 
-theme:Chiron's School
+# Unique Guardians
+
+theme:Chiron's Hall
 label:Chiron's Hall
 label-color:p
 spawn:22:100:100:100
 unique:Kerwyn Foehammer
 unique-block-down-stairs:Chiron, the Wounded Teacher
 
+theme:Minos Maze
+label:Minos Maze
+label-color:p
+spawn:34:100:100:100
+unique-block-down-stairs:The Minotaur of Crete
+
+# Break Levels
 theme:Dungeon Store
 label:Dungeon Store
 label-color:y
 spawn:20:5:50:100
+spawn:40:5:50:100
 spawn:60:5:50:100
 seed-terrain:STORE_DUNGEON

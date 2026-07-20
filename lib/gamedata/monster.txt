@@ -7749,6 +7749,28 @@ flags:IM_FIRE
 desc:It is a fast moving creature of the underworld, a gigantic black bat
 desc: surrounded by flickering bright red flames.
 
+name:labyrinth minotaur
+base:monstrous
+color:U
+speed:120
+hit-points:390
+hearing:15
+smell:20
+armor-class:50
+sleepiness:20
+depth:32
+rarity:3
+experience:850
+blow:BUTT:HURT:3d7
+blow:HIT:HURT:4d6
+blow:HIT:HURT:4d6
+blow:CRUSH:HURT:3d8
+flags:EVIL
+flags:BASH_DOOR
+flags:FORCE_SLEEP
+desc:A bull-headed brute bred for the turns and dead ends of royal mazes.  Its
+desc: hooves strike sparks from the stone as it lowers its horns and charges.
+
 ### Dungeon level 33 ###
 
 name:druid of Dionysus
@@ -8240,6 +8262,33 @@ friends:60:1d3:odontotyrannos
 friends:100:3d3:Thracian champion:bodyguard
 desc:The impious king of Arcadia feasted a god on human flesh and was answered
 desc: with a wolf's doom.  His savage household still gathers at his call.
+
+name:The Minotaur of Crete
+base:monstrous
+color:U
+speed:120
+hit-points:1650
+hearing:25
+smell:30
+armor-class:105
+sleepiness:15
+depth:34
+rarity:3
+experience:1800
+blow:BUTT:HURT:6d7
+blow:HIT:HURT:5d8
+blow:HIT:HURT:5d8
+blow:CRUSH:HURT:5d9
+flags:UNIQUE | MALE | EVIL
+flags:DROP_2 | DROP_GOOD | DROP_GREAT | ONLY_ITEM
+flags:BASH_DOOR | MOVE_BODY
+flags:NO_CONF | NO_SLEEP
+flags:FORCE_SLEEP
+friends:100:1d3:labyrinth minotaur:bodyguard
+friends:50:1d2:labyrinth minotaur:servant
+desc:The shame of Crete waits in the dark heart of Minos' maze.  Horns scrape
+desc: the stone, hooves thunder through the passages, and every turn of the
+desc: labyrinth seems to bend toward his hunger.
 
 name:lich
 plural:liches
