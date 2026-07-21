@@ -1995,6 +1995,7 @@ bool effect_handler_IDENTIFY(effect_handler_context_t *context)
 bool effect_handler_IDENTIFY_RELIC(effect_handler_context_t *context)
 {
 	struct object *obj;
+	char o_name[80];
 	const char *q, *s;
 	int itemmode = (USE_EQUIP | USE_INVEN | USE_QUIVER | USE_FLOOR);
 	bool used = false;
@@ -2013,6 +2014,8 @@ bool effect_handler_IDENTIFY_RELIC(effect_handler_context_t *context)
 	}
 
 	object_reveal_relic(player, obj);
+	object_desc(o_name, sizeof(o_name), obj, ODESC_BASE, player);
+	msg("You now understand %s.", o_name);
 	return true;
 }
 
