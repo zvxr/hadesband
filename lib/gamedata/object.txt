@@ -368,7 +368,7 @@ type:food
 graphics:,:B
 level:5
 weight:3
-cost:150
+cost:500
 alloc:20:30 to 100
 pile:10:1d3
 power:4
@@ -376,10 +376,13 @@ msg:That tastes great.
 effect:NOURISH:INC_TO
 dice:75
 effect:CURE:POISONED
+effect:RESTORE_STAT:STR
+effect:RESTORE_STAT:WIS
 effect:HEAL_HP
 dice:4d8
 desc:A small portion of deathless food, fragrant as mountain air after rain.
-desc: Even a morsel restores strength and steadies the body against poison.
+desc: Even a morsel restores strength and clarity, and steadies the body
+desc: against poison.
 
 name:Minoan Wine
 type:food

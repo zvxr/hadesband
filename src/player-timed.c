@@ -770,8 +770,22 @@ static int timed_effect_ward_flag(int idx)
 	switch (idx) {
 	case TMD_BLIND:
 		return OF_WARD_BLIND;
+	case TMD_CONFUSED:
+		return OF_WARD_CONF;
 	default:
 		return OF_NONE;
+	}
+}
+
+static const char *timed_effect_ward_message(int idx)
+{
+	switch (idx) {
+	case TMD_BLIND:
+		return "A clear flare from %s preserves your sight!";
+	case TMD_CONFUSED:
+		return "A mellowing pulse from %s steadies your thoughts!";
+	default:
+		return "A ward from %s protects you!";
 	}
 }
 
@@ -800,7 +814,7 @@ static bool player_ward_timed_effect(struct player *p, int idx)
 
 	object_desc(o_name, sizeof(o_name), ward_obj, ODESC_BASE, p);
 	equip_learn_flag(p, flag);
-	msg("A clear flare from %s preserves your sight!", o_name);
+	msg(timed_effect_ward_message(idx), o_name);
 	return true;
 }
 

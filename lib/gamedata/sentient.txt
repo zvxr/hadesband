@@ -148,6 +148,13 @@ values:LIGHT[-1]
 flags:WARD_BLIND
 desc:a small, watchful flame
 
+name:Mellow
+alloc:20:1 to 35
+type:helm
+values:INT[-1]
+flags:WARD_CONF
+desc:mellows vibes
+
 # Tradeoff effects (Uncommon)
 
 name:Dreadful
