@@ -265,6 +265,17 @@ msg:Your {name} soothes your eyes.
 bindui:pblind_ui_compact_0:0
 desc:blindness
 
+name:ward against blindness
+type:flag
+code:WARD_BLIND
+subtype:protection
+id-type:on effect
+power:5
+mult:5
+type-mult:light:3
+msg:Your {name} flares with clear light.
+desc:20% chance to prevent blindness
+
 name:protection from confusion
 type:flag
 code:PROT_CONF

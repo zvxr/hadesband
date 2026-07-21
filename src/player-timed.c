@@ -23,6 +23,7 @@
 #include "effects.h"
 #include "init.h"
 #include "mon-util.h"
+#include "obj-desc.h"
 #include "obj-gear.h"
 #include "obj-knowledge.h"
 #include "obj-properties.h"
@@ -764,6 +765,45 @@ static bool player_of_has_not_timed(struct player *p, int flag)
     return of_has(collect_f, flag);
 }
 
+static int timed_effect_ward_flag(int idx)
+{
+	switch (idx) {
+	case TMD_BLIND:
+		return OF_WARD_BLIND;
+	default:
+		return OF_NONE;
+	}
+}
+
+static bool player_ward_timed_effect(struct player *p, int idx)
+{
+	int i;
+	int flag = timed_effect_ward_flag(idx);
+	struct object *ward_obj = NULL;
+	char o_name[80];
+
+	if (flag == OF_NONE) return false;
+	if (!player_of_has(p, flag)) return false;
+	if (!one_in_(5)) return false;
+
+	for (i = 0; i < p->body.count; i++) {
+		struct object *obj = slot_object(p, i);
+
+		if (!obj) continue;
+		if (of_has(obj->flags, flag)) {
+			ward_obj = obj;
+			break;
+		}
+	}
+
+	if (!ward_obj) return false;
+
+	object_desc(o_name, sizeof(o_name), ward_obj, ODESC_BASE, p);
+	equip_learn_flag(p, flag);
+	msg("A clear flare from %s preserves your sight!", o_name);
+	return true;
+}
+
 /**
  * ------------------------------------------------------------------------
  * Setting, increasing, decreasing and clearing timed effects
@@ -1056,6 +1096,9 @@ bool player_inc_timed(struct player *p, int idx, int v, bool notify,
 	assert(idx < TMD_MAX);
 
 	if (check == false || player_inc_check(p, idx, false) == true) {
+		if (check && player_ward_timed_effect(p, idx)) {
+			return false;
+		}
 		if ((timed_effects[idx].flags & TMD_FLAG_NONSTACKING)
 				&& p->timed[idx] > 0) {
 			/*
@@ -1130,4 +1173,3 @@ bool player_clear_timed(struct player *p, int idx, bool notify,
 
 	return player_set_timed(p, idx, 0, notify, can_disturb);
 }
-
