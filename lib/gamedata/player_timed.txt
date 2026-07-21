@@ -344,10 +344,10 @@ grade:y:10000:WarCry:You catch your breath.
 on-end:You are ready to unleash another war cry.
 msgt:GENERIC
 
-name:CURE_CONFUSION_COOLDOWN
-desc:steadying your mind
-grade:y:10000:Clarity:Your thoughts settle.
-on-end:You are ready to clear your thoughts again.
+name:SATYR_TRICKERY_COOLDOWN
+desc:recovering from Pan's Door
+grade:y:10000:PanDoor:You steady yourself.
+on-end:You are ready to open Pan's Door again.
 msgt:GENERIC
 
 name:STONE_LORE_COOLDOWN

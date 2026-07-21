@@ -158,7 +158,7 @@ static int test_bonuses0(void *data)
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.el_info[ELEM_DISEN].res_level, 1);
 	require(player_has(player, PF_KNOW_MUSHROOM));
-	require(player_has(player, PF_CURE_CONFUSION));
+	require(player_has(player, PF_SATYR_TRICKERY));
 
 	eq(player_make_simple("Siren", "Warrior", "Tester"), true);
 	calc_bonuses(player, &calc_state, false, false);
@@ -202,7 +202,7 @@ static int test_power_ownership0(void *data)
 	require(!player_power_needs_direction(PLAYER_POWER_RACE));
 
 	eq(player_make_simple("Satyr", "Warrior", "Tester"), true);
-	require(streq(player_power_name(PLAYER_POWER_RACE), "Cure Confusion"));
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Pan's Door"));
 	require(!player_power_needs_direction(PLAYER_POWER_RACE));
 
 	eq(player_make_simple("Siren", "Warrior", "Tester"), true);

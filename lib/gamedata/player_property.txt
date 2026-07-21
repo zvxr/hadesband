@@ -81,9 +81,10 @@ name:War Cry
 desc:You can unleash a battle cry to frighten a single target.
 
 type:player
-code:CURE_CONFUSION
-name:Cure Confusion
-desc:You can steady your mind and clear confusion.
+code:SATYR_TRICKERY
+name:Pan's Door
+desc:You can open a small portal of Pan, phasing farther than an
+desc: ordinary phase door.
 
 type:player
 code:STONE_LORE

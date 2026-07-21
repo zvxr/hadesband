@@ -65,7 +65,7 @@ static void use_cyclopean_rage(int dir, struct command *cmd);
 static void use_kobold_scurry(int dir, struct command *cmd);
 static void use_siren_song(int dir, struct command *cmd);
 static void use_war_cry(int dir, struct command *cmd);
-static void use_cure_confusion(int dir, struct command *cmd);
+static void use_satyr_trickery(int dir, struct command *cmd);
 static void use_stone_lore(int dir, struct command *cmd);
 static void use_demigod_taunt(int dir, struct command *cmd);
 static void use_fletch_ammo(int dir, struct command *cmd);
@@ -92,8 +92,8 @@ static const struct player_power player_powers[] = {
 	{ PF_SIREN_SONG, PLAYER_POWER_RACE, 1, "Siren Song", false,
 		use_siren_song },
 	{ PF_WAR_CRY, PLAYER_POWER_RACE, 1, "War Cry", false, use_war_cry },
-	{ PF_CURE_CONFUSION, PLAYER_POWER_RACE, 1, "Cure Confusion", false,
-		use_cure_confusion },
+	{ PF_SATYR_TRICKERY, PLAYER_POWER_RACE, 1, "Pan's Door", false,
+		use_satyr_trickery },
 	{ PF_STONE_LORE, PLAYER_POWER_RACE, 1, "Stone Lore", false,
 		use_stone_lore },
 	{ PF_DEMIGOD_TAUNT, PLAYER_POWER_RACE, 1, "Taunt", false,
@@ -1023,25 +1023,23 @@ static void use_war_cry(int dir, struct command *cmd)
 	mon_inc_timed(mon, MON_TMD_FEAR, 10 + player->lev, 0);
 }
 
-static void use_cure_confusion(int dir, struct command *cmd)
+static void use_satyr_trickery(int dir, struct command *cmd)
 {
+	bool ident = false;
 	(void)dir;
 	(void)cmd;
 
-	if (player->timed[TMD_CURE_CONFUSION_COOLDOWN]) {
-		msg("You need %d more turns before clearing your thoughts again.",
-			player->timed[TMD_CURE_CONFUSION_COOLDOWN]);
-		return;
-	}
-
-	if (!player->timed[TMD_CONFUSED]) {
-		msg("Your thoughts are already clear.");
+	if (player->timed[TMD_SATYR_TRICKERY_COOLDOWN]) {
+		msg("You need %d more turns before opening Pan's Door again.",
+			player->timed[TMD_SATYR_TRICKERY_COOLDOWN]);
 		return;
 	}
 
 	player->upkeep->energy_use = z_info->move_energy;
-	(void)player_clear_timed(player, TMD_CONFUSED, true, false);
-	(void)player_set_timed(player, TMD_CURE_CONFUSION_COOLDOWN, 120,
+	msg("A small portal opens before you.");
+	effect_simple(EF_TELEPORT, source_player(), "8", 0, 0, 0, 0, 0,
+		&ident);
+	(void)player_set_timed(player, TMD_SATYR_TRICKERY_COOLDOWN, 80,
 		true, false);
 }
 

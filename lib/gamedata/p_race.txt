@@ -322,7 +322,7 @@ history:70
 age:35:10
 height:64:6
 weight:150:25
-player-flags:KNOW_MUSHROOM | CURE_CONFUSION
+player-flags:KNOW_MUSHROOM | SATYR_TRICKERY
 values:RES_DISEN[1]
 
 name:Siren
