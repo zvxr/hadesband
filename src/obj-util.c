@@ -49,11 +49,13 @@ struct artifact *a_info;
 struct artifact_upkeep *aup_info;
 struct ego_item *e_info;
 struct flavor *flavors;
+char **scroll_titles;
+size_t scroll_title_count;
 
 /**
- * Hold the titles of scrolls, 6 to 14 characters each, plus quotes.
+ * Hold the titles of scrolls, including quotes.
  */
-static char scroll_adj[MAX_TITLES][18];
+static char scroll_adj[MAX_TITLES][MAX_SCROLL_TITLE_LEN];
 
 static void flavor_assign_fixed(void)
 {
@@ -130,6 +132,75 @@ static void flavor_reset_fixed(void)
 	}
 }
 
+static void prepare_direct_scroll_titles(void)
+{
+	bool *used;
+	int i;
+
+	if (scroll_title_count < MAX_TITLES) {
+		quit_fmt("Need at least %d scroll titles.", MAX_TITLES);
+	}
+
+	used = mem_zalloc(scroll_title_count * sizeof(*used));
+	for (i = 0; i < MAX_TITLES; i++) {
+		size_t choice;
+
+		do {
+			choice = randint0(scroll_title_count);
+		} while (used[choice]);
+
+		used[choice] = true;
+		strnfmt(scroll_adj[i], sizeof(scroll_adj[i]), "\"%s\"",
+			scroll_titles[choice]);
+	}
+	mem_free(used);
+}
+
+static void prepare_generated_scroll_titles(void)
+{
+	int i, j;
+
+	/*
+	 * Legacy fallback: generate pseudo-words from names.txt section 2.
+	 * Once direct scroll titles are fully established, this can be removed.
+	 */
+	for (i = 0; i < MAX_TITLES; i++) {
+		char buf[26];
+		char *end = buf + 1;
+		int titlelen = 0;
+		int wordlen;
+		bool okay = true;
+
+		my_strcpy(buf, "\"", 2);
+		wordlen = randname_make(RANDNAME_SCROLL, 2, 8, end, 24,
+			name_sections);
+		while (titlelen + wordlen < (int)(sizeof(scroll_adj[0]) - 3)) {
+			end[wordlen] = ' ';
+			titlelen += wordlen + 1;
+			end += wordlen + 1;
+			wordlen = randname_make(RANDNAME_SCROLL, 2, 8, end,
+				24 - titlelen, name_sections);
+		}
+		buf[titlelen] = '"';
+		buf[titlelen + 1] = '\0';
+
+		/* Check the scroll name hasn't already been generated */
+		for (j = 0; j < i; j++) {
+			if (streq(buf, scroll_adj[j])) {
+				okay = false;
+				break;
+			}
+		}
+
+		if (okay) {
+			my_strcpy(scroll_adj[i], buf, sizeof(scroll_adj[0]));
+		} else {
+			/* Have another go at making a name */
+			i--;
+		}
+	}
+}
+
 /**
  * Prepare the "variable" part of the "k_info" array.
  *
@@ -153,7 +224,7 @@ static void flavor_reset_fixed(void)
  */
 void flavor_init(void)
 {
-	int i, j;
+	int i;
 
 	/* Use the "simple" RNG */
 	Rand_quick = true;
@@ -188,39 +259,11 @@ void flavor_init(void)
 	flavor_assign_random(TV_MUSHROOM);
 	flavor_assign_random(TV_POTION);
 
-	/* Scrolls (random titles, always white) */
-	for (i = 0; i < MAX_TITLES; i++) {
-		char buf[26];
-		char *end = buf + 1;
-		int titlelen = 0;
-		int wordlen;
-		bool okay = true;
-
-		my_strcpy(buf, "\"", 2);
-		wordlen = randname_make(RANDNAME_SCROLL, 2, 8, end, 24, name_sections);
-		while (titlelen + wordlen < (int)(sizeof(scroll_adj[0]) - 3)) {
-			end[wordlen] = ' ';
-			titlelen += wordlen + 1;
-			end += wordlen + 1;
-			wordlen = randname_make(RANDNAME_SCROLL, 2, 8, end, 24 - titlelen,
-									name_sections);
-		}
-		buf[titlelen] = '"';
-		buf[titlelen+1] = '\0';
-
-		/* Check the scroll name hasn't already been generated */
-		for (j = 0; j < i; j++) {
-			if (streq(buf, scroll_adj[j])) {
-				okay = false;
-				break;
-			}
-		}
-
-		if (okay)
-			my_strcpy(scroll_adj[i], buf, sizeof(scroll_adj[0]));
-		else
-			/* Have another go at making a name */
-			i--;
+	/* Scrolls (direct titles when available, always white) */
+	if (scroll_title_count) {
+		prepare_direct_scroll_titles();
+	} else {
+		prepare_generated_scroll_titles();
 	}
 	flavor_assign_random(TV_SCROLL);
 

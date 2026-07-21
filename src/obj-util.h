@@ -21,11 +21,15 @@
 
 /* Maximum number of scroll titles generated */
 #define MAX_TITLES	 50
+#define MAX_SCROLL_TITLE_LEN 48
 
 /* An item's pval (for charges, amount of gold, etc) is limited to int16_t */
 #define MAX_PVAL  32767
 
 struct player;
+
+extern char **scroll_titles;
+extern size_t scroll_title_count;
 
 void flavor_init(void);
 void flavor_set_all_aware(void);

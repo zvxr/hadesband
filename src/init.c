@@ -1754,6 +1754,81 @@ struct file_parser names_parser = {
 
 /**
  * ------------------------------------------------------------------------
+ * Initialize direct scroll titles
+ * ------------------------------------------------------------------------ */
+
+struct scroll_title_parse {
+	char **titles;
+	size_t count;
+	size_t alloc;
+};
+
+static enum parser_error parse_scroll_title_title(struct parser *p)
+{
+	const char *title = parser_getstr(p, "title");
+	struct scroll_title_parse *s = parser_priv(p);
+
+	if (strlen(title) + 3 > MAX_SCROLL_TITLE_LEN) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
+
+	if (s->count == s->alloc) {
+		s->alloc = s->alloc ? s->alloc * 2 : 64;
+		s->titles = mem_realloc(s->titles, s->alloc * sizeof(*s->titles));
+	}
+
+	s->titles[s->count++] = string_make(title);
+	return PARSE_ERROR_NONE;
+}
+
+static struct parser *init_parse_scroll_title(void)
+{
+	struct parser *p = parser_new();
+	struct scroll_title_parse *s = mem_zalloc(sizeof(*s));
+
+	parser_setpriv(p, s);
+	parser_reg(p, "title str title", parse_scroll_title_title);
+	return p;
+}
+
+static errr run_parse_scroll_title(struct parser *p)
+{
+	return parse_file_quit_not_found(p, "scroll_title");
+}
+
+static errr finish_parse_scroll_title(struct parser *p)
+{
+	struct scroll_title_parse *s = parser_priv(p);
+
+	scroll_titles = s->titles;
+	scroll_title_count = s->count;
+	mem_free(s);
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_scroll_title(void)
+{
+	size_t i;
+
+	for (i = 0; i < scroll_title_count; i++) {
+		string_free(scroll_titles[i]);
+	}
+	mem_free(scroll_titles);
+	scroll_titles = NULL;
+	scroll_title_count = 0;
+}
+
+struct file_parser scroll_title_parser = {
+	"scroll_title",
+	init_parse_scroll_title,
+	run_parse_scroll_title,
+	finish_parse_scroll_title,
+	cleanup_scroll_title
+};
+
+/**
+ * ------------------------------------------------------------------------
  * Initialize traps
  * ------------------------------------------------------------------------ */
 
@@ -4695,6 +4770,7 @@ static struct {
 	{ "quests", &quests_parser },
 	{ "flavours", &flavor_parser },
 	{ "hints", &hints_parser },
+	{ "scroll titles", &scroll_title_parser },
 	{ "random names", &names_parser }
 };
 
