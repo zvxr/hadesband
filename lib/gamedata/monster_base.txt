@@ -326,7 +326,7 @@ name:mushroom
 glyph:,
 pain:2
 flags:EMPTY_MIND | STUPID
-flags:HURT_FIRE | NO_FEAR | NO_CONF | NO_SLEEP
+flags:IM_POIS | HURT_FIRE | NO_FEAR | NO_CONF | NO_SLEEP
 desc:Mushroom
 
 # Female serpent-like monsters

@@ -76,6 +76,13 @@ uniques:0
 base:spider
 desc:spiders
 
+name:MUSHROOM
+msgt:SUM_MONSTER
+uniques:0
+base:mushroom
+base:mold
+desc:mushrooms and molds
+
 name:HOUND
 msgt:SUM_HOUND
 uniques:0

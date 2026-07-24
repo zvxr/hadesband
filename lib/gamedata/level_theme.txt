@@ -40,6 +40,13 @@ spawn:22:100:100:100
 unique:Kerwyn Foehammer
 unique-block-down-stairs:Chiron, the Wounded Teacher
 
+theme:White Lotus
+label:White Lotus
+label-color:W
+spawn:28:100:100:100
+seed-room-tag:organic:50
+unique-block-down-stairs:The White Lotus
+
 theme:Minos Maze
 label:Minos Maze
 label-color:p

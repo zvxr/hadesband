@@ -63,6 +63,15 @@ lore-color-resist:Light Green
 effect-type:theft
 lash-type:MISSILE
 
+name:DRAIN_GOLD
+power:0
+eval:5
+desc:drain gold
+lore-color-base:Yellow
+lore-color-resist:Light Green
+effect-type:theft
+lash-type:MISSILE
+
 name:EAT_ITEM
 power:0
 eval:5

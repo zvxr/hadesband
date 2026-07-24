@@ -772,6 +772,56 @@ static void melee_effect_handler_DRAIN_CHARGES(melee_effect_handler_context_t *c
 }
 
 /**
+ * Take some of the player's gold and transfer it to the monster's inventory.
+ */
+static void steal_player_gold(melee_effect_handler_context_t *context, bool blink,
+		int32_t gold)
+{
+	struct player *current_player = context->p;
+
+	if (gold > current_player->au) gold = current_player->au;
+	current_player->au -= gold;
+	if (gold <= 0) {
+		msg("Nothing was stolen.");
+		return;
+	}
+
+	/* Let the player know they were robbed */
+	msg("Your purse feels lighter.");
+	if (current_player->au)
+		msg("%d coins were stolen!", gold);
+	else
+		msg("All of your coins were stolen!");
+
+	/* While we have gold, put it in objects */
+	while (gold > 0) {
+		int amt;
+
+		/* Create a new temporary object */
+		struct object *obj = object_new();
+		object_prep(obj, money_kind("gold", gold), 0, MINIMISE);
+
+		/* Amount of gold to put in this object */
+		amt = gold > MAX_PVAL ? MAX_PVAL : gold;
+		obj->pval = amt;
+		gold -= amt;
+
+		/* Set origin to stolen, so it is not confused with
+		 * dropped treasure in monster_death */
+		obj->origin = ORIGIN_STOLEN;
+		obj->origin_depth = convert_depth_to_origin(current_player->depth);
+
+		/* Give the gold to the monster */
+		monster_carry(cave, context->mon, obj);
+	}
+
+	/* Redraw gold */
+	current_player->upkeep->redraw |= (PR_GOLD);
+
+	if (blink) context->blinked = true;
+}
+
+/**
  * Melee effect handler: Take the player's gold.
  */
 static void melee_effect_handler_EAT_GOLD(melee_effect_handler_context_t *context)
@@ -781,64 +831,51 @@ static void melee_effect_handler_EAT_GOLD(melee_effect_handler_context_t *contex
 	/* Take damage */
 	if (monster_damage_target(context, true)) return;
 
-    /* Obvious */
-    context->obvious = true;
+	/* Obvious */
+	context->obvious = true;
 
-    /* Attempt saving throw (unless paralyzed) based on dex and level */
-    if (!current_player->timed[TMD_PARALYZED] &&
-        (randint0(100) < (adj_dex_safe[current_player->state.stat_ind[STAT_DEX]]
+	/* Attempt saving throw (unless paralyzed) based on dex and level */
+	if (!current_player->timed[TMD_PARALYZED] &&
+		(randint0(100) < (adj_dex_safe[current_player->state.stat_ind[STAT_DEX]]
 						  + current_player->lev))) {
-        /* Saving throw message */
-        msg("You quickly protect your money pouch!");
+		/* Saving throw message */
+		msg("You quickly protect your money pouch!");
 
-        /* Occasional blink anyway */
-        if (randint0(3)) context->blinked = true;
-    } else {
-        int32_t gold = (current_player->au / 10) + randint1(25);
-        if (gold < 2) gold = 2;
-        if (gold > 5000) gold = (current_player->au / 20) + randint1(3000);
-        if (gold > current_player->au) gold = current_player->au;
-        current_player->au -= gold;
-        if (gold <= 0) {
-            msg("Nothing was stolen.");
-            return;
-        }
+		/* Occasional blink anyway */
+		if (randint0(3)) context->blinked = true;
+	} else {
+		int32_t gold = (current_player->au / 10) + randint1(25);
+		if (gold < 2) gold = 2;
+		if (gold > 5000) gold = (current_player->au / 20) + randint1(3000);
+		steal_player_gold(context, true, gold);
+	}
+}
 
-        /* Let the player know they were robbed */
-        msg("Your purse feels lighter.");
-        if (current_player->au)
-            msg("%d coins were stolen!", gold);
-        else
-            msg("All of your coins were stolen!");
+/**
+ * Melee effect handler: Drain a smaller amount of the player's gold.
+ */
+static void melee_effect_handler_DRAIN_GOLD(melee_effect_handler_context_t *context)
+{
+	struct player *current_player = context->p;
 
-        /* While we have gold, put it in objects */
-        while (gold > 0) {
-            int amt;
+	/* Take damage */
+	if (monster_damage_target(context, true)) return;
 
-            /* Create a new temporary object */
-            struct object *obj = object_new();
-            object_prep(obj, money_kind("gold", gold), 0, MINIMISE);
+	/* Obvious */
+	context->obvious = true;
 
-            /* Amount of gold to put in this object */
-            amt = gold > MAX_PVAL ? MAX_PVAL : gold;
-            obj->pval = amt;
-            gold -= amt;
-
-            /* Set origin to stolen, so it is not confused with
-             * dropped treasure in monster_death */
-            obj->origin = ORIGIN_STOLEN;
-            obj->origin_depth = convert_depth_to_origin(current_player->depth);
-
-            /* Give the gold to the monster */
-            monster_carry(cave, context->mon, obj);
-        }
-
-        /* Redraw gold */
-        current_player->upkeep->redraw |= (PR_GOLD);
-
-        /* Blink away */
-        context->blinked = true;
-    }
+	/* Attempt saving throw (unless paralyzed) based on dex and level */
+	if (!current_player->timed[TMD_PARALYZED] &&
+		(randint0(100) < (adj_dex_safe[current_player->state.stat_ind[STAT_DEX]]
+						  + current_player->lev))) {
+		/* Saving throw message */
+		msg("You quickly protect your money pouch!");
+	} else {
+		int32_t gold = (current_player->au / 25) + randint1(15);
+		if (gold < 1) gold = 1;
+		if (gold > 750) gold = (current_player->au / 50) + randint1(250);
+		steal_player_gold(context, false, gold);
+	}
 }
 
 /**
@@ -1200,6 +1237,7 @@ melee_effect_handler_f melee_handler_for_blow_effect(const char *name)
 		{ "DISENCHANT", melee_effect_handler_DISENCHANT },
 		{ "DRAIN_CHARGES", melee_effect_handler_DRAIN_CHARGES },
 		{ "EAT_GOLD", melee_effect_handler_EAT_GOLD },
+		{ "DRAIN_GOLD", melee_effect_handler_DRAIN_GOLD },
 		{ "EAT_ITEM", melee_effect_handler_EAT_ITEM },
 		{ "EAT_FOOD", melee_effect_handler_EAT_FOOD },
 		{ "EAT_LIGHT", melee_effect_handler_EAT_LIGHT },

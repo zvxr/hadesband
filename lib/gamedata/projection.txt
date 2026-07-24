@@ -716,6 +716,22 @@ blind-desc:something
 obvious:1
 color:White
 
+code:LOTUS_MIASMA
+name:lotus miasma
+type:projection
+desc:golden miasma
+player-desc:golden miasma
+blind-desc:a cloying perfume
+lash-desc:perfume
+numerator:1
+denominator:3
+divisor:6
+damage-cap:400
+msgt:BR_GAS
+obvious:1
+wake:1
+color:Yellow
+
 code:SWAP_PLACES
 type:monster
 desc:causes the user to swap places with the target

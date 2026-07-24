@@ -1044,6 +1044,8 @@ void process_world(struct chunk *c)
 			/* Determine the level */
 			if (player->depth) {
 				msgt(MSG_TPLEVEL, "You feel yourself yanked upwards!");
+				/* Return to the level recall actually pulled us from. */
+				player->recall_depth = player->depth;
 				dungeon_change_level(player, 0);
 			} else {
 				msgt(MSG_TPLEVEL, "You feel yourself yanked downwards!");

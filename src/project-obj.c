@@ -237,6 +237,10 @@ static void project_object_handler_POIS(project_object_handler_context_t *contex
 {
 }
 
+static void project_object_handler_LOTUS_MIASMA(project_object_handler_context_t *context)
+{
+}
+
 static void project_object_handler_LIGHT(project_object_handler_context_t *context)
 {
 }

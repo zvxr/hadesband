@@ -54,6 +54,7 @@ int adjust_dam(struct player *p, int type, int dam, aspect dam_aspect,
 	if (p && p->race) {
 		/* Ice is a special case */
 		int res_type = (type == PROJ_ICE) ? PROJ_COLD: type;
+		if (type == PROJ_LOTUS_MIASMA) res_type = PROJ_POIS;
 		resist = res_type < ELEM_MAX ? p->state.el_info[res_type].res_level : 0;
 
 		/* Notice element stuff */
@@ -241,6 +242,22 @@ static int project_player_handler_POIS(project_player_handler_context_t *context
 		}
 	}
 	return xtra;
+}
+
+static int project_player_handler_LOTUS_MIASMA(project_player_handler_context_t *context)
+{
+	if (!player_inc_timed(player, TMD_POISONED,
+			5 + randint1(MAX(1, context->dam / 2)), true, true, true)) {
+		msg("You resist the perfume!");
+	}
+
+	if (context->power >= 35 && one_in_(3)) {
+		msg("The sweet fumes leave your thoughts soft and expensive.");
+		effect_simple(EF_DRAIN_STAT, source_none(), "0", STAT_WIS, 0, 0, 0,
+					  0, &context->obvious);
+	}
+
+	return 0;
 }
 
 static int project_player_handler_LIGHT(project_player_handler_context_t *context)

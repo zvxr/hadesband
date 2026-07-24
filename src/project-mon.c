@@ -568,6 +568,11 @@ static void project_monster_handler_POIS(project_monster_handler_context_t *cont
 	project_monster_resist_element(context, RF_IM_POIS, 9);
 }
 
+static void project_monster_handler_LOTUS_MIASMA(project_monster_handler_context_t *context)
+{
+	project_monster_resist_element(context, RF_IM_POIS, 9);
+}
+
 /* Light -- opposite of Dark */
 static void project_monster_handler_LIGHT(project_monster_handler_context_t *context)
 {

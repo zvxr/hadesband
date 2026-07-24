@@ -74,7 +74,8 @@ int borg_mon_blow_effect(const char *name)
     } monblow[] = { { "NONE", MONBLOW_NONE }, { "HURT", MONBLOW_HURT },
         { "POISON", MONBLOW_POISON }, { "DISENCHANT", MONBLOW_DISENCHANT },
         { "DRAIN_CHARGES", MONBLOW_DRAIN_CHARGES },
-        { "EAT_GOLD", MONBLOW_EAT_GOLD }, { "EAT_ITEM", MONBLOW_EAT_ITEM },
+        { "EAT_GOLD", MONBLOW_EAT_GOLD },
+        { "DRAIN_GOLD", MONBLOW_EAT_GOLD }, { "EAT_ITEM", MONBLOW_EAT_ITEM },
         { "EAT_FOOD", MONBLOW_EAT_FOOD }, { "EAT_LIGHT", MONBLOW_EAT_LIGHT },
         { "ACID", MONBLOW_ACID }, { "ELEC", MONBLOW_ELEC },
         { "FIRE", MONBLOW_FIRE }, { "COLD", MONBLOW_COLD },
@@ -240,6 +241,7 @@ static int borg_thrust_damage_one(int i)
         || (rsf_has(r_ptr->spell_flags, RSF_S_MONSTERS))
         || (rsf_has(r_ptr->spell_flags, RSF_S_ANIMAL))
         || (rsf_has(r_ptr->spell_flags, RSF_S_SPIDER))
+        || (rsf_has(r_ptr->spell_flags, RSF_S_MUSHROOM))
         || (rsf_has(r_ptr->spell_flags, RSF_S_HOUND))
         || (rsf_has(r_ptr->spell_flags, RSF_S_HYDRA))
         || (rsf_has(r_ptr->spell_flags, RSF_S_AINU))
@@ -1175,6 +1177,7 @@ static int borg_launch_damage_one(int i, int dam, int typ, int ammo_location)
         || (rsf_has(r_ptr->spell_flags, RSF_S_MONSTERS))
         || (rsf_has(r_ptr->spell_flags, RSF_S_ANIMAL))
         || (rsf_has(r_ptr->spell_flags, RSF_S_SPIDER))
+        || (rsf_has(r_ptr->spell_flags, RSF_S_MUSHROOM))
         || (rsf_has(r_ptr->spell_flags, RSF_S_HOUND))
         || (rsf_has(r_ptr->spell_flags, RSF_S_HYDRA))
         || (rsf_has(r_ptr->spell_flags, RSF_S_AINU))

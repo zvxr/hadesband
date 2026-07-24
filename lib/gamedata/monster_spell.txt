@@ -530,6 +530,18 @@ lore-color-resist:Light Green
 message-vis:{name} unleashes a storm of corrosive toxins.
 message-invis:Something murmurs viciously.
 
+name:BA_LOTUS
+hit:100
+effect:BALL:LOTUS_MIASMA:2
+dice:$Dd4
+expr:D:SPELL_POWER:/ 4 + 2
+lore:produce clouds of golden miasma
+lore-color-base:Orange
+lore-color-resist:Yellow
+lore-color-immune:Light Green
+message-vis:{name} exhales a cloud of golden perfume.
+message-invis:A cloying perfume rolls through the air.
+
 name:BA_SHAR
 hit:100
 effect:BALL:SHARD:2
@@ -1122,6 +1134,16 @@ lore:summon spiders
 lore-color-base:Orange
 message-vis:{name} summons spiders.
 message-invis:You hear chittering things appear nearby!
+
+name:S_MUSHROOM
+msgt:SUM_MONSTER
+hit:100
+effect:SUMMON:MUSHROOM
+dice:1
+lore:summon mushrooms and molds
+lore-color-base:Orange
+message-vis:{name} shakes loose a clutch of spores.
+message-invis:You hear soft things take root nearby!
 
 name:S_HOUND
 msgt:SUM_HOUND

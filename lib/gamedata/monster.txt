@@ -4766,6 +4766,8 @@ flags:DROP_60 | ONLY_GOLD
 flags:OPEN_DOOR | BASH_DOOR
 innate-freq:4
 spells:SHRIEK
+spell-freq:14
+spells:S_MUSHROOM
 friends:60:1d1:Giant fruit fly
 desc:A pile of rotting vegetation that slides towards you with a disgusting
 desc: stench, waking all it nears.
@@ -6589,6 +6591,67 @@ desc:It is a strange growth on the dungeon floor, glowing and crackling with
 desc: sparks.
 
 ### Dungeon level 28 ###
+
+name:black lotus patch
+plural:black lotus patches
+base:mushroom
+color:b
+speed:120
+hit-points:160
+hearing:20
+armor-class:42
+sleepiness:20
+depth:28
+rarity:2
+experience:220
+blow:TOUCH:DRAIN_GOLD
+blow:SPORE:CONFUSE:2d4
+blow:SPORE:HALLU:2d4
+flags:EVIL | ATTR_FLICKER
+flags:IM_POIS
+flags:OPEN_DOOR | BASH_DOOR
+spell-freq:8
+spells:DARKNESS | SLOW
+desc:A lacquer-dark lotus that shimmers with impossible value.  Its pollen
+desc: clouds the mind, and its petals brush your purse with the ruinous
+desc: elegance of a collectible habit.
+
+name:The White Lotus
+base:mushroom
+color:W
+speed:120
+hit-points:980
+hearing:30
+armor-class:88
+sleepiness:10
+depth:28
+rarity:4
+experience:1200
+blow:TOUCH:DRAIN_GOLD
+blow:SPORE:CONFUSE:3d4
+blow:SPORE:LOSE_WIS:2d4
+flags:UNIQUE | EVIL | SMART | ATTR_FLICKER
+flags:IM_POIS | NO_FEAR | NO_CONF | NO_SLEEP
+flags:OPEN_DOOR | BASH_DOOR
+flags-off:EMPTY_MIND | STUPID
+spell-freq:4
+spell-power:40
+spells:BLINK | TELE_TO | SLOW | CONF | DARKNESS
+spells:BR_POIS | BR_SOUN | BA_LOTUS
+message-vis:BLINK:{name} cries, "I only have four hands!"
+message-invis:BLINK:Something cries, "I only have four hands!"
+message-vis:TELE_TO:{name} sighs, "Oh brother."
+message-invis:TELE_TO:Something sighs, "Oh brother."
+friends-base:100:3d4:mushroom:servant
+friends-base:100:2d4:mushroom:servant
+friends-base:80:2d3:mold:servant
+friends-base:60:1d3:mold:servant
+friends:100:1d3:black lotus patch:bodyguard
+friends:80:1d2:magic mushroom patch:servant
+friends:70:1d2:shimmering mold:servant
+desc:An immaculate pale bloom attended with suffocating luxury.  Its perfume
+desc: promises rest, indulgence, and renewal, then itemizes the cost in breath
+desc: and memory.
 
 name:frost giant
 base:giant

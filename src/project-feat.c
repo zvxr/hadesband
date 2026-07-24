@@ -422,6 +422,15 @@ static void project_feature_handler_POIS(project_feature_handler_context_t *cont
 	}
 }
 
+static void project_feature_handler_LOTUS_MIASMA(project_feature_handler_context_t *context)
+{
+	/* Grid is in line of sight and player is not blind */
+	if (square_isview(cave, context->grid) && !player->timed[TMD_BLIND]) {
+		/* Observe */
+		context->obvious = true;
+	}
+}
+
 /* Light up the grid */
 static void project_feature_handler_LIGHT(project_feature_handler_context_t *context)
 {
