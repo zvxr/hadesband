@@ -178,7 +178,7 @@ static struct object *wiz_create_object_from_kind(struct object_kind *kind)
 		object_prep(obj, kind, player->depth, RANDOMISE);
 
 		/* Apply magic (no messages, no artifacts) */
-		apply_magic(obj, player->depth, false, false, false, false);
+		apply_magic(obj, player->depth, false, false, false, false, false);
 	}
 
 	return obj;
@@ -2364,7 +2364,7 @@ void do_cmd_wiz_reroll_item(struct command *cmd)
 
 	/* Reroll based on old kind and player's depth.  Then apply magic. */
 	object_prep(new, obj->kind, player->depth, RANDOMISE);
-	apply_magic(new, player->depth, false, good, great, false);
+	apply_magic(new, player->depth, false, good, great, false, false);
 
 	/* Copy over changes to the original. */
 	{

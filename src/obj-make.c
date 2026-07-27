@@ -918,7 +918,10 @@ static bool apply_sentient(struct object *obj, int lev)
 	int i;
 	long total = 0L;
 
-	if (obj->curses || obj->sentient || !tval_is_wearable(obj)) return false;
+	if (obj->curses || obj->sentient ||
+			(!tval_is_wearable(obj) && !tval_is_book(obj))) {
+		return false;
+	}
 
 	for (i = 1; i < z_info->sentient_max; i++) {
 		struct sentient *sentient = &sentients[i];
@@ -964,7 +967,7 @@ static bool apply_sentient(struct object *obj, int lev)
  * artifact.
  */
 int apply_magic(struct object *obj, int lev, bool allow_artifacts, bool good,
-				bool great, bool extra_roll)
+				bool great, bool extra_roll, bool allow_book_sentient)
 {
 	int i;
 	int16_t power = 0;
@@ -1019,7 +1022,9 @@ int apply_magic(struct object *obj, int lev, bool allow_artifacts, bool good,
 	if (one_in_(20) && tval_is_wearable(obj)) {
 		lev = apply_curse(obj, lev);
 	}
-	if (!obj->curses && one_in_(40) && tval_is_wearable(obj)) {
+	if (!obj->curses && one_in_(40) &&
+			(tval_is_wearable(obj) ||
+			 (allow_book_sentient && tval_is_book(obj)))) {
 		apply_sentient(obj, lev);
 	}
 
@@ -1242,7 +1247,7 @@ struct object *make_object(struct chunk *c, int lev, bool good, bool great,
 	/* Make the object, prep it and apply magic */
 	new_obj = object_new();
 	object_prep(new_obj, kind, lev, RANDOMISE);
-	apply_magic(new_obj, lev, true, good, great, extra_roll);
+	apply_magic(new_obj, lev, true, good, great, extra_roll, true);
 
 	/* Generate multiple items */
 	if (!new_obj->artifact && kind->gen_mult_prob >= randint1(100))

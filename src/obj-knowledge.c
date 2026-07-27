@@ -1161,6 +1161,9 @@ void player_know_object(struct player *p, struct object *obj)
 			obj->known->sentient = mem_zalloc(sizeof(*obj->known->sentient));
 		}
 		obj->known->sentient->index = obj->sentient->index;
+		obj->known->sentient->spell_fail = obj->sentient->spell_fail;
+		obj->known->sentient->spell_mana = obj->sentient->spell_mana;
+		obj->known->sentient->spell_power = obj->sentient->spell_power;
 	} else if (obj->known->sentient) {
 		free_object_sentient(obj->known);
 	}

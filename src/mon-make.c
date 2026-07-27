@@ -851,7 +851,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon,
 			/* Allocate by hand, prep, apply magic */
 			obj = mem_zalloc(sizeof(*obj));
 			object_prep(obj, drop->kind, level, RANDOMISE);
-			apply_magic(obj, level, true, good, great, extra_roll);
+			apply_magic(obj, level, true, good, great, extra_roll, true);
 		} else {
 			/* Choose by set tval */
 			assert(drop->tval);
@@ -933,7 +933,7 @@ void mon_create_mimicked_object(struct chunk *c, struct monster *mon, int index)
 	} else {
 		obj = object_new();
 		object_prep(obj, kind, mon->race->level, RANDOMISE);
-		apply_magic(obj, mon->race->level, true, false, false, false);
+		apply_magic(obj, mon->race->level, true, false, false, false, true);
 		obj->number = 1;
 		obj->origin = ORIGIN_DROP_MIMIC;
 		obj->origin_depth = convert_depth_to_origin(c->depth);

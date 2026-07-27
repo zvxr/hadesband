@@ -1586,6 +1586,36 @@ static enum parser_error parse_sentient_values(struct parser *p) {
 	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_sentient_spell_fail(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	sentient->spell_fail = parser_getrand(p, "dice");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_spell_mana(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	sentient->spell_mana = parser_getrand(p, "dice");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_sentient_spell_power(struct parser *p) {
+	struct sentient *sentient = parser_priv(p);
+
+	if (!sentient) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+	sentient->spell_power = parser_getrand(p, "dice");
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_sentient_event(struct parser *p) {
 	struct sentient *sentient = parser_priv(p);
 	struct sentient_event *event, *new_event;
@@ -1756,6 +1786,9 @@ static struct parser *init_parse_sentient(void) {
 	parser_reg(p, "combat int to-h int to-d int to-a", parse_sentient_combat);
 	parser_reg(p, "flags str flags", parse_sentient_flags);
 	parser_reg(p, "values str values", parse_sentient_values);
+	parser_reg(p, "spell-fail rand dice", parse_sentient_spell_fail);
+	parser_reg(p, "spell-mana rand dice", parse_sentient_spell_mana);
+	parser_reg(p, "spell-power rand dice", parse_sentient_spell_power);
 	parser_reg(p, "event int chance rand time", parse_sentient_event);
 	parser_reg(p, "effect sym eff ?sym type ?int radius ?int other", parse_sentient_effect);
 	parser_reg(p, "dice str dice", parse_sentient_dice);

@@ -179,6 +179,9 @@ static void wr_item(const struct object *obj)
 
 		wr_byte(1);
 		wr_string(sentient->name);
+		wr_s16b(obj->sentient->spell_fail);
+		wr_s16b(obj->sentient->spell_mana);
+		wr_s16b(obj->sentient->spell_power);
 		for (event = 0; event < sentient->event_count; event++) {
 			wr_u16b(obj->sentient->timeouts ?
 				obj->sentient->timeouts[event] : 0);

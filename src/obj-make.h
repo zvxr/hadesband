@@ -33,7 +33,7 @@ bool make_fake_artifact(struct object *obj, const struct artifact *artifact);
 void object_prep(struct object *obj, struct object_kind *kind, int lev,
 				 aspect rand_aspect);
 int apply_magic(struct object *obj, int lev, bool okay, bool good,
-				bool great, bool extra_roll);
+				bool great, bool extra_roll, bool allow_book_sentient);
 bool kind_is_good(const struct object_kind *kind);
 struct object_kind *get_obj_num(int level, bool good, int tval);
 struct object *make_object(struct chunk *c, int lev, bool good, bool great,

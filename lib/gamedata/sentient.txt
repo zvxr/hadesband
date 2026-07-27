@@ -155,6 +155,78 @@ values:INT[-1]
 flags:WARD_CONF
 desc:mellows vibes
 
+# Spellbook spirits
+
+name:Lucid
+alloc:30:1 to 100
+type:magic book
+type:prayer book
+type:nature book
+type:shadow book
+type:other book
+weight:20
+flags:IGNORE_FIRE
+spell-fail:-1d4
+spell-mana:81+1d8
+spell-power:83+1d8
+desc:a clear but cautious intellect
+
+name:Timid
+alloc:25:1 to 100
+type:magic book
+type:prayer book
+type:nature book
+type:shadow book
+type:other book
+weight:20
+flags:IGNORE_FIRE
+spell-fail:1d4
+spell-mana:57+2d8
+spell-power:62+2d8
+desc:a nervous presence that spends power sparingly
+
+name:Volatile
+alloc:16:10 to 100
+type:magic book
+type:prayer book
+type:nature book
+type:shadow book
+type:other book
+weight:20
+flags:IGNORE_FIRE
+spell-fail:1d8
+spell-mana:115+2d8
+spell-power:115+3d8
+desc:a brilliant and unstable temper
+
+name:Hungry
+alloc:10:20 to 100
+type:magic book
+type:prayer book
+type:nature book
+type:shadow book
+type:other book
+weight:20
+flags:IGNORE_FIRE
+spell-fail:-1d6
+spell-mana:125+3d8
+spell-power:110+2d8
+desc:a ravenous mind that draws deeply from its reader
+
+name:Reckless
+alloc:3:35 to 100
+type:magic book
+type:prayer book
+type:nature book
+type:shadow book
+type:other book
+weight:20
+flags:IGNORE_FIRE
+spell-fail:2d6
+spell-mana:130+3d10
+spell-power:135+4d10
+desc:a wild voice that demands spectacular risks
+
 # Tradeoff effects (Uncommon)
 
 name:Dreadful

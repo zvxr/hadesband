@@ -22,6 +22,7 @@
 #include "obj-knowledge.h"
 #include "obj-pile.h"
 #include "obj-power.h"
+#include "obj-sentient.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
@@ -1233,6 +1234,8 @@ int object_value_real(const struct object *obj, int qty)
 			total_value = value * qty;
 		}
 
+		total_value += sentient_book_value_bonus(obj) * qty;
+
 		/* No negative value */
 		if (total_value < 0) total_value = 0;
 	}
@@ -1256,6 +1259,8 @@ int object_value(const struct object *obj, int qty)
 
 	/* Variable power items are assessed by what is known about them */
 	if (tval_has_variable_power(obj) && obj->known) {
+		value = object_value_real(obj->known, qty);
+	} else if (obj->known && sentient_book_value_bonus(obj->known)) {
 		value = object_value_real(obj->known, qty);
 	} else if (tval_can_have_flavor_k(obj->kind) &&
 			   object_flavor_is_aware(obj)) {

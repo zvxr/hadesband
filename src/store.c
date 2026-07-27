@@ -1254,7 +1254,7 @@ static bool store_create_random(struct store *store)
 		object_prep(obj, kind, level, RANDOMISE);
 
 		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(obj, level, false, false, false, false);
+		apply_magic(obj, level, false, false, false, false, false);
 		assert(!obj->artifact);
 
 		/* Reject if item is 'damaged' (negative combat mods, curses) */

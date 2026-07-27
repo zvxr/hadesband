@@ -39,6 +39,12 @@ static int test_missing_record_header0(void *state) {
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "values:DEX[2] | STR[-1]");
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
+	r = parser_parse(p, "spell-fail:-1d4");
+	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
+	r = parser_parse(p, "spell-mana:81+1d8");
+	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
+	r = parser_parse(p, "spell-power:115+3d8");
+	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "event:15:1d250");
 	eq(r, PARSE_ERROR_MISSING_RECORD_HEADER);
 	r = parser_parse(p, "effect:DETECT_INVISIBLE_MONSTERS");
@@ -85,6 +91,29 @@ static int test_values0(void *state) {
 	ok;
 }
 
+static int test_spell_modifiers0(void *state) {
+	struct parser *p = (struct parser*) state;
+	struct sentient *s = (struct sentient*) parser_priv(p);
+	enum parser_error r;
+
+	r = parser_parse(p, "spell-fail:-1d4");
+	eq(r, PARSE_ERROR_NONE);
+	eq(s->spell_fail.base, -5);
+	eq(s->spell_fail.dice, 1);
+	eq(s->spell_fail.sides, 4);
+	r = parser_parse(p, "spell-mana:81+1d8");
+	eq(r, PARSE_ERROR_NONE);
+	eq(s->spell_mana.base, 81);
+	eq(s->spell_mana.dice, 1);
+	eq(s->spell_mana.sides, 8);
+	r = parser_parse(p, "spell-power:115+3d8");
+	eq(r, PARSE_ERROR_NONE);
+	eq(s->spell_power.base, 115);
+	eq(s->spell_power.dice, 3);
+	eq(s->spell_power.sides, 8);
+	ok;
+}
+
 static int test_event_effect0(void *state) {
 	struct parser *p = (struct parser*) state;
 	struct sentient *s;
@@ -111,6 +140,7 @@ struct test tests[] = {
 	{ "name0", test_name0 },
 	{ "alloc0", test_alloc0 },
 	{ "values0", test_values0 },
+	{ "spell_modifiers0", test_spell_modifiers0 },
 	{ "event_effect0", test_event_effect0 },
 	{ NULL, NULL }
 };

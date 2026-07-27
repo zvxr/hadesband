@@ -38,6 +38,7 @@
 struct spell_menu_data {
 	int *spells;
 	int n_spells;
+	const struct object *book;
 
 	bool browse;
 	bool (*is_valid)(const struct player *p, int spell_index);
@@ -116,8 +117,9 @@ static void spell_menu_display(struct menu *m, int oid, bool cursor,
 		my_strcpy(out, name_copy, sizeof(out));
 		string_free(name_copy);
 	}
-	my_strcat(out, format("%2d %4d %3d%%%s", spell->slevel, spell->smana,
-		spell_chance(spell_index), comment), sizeof(out));
+	my_strcat(out, format("%2d %4d %3d%%%s", spell->slevel,
+		spell_mana_cost(spell_index, d->book),
+		spell_chance_from_book(spell_index, d->book), comment), sizeof(out));
 	c_prt(attr, illegible ? illegible : out, row, col);
 }
 
@@ -238,6 +240,7 @@ static struct menu *spell_menu_new(const struct object *obj,
 	}
 
 	/* Copy across private data */
+	d->book = obj;
 	d->is_valid = is_valid;
 	d->selected_spell = -1;
 	d->browse = false;

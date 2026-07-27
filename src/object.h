@@ -135,6 +135,9 @@ struct sentient {
 	bool *poss;
 	struct object *obj;
 	char *desc;
+	random_value spell_fail;
+	random_value spell_mana;
+	random_value spell_power;
 	int alloc_prob;
 	uint8_t alloc_min;
 	uint8_t alloc_max;
@@ -416,6 +419,9 @@ struct curse_data {
 
 struct sentient_data {
 	uint8_t index;
+	int16_t spell_fail;
+	int16_t spell_mana;
+	int16_t spell_power;
 	uint16_t *timeouts;
 };
 

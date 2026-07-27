@@ -224,6 +224,14 @@ static struct object *rd_item(void)
 			}
 			obj->sentient = mem_zalloc(sizeof(*obj->sentient));
 			obj->sentient->index = sentient_idx;
+			if (ver >= 7) {
+				rd_s16b(&obj->sentient->spell_fail);
+				rd_s16b(&obj->sentient->spell_mana);
+				rd_s16b(&obj->sentient->spell_power);
+			} else {
+				obj->sentient->spell_mana = 100;
+				obj->sentient->spell_power = 100;
+			}
 			if (sentients[sentient_idx].event_count) {
 				obj->sentient->timeouts = mem_zalloc(
 					sentients[sentient_idx].event_count *

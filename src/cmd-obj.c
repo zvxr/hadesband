@@ -1113,6 +1113,8 @@ void do_cmd_refill(struct command *cmd)
 void do_cmd_cast(struct command *cmd)
 {
 	int spell_index, dir = 0;
+	int mana;
+	struct object *book = NULL;
 	const struct class_spell *spell;
 
 	if (!player_get_resume_normal_shape(player, cmd)) {
@@ -1133,11 +1135,14 @@ void do_cmd_cast(struct command *cmd)
 		return;
 	}
 
+	cmd_get_arg_item(cmd, "book", &book);
+
 	/* Get the spell */
 	spell = spell_by_index(player, spell_index);
+	mana = spell_mana_cost(spell_index, book);
 
 	/* Verify "dangerous" spells */
-	if (spell->smana > player->csp) {
+	if (mana > player->csp) {
 		const char *verb = spell->realm->verb;
 		const char *noun = spell->realm->spell_noun;
 
@@ -1160,7 +1165,7 @@ void do_cmd_cast(struct command *cmd)
 
 	/* Cast a spell */
 	target_fix();
-	if (spell_cast(spell_index, dir, cmd)) {
+	if (spell_cast_from_book(spell_index, book, dir, cmd)) {
 		if (player->timed[TMD_FASTCAST]) {
 			player->upkeep->energy_use = (z_info->move_energy * 3) / 4;
 		} else {

@@ -7,6 +7,7 @@
 #include "effects.h"
 #include "init.h"
 #include "obj-sentient.h"
+#include "obj-tval.h"
 #include "obj-util.h"
 #include "player-util.h"
 
@@ -51,7 +52,10 @@ bool sentients_are_equal(const struct object *obj1, const struct object *obj2)
 	if (obj1->sentient && !obj2->sentient) return false;
 	if (!obj1->sentient && obj2->sentient) return false;
 
-	return obj1->sentient->index == obj2->sentient->index;
+	return obj1->sentient->index == obj2->sentient->index &&
+		obj1->sentient->spell_fail == obj2->sentient->spell_fail &&
+		obj1->sentient->spell_mana == obj2->sentient->spell_mana &&
+		obj1->sentient->spell_power == obj2->sentient->spell_power;
 }
 
 int16_t modify_weight_for_sentient(int i, int16_t weight)
@@ -129,6 +133,11 @@ bool append_object_sentient(struct object *obj, int pick)
 
 	obj->sentient = mem_zalloc(sizeof(*obj->sentient));
 	obj->sentient->index = pick;
+	obj->sentient->spell_fail = randcalc(s->spell_fail, 0, RANDOMISE);
+	obj->sentient->spell_mana = randcalc(s->spell_mana, 0, RANDOMISE);
+	obj->sentient->spell_power = randcalc(s->spell_power, 0, RANDOMISE);
+	if (!obj->sentient->spell_mana) obj->sentient->spell_mana = 100;
+	if (!obj->sentient->spell_power) obj->sentient->spell_power = 100;
 	if (s->event_count) {
 		obj->sentient->timeouts = mem_zalloc(s->event_count *
 			sizeof(*obj->sentient->timeouts));
@@ -161,4 +170,50 @@ bool do_sentient_effect(int event_idx, struct object *obj)
 		NULL);
 	disturb(player);
 	return ident;
+}
+
+static bool sentient_book_has_magic(const struct object *book)
+{
+	return book && book->sentient && tval_is_book(book);
+}
+
+int sentient_book_fail_adjust(const struct object *book)
+{
+	if (!sentient_book_has_magic(book)) return 0;
+	return book->sentient->spell_fail;
+}
+
+int sentient_book_mana_cost(const struct object *book, int base_mana)
+{
+	int pct, mana;
+
+	if (!sentient_book_has_magic(book)) return base_mana;
+	pct = book->sentient->spell_mana ? book->sentient->spell_mana : 100;
+	pct = MAX(0, pct);
+	mana = (base_mana * pct + 50) / 100;
+	if (base_mana > 0 && pct > 0 && mana < 1) mana = 1;
+	return mana;
+}
+
+int sentient_book_power_percent(const struct object *book)
+{
+	if (!sentient_book_has_magic(book)) return 100;
+	return book->sentient->spell_power ? book->sentient->spell_power : 100;
+}
+
+int sentient_book_value_bonus(const struct object *book)
+{
+	int fail, mana, power, value;
+
+	if (!sentient_book_has_magic(book)) return 0;
+	fail = book->sentient->spell_fail;
+	mana = book->sentient->spell_mana ? book->sentient->spell_mana : 100;
+	power = book->sentient->spell_power ? book->sentient->spell_power : 100;
+
+	value = 500;
+	value += (power - 100) * 100;
+	value += (100 - mana) * 60;
+	value -= fail * 80;
+	if (value < 250) value = 250;
+	return value;
 }

@@ -151,6 +151,21 @@ static bool describe_sentient(textblock *tb, const struct object *obj)
 	textblock_append_c(tb, COLOUR_L_BLUE, "%s", sentients[sentient->index].desc);
 	textblock_append(tb, ".\n");
 
+	if (tval_is_book(obj)) {
+		if (sentient->spell_fail) {
+			textblock_append(tb, "It modifies spell failure by %+d%%.\n",
+				sentient->spell_fail);
+		}
+		if (sentient->spell_mana && sentient->spell_mana != 100) {
+			textblock_append(tb, "It modifies spell mana costs to %d%%.\n",
+				sentient->spell_mana);
+		}
+		if (sentient->spell_power && sentient->spell_power != 100) {
+			textblock_append(tb, "It modifies spell power to %d%%.\n",
+				sentient->spell_power);
+		}
+	}
+
 	for (event = sentients[sentient->index].events; event; event = event->next) {
 		textblock *tbe;
 

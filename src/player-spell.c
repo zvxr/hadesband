@@ -22,6 +22,7 @@
 #include "effects.h"
 #include "init.h"
 #include "monster.h"
+#include "obj-sentient.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "object.h"
@@ -378,9 +379,19 @@ static int min_fail(struct player *p, const struct class_spell *spell)
 	return adj_mag_fail[p->state.stat_ind[stat]];
 }
 
-static int16_t spell_chance_aux(int spell_index, bool free_mana)
+int spell_mana_cost(int spell_index, const struct object *book)
+{
+	const struct class_spell *spell = spell_by_index(player, spell_index);
+
+	if (!spell) return 0;
+	return sentient_book_mana_cost(book, spell->smana);
+}
+
+static int16_t spell_chance_aux(int spell_index, const struct object *book,
+	bool free_mana)
 {
 	int chance = 100, minfail;
+	int mana;
 
 	const struct class_spell *spell;
 
@@ -400,9 +411,14 @@ static int16_t spell_chance_aux(int spell_index, bool free_mana)
 	/* Reduce failure rate by casting stat level adjustment */
 	chance -= fail_adjust(player, spell);
 
+	/* Sentient books may steady or unsettle their reader. */
+	chance += sentient_book_fail_adjust(book);
+
+	mana = spell_mana_cost(spell_index, book);
+
 	/* Not enough mana to cast */
-	if (!free_mana && spell->smana > player->csp)
-		chance += 5 * (spell->smana - player->csp);
+	if (!free_mana && mana > player->csp)
+		chance += 5 * (mana - player->csp);
 
 	/* Get the minimum failure rate for the casting stat level */
 	minfail = min_fail(player, spell);
@@ -452,7 +468,15 @@ static int16_t spell_chance_aux(int spell_index, bool free_mana)
  */
 int16_t spell_chance(int spell_index)
 {
-	return spell_chance_aux(spell_index, false);
+	return spell_chance_aux(spell_index, NULL, false);
+}
+
+/**
+ * Returns chance of failure for a spell cast from a specific book.
+ */
+int16_t spell_chance_from_book(int spell_index, const struct object *book)
+{
+	return spell_chance_aux(spell_index, book, false);
 }
 
 /**
@@ -460,7 +484,7 @@ int16_t spell_chance(int spell_index)
  */
 int16_t spell_chance_free(int spell_index)
 {
-	return spell_chance_aux(spell_index, true);
+	return spell_chance_aux(spell_index, NULL, true);
 }
 
 
@@ -504,10 +528,12 @@ static int beam_chance(void)
 	return (player_has(player, PF_BEAM) ? plev : (plev / 2));
 }
 
-static bool spell_cast_aux(int spell_index, int dir, struct command *cmd,
-	bool free_mana)
+static bool spell_cast_aux(int spell_index, const struct object *book, int dir,
+	struct command *cmd, bool free_mana)
 {
 	int chance;
+	int mana;
+	int boost;
 	bool ident = false;
 	int beam  = beam_chance();
 
@@ -515,7 +541,9 @@ static bool spell_cast_aux(int spell_index, int dir, struct command *cmd,
 	const struct class_spell *spell = spell_by_index(player, spell_index);
 
 	/* Spell failure chance */
-	chance = spell_chance_aux(spell_index, free_mana);
+	chance = spell_chance_aux(spell_index, book, free_mana);
+	mana = spell_mana_cost(spell_index, book);
+	boost = sentient_book_power_percent(book) - 100;
 
 	/* Fail or succeed */
 	if (randint0(100) < chance) {
@@ -524,13 +552,13 @@ static bool spell_cast_aux(int spell_index, int dir, struct command *cmd,
 	} else {
 		/* Cast the spell */
 		if (!effect_do(spell->effect, source_player(), NULL, &ident, true, dir,
-					   beam, 0, cmd)) {
+					   beam, boost, cmd)) {
 			return false;
 		}
 
 		/* Reward COMBAT_REGEN with small HP recovery */
 		if (player_has(player, PF_COMBAT_REGEN)) {
-			convert_mana_to_hp(player, spell->smana << 16);
+			convert_mana_to_hp(player, mana << 16);
 		}
 
 		/* A spell was cast */
@@ -553,11 +581,11 @@ static bool spell_cast_aux(int spell_index, int dir, struct command *cmd,
 	if (free_mana) return true;
 
 	/* Sufficient mana? */
-	if (spell->smana <= player->csp) {
+	if (mana <= player->csp) {
 		/* Use some mana */
-		player->csp -= spell->smana;
+		player->csp -= mana;
 	} else {
-		int oops = spell->smana - player->csp;
+		int oops = mana - player->csp;
 
 		/* No mana left */
 		player->csp = 0;
@@ -580,7 +608,16 @@ static bool spell_cast_aux(int spell_index, int dir, struct command *cmd,
  */
 bool spell_cast(int spell_index, int dir, struct command *cmd)
 {
-	return spell_cast_aux(spell_index, dir, cmd, false);
+	return spell_cast_aux(spell_index, NULL, dir, cmd, false);
+}
+
+/**
+ * Cast the specified spell from a specific book.
+ */
+bool spell_cast_from_book(int spell_index, const struct object *book, int dir,
+	struct command *cmd)
+{
+	return spell_cast_aux(spell_index, book, dir, cmd, false);
 }
 
 
@@ -589,7 +626,7 @@ bool spell_cast(int spell_index, int dir, struct command *cmd)
  */
 bool spell_cast_free(int spell_index, int dir, struct command *cmd)
 {
-	return spell_cast_aux(spell_index, dir, cmd, true);
+	return spell_cast_aux(spell_index, NULL, dir, cmd, true);
 }
 
 

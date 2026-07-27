@@ -417,6 +417,9 @@ bool object_similar(const struct object *obj1, const struct object *obj2,
 	/* Require identical object kinds */
 	if (obj1->kind != obj2->kind) return false;
 
+	/* Sentient personalities and rolled values must match. */
+	if (!sentients_are_equal(obj1, obj2)) return false;
+
 	/* Different flags don't stack */
 	if (!of_is_equal(obj1->flags, obj2->flags)) return false;
 
@@ -736,6 +739,9 @@ void object_copy(struct object *dest, const struct object *src)
 
 		dest->sentient = mem_zalloc(sizeof(*dest->sentient));
 		dest->sentient->index = src->sentient->index;
+		dest->sentient->spell_fail = src->sentient->spell_fail;
+		dest->sentient->spell_mana = src->sentient->spell_mana;
+		dest->sentient->spell_power = src->sentient->spell_power;
 		if (event_count) {
 			size_t array_size = event_count *
 				sizeof(*dest->sentient->timeouts);

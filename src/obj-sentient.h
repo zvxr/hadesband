@@ -16,5 +16,9 @@ bool do_sentient_effect(int event_idx, struct object *obj);
 const struct sentient_event *sentient_event_by_index(const struct sentient *s,
 	int event_idx);
 int16_t modify_weight_for_sentient(int i, int16_t weight);
+int sentient_book_fail_adjust(const struct object *book);
+int sentient_book_mana_cost(const struct object *book, int base_mana);
+int sentient_book_power_percent(const struct object *book);
+int sentient_book_value_bonus(const struct object *book);
 
 #endif /* OBJECT_SENTIENT_H_ */
