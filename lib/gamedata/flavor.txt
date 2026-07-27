@@ -334,6 +334,17 @@ flavor:192:Umber:Smelly
 # Leathery
 # Rotting
 
+##### Amphorae #####
+
+kind:amphora:!
+
+flavor:315:Light Umber:Clay
+flavor:316:Slate:Iron
+flavor:317:Umber:Copper
+flavor:318:Light Red:Jasper
+flavor:319:Light Dark:Obsidian
+flavor:320:Mud:Earthen
+
 ##### Potions #####
 # These are colours or -ing verbs
 

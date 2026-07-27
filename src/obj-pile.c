@@ -1305,8 +1305,15 @@ void floor_item_charges(struct object *obj)
 	if (!object_flavor_is_aware(obj)) return;
 
 	/* Print a message */
-	msg("There %s %d charge%s remaining.", (obj->pval != 1) ? "are" : "is",
-	     obj->pval, (obj->pval != 1) ? "s" : "");
+	if (tval_is_amphora(obj)) {
+		msg("There %s %d use%s remaining.",
+				(obj->pval != 1) ? "are" : "is", obj->pval,
+				(obj->pval != 1) ? "s" : "");
+	} else {
+		msg("There %s %d charge%s remaining.",
+				(obj->pval != 1) ? "are" : "is", obj->pval,
+				(obj->pval != 1) ? "s" : "");
+	}
 }
 
 

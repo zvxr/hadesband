@@ -1520,7 +1520,7 @@ dice:7+1d7
 desc:Repairs and locks all adjacent doors.
 
 spell:Hit and Run:23:10:20:20
-effect:TIMED_INC:ATT_RUN
+effect:TIMED_INC:ATT_RUN_ONCE
 dice:10
 desc:Prepares you to teleport a short distance and run after attacking or stealing from a monster.
 

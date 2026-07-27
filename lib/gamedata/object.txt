@@ -99,8 +99,8 @@
 # - min_level: Earliest dungeon level where this object can appear
 # - max_level: Latest dungeon level where this object can appear
 
-# 'charges' is for charges (wands and staves only).  This field accepts
-# randomized values.
+# 'charges' is for charges or uses (wands, staves, and amphorae).  This field
+# accepts randomized values.
 
 # 'pile' is for piling behaviour - how likely the item is to be found in a
 # pile, and how many (random value) objects in such a pile.  Objects
@@ -3129,7 +3129,7 @@ cost:30
 alloc:16:5 to 60
 pile:25:2
 power:8
-effect:TIMED_INC:ATT_CONF
+effect:TIMED_INC:ATT_CONF_ONCE
 dice:10000
 
 name:Rune of Protection
@@ -3218,6 +3218,108 @@ msg:You hear a low-pitched whistling sound.
 effect:TOUCH:MAKE_TRAP:3
 
 
+
+
+##### Amphorae #####
+
+name:Health
+type:amphora
+graphics:!:b
+level:20
+weight:20
+cost:350
+alloc:18:20 to 70
+charges:2+d4
+power:8
+effect:HEAL_HP
+dice:48
+effect:CURE:POISONED
+effect:NOURISH:INC_BY
+dice:1
+desc:The seal is cool and waxy, and the liquid within smells faintly of bitter
+desc: herbs and rainwater.
+
+name:Mana
+type:amphora
+graphics:!:b
+level:38
+weight:20
+cost:1200
+alloc:10:35 to 90
+charges:1+d2
+power:20
+effect:RESTORE_MANA
+effect:RESTORE_STAT:INT
+effect:RESTORE_STAT:WIS
+desc:Fine blue script crawls around the neck of the vessel, rearranging itself
+desc: whenever it is read too closely.
+
+name:Djinn-form
+type:amphora
+graphics:!:b
+level:30
+weight:20
+cost:650
+alloc:14:28 to 85
+charges:2+d2
+power:10
+effect:TIMED_INC:FAST:0:5
+dice:24+2d12
+effect:TIMED_INC:FLY
+dice:24+2d12
+effect:TIMED_INC:OPP_ELEC
+dice:24+2d12
+desc:Smoke-blue vapor curls beneath the stopper, flashing with tiny sparks.
+
+name:Satyr-form
+type:amphora
+graphics:!:b
+level:32
+weight:20
+cost:700
+alloc:14:30 to 85
+charges:2+d2
+power:10
+effect:TIMED_INC:ATT_CONF
+dice:24+2d12
+effect:TIMED_INC:STEALTH
+dice:24+2d12
+effect:TIMED_INC:OPP_CONF
+dice:24+2d12
+desc:The draught smells of crushed ivy, warm stone, and music heard from very
+desc: far away.
+
+name:Cyclops-form
+type:amphora
+graphics:!:b
+level:35
+weight:20
+cost:800
+alloc:12:32 to 90
+charges:2+d2
+power:11
+effect:TIMED_INC:CYCLOPEAN_RAGE
+dice:24+2d12
+desc:The clay is thick and rough, marked by one staring eye pressed into the
+desc: shoulder of the vessel.
+
+name:Minotaur-form
+type:amphora
+graphics:!:b
+level:34
+weight:20
+cost:850
+alloc:12:32 to 90
+charges:2+d2
+power:11
+effect:TIMED_INC:RUNNING:0:0
+dice:24+2d12
+effect:TIMED_INC:SHERO:0:5
+dice:24+2d12
+effect:TIMED_INC:KNOCKBACK
+dice:24+2d12
+desc:Its heavy handles are worn smooth, as if gripped by something impatient
+desc: to charge.
 
 
 ##### Potions #####

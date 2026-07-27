@@ -41,6 +41,11 @@ bool tval_is_potion(const struct object *obj)
 	return obj->tval == TV_POTION;
 }
 
+bool tval_is_amphora(const struct object *obj)
+{
+	return obj->tval == TV_AMPHORA;
+}
+
 bool tval_is_scroll(const struct object *obj)
 {
 	return obj->tval == TV_SCROLL;
@@ -114,7 +119,8 @@ bool tval_can_have_nourishment(const struct object *obj)
 
 bool tval_can_have_charges(const struct object *obj)
 {
-	return obj->tval == TV_STAFF || obj->tval == TV_WAND;
+	return obj->tval == TV_STAFF || obj->tval == TV_WAND ||
+			obj->tval == TV_AMPHORA;
 }
 
 bool tval_can_have_timeout(const struct object *obj)
@@ -179,6 +185,7 @@ bool tval_is_useable(const struct object *obj)
 		case TV_WAND:
 		case TV_STAFF:
 		case TV_SCROLL:
+		case TV_AMPHORA:
 		case TV_POTION:
 		case TV_FOOD:
 		case TV_MUSHROOM:
@@ -327,6 +334,7 @@ bool tval_can_have_flavor_k(const struct object_kind *kind)
 		case TV_STAFF:
 		case TV_WAND:
 		case TV_ROD:
+		case TV_AMPHORA:
 		case TV_POTION:
 		case TV_MUSHROOM:
 		case TV_SCROLL:

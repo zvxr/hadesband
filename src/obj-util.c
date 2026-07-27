@@ -257,6 +257,7 @@ void flavor_init(void)
 	flavor_assign_random(TV_WAND);
 	flavor_assign_random(TV_ROD);
 	flavor_assign_random(TV_MUSHROOM);
+	flavor_assign_random(TV_AMPHORA);
 	flavor_assign_random(TV_POTION);
 
 	/* Scrolls (direct titles when available, always white) */

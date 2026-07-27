@@ -186,6 +186,7 @@ normal:potion:Neutralize Poison
 normal:potion:Cure Serious Wounds
 normal:potion:Cure Critical Wounds
 buy:scroll
+buy:amphora
 buy:potion
 
 # Magic-user's
@@ -259,8 +260,8 @@ sometimes:80:mushroom:Sprinting:2d4
 sometimes:50:mushroom:Revelation:1d3
 sometimes:25:mushroom:Visions
 sometimes:25:mushroom:Madness
-sometimes:75:potion:Healing:1d3
-sometimes:75:potion:Restore Mana:2
+always:amphora:Health:1
+always:amphora:Mana:1
 sometimes:75:potion:Restore Life Levels:2
 sometimes:50:scroll:Identify Rune:3d6
 sometimes:50:scroll:Recharging:2d3
@@ -268,6 +269,7 @@ sometimes:33:amulet:Wisdom
 sometimes:33:amulet:Brilliance
 sometimes:33:amulet:Resist Confusion
 buy:mushroom
+buy:amphora
 buy:potion
 buy:scroll
 buy:amulet

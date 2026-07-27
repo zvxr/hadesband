@@ -573,7 +573,7 @@ void effect_simple(int index,
  * Returns N which is the 1 in N chance for recharging to fail.
  */
 int recharge_failure_chance(const struct object *obj, int strength) {
-	/* Ease of recharge ranges from 9 down to 4 (wands) or 3 (staffs) */
+	/* Ease of recharge ranges from 9 down to 4 or less for deep items. */
 	int ease_of_recharge = (100 - obj->kind->level) / 10;
 	int raw_chance = strength + ease_of_recharge
 		- 2 * (obj->pval / obj->number);

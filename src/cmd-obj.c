@@ -120,6 +120,11 @@ static int beam_chance(int tval)
 	return 0;
 }
 
+static bool tval_is_quaffable(const struct object *obj)
+{
+	return tval_is_potion(obj) || tval_is_amphora(obj);
+}
+
 
 /**
  * Print an artifact activation message.
@@ -447,7 +452,8 @@ static bool use_aux(struct command *cmd, struct object *obj, enum use use,
 	assert(effect);
 
 	/* Check for use if necessary */
-	if ((use == USE_CHARGE) || (use == USE_TIMEOUT)) {
+	if (((use == USE_CHARGE) || (use == USE_TIMEOUT)) &&
+			tval_can_have_failure(obj)) {
 		can_use = check_devices(obj);
 	}
 
@@ -917,6 +923,7 @@ void do_cmd_eat_food(struct command *cmd)
 void do_cmd_quaff_potion(struct command *cmd)
 {
 	struct object *obj;
+	bool amphora;
 
 	if (!player_get_resume_normal_shape(player, cmd)) {
 		return;
@@ -924,12 +931,19 @@ void do_cmd_quaff_potion(struct command *cmd)
 
 	/* Get an item */
 	if (cmd_get_item(cmd, "item", &obj,
-			"Quaff which potion? ",
-			"You have no potions from which to quaff.",
-			tval_is_potion,
+			"Quaff which potion or amphora? ",
+			"You have no potions or amphorae from which to quaff.",
+			tval_is_quaffable,
 			USE_INVEN | USE_FLOOR) != CMD_OK) return;
 
-	(void)use_aux(cmd, obj, USE_SINGLE, MSG_QUAFF);
+	amphora = tval_is_amphora(obj);
+	if (amphora && !obj_has_charges(obj)) {
+		msg("That amphora has no uses left.");
+		cmd_set_repeat(0);
+		return;
+	}
+
+	(void)use_aux(cmd, obj, amphora ? USE_CHARGE : USE_SINGLE, MSG_QUAFF);
 }
 
 /**
@@ -961,7 +975,7 @@ void do_cmd_use(struct command *cmd)
 	 */
 	if (tval_is_ammo(obj)) {
 		do_cmd_fire(cmd);
-	} else if (tval_is_potion(obj)) {
+	} else if (tval_is_potion(obj) || tval_is_amphora(obj)) {
 		do_cmd_quaff_potion(cmd);
 	} else if (tval_is_edible(obj)) {
 		do_cmd_eat_food(cmd);

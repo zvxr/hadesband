@@ -678,12 +678,87 @@ static int player_damage_bonus(struct player_state *state)
 static void blow_side_effects(struct player *p, struct monster *mon)
 {
 	/* Confusion attack */
-	if (p->timed[TMD_ATT_CONF]) {
-		player_clear_timed(p, TMD_ATT_CONF, true, false);
+	if (p->timed[TMD_ATT_CONF_ONCE]) {
+		player_clear_timed(p, TMD_ATT_CONF_ONCE, true, false);
 
 		mon_inc_timed(mon, MON_TMD_CONF, (10 + randint0(p->lev) / 10),
 					  MON_TMD_FLG_NOTIFY);
 	}
+
+	if (p->timed[TMD_ATT_CONF]) {
+		mon_inc_timed(mon, MON_TMD_CONF,
+				4 + randint0(p->lev / 5 + 1), MON_TMD_FLG_NOTIFY);
+	}
+}
+
+/**
+ * Apply a timed knockback effect to a melee target.  Return true if the
+ * extra damage kills the monster.
+ */
+static bool blow_knockback(struct player *p, struct monster *mon, bool *fear)
+{
+	char m_name[80];
+	struct loc dest;
+	int dir, chance, sides, damage, max_damage;
+	bool blocked = false;
+
+	if (!p->timed[TMD_KNOCKBACK]) {
+		return false;
+	}
+
+	chance = 5 + p->state.skills[SKILL_TO_HIT_MELEE] / 8;
+	chance += adj_str_td[p->state.stat_ind[STAT_STR]];
+	chance += MIN(p->timed[TMD_KNOCKBACK], 100) / 5;
+	chance += MIN(p->wt, 250) / 50;
+
+	if (randint0(100) >= chance) {
+		return false;
+	}
+
+	dir = motion_dir(p->grid, mon->grid);
+	if (dir == 5) {
+		return false;
+	}
+
+	sides = 4 + p->lev / 8 + MIN(p->timed[TMD_KNOCKBACK], 100) / 20;
+	max_damage = sides;
+	dest = next_grid(mon->grid, dir);
+
+	if (!square_in_bounds_fully(cave, dest) ||
+			!square_is_monster_walkable_for(cave, dest, mon) ||
+			square_monster(cave, dest) ||
+			square_isplayer(cave, dest)) {
+		blocked = true;
+	}
+
+	damage = blocked ? max_damage : randint1(max_damage);
+	monster_desc(m_name, sizeof(m_name), mon, MDESC_TARG);
+
+	if (blocked) {
+		if (OPT(p, show_damage)) {
+			msgt(MSG_HIT, "You smash %s into an obstacle! (%d)",
+				m_name, damage);
+		} else {
+			msgt(MSG_HIT, "You smash %s into an obstacle!", m_name);
+		}
+	} else {
+		if (OPT(p, show_damage)) {
+			msgt(MSG_HIT, "You knock %s back! (%d)", m_name, damage);
+		} else {
+			msgt(MSG_HIT, "You knock %s back!", m_name);
+		}
+	}
+
+	if (mon_take_hit(mon, p, damage, fear, NULL)) {
+		return true;
+	}
+
+	if (blocked) {
+		return false;
+	}
+
+	monster_swap(mon->grid, dest);
+	return false;
 }
 
 /**
@@ -704,14 +779,14 @@ static bool blow_after_effects(struct loc grid, int dmg, int splash,
 
 	/* Player hit and run */
 	/* XXX code duplicated from mon-util.c steal_monster_item */
-	if (player->timed[TMD_ATT_RUN]) {
+	if (player->timed[TMD_ATT_RUN_ONCE]) {
 		player_inc_timed(player, TMD_RUNNING, 10, false, false, false);
 
 		const char *near = "5";
 		msg("You vanish into the shadows!");
 		effect_simple(EF_TELEPORT, source_player(), near, 0, 0, 0, 0, 0,
 					  NULL);
-		(void) player_clear_timed(player, TMD_ATT_RUN, false,
+		(void) player_clear_timed(player, TMD_ATT_RUN_ONCE, false,
 			false);
 	}
 
@@ -916,6 +991,10 @@ bool py_attack_real(struct player *p, struct loc grid, int num_blows_x100, bool 
 		if (p->timed[TMD_ATT_VAMP] && monster_is_living(mon)) {
 			effect_simple(EF_HEAL_HP, source_player(), format("%d", drain),
 						  0, 0, 0, 0, 0, NULL);
+		}
+
+		if (blow_knockback(p, mon, fear)) {
+			return true;
 		}
 	}
 

@@ -1163,6 +1163,9 @@ static bool black_market_ok(const struct object *obj)
 	/* Ego items are always fine */
 	if (obj->ego) return true;
 
+	/* Amphorae are dungeon finds for now. */
+	if (tval_is_amphora(obj)) return false;
+
 	/* Good items are normally fine */
 	if (obj->to_a > 2) return true;
 	if (obj->to_h > 1) return true;
@@ -1637,6 +1640,7 @@ int find_inven(const struct object *obj)
 			/* Food and Potions and Scrolls */
 			case TV_FOOD:
 			case TV_MUSHROOM:
+			case TV_AMPHORA:
 			case TV_POTION:
 			case TV_SCROLL:
 			{

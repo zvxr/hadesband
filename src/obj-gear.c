@@ -794,9 +794,13 @@ void inven_item_charges(struct object *obj)
 {
 	/* Require staff/wand */
 	if (tval_can_have_charges(obj) && object_flavor_is_aware(obj)) {
-		msg("You have %d charge%s remaining.",
-				obj->pval,
-				PLURAL(obj->pval));
+		if (tval_is_amphora(obj)) {
+			msg("You have %d use%s remaining.", obj->pval,
+					PLURAL(obj->pval));
+		} else {
+			msg("You have %d charge%s remaining.", obj->pval,
+					PLURAL(obj->pval));
+		}
 	}
 }
 

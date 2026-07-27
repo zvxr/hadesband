@@ -567,7 +567,7 @@ name:CONFUSING
 aim:0
 level:12
 power:8
-effect:TIMED_INC:ATT_CONF
+effect:TIMED_INC:ATT_CONF_ONCE
 dice:10000
 desc:causes your next attack upon a monster to confuse it
 

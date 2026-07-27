@@ -538,9 +538,9 @@ grade:g:10000:AttPois:Your {kind} drip{s} with poison!
 on-end:The poison disappears from your {kind}.
 brand:POIS_3
 
-name:ATT_CONF
+name:ATT_CONF_ONCE
 desc:temporary monster confusion
-grade:U:10000:AttConf:Your hands begin to glow!
+grade:U:10000:Conf1:Your hands begin to glow!
 on-end:The glow fades from your hands.
 
 name:ATT_EVIL
@@ -570,9 +570,9 @@ desc:commanding a monster
 grade:P:10000:Cmd:You focus on your target.
 on-end:Your resume control of your own body.
 
-name:ATT_RUN
+name:ATT_RUN_ONCE
 desc:escape on attack
-grade:m:10000:HitRun:You tense up ready to escape!
+grade:m:10000:Run1:You tense up ready to escape!
 on-end:You relax again.
 
 name:COVERTRACKS
@@ -697,3 +697,24 @@ grade:w:10000:HLife:You feel anchored to life!
 on-end:Your grip on life loosens.
 on-increase:Your grip on life strengthens.
 flag-synonym:HOLD_LIFE:1
+
+name:KNOCKBACK
+desc:knockback
+grade:U:10000:KnckBak:You feel ready to smash foes back!
+on-end:Your crushing momentum fades.
+on-increase:Your crushing momentum builds!
+msgt:GENERIC
+
+name:FLY
+desc:flight
+grade:b:10000:Fly:You rise above the ground!
+on-end:You settle back to the ground.
+on-increase:You rise higher above the ground!
+flag-synonym:FLY:1
+
+name:ATT_CONF
+desc:confusing touch
+grade:v:10000:ConfTch:Your hands shimmer with mischief!
+on-end:The shimmer fades from your hands.
+on-increase:The shimmer around your hands brightens!
+msgt:GENERIC

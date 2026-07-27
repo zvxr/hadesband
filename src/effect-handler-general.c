@@ -2311,10 +2311,10 @@ bool effect_handler_NOISY(effect_handler_context_t *context)
 }
 
 /**
- * Recharge a wand or staff from the pack or on the floor.  Recharge strength
+ * Recharge a charged item from the pack or on the floor.  Recharge strength
  * is context->value.base.
  *
- * It is harder to recharge high level, and highly charged wands.
+ * It is harder to recharge high level, and highly charged items.
  */
 bool effect_handler_RECHARGE(effect_handler_context_t *context)
 {

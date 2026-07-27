@@ -1538,14 +1538,14 @@ void steal_monster_item(struct monster *mon, int midx)
 		}
 
 		/* Player hit and run */
-		if (player->timed[TMD_ATT_RUN]) {
+		if (player->timed[TMD_ATT_RUN_ONCE]) {
 			player_inc_timed(player, TMD_RUNNING, 10, false, false, false);
 
 			const char *near = "5";
 			msg("You vanish into the shadows!");
 			effect_simple(EF_TELEPORT, source_player(), near, 0, 0, 0, 0, 0,
 						  NULL);
-			(void) player_clear_timed(player, TMD_ATT_RUN, false,
+			(void) player_clear_timed(player, TMD_ATT_RUN_ONCE, false,
 				false);
 		}
 	} else {

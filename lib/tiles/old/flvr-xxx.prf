@@ -939,3 +939,21 @@ flavor:311:0xB8:0x87
 
 # Transparent Rod
 flavor:312:0xB8:0x84
+
+# Clay amphora
+flavor:315:0xBC:0x89
+
+# Iron amphora
+flavor:316:0xBC:0x8A
+
+# Copper amphora
+flavor:317:0xBC:0x89
+
+# Jasper amphora
+flavor:318:0xBC:0x87
+
+# Obsidian amphora
+flavor:319:0xBC:0x84
+
+# Earthen amphora
+flavor:320:0xBC:0x86

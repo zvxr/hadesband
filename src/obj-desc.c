@@ -135,6 +135,9 @@ static const char *obj_desc_get_basename(const struct object *obj, bool aware,
 		case TV_ROD:
 			return (show_flavor ? "& # Rod~" : "& Rod~");
 
+		case TV_AMPHORA:
+			return (show_flavor ? "& # Amphora~" : "& Amphora~");
+
 		case TV_POTION:
 			return (show_flavor ? "& # Potion~" : "& Potion~");
 
@@ -496,10 +499,15 @@ static size_t obj_desc_charges(const struct object *obj, char *buf, size_t max,
 {
 	bool aware = object_flavor_is_aware(obj) || (mode & ODESC_STORE);
 
-	/* Wands and staffs have charges, others may be charging */
+	/* Wands, staffs, and amphorae have charges/uses; others may charge. */
 	if (aware && tval_can_have_charges(obj)) {
-		strnfcat(buf, max, &end, " (%d charge%s)", obj->pval,
-				 PLURAL(obj->pval));
+		if (tval_is_amphora(obj)) {
+			strnfcat(buf, max, &end, " (%d use%s)", obj->pval,
+					 PLURAL(obj->pval));
+		} else {
+			strnfcat(buf, max, &end, " (%d charge%s)", obj->pval,
+					 PLURAL(obj->pval));
+		}
 	} else if (obj->timeout > 0) {
 		if (tval_is_rod(obj) && obj->number > 1)
 			strnfcat(buf, max, &end, " (%d charging)", number_charging(obj));

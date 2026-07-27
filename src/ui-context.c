@@ -710,6 +710,10 @@ int context_menu_object(struct object *obj)
 			ADD_LABEL("Read", CMD_READ_SCROLL, valid);
 		} else if (tval_is_potion(obj)) {
 			ADD_LABEL("Quaff", CMD_QUAFF, MN_ROW_VALID);
+		} else if (tval_is_amphora(obj)) {
+			menu_row_validity_t valid = (obj_has_charges(obj)) ?
+				MN_ROW_VALID : MN_ROW_INVALID;
+			ADD_LABEL("Quaff", CMD_QUAFF, valid);
 		} else if (tval_is_edible(obj)) {
 			ADD_LABEL("Eat", CMD_EAT, MN_ROW_VALID);
 		} else if (obj_is_activatable(obj)) {
