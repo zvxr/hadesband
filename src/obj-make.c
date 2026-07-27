@@ -913,7 +913,7 @@ static int apply_curse(struct object *obj, int lev)
 /**
  * Attempt to apply a sentient personality to an object.
  */
-static bool apply_sentient(struct object *obj, int lev)
+bool apply_sentient(struct object *obj, int lev)
 {
 	int i;
 	long total = 0L;

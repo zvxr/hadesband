@@ -28,6 +28,7 @@
 #define NO_MINIMUM 	255
 
 void ego_apply_magic(struct object *obj, int level);
+bool apply_sentient(struct object *obj, int lev);
 void copy_artifact_data(struct object *obj, const struct artifact *art);
 bool make_fake_artifact(struct object *obj, const struct artifact *artifact);
 void object_prep(struct object *obj, struct object_kind *kind, int lev,

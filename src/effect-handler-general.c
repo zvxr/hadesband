@@ -38,6 +38,7 @@
 #include "obj-knowledge.h"
 #include "obj-make.h"
 #include "obj-pile.h"
+#include "obj-sentient.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "player-calcs.h"
@@ -258,6 +259,11 @@ static bool item_tester_relic_unknown(const struct object *obj)
 	if (!obj) return false;
 	if (!obj->ego && !obj->artifact && !obj->sentient) return false;
 	return object_fully_known(obj) ? false : true;
+}
+
+static bool item_tester_non_sentient_book(const struct object *obj)
+{
+	return obj && tval_is_book(obj) && !obj->sentient;
 }
 
 /**
@@ -2221,6 +2227,74 @@ bool effect_handler_ENCHANT(effect_handler_context_t *context)
 	}
 
 	return used;
+}
+
+/**
+ * Awaken a non-sentient book with a sentient personality.
+ */
+bool effect_handler_SENTIENT_BOOK(effect_handler_context_t *context)
+{
+	struct object *obj;
+	struct object *target;
+	struct loc grid;
+	char o_name[80];
+	bool carried;
+	bool none_left = false;
+	bool note = false;
+	int old_weight;
+	const char *q = "Awaken which book? ";
+	const char *s = "You have no non-sentient books.";
+	int itemmode = USE_INVEN | USE_FLOOR;
+	int depth = MAX(player->depth, 1);
+
+	context->ident = true;
+
+	if (context->cmd) {
+		if (cmd_get_item(context->cmd, "tgtitem", &obj, q, s,
+				item_tester_non_sentient_book, itemmode)) {
+			return false;
+		}
+	} else if (!get_item(&obj, q, s, 0, item_tester_non_sentient_book,
+			itemmode)) {
+		return false;
+	}
+
+	carried = object_is_carried(player, obj);
+	grid = obj->grid;
+	old_weight = obj->number * object_weight_one(obj);
+	if (obj->number > 1) {
+		target = carried ?
+			gear_object_for_use(player, obj, 1, false, &none_left) :
+			floor_object_for_use(player, obj, 1, false, &none_left);
+	} else {
+		target = obj;
+	}
+
+	if (!apply_sentient(target, depth)) {
+		msg("The letters stir, then settle back into silence.");
+	} else {
+		player_know_object(player, target);
+		if (carried && target == obj) {
+			player->upkeep->total_weight +=
+				target->number * object_weight_one(target) - old_weight;
+		}
+		object_desc(o_name, sizeof(o_name), target, ODESC_BASE, player);
+		msg("The words in %s wake and begin whispering.", o_name);
+	}
+
+	if (target != obj) {
+		if (carried) {
+			inven_carry(player, target, true, true);
+		} else if (!floor_carry(cave, grid, target, &note)) {
+			drop_near(cave, &target, 0, player->grid, false, true);
+		}
+	}
+
+	player->upkeep->update |= (PU_BONUS | PU_INVEN);
+	player->upkeep->notice |= (PN_COMBINE);
+	player->upkeep->redraw |= (PR_INVEN | PR_EQUIP);
+
+	return true;
 }
 
 /**

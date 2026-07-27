@@ -2882,6 +2882,18 @@ power:20
 effect:REMOVE_CURSE
 dice:50+d50
 
+name:Living Text
+type:scroll
+graphics:?:w
+level:35
+weight:5
+cost:4000
+alloc:8:35 to 100
+pile:10:1
+power:25
+effect:SENTIENT_BOOK
+desc:The ink crawls hungrily across the page, seeking a quieter book to wake.
+
 ### Summoning ###
 
 name:Summon Monster
