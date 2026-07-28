@@ -2152,9 +2152,9 @@ act:PROTEVIL
 time:200+4d50
 msg:{name} glows deep red...
 values:STR[1] | INT[1] | WIS[1] | DEX[1] | CON[1] | SPEED[5] | RES_FIRE[3]
-desc:The Ring of Fire, made of gold and set with a ruby that glows like a
-desc: sacred hearth.  Its warmth kindles courage, renewal, and protection
-desc: against the powers that would profane the home.
+desc:A gold ring set with a ruby that glows like Hestia's sacred hearth.  Its
+desc: warmth kindles courage, renewal, and protection against the powers that
+desc: would profane the home.
 
 name:'Persephone's Tear'
 base-object:ring:Ring of Adamant
@@ -2173,11 +2173,11 @@ act:RESTORE_LIFE
 time:200+2d50
 msg:{name} glows bright white...
 values:STR[2] | INT[2] | WIS[2] | DEX[2] | CON[2] | SPEED[5] | RES_COLD[3]
-desc:The Ring of Adamant, made of mithril with a pure white stone as
-desc: centerpiece.  It is cold as the underworld's stillest halls, yet within
-desc: it stirs the promise of return.
+desc:A mithril ring holding a pure white stone like a frozen tear.  It is cold
+desc: as the underworld's stillest halls, yet within it stirs the promise of
+desc: return.
 
-name:'Ouranos' Sapphire'
+name:'Hades' Sapphire'
 base-object:ring:Ring of Firmament
 graphics:=:d
 level:80
@@ -2194,11 +2194,11 @@ time:200+2d50
 msg:{name} glows deep blue...
 values:STR[3] | INT[3] | WIS[3] | DEX[3] | CON[3] | SPEED[5]
 values:RES_ELEC[3] | RES_POIS[1] | RES_DARK[1]
-desc:The Ring of Sapphire, made of gold with a brilliant blue gem that shines
-desc: like stars in the first sky.  It glitters with the breadth of Ouranos,
-desc: untouchable by storm, venom, and darkness.
+desc:A gold ring set with a brilliant blue gem, dark as the guarded vaults of
+desc: Hades.  Its cold gleam carries the lord of the underworld's command over
+desc: storm, venom, and darkness.
 
-name:'Ring of Gyges'
+name:'Ring of Zeus'
 base-object:ring:Ring of Power
 graphics:=:y
 level:75
@@ -2215,10 +2215,10 @@ values:RES_FIRE[3] | RES_COLD[3] | RES_ELEC[3] | RES_ACID[3] | RES_DARK[1]
 values:RES_DISEN[1] | RES_POIS[1] | RES_NETHER[1]
 act:BIZARRE
 time:200+9d50
-desc:Made of massive gold and inscribed with hidden runes of dominion, this
-desc: is the Ring of Gyges, whose power makes secrecy, desire, and command
-desc: nearly indistinguishable.  It inevitably twists and masters any mortal
-desc: being who wears it.
+desc:Made of massive gold and inscribed with hidden runes of dominion, this is
+desc: the Ring of Zeus, whose power makes desire, thunder, and command nearly
+desc: indistinguishable.  It inevitably twists and masters any mortal being who
+desc: wears it.
 
 
 ### Amulets ###

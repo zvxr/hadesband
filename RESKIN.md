@@ -486,8 +486,8 @@
   `of Tulkas` -> `of Heracles`,
   `Narya` -> `Hestia's Flame`,
   `Nenya` -> `Persephone's Tear`,
-  `Vilya` -> `Ouranos' Sapphire`,
-  `The One Ring` -> `Ring of Gyges`.
+  `Vilya` -> `Hades' Sapphire`,
+  `The One Ring` -> `Ring of Zeus`.
 - Implemented amulet artifact reskins, preserving mechanics and base amulet
   kinds:
   `of Carlammas` -> `of Hecate`,

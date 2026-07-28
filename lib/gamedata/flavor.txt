@@ -14,7 +14,7 @@
 
 kind:ring:=
 
-# Fixed: the Ring of Gyges
+# Fixed: the Ring of Zeus
 fixed:1:Ring of Power:Yellow:Plain Gold
 
 # The Ring of Medusa 50
@@ -26,7 +26,7 @@ fixed:28:Ring of Fire:Red:Ruby
 # The Ring of Adamant 'Persephone's Tear'
 fixed:40:Ring of Adamant:Light Blue:Mithril
 
-# The Ring of Firmament 'Ouranos' Sapphire'
+# The Ring of Firmament 'Hades' Sapphire'
 fixed:29:Ring of Firmament:Blue:Sapphire
 
 flavor:2:Green:Alexandrite

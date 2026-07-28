@@ -1086,7 +1086,7 @@ static void collect_artifact_data(struct artifact_set_data *data)
 		kind = lookup_kind(art->tval, art->sval);
 
 		/* Special cases -- don't parse these! */
-		if (strstr(art->name, "Ring of Gyges") ||
+		if (strstr(art->name, "Ring of Zeus") ||
 			kf_has(kind->kind_flags, KF_QUEST_ART))
 			continue;
 
@@ -2791,7 +2791,7 @@ static void design_artifact(struct artifact_set_data *data, int tv, int *aidx)
 	char *new_name = artifact_gen_name(art, name_sections);
 
 	/* Skip fixed artifacts */
-	while (strstr(art->name, "Ring of Gyges") ||
+	while (strstr(art->name, "Ring of Zeus") ||
 		kf_has(kind->kind_flags, KF_QUEST_ART)) {
 		(*aidx)++;
 		if ((*aidx) >= z_info->a_max) {

@@ -764,7 +764,7 @@ static void borg_parse_aux(char *msg, int len)
     /* Wearing Cursed Item */
     if (prefix(msg, "Oops! It feels deathly cold!")) {
         /* this should only happen with STICKY items, The Crown of Morgoth or
-         * the Ring of Gyges */
+         * the Ring of Zeus */
         /* !FIX !TODO handle crown eventually */
         return;
     }
