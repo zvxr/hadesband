@@ -2920,6 +2920,19 @@ power:0
 effect:SUMMON:UNDEAD
 dice:1d3
 
+name:Summon Unique
+type:scroll
+graphics:?:w
+level:30
+weight:5
+cost:0
+alloc:4:30 to 100
+pile:5:1
+power:0
+effect:SUMMON_UNIQUE_LEVEL
+desc:The glyphs crowd around an empty title, waiting for an important name to
+desc: answer.
+
 name:Acquirement
 type:scroll
 graphics:?:w

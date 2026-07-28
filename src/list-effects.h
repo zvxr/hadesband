@@ -135,3 +135,4 @@ EFFECT(DAMNATION,				        true,	NULL,		0,		EFINFO_NONE,	"opens a pit of lava 
 EFFECT(SCRAMBLE_STATS,					false,  NULL,		0,		EFINFO_NONE,	"", 					"")
 EFFECT(UNSCRAMBLE_STATS,				false,	NULL,		0,		EFINFO_NONE,	"",					"")
 EFFECT(NOISY,                                           false,  NULL,           0,              EFINFO_NONE,    "can wake up nearby monsters", "")
+EFFECT(SUMMON_UNIQUE_LEVEL,				false,	NULL,		0,		EFINFO_NONE,	"summons a unique creature elsewhere on the level",	"summon unique")

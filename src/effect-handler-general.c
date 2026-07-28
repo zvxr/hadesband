@@ -2382,6 +2382,93 @@ bool effect_handler_RECHARGE(effect_handler_context_t *context)
 	return true;
 }
 
+static bool race_can_be_level_unique_summon(const struct monster_race *race,
+		int depth)
+{
+	if (!race->name) return false;
+	if (!rf_has(race->flags, RF_UNIQUE)) return false;
+	if (rf_has(race->flags, RF_QUESTOR)) return false;
+	if (race->level != depth) return false;
+	if (race->cur_num >= race->max_num) return false;
+	if (rf_has(race->flags, RF_FORCE_DEPTH) && race->level > player->depth)
+		return false;
+
+	return true;
+}
+
+static struct monster_race *pick_level_unique_summon(void)
+{
+	int depth;
+
+	for (depth = player->depth; depth >= 0; depth--) {
+		struct monster_race *choice = NULL;
+		int choices = 0;
+		int i;
+
+		for (i = 1; i < z_info->r_max; i++) {
+			struct monster_race *race = &r_info[i];
+
+			if (!race_can_be_level_unique_summon(race, depth)) continue;
+
+			choices++;
+			if (one_in_(choices)) choice = race;
+		}
+
+		if (choice) return choice;
+	}
+
+	return NULL;
+}
+
+static bool place_unique_summon_distant(struct monster_race *race)
+{
+	int attempts_left = 10000;
+	struct monster_group_info info = { 0, 0 };
+
+	while (--attempts_left) {
+		struct loc grid = loc(randint0(cave->width), randint0(cave->height));
+
+		if (!square_isempty(cave, grid)) continue;
+		if ((!character_dungeon) && square_ismon_restrict(cave, grid))
+			continue;
+		if (distance(grid, player->grid) <= z_info->max_sight + 5)
+			continue;
+
+		return place_new_monster(cave, grid, race, true, true, info,
+			ORIGIN_DROP_SUMMON);
+	}
+
+	return false;
+}
+
+/**
+ * Summon a living, non-questor unique native to the current depth or lower
+ * elsewhere on the level.  Normal friends and escorts are allowed.
+ */
+bool effect_handler_SUMMON_UNIQUE_LEVEL(effect_handler_context_t *context)
+{
+	struct monster_race *race;
+
+	context->ident = true;
+
+	/* No summoning in arena levels */
+	if (player->upkeep->arena_level) return true;
+
+	race = pick_level_unique_summon();
+	if (!race) {
+		msg("The scroll whispers, but no one answers.");
+		return true;
+	}
+
+	if (place_unique_summon_distant(race)) {
+		msg("You hear a terrible name answered in the distance.");
+	} else {
+		msg("The scroll strains against the dungeon, but finds no place to open.");
+	}
+
+	return true;
+}
+
 bool effect_handler_ACQUIRE(effect_handler_context_t *context)
 {
 	int num = effect_calculate_value(context, false);
