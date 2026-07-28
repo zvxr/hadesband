@@ -413,7 +413,7 @@ effect:TIMED_INC:BOLD
 dice:79+1d41
 desc:A fine way to wash down some otherwise unappetising rations.
 
-name:& Sip~ of Nectar
+name:Spartan Bread
 type:food
 graphics:,:w
 level:0
@@ -421,13 +421,13 @@ weight:2
 cost:100
 alloc:20:10 to 50
 power:0
-msg:You feel your heart warm.
+msg:It is hard, plain, and sustaining.
 effect:NOURISH:INC_BY
 dice:3
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:CON
-desc:Just a little of this warm and fragrant nectar gives you fresh hope and
-desc: vigor.
+desc:A compact soldier's ration, dense enough to blunt hunger and stern enough
+desc: to remind the body of its duty.
 
 name:& Swig~ of Spartan Moonshine
 type:food

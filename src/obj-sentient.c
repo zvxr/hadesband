@@ -166,7 +166,7 @@ bool do_sentient_effect(int event_idx, struct object *obj)
 	if (event->effect_msg) {
 		msgt(MSG_GENERIC, "%s", event->effect_msg);
 	}
-	effect_do(event->effect, source_trap(NULL), NULL, &ident, true, 0, 0, 0,
+	effect_do(event->effect, source_player(), NULL, &ident, true, 0, 0, 0,
 		NULL);
 	disturb(player);
 	return ident;

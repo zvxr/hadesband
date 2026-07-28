@@ -413,13 +413,17 @@ struct loc origin_get_loc(struct source origin)
 
 		case SRC_TRAP: {
 			struct trap *trap = origin.which.trap;
-			return trap->grid;
+			return trap ? trap->grid : loc(-1, -1);
 		}
 
 		case SRC_PLAYER:
-		case SRC_OBJECT:	/* Currently only worn cursed objects use this */
-		case SRC_CHEST_TRAP:
 			return player->grid;
+
+		case SRC_OBJECT:	/* Currently only worn cursed objects use this */
+			return origin.which.object ? player->grid : loc(-1, -1);
+
+		case SRC_CHEST_TRAP:
+			return origin.which.chest_trap ? player->grid : loc(-1, -1);
 
 		case SRC_NONE:
 			return loc(-1, -1);
