@@ -2225,7 +2225,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		state->to_a += 100;
 	}
 	if (p->timed[TMD_BLESSED]) {
-		state->to_a += 5;
+		state->to_a += 10;
 		state->to_h += 10;
 		adjust_skill_scale(&state->skills[SKILL_DEVICE], 1, 20, 0);
 	}
@@ -2245,10 +2245,16 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		state->to_a -= 10;
 		adjust_skill_scale(&state->skills[SKILL_DEVICE], -1, 10, 0);
 	}
-	if (p->timed[TMD_CYCLOPEAN_RAGE]) {
-		state->skills[SKILL_TO_HIT_MELEE] += 75;
+	if (p->timed[TMD_RAGE]) {
+		state->skills[SKILL_TO_HIT_MELEE] += 50;
 		state->to_a -= 10;
 		adjust_skill_scale(&state->skills[SKILL_DEVICE], -1, 10, 0);
+		if (state->el_info[ELEM_GRAVITY].res_level < 2) {
+			state->el_info[ELEM_GRAVITY].res_level++;
+		}
+	}
+	if (p->timed[TMD_FLY]) {
+		state->to_a += 10;
 	}
 	if (p->timed[TMD_RUNNING]) {
 		extra_moves += 1;
@@ -2258,6 +2264,10 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	}
 	if (p->timed[TMD_SLOW]) {
 		state->speed -= 10;
+	}
+	if (p->timed[TMD_NAUSEATED]) {
+		state->speed -= 5;
+		state->to_h -= 10;
 	}
 	if (p->timed[TMD_SINFRA]) {
 		state->see_infra += 5;

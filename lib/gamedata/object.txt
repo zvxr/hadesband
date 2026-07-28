@@ -497,6 +497,7 @@ effect:CURE:STUN
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:BLIND
+effect:CURE:NAUSEATED
 effect:NOURISH:INC_BY
 dice:5
 
@@ -531,6 +532,7 @@ dice:20
 effect:CURE:CONFUSED
 effect:CURE:AFRAID
 effect:CURE:IMAGE
+effect:CURE:NAUSEATED
 effect:TIMED_INC:OPP_CONF
 dice:50+7d7
 effect:NOURISH:INC_BY
@@ -629,6 +631,7 @@ pile:70:1d3
 power:5
 msg:Your stomach heaves.
 effect:NOURISH:SET_TO
+effect:TIMED_INC:NAUSEATED
 dice:5
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:CON
@@ -681,6 +684,8 @@ power:8
 msg:Strange patterns shimmer before your eyes.
 effect:LEARN_FLAVOR
 dice:1d4
+effect:TIMED_INC:NAUSEATED
+dice:2d100
 effect:TIMED_INC:IMAGE
 dice:20d10
 effect:NOURISH:INC_BY
@@ -2395,7 +2400,7 @@ level:5
 weight:2
 cost:250
 alloc:30:10 to 50
-flags:SLOW_DIGEST | EASY_KNOW
+flags:SLOW_DIGEST | PROT_NAUS | EASY_KNOW
 
 name:Flight
 type:ring
@@ -2509,7 +2514,7 @@ weight:3
 cost:20000
 alloc:10:60 to 100
 flags:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON |
-flags:HOLD_LIFE | SLOW_DIGEST | EASY_KNOW | 
+flags:HOLD_LIFE | SLOW_DIGEST | PROT_NAUS | EASY_KNOW | 
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 desc:It hangs with the quiet patience of Demeter's granaries.
 
@@ -3247,6 +3252,7 @@ power:8
 effect:HEAL_HP
 dice:48
 effect:CURE:POISONED
+effect:CURE:NAUSEATED
 effect:NOURISH:INC_BY
 dice:1
 desc:The seal is cool and waxy, and the liquid within smells faintly of bitter
@@ -3311,7 +3317,7 @@ cost:800
 alloc:12:32 to 90
 charges:2+d2
 power:11
-effect:TIMED_INC:CYCLOPEAN_RAGE
+effect:TIMED_INC:RAGE
 dice:24+2d12
 desc:The clay is thick and rough, marked by one staring eye pressed into the
 desc: shoulder of the vessel.
@@ -3333,6 +3339,78 @@ effect:TIMED_INC:KNOCKBACK
 dice:24+2d12
 desc:Its heavy handles are worn smooth, as if gripped by something impatient
 desc: to charge.
+
+name:Restoration
+type:amphora
+graphics:!:b
+level:45
+weight:20
+cost:3000
+alloc:8:42 to 100
+charges:1+d2
+power:20
+effect:RESTORE_EXP
+effect:RESTORE_STAT:STR
+effect:RESTORE_STAT:INT
+effect:RESTORE_STAT:WIS
+effect:RESTORE_STAT:DEX
+effect:RESTORE_STAT:CON
+desc:Silver leaf curls beneath the seal, brightening wherever old wounds of
+desc: body or memory draw near.
+
+name:Greater Healing
+type:amphora
+graphics:!:b
+level:50
+weight:20
+cost:2500
+alloc:8:45 to 100
+charges:1+d2
+power:18
+effect:HEAL_HP
+dice:300+1d100
+effect:CURE:CUT
+effect:CURE:STUN
+effect:CURE:POISONED
+effect:CURE:NAUSEATED
+desc:The ivory stopper is warm to the touch, and the draught within glows like
+desc: lamp oil blessed in a quiet sanctuary.
+
+name:Lamia-form
+type:amphora
+graphics:!:b
+level:36
+weight:20
+cost:900
+alloc:12:34 to 85
+charges:2+d2
+power:11
+effect:TIMED_INC:ATT_POIS
+dice:24+2d12
+effect:TIMED_INC:SINVIS
+dice:24+2d12
+effect:TIMED_INC:OPP_POIS
+dice:24+2d12
+desc:Pale scales are scratched into the bone-hard clay, vanishing when looked
+desc: at directly and returning at the edge of sight.
+
+name:Phoenix-form
+type:amphora
+graphics:!:b
+level:58
+weight:20
+cost:3500
+alloc:6:55 to 100
+charges:1+d2
+power:22
+effect:TIMED_INC:ATT_FIRE
+dice:9
+effect:TIMED_INC:REBIRTH
+dice:9
+effect:TIMED_INC:OPP_FIRE
+dice:9
+desc:The wooden vessel is blackened but unburnt, smelling of cedar smoke and
+desc: dawn after ashfall.
 
 
 ##### Potions #####
@@ -3480,6 +3558,7 @@ effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
 effect:CURE:AMNESIA
+effect:CURE:NAUSEATED
 effect:NOURISH:INC_BY
 dice:1
 
@@ -3492,12 +3571,13 @@ cost:800
 alloc:75:30 to 100
 pile:50:1d3
 power:12
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:3
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
 effect:CURE:AMNESIA
+effect:CURE:NAUSEATED
 effect:NOURISH:INC_BY
 dice:1
 
@@ -3512,12 +3592,13 @@ pile:33:1d3
 attack:1d1:0:0
 armor:0:0
 power:18
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:10
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
 effect:CURE:AMNESIA
+effect:CURE:NAUSEATED
 
 name:Life
 type:potion
@@ -3538,12 +3619,13 @@ effect:CURE:STUN
 effect:CURE:AMNESIA
 effect:CURE:CONFUSED
 effect:CURE:IMAGE
+effect:CURE:NAUSEATED
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:INT
 effect:RESTORE_STAT:WIS
 effect:RESTORE_STAT:DEX
 effect:RESTORE_STAT:CON
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:20
 desc:The draught feels like spring water poured from Persephone's own cup.
 
@@ -3892,6 +3974,22 @@ dice:10+4d5
 effect:NOURISH:INC_BY
 dice:1
 
+name:Nausea
+type:potion
+graphics:!:d
+level:3
+weight:4
+cost:0
+alloc:10:3 to 15
+pile:70:2d3
+attack:3d4:0:0
+armor:0:0
+power:0
+effect:TIMED_INC:NAUSEATED
+dice:10+4d5
+effect:NOURISH:INC_BY
+dice:1
+
 name:Poison
 type:potion
 graphics:!:d
@@ -4169,6 +4267,22 @@ armor:0:0
 charges:2+d6
 power:3
 effect:BOLT_AWARE:MON_CONF
+dice:5+1d5
+
+name:Noxious Missile
+type:wand
+graphics:-:d
+level:18
+weight:10
+cost:650
+alloc:15:15 to 100
+attack:1d1:0:0
+armor:0:0
+charges:2+d6
+power:4
+effect:BOLT_AWARE:POIS
+dice:4d6
+effect:BOLT_AWARE:MON_NAUS
 dice:5+1d5
 
 name:Hold Monster
@@ -4577,6 +4691,20 @@ power:10
 effect:PROJECT_LOS_AWARE:MON_CONF
 dice:5+1d5
 
+name:Nauseous Gas
+type:staff
+graphics:_:d
+level:25
+weight:50
+cost:1200
+alloc:15:20 to 100
+attack:1d2:0:0
+armor:0:0
+charges:3+d3
+power:10
+effect:PROJECT_LOS_AWARE:MON_NAUS
+dice:5+1d5
+
 name:Slow Monsters
 type:staff
 graphics:_:d
@@ -4670,6 +4798,7 @@ power:9
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
+effect:CURE:NAUSEATED
 
 name:Cure Light Wounds
 type:staff
@@ -4702,13 +4831,14 @@ attack:1d2:0:0
 armor:0:0
 charges:1+d2
 power:12
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:3
 effect:CURE:BLIND
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
 effect:CURE:AMNESIA
+effect:CURE:NAUSEATED
 
 
 ### Killing staffs ###
@@ -4784,6 +4914,7 @@ effect:CURE:BLIND
 effect:CURE:CONFUSED
 effect:CURE:IMAGE
 effect:CURE:AMNESIA
+effect:CURE:NAUSEATED
 
 
 ### Utility ###
@@ -5127,6 +5258,7 @@ power:9
 effect:CURE:CUT
 effect:CURE:POISONED
 effect:CURE:STUN
+effect:CURE:NAUSEATED
 time:100
 
 name:Healing
@@ -5140,10 +5272,11 @@ attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
 power:14
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:5
 effect:CURE:CUT
 effect:CURE:STUN
+effect:CURE:NAUSEATED
 time:250
 
 name:Restoration

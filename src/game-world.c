@@ -1117,9 +1117,15 @@ static void sense_surroundings(struct chunk *c) {
 static void apply_per_100_energy_player_effects(void)
 {
 	/* Fast magical healing */
-	if (player->timed[TMD_ACCEL_HEALING]) {
+	if (player->timed[TMD_HEALING]) {
 		bool ident = false;
 		effect_simple(EF_HEAL_HP, source_player(), "100", 0, 0, 0, 0, 0, &ident);
+	}
+
+	/* Phoenix rebirth */
+	if (player->timed[TMD_REBIRTH]) {
+		player_adjust_hp_precise(player, 30 * 65536L);
+		(void)player_adjust_mana_precise(player, 5 * 65536L);
 	}
 }
 

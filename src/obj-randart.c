@@ -147,6 +147,7 @@ static int16_t art_idx_gen[] = {
 	ART_IDX_GEN_RDARK,
 	ART_IDX_GEN_RBLIND,
 	ART_IDX_GEN_RCONF,
+	ART_IDX_GEN_RNAUS,
 	ART_IDX_GEN_RSOUND,
 	ART_IDX_GEN_RSHARD,
 	ART_IDX_GEN_RNEXUS,
@@ -168,6 +169,7 @@ static int16_t art_idx_high_resist[] =	{
 	ART_IDX_GEN_RDARK,
 	ART_IDX_GEN_RBLIND,
 	ART_IDX_GEN_RCONF,
+	ART_IDX_GEN_RNAUS,
 	ART_IDX_GEN_RSOUND,
 	ART_IDX_GEN_RSHARD,
 	ART_IDX_GEN_RNEXUS,
@@ -833,6 +835,7 @@ static void count_high_resists(const struct artifact *art,
 		if (art->el_info[ELEM_DARK].res_level == 1) num++;
 		if (of_has(art->flags, OF_PROT_BLIND)) num++;
 		if (of_has(art->flags, OF_PROT_CONF)) num++;
+		if (of_has(art->flags, OF_PROT_NAUS)) num++;
 		if (art->el_info[ELEM_SOUND].res_level == 1) num++;
 		if (art->el_info[ELEM_SHARD].res_level == 1) num++;
 		if (art->el_info[ELEM_NEXUS].res_level == 1) num++;
@@ -887,6 +890,12 @@ static void count_high_resists(const struct artifact *art,
 		/* Resist confusion ability */
 		file_putf(log_file, "Adding 1 for resist confusion - general.\n");
 		(data->art_probs[ART_IDX_GEN_RCONF])++;
+	}
+
+	if (of_has(art->flags, OF_PROT_NAUS)) {
+		/* Resist nausea ability */
+		file_putf(log_file, "Adding 1 for resist nausea - general.\n");
+		(data->art_probs[ART_IDX_GEN_RNAUS])++;
 	}
 
 	if (art->el_info[ELEM_SOUND].res_level == 1) {
@@ -1269,6 +1278,8 @@ static void adjust_freqs(struct artifact_set_data *data)
 		data->art_probs[ART_IDX_MELEE_AC] = 5;
 	if (data->art_probs[ART_IDX_GEN_PSTUN] < 3)
 		data->art_probs[ART_IDX_GEN_PSTUN] = 3;
+	if (data->art_probs[ART_IDX_GEN_RNAUS] < 3)
+		data->art_probs[ART_IDX_GEN_RNAUS] = 3;
 
 	/* Cut aggravation frequencies in half since they're used twice */
 	data->art_probs[ART_IDX_NONWEAPON_AGGR] /= 2;
@@ -1921,13 +1932,14 @@ static void add_high_resist(struct artifact *art,
 		else if (i == 3) success = add_resist(art, ELEM_DARK);
 		else if (i == 4) success = add_flag(art, OF_PROT_BLIND);
 		else if (i == 5) success = add_flag(art, OF_PROT_CONF);
-		else if (i == 6) success = add_resist(art, ELEM_SOUND);
-		else if (i == 7) success = add_resist(art, ELEM_SHARD);
-		else if (i == 8) success = add_resist(art, ELEM_NEXUS);
-		else if (i == 9) success = add_resist(art, ELEM_NETHER);
-		else if (i == 10) success = add_resist(art, ELEM_CHAOS);
-		else if (i == 11) success = add_resist(art, ELEM_DISEN);
-		else if (i == 12) success = add_flag(art, OF_PROT_STUN);
+		else if (i == 6) success = add_flag(art, OF_PROT_NAUS);
+		else if (i == 7) success = add_resist(art, ELEM_SOUND);
+		else if (i == 8) success = add_resist(art, ELEM_SHARD);
+		else if (i == 9) success = add_resist(art, ELEM_NEXUS);
+		else if (i == 10) success = add_resist(art, ELEM_NETHER);
+		else if (i == 11) success = add_resist(art, ELEM_CHAOS);
+		else if (i == 12) success = add_resist(art, ELEM_DISEN);
+		else if (i == 13) success = add_flag(art, OF_PROT_STUN);
 
 		count++;
 	}
@@ -2377,6 +2389,10 @@ static void add_ability_aux(struct artifact *art, int r, int32_t target_power,
 
 		case ART_IDX_GEN_RCONF:
 			add_flag(art, OF_PROT_CONF);
+			break;
+
+		case ART_IDX_GEN_RNAUS:
+			add_flag(art, OF_PROT_NAUS);
 			break;
 
 		case ART_IDX_GEN_RSOUND:

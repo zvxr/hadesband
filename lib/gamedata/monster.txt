@@ -6605,13 +6605,13 @@ depth:28
 rarity:2
 experience:220
 blow:TOUCH:DRAIN_GOLD
-blow:SPORE:CONFUSE:2d4
+blow:SPORE:NAUSEATE:2d4
 blow:SPORE:HALLU:2d4
 flags:EVIL | ATTR_FLICKER
 flags:IM_POIS
 flags:OPEN_DOOR | BASH_DOOR
 spell-freq:8
-spells:DARKNESS | SLOW
+spells:DARKNESS | NAUSEA
 desc:A lacquer-dark lotus that shimmers with impossible value.  Its pollen
 desc: clouds the mind, and its petals brush your purse with the ruinous
 desc: elegance of a collectible habit.
@@ -6628,7 +6628,7 @@ depth:28
 rarity:4
 experience:1200
 blow:TOUCH:DRAIN_GOLD
-blow:SPORE:CONFUSE:3d4
+blow:SPORE:NAUSEATE:3d4
 blow:SPORE:LOSE_WIS:2d4
 flags:UNIQUE | EVIL | SMART | ATTR_FLICKER
 flags:IM_POIS | NO_FEAR | NO_CONF | NO_SLEEP
@@ -6636,7 +6636,7 @@ flags:OPEN_DOOR | BASH_DOOR
 flags-off:EMPTY_MIND | STUPID
 spell-freq:4
 spell-power:40
-spells:BLINK | TELE_TO | SLOW | CONF | DARKNESS
+spells:BLINK | TELE_TO | NAUSEA | CONF | DARKNESS
 spells:BR_POIS | BR_SOUN | BA_LOTUS
 message-vis:BLINK:{name} cries, "I only have four hands!"
 message-invis:BLINK:Something cries, "I only have four hands!"

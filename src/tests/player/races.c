@@ -132,13 +132,14 @@ static int test_bonuses0(void *data)
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.el_info[ELEM_SHARD].res_level, 0);
 	eq(calc_state.el_info[ELEM_GRAVITY].res_level, 1);
-	require(player_has(player, PF_CYCLOPEAN_RAGE));
+	require(player_has(player, PF_RAGE));
 	base_melee = calc_state.skills[SKILL_TO_HIT_MELEE];
-	player->timed[TMD_CYCLOPEAN_RAGE] = 10;
+	player->timed[TMD_RAGE] = 10;
 	player->timed[TMD_RUNNING] = 10;
 	calc_bonuses(player, &calc_state, false, false);
 	eq(calc_state.el_info[ELEM_SHARD].res_level, 1);
-	eq(calc_state.skills[SKILL_TO_HIT_MELEE], base_melee + 75);
+	eq(calc_state.el_info[ELEM_GRAVITY].res_level, 2);
+	eq(calc_state.skills[SKILL_TO_HIT_MELEE], base_melee + 50);
 	eq(calc_state.num_moves, 1);
 
 	eq(player_make_simple("Demigod", "Warrior", "Tester"), true);
@@ -177,7 +178,7 @@ static int test_power_ownership0(void *data)
 	const struct player_class *original_class;
 
 	eq(player_make_simple("Cyclops", "Warrior", "Tester"), true);
-	require(streq(player_power_name(PLAYER_POWER_RACE), "Cyclopean Rage"));
+	require(streq(player_power_name(PLAYER_POWER_RACE), "Rage"));
 	require(!player_power_needs_direction(PLAYER_POWER_RACE));
 	null(player_power_name(PLAYER_POWER_CLASS));
 
@@ -221,7 +222,7 @@ static int test_power_ownership0(void *data)
 	null(player_power_name(PLAYER_POWER_RACE));
 
 	/* Derived flags must not grant a class Skill or racial Expertise. */
-	pf_on(player->state.pflags, PF_CYCLOPEAN_RAGE);
+	pf_on(player->state.pflags, PF_RAGE);
 	null(player_power_name(PLAYER_POWER_RACE));
 
 	ok;

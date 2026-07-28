@@ -61,7 +61,7 @@ static void use_prayer(int dir, struct command *cmd);
 static void use_battle_prayer(int dir, struct command *cmd);
 static void use_signature_spell(int dir, struct command *cmd);
 static void use_innate_bloodlust(int dir, struct command *cmd);
-static void use_cyclopean_rage(int dir, struct command *cmd);
+static void use_rage(int dir, struct command *cmd);
 static void use_kobold_scurry(int dir, struct command *cmd);
 static void use_siren_song(int dir, struct command *cmd);
 static void use_war_cry(int dir, struct command *cmd);
@@ -85,8 +85,8 @@ static const struct player_power player_powers[] = {
 		use_signature_spell },
 	{ PF_INNATE_BLOODLUST, PLAYER_POWER_CLASS, 30, "Bloodlust", false,
 		use_innate_bloodlust },
-	{ PF_CYCLOPEAN_RAGE, PLAYER_POWER_RACE, 1, "Cyclopean Rage", false,
-		use_cyclopean_rage },
+	{ PF_RAGE, PLAYER_POWER_RACE, 1, "Rage", false,
+		use_rage },
 	{ PF_KOBOLD_SCURRY, PLAYER_POWER_RACE, 1, "Scurry", false,
 		use_kobold_scurry },
 	{ PF_SIREN_SONG, PLAYER_POWER_RACE, 1, "Siren Song", false,
@@ -249,6 +249,11 @@ void use_player_power(enum player_power_source source, struct command *cmd)
 	int count = player_power_choices(source, choices);
 	int dir = 0;
 	int i;
+
+	if (player->timed[TMD_NAUSEATED]) {
+		msg("You are too nauseated to focus!");
+		return;
+	}
 
 	if (!count) {
 		msg(source == PLAYER_POWER_CLASS ?
@@ -794,20 +799,20 @@ static void use_innate_bloodlust(int dir, struct command *cmd)
 		true, false);
 }
 
-static void use_cyclopean_rage(int dir, struct command *cmd)
+static void use_rage(int dir, struct command *cmd)
 {
 	int duration;
 	(void)dir;
 	(void)cmd;
 
-	if (player->timed[TMD_CYCLOPEAN_RAGE] || player->timed[TMD_SHERO]) {
+	if (player->timed[TMD_RAGE] || player->timed[TMD_SHERO]) {
 		msg("You are already consumed by rage.");
 		return;
 	}
 
-	if (player->timed[TMD_CYCLOPEAN_RAGE_COOLDOWN]) {
-		msg("You need %d more turns before unleashing your Cyclopean rage again.",
-			player->timed[TMD_CYCLOPEAN_RAGE_COOLDOWN]);
+	if (player->timed[TMD_RAGE_COOLDOWN]) {
+		msg("You need %d more turns before unleashing your rage again.",
+			player->timed[TMD_RAGE_COOLDOWN]);
 		return;
 	}
 
@@ -815,10 +820,10 @@ static void use_cyclopean_rage(int dir, struct command *cmd)
 	(void)player_clear_timed(player, TMD_AFRAID, true, false);
 
 	duration = 10 + randint1(10) + player->lev / 2;
-	(void)player_inc_timed(player, TMD_CYCLOPEAN_RAGE, duration, true,
+	(void)player_inc_timed(player, TMD_RAGE, duration, true,
 		false, false);
 	(void)player_inc_timed(player, TMD_RUNNING, duration, true, false, false);
-	(void)player_set_timed(player, TMD_CYCLOPEAN_RAGE_COOLDOWN, 150, true,
+	(void)player_set_timed(player, TMD_RAGE_COOLDOWN, 150, true,
 		false);
 	monsters_handle_player_noise(100);
 }

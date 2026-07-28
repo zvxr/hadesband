@@ -1060,6 +1060,14 @@ static void project_monster_handler_MON_STUN(project_monster_handler_context_t *
 	context->dam = 0;
 }
 
+/* Nausea (Use "dam" as "power") */
+static void project_monster_handler_MON_NAUS(project_monster_handler_context_t *context)
+{
+	project_monster_charm_animal(context);
+	context->mon_timed[MON_TMD_NAUS] = context->dam;
+	context->dam = 0;
+}
+
 /* Drain Life */
 static void project_monster_handler_MON_DRAIN(project_monster_handler_context_t *context)
 {

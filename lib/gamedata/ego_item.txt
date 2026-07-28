@@ -176,7 +176,7 @@ combat:d4:d4:d8
 type:sword
 type:polearm
 type:hafted
-flags:FREE_ACT | SEE_INVIS | FEATHER | REGEN | RAND_SUSTAIN
+flags:FREE_ACT | SEE_INVIS | FEATHER | REGEN | RAND_SUSTAIN | PROT_NAUS
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:STEALTH[d4] | RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
 min-values:STEALTH[0]

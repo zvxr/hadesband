@@ -971,3 +971,15 @@ flavor:319:0x85:0x81
 
 # Earthen amphora
 flavor:320:0x85:0x84
+
+# Silver Leafed amphora
+flavor:321:0x85:0x88
+
+# Wood amphora
+flavor:322:0x85:0x8E
+
+# Ivory amphora
+flavor:323:0x85:0x80
+
+# Bone amphora
+flavor:324:0x85:0x80

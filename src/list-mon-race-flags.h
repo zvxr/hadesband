@@ -90,4 +90,5 @@ RF(NO_CONF,		RFT_PROT,		"confused")
 RF(NO_SLEEP,	RFT_PROT,		"slept")
 RF(NO_HOLD,		RFT_PROT,		"held")
 RF(NO_SLOW,		RFT_PROT,		"slowed")
+RF(NO_NAUS,		RFT_PROT,		"nauseated")
 /* end flags */

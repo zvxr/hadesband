@@ -48,7 +48,7 @@ pain:1
 flags:POWERFUL | SPIRIT | SMART
 flags:ONLY_ITEM
 flags:OPEN_DOOR | BASH_DOOR | TAKE_ITEM | CLEAR_WEB
-flags:IM_COLD | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
+flags:IM_COLD | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD | NO_NAUS
 flags:FORCE_SLEEP
 desc:Ainu/maia
 
@@ -61,7 +61,7 @@ pain:1
 flags:POWERFUL | SPIRIT | SMART
 flags:ONLY_ITEM
 flags:OPEN_DOOR | BASH_DOOR | TAKE_ITEM | CLEAR_WEB
-flags:IM_COLD | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
+flags:IM_COLD | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD | NO_NAUS
 flags:FORCE_SLEEP
 desc:God
 
@@ -120,7 +120,7 @@ pain:1
 flags:COLD_BLOOD | METAL | UNAWARE | EMPTY_MIND
 flags:ONLY_GOLD
 flags:BASH_DOOR | CLEAR_WEB
-flags:IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
+flags:IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | NO_NAUS
 flags:MIMIC_INV
 desc:Creeping Coins
 
@@ -157,7 +157,7 @@ name:elemental
 glyph:E
 pain:1
 flags:EMPTY_MIND | CLEAR_WEB
-flags:IM_POIS | NO_FEAR | NO_CONF | NO_SLEEP
+flags:IM_POIS | NO_FEAR | NO_CONF | NO_SLEEP | NO_NAUS
 flags:NONLIVING
 desc:Elemental
 
@@ -183,7 +183,7 @@ name:golem
 glyph:g
 pain:1
 flags:EMPTY_MIND | CLEAR_WEB
-flags:IM_ELEC | NO_FEAR | NO_CONF | NO_SLEEP
+flags:IM_ELEC | NO_FEAR | NO_CONF | NO_SLEEP | NO_NAUS
 flags:NONLIVING
 desc:Golem
 
@@ -240,7 +240,7 @@ name:jelly
 glyph:j
 pain:2
 flags:EMPTY_MIND | STUPID | CLEAR_WEB
-flags:NO_FEAR
+flags:NO_FEAR | NO_NAUS
 desc:Jelly
 
 # Giant beetles with high armor class and fairly powerful bites, frequently
@@ -267,7 +267,7 @@ glyph:L
 pain:1
 flags:UNDEAD | EVIL | COLD_BLOOD | SMART | SPIRIT
 flags:OPEN_DOOR | BASH_DOOR | CLEAR_WEB
-flags:IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN | NO_HOLD
+flags:IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN | NO_HOLD | NO_NAUS
 flags:FORCE_SLEEP
 desc:Lich
 
@@ -299,7 +299,7 @@ glyph:?
 pain:1
 flags:COLD_BLOOD | EMPTY_MIND | UNAWARE
 flags:NEVER_MOVE
-flags:NO_FEAR | NO_CONF | NO_SLEEP
+flags:NO_FEAR | NO_CONF | NO_SLEEP | NO_NAUS
 flags:FORCE_SLEEP | ATTR_CLEAR
 desc:Mimic
 
@@ -318,7 +318,7 @@ name:mold
 glyph:m
 pain:2
 flags:NEVER_MOVE
-flags:IM_POIS | HURT_FIRE | NO_FEAR | NO_CONF | NO_SLEEP
+flags:IM_POIS | HURT_FIRE | NO_FEAR | NO_CONF | NO_SLEEP | NO_NAUS
 desc:Mold
 
 # Small (mostly) non-moving (mostly) spore-releasing-for-effect creatures
@@ -326,7 +326,7 @@ name:mushroom
 glyph:,
 pain:2
 flags:EMPTY_MIND | STUPID
-flags:IM_POIS | HURT_FIRE | NO_FEAR | NO_CONF | NO_SLEEP
+flags:IM_POIS | HURT_FIRE | NO_FEAR | NO_CONF | NO_SLEEP | NO_NAUS
 desc:Mushroom
 
 # Female serpent-like monsters
@@ -374,7 +374,7 @@ glyph:Q
 pain:2
 flags:EMPTY_MIND | INVISIBLE
 flags:NEVER_BLOW | NEVER_MOVE
-flags:NO_FEAR | NO_CONF | NO_SLEEP | NO_HOLD
+flags:NO_FEAR | NO_CONF | NO_SLEEP | NO_HOLD | NO_NAUS
 flags:FORCE_SLEEP
 desc:Quylthulg
 
@@ -400,7 +400,7 @@ name:skeleton
 glyph:s
 pain:9
 flags:UNDEAD | EVIL | COLD_BLOOD | CLEAR_WEB
-flags:IM_COLD | IM_POIS | NO_FEAR | NO_CONF | NO_SLEEP | NO_STUN
+flags:IM_COLD | IM_POIS | NO_FEAR | NO_CONF | NO_SLEEP | NO_STUN | NO_NAUS
 desc:Skeleton
 
 # Snakes are typically slow, but have high armor class
@@ -433,7 +433,7 @@ name:tree
 glyph:l
 pain:9
 flags:CLEAR_WEB | COLD_BLOOD | REGENERATE
-flags:NO_FEAR | NO_CONF | HURT_FIRE | IM_WATER
+flags:NO_FEAR | NO_CONF | HURT_FIRE | IM_WATER | NO_NAUS
 desc:Living Wood
 
 # Trolls are evil, larger than human-size humanoids. They have strong melee
@@ -452,7 +452,7 @@ glyph:V
 pain:1
 flags:UNDEAD | EVIL | COLD_BLOOD | REGENERATE | SPIRIT
 flags:OPEN_DOOR | BASH_DOOR | CLEAR_WEB
-flags:HURT_LIGHT | HURT_FIRE | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN
+flags:HURT_LIGHT | HURT_FIRE | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN | NO_NAUS
 flags:FORCE_SLEEP
 desc:Vampire
 
@@ -462,7 +462,7 @@ glyph:v
 pain:11
 flags:EMPTY_MIND | POWERFUL
 flags:RAND_50 | BASH_DOOR | CLEAR_WEB
-flags:NO_FEAR | NO_CONF | NO_SLEEP | NO_HOLD | IM_POIS
+flags:NO_FEAR | NO_CONF | NO_SLEEP | NO_HOLD | IM_POIS | NO_NAUS
 flags:FORCE_SLEEP
 flags:NONLIVING
 desc:Vortex
@@ -481,7 +481,7 @@ name:wraith
 glyph:W
 pain:1
 flags:UNDEAD | EVIL | COLD_BLOOD | SPIRIT | CLEAR_WEB
-flags:HURT_LIGHT | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN | NO_HOLD
+flags:HURT_LIGHT | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN | NO_HOLD | NO_NAUS
 desc:Wight/Wraith
 
 # Strange part rock beings which can destroy or pass through walls
@@ -489,7 +489,7 @@ name:xorn
 glyph:X
 pain:4
 flags:COLD_BLOOD | EMPTY_MIND | CLEAR_WEB
-flags:HURT_ROCK | IM_POIS | NO_CONF | NO_SLEEP
+flags:HURT_ROCK | IM_POIS | NO_CONF | NO_SLEEP | NO_NAUS
 desc:Xorn/Xaren
 
 # Small, quick mythic tricksters, often appearing in reveling bands.
@@ -525,7 +525,7 @@ glyph:z
 pain:10
 flags:UNDEAD | EVIL | COLD_BLOOD
 flags:OPEN_DOOR | BASH_DOOR | CLEAR_WEB
-flags:IM_COLD | IM_POIS | HURT_FIRE | NO_CONF | NO_SLEEP | NO_STUN
+flags:IM_COLD | IM_POIS | HURT_FIRE | NO_CONF | NO_SLEEP | NO_STUN | NO_NAUS
 desc:Zombie/Mummy
 
 ##### Special templates #####

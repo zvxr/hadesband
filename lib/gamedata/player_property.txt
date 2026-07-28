@@ -58,10 +58,10 @@ name:Miner
 desc:You can sense ore in the walls.
 
 type:player
-code:CYCLOPEAN_RAGE
-name:Cyclopean Rage
-desc:You can enter a Cyclopean fury, gaining combat prowess,
-desc: fear protection, shard resistance, and a burst of running.
+code:RAGE
+name:Rage
+desc:You can enter a rage, gaining combat prowess,
+desc: fear protection, shard and gravity resistance, and a burst of running.
 
 type:player
 code:KOBOLD_SCURRY
@@ -289,6 +289,12 @@ code:PROT_STUN
 bindui:pstun_ui_compact_0:0:1
 name:Stun Immunity
 desc:You cannot be stunned.
+
+type:object
+code:PROT_NAUS
+bindui:pnaus_ui_compact_0:0:1
+name:Nausea Immunity
+desc:You cannot be nauseated.
 
 type:object
 code:SLOW_DIGEST

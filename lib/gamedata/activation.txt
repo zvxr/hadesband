@@ -104,7 +104,7 @@ name:CURE_FULL
 aim:0
 level:80
 power:12
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:3
 effect:CURE:CUT
 effect:CURE:POISONED
@@ -116,7 +116,7 @@ name:CURE_FULL2
 aim:0
 level:90
 power:18
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:12
 effect:CURE:CUT
 effect:CURE:POISONED
@@ -142,7 +142,7 @@ effect:RESTORE_STAT:INT
 effect:RESTORE_STAT:WIS
 effect:RESTORE_STAT:DEX
 effect:RESTORE_STAT:CON
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:20
 desc:heals 2000 hit points, restores experience and stats, heals cut damage, and cures stunning, poison, blindness, and confusion
 
@@ -160,7 +160,7 @@ aim:0
 level:60
 power:13
 msg:You feel a warm tingling inside...
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:5
 effect:CURE:CUT
 desc:heals 500 hit points
@@ -170,7 +170,7 @@ aim:0
 level:80
 power:16
 msg:{name} glows a bright white...
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:10
 effect:CURE:CUT
 desc:heals 1000 hit points
@@ -179,7 +179,7 @@ name:HEAL3
 aim:0
 level:65
 power:14
-effect:TIMED_INC:ACCEL_HEALING
+effect:TIMED_INC:HEALING
 dice:5
 effect:CURE:CUT
 effect:CURE:STUN

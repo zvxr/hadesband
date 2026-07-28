@@ -1222,6 +1222,13 @@ bool player_can_read(const struct player *p, bool show_msg)
 		return false;
 	}
 
+	if (p->timed[TMD_NAUSEATED]) {
+		if (show_msg)
+			msg("You are too nauseated to read!");
+
+		return false;
+	}
+
 	if (p->timed[TMD_AMNESIA]) {
 		if (show_msg)
 			msg("You can't remember how to read!");
@@ -1544,6 +1551,7 @@ void player_resting_complete_special(struct player *p)
 			!p->timed[TMD_POISONED] && !p->timed[TMD_AFRAID] &&
 			!p->timed[TMD_TERROR] && !p->timed[TMD_STUN] &&
 			!p->timed[TMD_CUT] && !p->timed[TMD_SLOW] &&
+			!p->timed[TMD_NAUSEATED] &&
 			!p->timed[TMD_PARALYZED] && !p->timed[TMD_IMAGE] &&
 			!p->word_recall && !p->deep_descent)
 			/* Stop resting */

@@ -317,19 +317,19 @@ on-increase:You feel even more berserk!
 msgt:BERSERK
 flag-synonym:PROT_FEAR:0
 
-name:CYCLOPEAN_RAGE
-desc:Cyclopean rage
-grade:r:10000:Cyclops:Your blood burns with Cyclopean fury!
-on-end:Your Cyclopean fury subsides.
-on-increase:Your Cyclopean fury intensifies!
+name:RAGE
+desc:rage
+grade:r:10000:Rage:Your blood burns with rage!
+on-end:Your rage subsides.
+on-increase:Your rage intensifies!
 msgt:BERSERK
 resist:SHARD
 flag-synonym:PROT_FEAR:0
 
-name:CYCLOPEAN_RAGE_COOLDOWN
+name:RAGE_COOLDOWN
 desc:gathering your fury
 grade:y:10000:Rage:Your fury gathers again.
-on-end:You are ready to unleash Cyclopean rage again.
+on-end:You are ready to unleash rage again.
 msgt:GENERIC
 
 name:SIREN_SONG_COOLDOWN
@@ -443,6 +443,13 @@ on-end:You are no longer resistant to confusion.
 on-increase:You feel more resistant to confusion!
 flag-synonym:PROT_CONF:1
 
+name:OPP_NAUS
+desc:nausea resistance
+grade:g:10000:RNaus:Your stomach settles!
+on-end:Your stomach feels less settled.
+on-increase:Your stomach feels steadier!
+flag-synonym:PROT_NAUS:1
+
 name:AMNESIA
 desc:amnesia
 grade:o:10000:Amnesiac:You feel your memories fade.
@@ -540,7 +547,7 @@ brand:POIS_3
 
 name:ATT_CONF_ONCE
 desc:temporary monster confusion
-grade:U:10000:Conf1:Your hands begin to glow!
+grade:v:10000:Conf1:Your hands begin to glow!
 on-end:The glow fades from your hands.
 
 name:ATT_EVIL
@@ -628,7 +635,7 @@ desc:sense
 grade:u:10000:Mapping:You become attuned to the earth.
 on-end:You feel less attuned to the earth.
 
-name:ACCEL_HEALING
+name:HEALING
 desc:magical healing
 grade:B:10000:Heal:Healing energies course through you!
 on-end:The healing energies subside.
@@ -712,9 +719,27 @@ on-end:You settle back to the ground.
 on-increase:You rise higher above the ground!
 flag-synonym:FLY:1
 
+name:REBIRTH
+desc:rebirth
+grade:R:10000:Rebirth:Phoenix-fire gathers beneath your skin!
+on-end:The phoenix-fire fades from your blood.
+on-increase:The phoenix-fire flares brighter!
+msgt:GENERIC
+flags:DURATION_IN_PLAYER_TURNS
+
 name:ATT_CONF
 desc:confusing touch
 grade:v:10000:ConfTch:Your hands shimmer with mischief!
 on-end:The shimmer fades from your hands.
 on-increase:The shimmer around your hands brightens!
 msgt:GENERIC
+
+name:NAUSEATED
+desc:nausea
+grade:g:10000:Nauseated:Your stomach turns!
+on-end:Your nausea passes.
+on-increase:Your nausea worsens!
+on-decrease:You feel a little less nauseated.
+msgt:GENERIC
+fail:1:PROT_NAUS
+flags:NONSTACKING | DURATION_IN_PLAYER_TURNS

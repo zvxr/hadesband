@@ -155,6 +155,16 @@ effect-type:flag
 resist:PROT_CONF
 lash-type:CHAOS
 
+name:NAUSEATE
+power:15
+eval:20
+desc:nauseate
+lore-color-base:Orange
+lore-color-resist:Light Green
+effect-type:flag
+resist:PROT_NAUS
+lash-type:POIS
+
 name:TERRIFY
 power:0
 eval:10

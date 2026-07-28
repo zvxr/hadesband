@@ -30,6 +30,9 @@
 #define CONF_HIT_REDUCTION		20  /* Percentage reduction in accuracy for spells */
 #define CONF_RANDOM_CHANCE		40  /* Percentage chance of an aimed spell going in random direction */
 
+#define NAUS_HIT_REDUCTION		20  /* Percentage reduction in accuracy for combat */
+#define NAUS_SPELL_FAIL_PENALTY	20  /* Percentage spell failure penalty */
+
 /**
  * Monster Timed Effects
  */

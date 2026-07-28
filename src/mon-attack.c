@@ -321,6 +321,10 @@ static int monster_spell_failrate(struct monster *mon)
 		/* Confusion and diesnchantment add 50% */
 		if (mon->m_timed[MON_TMD_CONF] || mon->m_timed[MON_TMD_DISEN])
 			failrate += 50;
+
+		/* Nausea makes it harder to focus. */
+		if (mon->m_timed[MON_TMD_NAUS])
+			failrate += NAUS_SPELL_FAIL_PENALTY;
 	}
 
 	return failrate;
@@ -353,6 +357,9 @@ static int chance_of_monster_hit(const struct monster *mon,
 	/* Apply stun hit reduction if applicable */
 	if (mon->m_timed[MON_TMD_STUN]) {
 		to_hit = to_hit * (100 - STUN_HIT_REDUCTION) / 100;
+	}
+	if (mon->m_timed[MON_TMD_NAUS]) {
+		to_hit = to_hit * (100 - NAUS_HIT_REDUCTION) / 100;
 	}
 
 	return to_hit;

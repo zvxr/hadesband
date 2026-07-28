@@ -517,6 +517,10 @@ static void melee_effect_timed(melee_effect_handler_context_t *context,
 				mon_tmd_effect = MON_TMD_CONF;
 				break;
 			}
+			case TMD_NAUSEATED: {
+				mon_tmd_effect = MON_TMD_NAUS;
+				break;
+			}
 			case TMD_PARALYZED: {
 				mon_tmd_effect = MON_TMD_HOLD;
 				break;
@@ -1040,6 +1044,15 @@ static void melee_effect_handler_CONFUSE(melee_effect_handler_context_t *context
 }
 
 /**
+ * Melee effect handler: Nauseate the player.
+ */
+static void melee_effect_handler_NAUSEATE(melee_effect_handler_context_t *context)
+{
+	melee_effect_timed(context, TMD_NAUSEATED, damroll(3, 2),
+					   OF_PROT_NAUS, false, NULL);
+}
+
+/**
  * Melee effect handler: Terrify the player.
  */
 static void melee_effect_handler_TERRIFY(melee_effect_handler_context_t *context)
@@ -1247,6 +1260,7 @@ melee_effect_handler_f melee_handler_for_blow_effect(const char *name)
 		{ "COLD", melee_effect_handler_COLD },
 		{ "BLIND", melee_effect_handler_BLIND },
 		{ "CONFUSE", melee_effect_handler_CONFUSE },
+		{ "NAUSEATE", melee_effect_handler_NAUSEATE },
 		{ "TERRIFY", melee_effect_handler_TERRIFY },
 		{ "PARALYZE", melee_effect_handler_PARALYZE },
 		{ "LOSE_STR", melee_effect_handler_LOSE_STR },

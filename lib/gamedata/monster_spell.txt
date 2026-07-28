@@ -937,6 +937,17 @@ message-vis:{name} conjures up weird things.
 message-invis:Something messes with your mind.
 message-save:You retain your presence of mind.
 
+name:NAUSEA
+hit:100
+effect:TIMED_INC:NAUSEATED
+dice:3d2
+lore:nauseate
+lore-color-base:Orange
+lore-color-resist:Light Green
+message-vis:{name} exhales a noxious haze.
+message-invis:Something makes the air turn sour.
+message-save:You settle your stomach.
+
 name:SLOW
 hit:100
 effect:TIMED_INC:SLOW

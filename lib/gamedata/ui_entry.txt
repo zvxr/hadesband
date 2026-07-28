@@ -190,16 +190,22 @@ label:Stun resistance
 label5:pStun
 priority:-3
 
+name:pnaus_ui_compact_0
+template:good_flag_ui_compact_0
+label:Nausea resistance
+label5:pNaus
+priority:-4
+
 name:holdlife_ui_compact_0
 template:good_flag_ui_compact_0
 label:Hold life
 label5:HLife
-priority:-4
+priority:-5
 
 name:regen_ui_compact_0
 template:good_flag_ui_compact_0
 label:Regeneration
-priority:-5
+priority:-6
 
 name:esp_ui_compact_0
 template:good_flag_ui_compact_0

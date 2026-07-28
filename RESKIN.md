@@ -52,8 +52,8 @@
 - Removed: Spartan was mistakenly added as a race; revisit Barbarian as a
   class/theme discussion instead.
 - Done: Half-Giant renamed to Cyclops.
-- Cyclops uses `x` for Cyclopean Rage: uses a 150-turn cooldown, alarms
-  monsters, grants berserk combat effects, temporary shard resistance, and
+- Cyclops uses `x` for Rage: uses a 150-turn cooldown, alarms monsters, grants
+  fear protection, temporary shard and gravity resistance, a melee boost, and
   running for the same duration.
 - Hadesband command convention: `s` invokes a class Skill and `x` invokes a
   racial Expertise.
@@ -79,7 +79,7 @@
 | Half-Orc | Half-Orc | Pending; likely retain | Not reviewed |
 | Half-Troll | Half-Troll | Pending | Not reviewed |
 | Barbarian | Barbarian | Pending; Spartan race removed | Not reviewed |
-| Half-Giant | Cyclops | Done | Reviewed; Cyclopean Rage, 140% XP |
+| Half-Giant | Cyclops | Done | Reviewed; Rage, 140% XP |
 | New | Satyr | Done | Reviewed; 130% XP; Mushroom Lore, disenchantment resistance, Cure Confusion |
 | New | Siren | Done | Reviewed; 125% XP; Siren Song |
 | Dunadan | Demigod | Done | Reviewed; +2 all stats, 150% XP |

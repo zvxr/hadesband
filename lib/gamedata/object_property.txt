@@ -307,6 +307,16 @@ msg:Your {name} steadies you.
 bindui:pstun_ui_compact_0:0
 desc:stunning
 
+name:protection from nausea
+type:flag
+code:PROT_NAUS
+subtype:protection
+id-type:on effect
+power:14
+msg:Your {name} settles your stomach.
+bindui:pnaus_ui_compact_0:0
+desc:nausea
+
 name:slow digestion
 type:flag
 subtype:misc ability

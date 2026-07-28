@@ -240,6 +240,10 @@ static int project_player_handler_POIS(project_player_handler_context_t *context
 			effect_simple(EF_DRAIN_STAT, source_none(), "0", STAT_CON, 0, 0, 0,
 						  0, &context->obvious);
 		}
+		if (randint0(context->dam) > 200) {
+			(void)player_inc_timed(player, TMD_NAUSEATED,
+				5 + randint1(MAX(1, context->dam / 20)), true, true, true);
+		}
 	}
 	return xtra;
 }
@@ -305,11 +309,11 @@ static int project_player_handler_DARK(project_player_handler_context_t *context
 			}
 		}
 
-		/* Slowing */
+		/* Nausea */
 		if (randint0(context->dam) > 200) {
-			msg("You feel unsure of yourself in the darkness.");
-			(void)player_inc_timed(player, TMD_SLOW,
-				context->dam / 100, true, true, false);
+			msg("You feel sickened by the darkness.");
+			(void)player_inc_timed(player, TMD_NAUSEATED,
+				5 + context->dam / 100, true, true, false);
 		}
 
 		/* Amnesia */
@@ -347,6 +351,8 @@ static int project_player_handler_SOUND(project_player_handler_context_t *contex
 		}
 		(void)player_inc_timed(player, TMD_CONFUSED,
 			2 + randint1(context->dam / 100), true, true, true);
+		(void)player_inc_timed(player, TMD_NAUSEATED,
+			2 + randint1(context->dam / 100), true, true, true);
 	}
 	return 0;
 }
@@ -375,6 +381,9 @@ static int project_player_handler_NEXUS(project_player_handler_context_t *contex
 		msg("You resist the effect!");
 		return 0;
 	}
+
+	(void)player_inc_timed(player, TMD_NAUSEATED, 5 + randint1(10),
+		true, true, true);
 
 	/* Stat swap */
 	if (randint0(100) < player->state.skills[SKILL_SAVE]) {
@@ -449,6 +458,9 @@ static int project_player_handler_CHAOS(project_player_handler_context_t *contex
 	(void)player_inc_timed(player, TMD_CONFUSED, 10 + randint0(20), true,
 		true, true);
 
+	(void)player_inc_timed(player, TMD_NAUSEATED, 5 + randint1(10), true,
+		true, true);
+
 	/* Life draining */
 	if (!player_of_has(player, OF_HOLD_LIFE)) {
 		int drain = ((player->exp * 3)/ (100 * 2)) * z_info->life_drain_percent;
@@ -474,8 +486,8 @@ static int project_player_handler_DISEN(project_player_handler_context_t *contex
 
 static int project_player_handler_WATER(project_player_handler_context_t *context)
 {
-	/* Confusion */
-	(void)player_inc_timed(player, TMD_CONFUSED, 5 + randint1(5), true,
+	/* Nausea */
+	(void)player_inc_timed(player, TMD_NAUSEATED, 5 + randint1(5), true,
 		true, true);
 
 	/* Stun */
@@ -534,6 +546,11 @@ static int project_player_handler_INERTIA(project_player_handler_context_t *cont
 	/* Slow */
 	(void)player_inc_timed(player, TMD_SLOW, 4 + randint0(4), true, true,
 		false);
+
+	if (context->power >= 60) {
+		(void)player_inc_timed(player, TMD_NAUSEATED, 5 + randint1(5),
+			true, true, true);
+	}
 	return 0;
 }
 
@@ -804,6 +821,11 @@ static int project_player_handler_MON_HOLD(project_player_handler_context_t *con
 }
 
 static int project_player_handler_MON_STUN(project_player_handler_context_t *context)
+{
+	return 0;
+}
+
+static int project_player_handler_MON_NAUS(project_player_handler_context_t *context)
 {
 	return 0;
 }

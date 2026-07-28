@@ -701,6 +701,13 @@ blind-desc:something
 obvious:0
 color:White
 
+code:MON_NAUS
+type:monster
+desc:attempts to nauseate monsters
+blind-desc:something
+obvious:0
+color:Green
+
 code:MON_DRAIN
 type:monster
 desc:damages living monsters

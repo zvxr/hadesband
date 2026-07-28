@@ -980,6 +980,7 @@ void do_cmd_wiz_cure_all(struct command *cmd)
 	(void) player_clear_timed(player, TMD_CUT, true, false);
 	(void) player_clear_timed(player, TMD_SLOW, true, false);
 	(void) player_clear_timed(player, TMD_AMNESIA, true, false);
+	(void) player_clear_timed(player, TMD_NAUSEATED, true, false);
 
 	/* No longer hungry */
 	player_set_timed(player, TMD_FOOD, PY_FOOD_FULL - 1, false, false);

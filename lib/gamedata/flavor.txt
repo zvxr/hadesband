@@ -344,6 +344,10 @@ flavor:317:Umber:Copper
 flavor:318:Light Red:Jasper
 flavor:319:Light Dark:Obsidian
 flavor:320:Mud:Earthen
+flavor:321:Light Slate:Silver Leafed
+flavor:322:Light Umber:Wood
+flavor:323:White:Ivory
+flavor:324:Light Slate:Bone
 
 ##### Potions #####
 # These are colours or -ing verbs

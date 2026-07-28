@@ -409,6 +409,9 @@ uint8_t monster_health_attr(void)
 		/* Confused */
 		if (mon->m_timed[MON_TMD_CONF]) attr = COLOUR_UMBER;
 
+		/* Nauseated */
+		if (mon->m_timed[MON_TMD_NAUS]) attr = COLOUR_GREEN;
+
 		/* Stunned */
 		if (mon->m_timed[MON_TMD_STUN]) attr = COLOUR_L_BLUE;
 
