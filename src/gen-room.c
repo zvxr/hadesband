@@ -1301,6 +1301,8 @@ static bool build_room_template(struct chunk *c, struct loc centre, int ymax,
 			case 't': square_set_feat(c, grid, FEAT_TREE); break;
 			case 'w': square_set_feat(c, grid, FEAT_WOOD); break;
 			case 'm': place_forest_marker(c, grid); break;
+			case 'p': square_set_feat(c, grid, FEAT_POOL); break;
+			case 'T': square_set_feat(c, grid, FEAT_TARN); break;
 			case '+': place_closed_door(c, grid); break;
 			case '^': if (one_in_(4)) place_trap(c, grid, -1, c->depth); break;
 			case 'x': {

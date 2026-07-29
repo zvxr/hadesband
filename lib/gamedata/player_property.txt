@@ -315,6 +315,11 @@ name:Flight
 desc:You can fly.
 
 type:object
+code:SWIM
+name:Swimming
+desc:You can swim through water.
+
+type:object
 code:REGEN
 bindui:regen_ui_compact_0:0:1
 name:Regeneration

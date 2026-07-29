@@ -1002,6 +1002,107 @@ void player_take_terrain_damage(struct player *p, struct loc grid)
 }
 
 /**
+ * True if the player's build allows wading through this water feature.
+ */
+bool player_can_wade_water(const struct player *p, int feat)
+{
+	int height;
+
+	if (!p || !feat_is_water(feat) || feat_is_deep_water(feat)) return false;
+	height = p->ht ? p->ht : (p->race ? p->race->base_hgt : 0);
+	return height >= 72;
+}
+
+/**
+ * Attempt to travel through water.  Failure leaves the player drowning briefly.
+ */
+bool player_check_water_travel(struct player *p, struct chunk *c,
+	struct loc grid)
+{
+	int feat;
+	int hp_pct;
+	int chance;
+	const char *water_name;
+	bool deep;
+	bool swimming;
+
+	if (!p || !square_in_bounds(c, grid)) return true;
+	feat = square(c, grid)->feat;
+	if (!feat_is_water(feat)) return true;
+
+	deep = feat_is_deep_water(feat);
+	swimming = player_of_has(p, OF_SWIM);
+	water_name = deep ? "tarn" : "pool of water";
+
+	if (player_of_has(p, OF_FLY)) {
+		msg("You fly over the %s.", water_name);
+		if (p->timed[TMD_DROWNING]) {
+			(void)player_clear_timed(p, TMD_DROWNING, true, true);
+		}
+		return true;
+	}
+
+	if (!deep && player_can_wade_water(p, feat)) {
+		msg("You wade through the %s.", water_name);
+		if (p->timed[TMD_DROWNING]) {
+			(void)player_clear_timed(p, TMD_DROWNING, true, true);
+		}
+		return true;
+	}
+
+	hp_pct = p->mhp ? (p->chp * 100) / p->mhp : 100;
+	chance = 15 + p->state.stat_ind[STAT_STR] + (hp_pct / 5);
+	if (deep) {
+		chance += swimming ? -10 : -60;
+	} else {
+		chance += swimming ? 20 : -10;
+	}
+	chance -= p->upkeep->total_weight / 100;
+	if (p->timed[TMD_CONFUSED]) chance -= 15;
+	if (p->timed[TMD_BLIND]) chance -= 15;
+	if (p->timed[TMD_NAUSEATED]) chance -= 15;
+	if (p->timed[TMD_STUN]) chance -= 15;
+	chance = MIN(95, MAX(5, chance));
+
+	if (randint0(100) < chance) {
+		msg("%s through the %s.", swimming ? "You swim" : "You struggle",
+			water_name);
+		if (p->timed[TMD_DROWNING]) {
+			(void)player_clear_timed(p, TMD_DROWNING, true, true);
+		}
+		return true;
+	}
+
+	(void)player_inc_timed(p, TMD_DROWNING, 2, true, true, false);
+	player_take_drowning_damage(p);
+	return false;
+}
+
+/**
+ * Apply escalating drowning damage.
+ */
+void player_take_drowning_damage(struct player *p)
+{
+	int turns;
+	int dam = 1;
+	int i;
+
+	if (!p->timed[TMD_DROWNING]) return;
+
+	turns = MAX(1, p->timed[TMD_DROWNING] - 1);
+	for (i = 1; i < turns && dam < 400; i++) {
+		dam *= 2;
+	}
+	dam = MIN(400, MAX(5, dam));
+	if (OPT(p, show_damage)) {
+		msg("You are drowning! (%d)", dam);
+	} else {
+		msg("You are drowning!");
+	}
+	take_hit(p, dam, "drowning");
+}
+
+/**
  * Find a player shape from the name
  */
 struct player_shape *lookup_player_shape(const char *name)

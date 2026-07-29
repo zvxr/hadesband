@@ -195,6 +195,28 @@ static bool monster_hates_grid(struct monster *mon, struct loc grid)
 }
 
 /**
+ * True if the monster chooses not to enter water when another step may work.
+ */
+static bool monster_avoids_water_grid(struct monster *mon, struct loc grid)
+{
+	int avoid_chance;
+
+	if (!mon || !mon->race || !square_in_bounds(cave, grid)) return false;
+	if (!square_iswater(cave, grid)) return false;
+	if (square_iswater(cave, mon->grid)) return false;
+	if (rf_has(mon->race->flags, RF_FLY)) return false;
+	if (rf_has(mon->race->flags, RF_AQUATIC)) return false;
+
+	if (rf_has(mon->race->flags, RF_SWIM)) {
+		avoid_chance = square_isdeepwater(cave, grid) ? 25 : 10;
+	} else {
+		avoid_chance = square_isdeepwater(cave, grid) ? 70 : 50;
+	}
+
+	return randint0(100) < avoid_chance;
+}
+
+/**
  * ------------------------------------------------------------------------
  * Monster movement routines
  * These routines, culminating in get_move(), choose if and where a monster
@@ -1131,6 +1153,72 @@ static void monster_slightly_stun_by_move(struct monster *mon)
 	}
 }
 
+/**
+ * Apply escalating drowning damage to a monster.
+ */
+static bool monster_take_drowning_damage(struct monster *mon)
+{
+	int turns;
+	int dam = 1;
+	int i;
+
+	if (!mon || !mon->race || !mon->m_timed[MON_TMD_DROWNING]) return false;
+
+	turns = MAX(1, mon->m_timed[MON_TMD_DROWNING] - 1);
+	for (i = 1; i < turns && dam < 400; i++) {
+		dam *= 2;
+	}
+	dam = MIN(400, MAX(5, dam));
+	return mon_take_nonplayer_hit(dam, mon, MON_MSG_NONE, MON_MSG_DIE);
+}
+
+/**
+ * Swimming monsters can struggle in dungeon water, especially deep water.
+ * Returns false if immediate drowning damage was already handled.
+ */
+static bool monster_check_water_travel(struct monster *mon)
+{
+	int feat;
+	int chance;
+	bool deep;
+	bool swimming;
+
+	if (!mon || !mon->race || !square_in_bounds(cave, mon->grid)) return true;
+	feat = square(cave, mon->grid)->feat;
+	if (!feat_is_water(feat)) return true;
+	if (rf_has(mon->race->flags, RF_FLY) ||
+			rf_has(mon->race->flags, RF_AQUATIC)) {
+		if (mon->m_timed[MON_TMD_DROWNING]) {
+			mon_clear_timed(mon, MON_TMD_DROWNING, MON_TMD_FLG_NOTIFY);
+		}
+		return true;
+	}
+
+	deep = feat_is_deep_water(feat);
+	swimming = rf_has(mon->race->flags, RF_SWIM);
+	if (deep) {
+		chance = swimming ? 60 : 15;
+	} else {
+		chance = swimming ? 90 : 65;
+	}
+	if (mon->hp < mon->maxhp / 2) {
+		chance -= 20;
+	}
+	chance = MIN(95, MAX(5, chance));
+	if (randint0(100) < chance) {
+		if (mon->m_timed[MON_TMD_DROWNING]) {
+			mon_clear_timed(mon, MON_TMD_DROWNING, MON_TMD_FLG_NOTIFY);
+		}
+		return true;
+	}
+
+	if (mon->m_timed[MON_TMD_DROWNING] < 5) {
+		mon_inc_timed(mon, MON_TMD_DROWNING, 2, MON_TMD_FLG_NOTIFY);
+	}
+	(void)monster_take_drowning_damage(mon);
+	return false;
+}
+
 
 /**
  * Work out if a monster can move through the grid, if necessary bashing 
@@ -1585,6 +1673,14 @@ static void monster_turn(struct monster *mon)
 		/* Get the grid to step to or attack */
 		struct loc new = loc_sum(mon->grid, ddgrid[d]);
 
+		/* Prefer dry ground, but still cross water when pressed. */
+		if (stagger != CONFUSED_STAGGER &&
+				!square_isplayer(cave, new) &&
+				!square_isdecoyed(cave, new) &&
+				monster_avoids_water_grid(mon, new)) {
+			continue;
+		}
+
 		/* Tracking monsters have their best direction, don't change */
 		if ((i > 0) && stagger == NO_STAGGER &&
 			!square_isview(cave, mon->grid) && tracking) {
@@ -1984,6 +2080,15 @@ void process_monsters(int minimum_energy)
 			/* Process timed effects - skip turn if necessary */
 			if (process_monster_timed(mon))
 				continue;
+
+			/* Water is passable, but unsafe actors can start drowning. */
+			if (monster_check_water_travel(mon)) {
+				if (monster_take_drowning_damage(mon)) {
+					continue;
+				}
+			} else if (!mon->race) {
+				continue;
+			}
 
 			/* Set this monster to be the current actor */
 			cave->mon_current = i;

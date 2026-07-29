@@ -4469,7 +4469,7 @@ blow:HIT:HURT:2d4
 blow:HIT:HURT:2d4
 flags:COLD_BLOOD
 flags:RAND_25 | BASH_DOOR
-flags:IM_ACID | IM_WATER
+flags:IM_ACID | IM_WATER | AQUATIC
 desc:A whirlpool of sentient liquid.
 
 name:giant red scorpion
@@ -5092,6 +5092,7 @@ blow:CLAW:HURT:3d3
 blow:CLAW:HURT:3d3
 flags:BASH_DOOR
 flags:IM_ACID
+flags:SWIM
 flags:FORCE_SLEEP
 innate-freq:10
 spells:BR_ACID
@@ -5373,7 +5374,7 @@ depth:21
 rarity:1
 experience:100
 blow:ENGULF:ACID:3d3
-flags:IM_ACID | IM_WATER
+flags:IM_ACID | IM_WATER | AQUATIC
 innate-freq:4
 spells:BR_ACID
 desc:A caustic spinning whirlpool of water.
@@ -8141,7 +8142,7 @@ blow:HIT:HURT:1d10
 blow:HIT:HURT:1d10
 flags:COLD_BLOOD
 flags:RAND_25 | BASH_DOOR | KILL_BODY | KILL_ITEM
-flags:IM_ACID | IM_COLD | IM_FIRE | IM_WATER
+flags:IM_ACID | IM_COLD | IM_FIRE | IM_WATER | AQUATIC
 flags:FORCE_SLEEP
 spell-freq:6
 spells:BO_COLD
@@ -10470,7 +10471,7 @@ blow:HIT:HURT:5d5
 blow:HIT:HURT:5d5
 flags:UNIQUE | MALE | NAME_COMMA | COLD_BLOOD | POWERFUL
 flags:RAND_25 | BASH_DOOR | KILL_BODY | KILL_ITEM
-flags:IM_ACID | IM_COLD | IM_FIRE | IM_WATER
+flags:IM_ACID | IM_COLD | IM_FIRE | IM_WATER | AQUATIC
 flags:FORCE_SLEEP
 spell-freq:4
 spells:BA_COLD | BA_WATE
@@ -12663,7 +12664,7 @@ blow:ENGULF:ACID:6d10
 blow:ENGULF:ACID:6d10
 flags:MALE
 flags:DROP_4
-flags:IM_ACID | IM_ELEC | IM_WATER
+flags:IM_ACID | IM_ELEC | IM_WATER | AQUATIC
 spell-freq:3
 spells:BA_WATE
 spells:BO_MANA | BO_WATE
@@ -12691,7 +12692,7 @@ blow:ENGULF:ACID:6d10
 blow:ENGULF:ACID:6d10
 flags:COLD_BLOOD | POWERFUL
 flags:BASH_DOOR | KILL_BODY | KILL_ITEM
-flags:IM_ACID | IM_WATER | IM_COLD
+flags:IM_ACID | IM_WATER | IM_COLD | AQUATIC
 innate-freq:5
 spell-freq:5
 spells:BA_WATE | BO_WATE
@@ -13382,7 +13383,7 @@ blow:HIT:HURT:10d10
 flags:UNIQUE | MALE | NAME_COMMA
 flags:DROP_4 | DROP_GOOD
 flags:MOVE_BODY
-flags:IM_ACID | IM_ELEC | IM_WATER | IM_DISEN
+flags:IM_ACID | IM_ELEC | IM_WATER | IM_DISEN | AQUATIC
 innate-freq:4
 spell-freq:2
 spells:BLIND | TELE_TO | WHIP
@@ -14565,7 +14566,7 @@ blow:TOUCH:DRAIN_CHARGES
 flags:UNIQUE | POWERFUL
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:OPEN_DOOR | BASH_DOOR | MOVE_BODY
-flags:IM_ACID | IM_COLD | IM_WATER | IM_DISEN | NO_CONF | NO_SLEEP | NO_HOLD
+flags:IM_ACID | IM_COLD | IM_WATER | IM_DISEN | NO_CONF | NO_SLEEP | NO_HOLD | AQUATIC
 flags:ATTR_MULTI | FORCE_SLEEP
 flags-off:HURT_COLD
 innate-freq:2

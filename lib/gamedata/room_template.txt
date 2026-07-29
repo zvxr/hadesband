@@ -73,6 +73,8 @@
 #    t - tree
 #    w - wood
 #    m - soil with a mushroom (60%), flying monster (30%), or nothing (10%)
+#    p - pool
+#    T - tarn
 
 # 'flags' lines are optional and list the flags, from src/list-room-flags.h,
 # that should be applied to the room.  As many flags: lines may be used as
@@ -105,6 +107,124 @@ D:%...vtm.....%
 D:##....tt...##
 D: #%#..v..#%# 
 D:   ##%%%##   
+
+name:Aquatic Small Pool
+type:1
+rating:1
+tags:aquatic | round
+rows:7
+columns:13
+doors:1
+tval:0
+flags:FEW_ENTRANCES
+D:   ##%%%##   
+D: #%#.....#%# 
+D:##...pp....##
+D:%...ppp.....%
+D:##....pp...##
+D: #%#.....#%# 
+D:   ##%%%##   
+
+name:Aquatic Tarn
+type:1
+rating:2
+tags:aquatic | round
+rows:11
+columns:17
+doors:1
+tval:0
+flags:FEW_ENTRANCES
+D:    ###%%%###    
+D:  ##.........##  
+D: #....ppppp....# 
+D:#...ppTTTTpp...# 
+D:%..ppTTTTTTpp..% 
+D:%..pTTTTTTTTp..% 
+D:%..ppTTTTTTpp..% 
+D:#...ppTTTTpp...# 
+D: #....ppppp....# 
+D:  ##.........##  
+D:    ###%%%###    
+
+name:Aquatic Island Pool
+type:1
+rating:1
+tags:aquatic
+rows:11
+columns:21
+doors:2
+tval:0
+flags:FEW_ENTRANCES
+D:%%%%%%%%%%%%%%%%%%%%%
+D:%.....ppppppp.......%
+D:%.ppppppppppppppppp.%
+D:%pppppp.....pppppppp%
+D:%ppppp.......ppppppp%
+D:%pppp....9....pppppp%
+D:%ppppp.......ppppppp%
+D:%pppppp.....pppppppp%
+D:%.ppppppppppppppppp.%
+D:%.......ppppppp.....%
+D:%%%%%%%%%%%%%%%%%%%%%
+
+name:Aquatic Twin Islets
+type:1
+rating:1
+tags:aquatic
+rows:11
+columns:25
+doors:2
+tval:0
+flags:FEW_ENTRANCES
+D:%%%%%%%%%%%%%%%%%%%%%%%%%
+D:%....pppppppppppppp.....%
+D:%..pppppppppppppppppp...%
+D:%.pppp...pppppp...pppp..%
+D:%pppp.....pppp.....pppp.%
+D:%pppp..9..pppp..9..pppp.%
+D:%pppp.....pppp.....pppp.%
+D:%.pppp...pppppp...pppp..%
+D:%..pppppppppppppppppp...%
+D:%.....ppppppppppppp.....%
+D:%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name:Aquatic River Crossing
+type:1
+rating:1
+tags:aquatic
+rows:9
+columns:23
+doors:2
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%
+D:%.........ppp.........%
+D:%.........ppp.........%
+D:%.........ppp.........%
+D:%.........ppp.........%
+D:%.........ppp.........%
+D:%.........ppp.........%
+D:%.........ppp.........%
+D:%%%%%%%%%%%%%%%%%%%%%%%
+
+name:Aquatic Bent River
+type:1
+rating:1
+tags:aquatic
+rows:11
+columns:25
+doors:2
+tval:0
+D:%%%%%%%%%%%%%%%%%%%%%%%%%
+D:%.....ppp...............%
+D:%......ppp..............%
+D:%.......ppp.............%
+D:%........pppppppp.......%
+D:%..............ppp......%
+D:%...............ppp.....%
+D:%................ppp....%
+D:%.....9..........ppp....%
+D:%.................ppp...%
+D:%%%%%%%%%%%%%%%%%%%%%%%%%
 
 name:Organic Pillars
 type:1

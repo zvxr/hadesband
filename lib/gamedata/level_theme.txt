@@ -16,6 +16,12 @@
 
 # Floor Generation Themes
 
+theme:Flooded Halls
+label:Flooded Halls
+label-color:B
+spawn:3:100:100:100
+seed-room-tag:aquatic:85
+
 theme:Forest
 label:Forest
 label-color:g
@@ -23,12 +29,14 @@ spawn:10:10:100:100
 spawn:30:10:100:100
 spawn:50:10:100:100
 seed-room-tag:organic:80
+seed-room-tag:aquatic:20
 
 theme:Round Halls
 label:Round Halls
 label-color:u
 spawn:6:100:100:100
 spawn:66:100:100:100
+seed-room-tag:aquatic:75
 seed-room-tag:round:66
 
 # Unique Guardians
@@ -45,6 +53,7 @@ label:White Lotus
 label-color:W
 spawn:28:100:100:100
 seed-room-tag:organic:50
+seed-room-tag:aquatic:35
 unique-block-down-stairs:The White Lotus
 
 theme:Minos Maze

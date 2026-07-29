@@ -487,12 +487,14 @@ static int project_player_handler_DISEN(project_player_handler_context_t *contex
 static int project_player_handler_WATER(project_player_handler_context_t *context)
 {
 	/* Nausea */
-	(void)player_inc_timed(player, TMD_NAUSEATED, 5 + randint1(5), true,
+	(void)player_inc_timed(player, TMD_NAUSEATED, 3 + randint1(4), true,
 		true, true);
 
-	/* Stun */
-	(void)player_inc_timed(player, TMD_STUN, randint1(40), true, true,
-		true);
+	/* Heavy water can leave the player drowning briefly. */
+	if (context->dam > 100) {
+		(void)player_inc_timed(player, TMD_DROWNING, randint1(3), true,
+			true, false);
+	}
 	return 0;
 }
 

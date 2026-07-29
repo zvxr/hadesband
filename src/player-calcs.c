@@ -2269,6 +2269,11 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		state->speed -= 5;
 		state->to_h -= 10;
 	}
+	if (p->timed[TMD_DROWNING]) {
+		state->speed -= 3;
+		state->to_h -= 5;
+		adjust_skill_scale(&state->skills[SKILL_DEVICE], -1, 5, 0);
+	}
 	if (p->timed[TMD_SINFRA]) {
 		state->see_infra += 5;
 	}
@@ -2414,6 +2419,9 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	} else {
 		/* Unarmed */
 		state->num_blows = calc_blows(p, NULL, state, extra_blows);
+	}
+	if (p->timed[TMD_DROWNING]) {
+		state->num_blows = MAX(10, state->num_blows - 20);
 	}
 
 	/* Mana */

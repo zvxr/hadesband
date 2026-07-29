@@ -80,6 +80,30 @@ static bool msg_organic_blocker(struct chunk *c, struct loc grid, bool known,
 	return true;
 }
 
+static bool msg_water_blocker(struct chunk *c, struct loc grid, bool known,
+		bool path)
+{
+	const char *text = NULL;
+
+	switch (square(c, grid)->feat) {
+		case FEAT_POOL:
+			text = known ? (path ? "The pool is too deep to wade!" :
+				"The pool blocks your way.") :
+				"You feel deep water blocking your way.";
+			break;
+		case FEAT_TARN:
+			text = known ? (path ? "The tarn is too deep to cross!" :
+				"The tarn blocks your way.") :
+				"You feel deep water blocking your way.";
+			break;
+		default:
+			return false;
+	}
+
+	msgt(MSG_HITWALL, text);
+	return true;
+}
+
 /**
  * Go up one level
  */
@@ -1203,6 +1227,9 @@ void move_player(int dir, bool disarm)
 			} else if (msg_organic_blocker(cave, grid, false, false)) {
 				square_memorize(cave, grid);
 				square_light_spot(cave, grid);
+			} else if (msg_water_blocker(cave, grid, false, false)) {
+				square_memorize(cave, grid);
+				square_light_spot(cave, grid);
 			} else {
 				msgt(MSG_HITWALL, "You feel a wall blocking your way.");
 				square_memorize(cave, grid);
@@ -1223,6 +1250,12 @@ void move_player(int dir, bool disarm)
 					square_light_spot(cave, grid);
 				}
 			} else if (msg_organic_blocker(cave, grid, true, false)) {
+				if (square(player->cave, grid)->feat !=
+						square(cave, grid)->feat) {
+					square_memorize(cave, grid);
+					square_light_spot(cave, grid);
+				}
+			} else if (msg_water_blocker(cave, grid, true, false)) {
 				if (square(player->cave, grid)->feat !=
 						square(cave, grid)->feat) {
 					square_memorize(cave, grid);
@@ -1359,6 +1392,12 @@ static bool do_cmd_walk_test(struct player *p, struct loc grid)
 			return true;
 		} else if (msg_organic_blocker(cave, grid, true, true)) {
 			/* Organic terrain */
+			if (square(p->cave, grid)->feat != square(cave, grid)->feat) {
+				square_memorize(cave, grid);
+				square_light_spot(cave, grid);
+			}
+		} else if (msg_water_blocker(cave, grid, true, true)) {
+			/* Water terrain */
 			if (square(p->cave, grid)->feat != square(cave, grid)->feat) {
 				square_memorize(cave, grid);
 				square_light_spot(cave, grid);

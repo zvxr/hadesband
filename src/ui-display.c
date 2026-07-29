@@ -412,6 +412,9 @@ uint8_t monster_health_attr(void)
 		/* Nauseated */
 		if (mon->m_timed[MON_TMD_NAUS]) attr = COLOUR_GREEN;
 
+		/* Drowning */
+		if (mon->m_timed[MON_TMD_DROWNING]) attr = COLOUR_BLUE;
+
 		/* Stunned */
 		if (mon->m_timed[MON_TMD_STUN]) attr = COLOUR_L_BLUE;
 

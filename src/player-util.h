@@ -84,6 +84,10 @@ bool player_attack_random_monster(struct player *p);
 enum player_game_mode player_get_game_mode(const struct player *p);
 int player_check_terrain_damage(struct player *p, struct loc grid, bool actual);
 void player_take_terrain_damage(struct player *p, struct loc grid);
+bool player_can_wade_water(const struct player *p, int feat);
+bool player_check_water_travel(struct player *p, struct chunk *c,
+	struct loc grid);
+void player_take_drowning_damage(struct player *p);
 struct player_shape *lookup_player_shape(const char *name);
 int shape_name_to_idx(const char *name);
 struct player_shape *player_shape_by_idx(int index);

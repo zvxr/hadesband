@@ -1163,6 +1163,15 @@ static void process_player_cleanup(void)
 			--player->skip_cmd_coercion;
 		}
 
+		/* Check for difficult swimming. */
+		if (player_check_water_travel(player, cave, player->grid)) {
+			/* Drowning quickly becomes lethal. */
+			player_take_drowning_damage(player);
+		}
+		if (player->is_dead) {
+			return;
+		}
+
 		/* Player can be damaged by terrain */
 		player_take_terrain_damage(player, player->grid);
 

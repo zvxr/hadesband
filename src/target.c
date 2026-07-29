@@ -89,6 +89,7 @@ void look_mon_desc(char *buf, size_t max, int m_idx)
 	if (mon->m_timed[MON_TMD_DISEN]) my_strcat(buf, ", disenchanted", max);
 	if (mon->m_timed[MON_TMD_CONF]) my_strcat(buf, ", confused", max);
 	if (mon->m_timed[MON_TMD_NAUS]) my_strcat(buf, ", nauseated", max);
+	if (mon->m_timed[MON_TMD_DROWNING]) my_strcat(buf, ", drowning", max);
 	if (mon->m_timed[MON_TMD_FEAR]) my_strcat(buf, ", afraid", max);
 	if (mon->m_timed[MON_TMD_STUN]) my_strcat(buf, ", stunned", max);
 	if (mon->m_timed[MON_TMD_SLOW]) my_strcat(buf, ", slowed", max);

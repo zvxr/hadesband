@@ -185,6 +185,22 @@ bool feat_is_organic(int feat)
 }
 
 /**
+ * True if the feature is water terrain.
+ */
+bool feat_is_water(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_WATER);
+}
+
+/**
+ * True if the feature is deep water terrain.
+ */
+bool feat_is_deep_water(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_DEEP_WATER);
+}
+
+/**
  * True if the feature can be chopped down.
  */
 bool feat_ischoppable(int feat)
@@ -703,6 +719,20 @@ bool square_isorganic(struct chunk *c, struct loc grid) {
 }
 
 /**
+ * True if the square is water terrain.
+ */
+bool square_iswater(struct chunk *c, struct loc grid) {
+	return feat_is_water(square(c, grid)->feat);
+}
+
+/**
+ * True if the square is deep water terrain.
+ */
+bool square_isdeepwater(struct chunk *c, struct loc grid) {
+	return feat_is_deep_water(square(c, grid)->feat);
+}
+
+/**
  * True if the square can burn away.
  */
 bool square_isflammable(struct chunk *c, struct loc grid) {
@@ -740,6 +770,7 @@ bool square_is_monster_walkable_for(struct chunk *c, struct loc grid,
 	assert(square_in_bounds(c, grid));
 	feat = square(c, grid)->feat;
 	if (feat_is_monster_walkable(feat)) return true;
+	if (feat_is_water(feat)) return true;
 	return mon && rf_has(mon->race->flags, RF_FLY) && feat_is_fly_passable(feat);
 }
 
@@ -762,7 +793,10 @@ bool square_ispassable_for_player(struct chunk *c, struct loc grid,
 	assert(square_in_bounds(c, grid));
 	feat = square(c, grid)->feat;
 	if (feat_is_passable(feat)) return true;
-	return p && player_of_has(p, OF_FLY) && feat_is_fly_passable(feat);
+	if (feat_is_water(feat)) return true;
+	if (!p) return false;
+	if (player_of_has(p, OF_FLY) && feat_is_fly_passable(feat)) return true;
+	return false;
 }
 
 /**

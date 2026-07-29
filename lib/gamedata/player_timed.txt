@@ -743,3 +743,12 @@ on-decrease:You feel a little less nauseated.
 msgt:GENERIC
 fail:1:PROT_NAUS
 flags:NONSTACKING | DURATION_IN_PLAYER_TURNS
+
+name:DROWNING
+desc:drowning
+grade:b:10000:Drowning:Water closes over you!
+on-end:You can breathe again.
+on-increase:You choke on the water!
+on-decrease:You struggle for air.
+msgt:GENERIC
+flags:DURATION_IN_PLAYER_TURNS

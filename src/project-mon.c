@@ -698,6 +698,12 @@ static void project_monster_handler_DISEN(project_monster_handler_context_t *con
 /* Water damage */
 static void project_monster_handler_WATER(project_monster_handler_context_t *context)
 {
+	if (!rf_has(context->mon->race->flags, RF_IM_WATER) &&
+			!rf_has(context->mon->race->flags, RF_AQUATIC)) {
+		context->mon_timed[MON_TMD_DROWNING] = adjust_radius(context,
+			randint1(3));
+	}
+
 	/* Zero out the damage because this is an immunity flag. */
 	project_monster_resist_other(context, RF_IM_WATER, 0, false, MON_MSG_IMMUNE);
 }

@@ -214,7 +214,7 @@ desc:Monstrous Hybrid
 name:hydra
 glyph:H
 pain:4
-flags:ANIMAL
+flags:ANIMAL | SWIM
 flags:ONLY_GOLD
 flags:BASH_DOOR | CLEAR_WEB
 flags:FORCE_SLEEP | HURT_COLD
@@ -382,7 +382,7 @@ desc:Quylthulg
 name:reptile
 glyph:R
 pain:5
-flags:ANIMAL | HURT_COLD | CLEAR_WEB
+flags:ANIMAL | HURT_COLD | CLEAR_WEB | SWIM
 desc:Reptile/Amphibian
 
 # Small, weak, early breeders, with one surprise non-breeder
@@ -407,7 +407,7 @@ desc:Skeleton
 name:snake
 glyph:J
 pain:5
-flags:ANIMAL | HURT_COLD
+flags:ANIMAL | HURT_COLD | SWIM
 flags:BASH_DOOR | CLEAR_WEB
 desc:Snake
 

@@ -347,6 +347,15 @@ msg:Your {name} lets you fly.
 bindui:flight_ui_compact_0:0
 desc:Flight
 
+name:swimming
+type:flag
+subtype:misc ability
+id-type:on effect
+code:SWIM
+power:4
+msg:Your {name} lets you swim.
+desc:Swimming
+
 name:regeneration
 type:flag
 subtype:misc ability
