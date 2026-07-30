@@ -949,6 +949,11 @@ bool player_set_timed(struct player *p, int idx, int v, bool notify,
 	/* Use the value */
 	p->timed[idx] = v;
 
+	/* Food is displayed as a live percentage, not just as a grade. */
+	if (idx == TMD_FOOD) {
+		p->upkeep->redraw |= PR_STATUS;
+	}
+
 	if (notify) {
 		/* Disturb */
 		if (can_disturb) {
