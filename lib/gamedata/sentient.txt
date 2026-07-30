@@ -440,6 +440,49 @@ effect:TIMED_INC:IMAGE
 dice:20+1d30
 msg:Half-remembered dreams overtake your senses.
 
+name:Buoyant
+alloc:8:5 to 100
+type:boots
+type:gloves
+type:cloak
+type:soft armor
+flags:SWIM
+values:STEALTH[-1]
+desc:a buoyant spirit that longs to propel itself and its bearer out of deep water
+
+name:Untethered
+alloc:5:15 to 100
+type:boots
+type:cloak
+type:soft armor
+flags:FLY
+combat:0:0:-2
+desc:a light, untethered spirit with little patience for the ground
+
+name:Impatient
+alloc:8:10 to 100
+type:boots
+type:gloves
+type:cloak
+type:light
+values:WIS[-1]
+desc:a fidgeting spirit that surges forward without waiting for permission
+event:25:1d250
+effect:TIMED_INC:RUNNING:0:0
+dice:10+1d15
+msg:The impatient spirit surges forward.
+
+name:Tidebound
+alloc:4:20 to 100
+type:boots
+type:gloves
+type:cloak
+type:soft armor
+type:amulet
+flags:SWIM
+values:RES_WATER[2] | INFRA[-1]
+desc:a tidal spirit that sees poorly beyond the pull of deep water
+
 
 # Archetypes (Rare)
 name:The Oracle
