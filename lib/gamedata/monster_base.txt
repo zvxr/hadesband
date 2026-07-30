@@ -168,6 +168,19 @@ pain:6
 flags:ANIMAL | CLEAR_WEB
 desc:Feline (Cat)
 
+# Water-bound animals that only live in deep water.
+name:fish
+glyph:^
+pain:5
+flags:ANIMAL | COLD_BLOOD | AQUATIC | WATER_BOUND | SWIM
+desc:Fish
+
+name:seahorse
+glyph:$
+pain:5
+flags:ANIMAL | COLD_BLOOD | AQUATIC | WATER_BOUND | SWIM
+desc:Seahorse
+
 # Giants are big, strong humanoids which hit hard and throw boulders.  They
 # may be associated with an element and have some spells, but their focus is
 # powerful melee.

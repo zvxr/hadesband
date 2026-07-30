@@ -1035,6 +1035,31 @@ static void floor_carry_fail(struct chunk *c, struct object *drop, bool broke)
 }
 
 /**
+ * Delete an object that has fallen into water.
+ */
+static void floor_carry_sink(struct chunk *c, struct loc grid,
+	struct object *drop)
+{
+	struct object *known = drop->known;
+	char o_name[80];
+	const char *verb = VERB_AGREEMENT(drop->number, "sinks", "sink");
+
+	object_desc(o_name, sizeof(o_name), drop, ODESC_BASE, player);
+	msg("The %s %s into the water!", o_name, verb);
+
+	if (known) {
+		if (!loc_is_zero(known->grid))
+			square_excise_object(player->cave, known->grid, known);
+		delist_object(player->cave, known);
+		object_delete(player->cave, NULL, &known);
+	}
+	delist_object(c, drop);
+	object_delete(c, player->cave, &drop);
+	square_note_spot(c, grid);
+	square_light_spot(c, grid);
+}
+
+/**
  * Find a grid near the given one for an object to fall on
  *
  * We check several locations to see if we can find a location at which
@@ -1165,6 +1190,12 @@ void drop_near(struct chunk *c, struct object **dropped, int chance,
 	/* Handle normal breakage */
 	if (!((*dropped)->artifact) && (randint0(100) < chance)) {
 		floor_carry_fail(c, *dropped, true);
+		return;
+	}
+
+	/* Objects dropped into water sink before they can drift to dry land. */
+	if (square_iswater(c, best)) {
+		floor_carry_sink(c, best, *dropped);
 		return;
 	}
 

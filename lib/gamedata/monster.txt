@@ -624,6 +624,283 @@ flags:RAND_25
 flags:ATTR_CLEAR
 desc:It is a smallish, transparent clot of crawling ichor.
 
+name:darting cave fish
+plural:darting cave fish
+base:fish
+color:g
+speed:120
+hit-points:5
+hearing:4
+armor-class:8
+sleepiness:20
+depth:2
+rarity:2
+experience:3
+blow:BITE:HURT:1d2
+flags:ATTR_FLICKER | RAND_25
+color-cycle:aquatic:g
+desc:A quick, pale-green fish that flashes between pool-shadow and scales as
+desc: it darts through the deep water.
+
+name:golden koi
+plural:golden koi
+base:fish
+color:y
+speed:135
+hit-points:7
+hearing:4
+armor-class:10
+sleepiness:15
+depth:3
+rarity:3
+experience:5
+blow:BITE:WATER:1d3
+innate-freq:3
+spells:WATER_WHIP
+flags:ATTR_FLICKER | RAND_25
+color-cycle:aquatic:y
+desc:A bright golden fish that moves with startling speed, snapping ribbons of
+desc: water from the dark pools around it.
+
+name:Magikarp
+plural:Magikarps
+base:fish
+color:R
+speed:110
+hit-points:28
+hearing:3
+armor-class:8
+sleepiness:10
+depth:4
+rarity:3
+experience:8
+blow:BITE:WATER:2d5
+innate-freq:1
+spell-freq:10
+spells:SPLASH_ABOUT | BLOW_BUBBLES
+flags:ATTR_FLICKER | RAND_50
+color-cycle:aquatic:R
+desc:A suspiciously useless red fish with more stamina than dignity.  Every so
+desc: often, it accidentally blows a dangerous stream of bubbles.
+
+name:reef piranha
+plural:reef piranhas
+base:fish
+color:r
+speed:125
+hit-points:14
+hearing:10
+smell:35
+armor-class:18
+sleepiness:5
+depth:8
+rarity:2
+experience:16
+blow:BITE:HURT:1d5
+flags:ATTR_FLICKER | RAND_25
+flags:GROUP_AI
+friends:100:3d4:Same
+color-cycle:aquatic:r
+desc:Small red fish with bright, hungry eyes.  One is a nuisance; a school is
+desc: a flashing red wound in the water.
+
+name:reef shark
+base:fish
+color:s
+speed:120
+hit-points:55
+hearing:20
+smell:50
+armor-class:35
+sleepiness:5
+depth:12
+rarity:2
+experience:45
+blow:BITE:WATER:2d6
+innate-freq:4
+spells:WATER_WHIP
+flags:ATTR_FLICKER | RAND_25
+flags:GROUP_AI
+friends:40:1d3:Same
+color-cycle:aquatic:s
+desc:A lean shark that lashes water ahead of its charge, then follows with a
+desc: quick tearing bite.
+
+name:hammerhead shark
+base:fish
+color:o
+speed:120
+hit-points:105
+hearing:25
+smell:55
+armor-class:48
+sleepiness:5
+depth:20
+rarity:3
+experience:145
+blow:BITE:WATER:2d8
+blow:BUTT:HURT:2d6
+innate-freq:4
+spells:WATER_WHIP
+flags:ATTR_FLICKER | RAND_25
+color-cycle:aquatic:o
+desc:A broad-headed predator that hammers through the tarn, driving a whip of
+desc: water before its jaws.
+
+name:dolphin of Poseidon
+plural:dolphins of Poseidon
+base:fish
+color:W
+speed:130
+hit-points:95
+hearing:40
+smell:25
+armor-class:42
+sleepiness:0
+depth:22
+rarity:3
+experience:170
+blow:BITE:WATER:2d5
+spell-freq:4
+spells:SONIC_CLICK
+flags:ATTR_FLICKER | SMART | RAND_25
+color-cycle:aquatic:W
+desc:A pale messenger of the sea god, graceful and unsettling.  Its clicking
+desc: song turns courage and balance against intruders.
+
+name:orca
+plural:orcas
+base:fish
+color:w
+speed:120
+hit-points:185
+hearing:35
+smell:45
+armor-class:55
+sleepiness:0
+depth:28
+rarity:3
+experience:310
+blow:BITE:WATER:3d8
+blow:CRUSH:HURT:2d8
+innate-freq:4
+spells:WATER_WHIP
+flags:ATTR_FLICKER | RAND_25
+flags:GROUP_AI
+friends:35:1d2:Same
+color-cycle:aquatic:w
+desc:A massive black-and-white hunter that moves with disciplined confidence,
+desc: striking from the deep behind a crushing surge of water.
+
+name:abyssal shark
+base:fish
+color:D
+speed:120
+hit-points:230
+hearing:30
+smell:55
+armor-class:62
+sleepiness:0
+depth:35
+rarity:4
+experience:520
+blow:BITE:WATER:3d10
+blow:BITE:HURT:2d10
+spell-freq:4
+spells:BO_NETH | DARKNESS
+flags:ATTR_FLICKER | EVIL | SMART | RAND_25
+flags:IM_NETHER | NO_CONF | NO_SLEEP
+color-cycle:aquatic:D
+desc:A shark from lightless water, marked by the will of Hades.  Nether fire
+desc: glimmers in its mouth before it vanishes back into the dark.
+
+name:coral seahorse
+base:seahorse
+color:o
+speed:110
+hit-points:55
+hearing:25
+smell:20
+armor-class:35
+sleepiness:10
+depth:20
+rarity:3
+experience:120
+blow:TOUCH:WATER:1d4
+spell-freq:4
+spells:MISSILE | CONF | ALGAE_BLOOM
+flags:ATTR_FLICKER | SMART | RAND_25
+flags:IM_WATER
+color-cycle:aquatic:o
+desc:A small coral-colored seahorse that blooms the water with magic and
+desc: sickness before darting away from its own cloud.
+
+name:hippocampus adept
+plural:hippocampus adepts
+base:seahorse
+color:B
+speed:120
+hit-points:95
+hearing:30
+smell:20
+armor-class:45
+sleepiness:5
+depth:28
+rarity:3
+experience:230
+blow:TOUCH:WATER:2d4
+spell-freq:3
+spells:BO_WATE | BA_WATE | WATER_WHIP | ALGAE_BLOOM
+flags:ATTR_FLICKER | SMART | RAND_25
+flags:IM_WATER | NO_CONF
+color-cycle:aquatic:B
+desc:A blue hippocampus trained in old sea-magic, drawing bolts and blooms out
+desc: of the water around its curled tail.
+
+name:hippocampus elder
+plural:hippocampus elders
+base:seahorse
+color:G
+speed:110
+hit-points:130
+hearing:35
+smell:20
+armor-class:58
+sleepiness:0
+depth:36
+rarity:4
+experience:390
+blow:TOUCH:WATER:2d5
+spell-freq:3
+spells:BO_COLD | HEAL | SONIC_CLICK | ALGAE_BLOOM
+flags:ATTR_FLICKER | SMART | RAND_25
+flags:IM_WATER | IM_COLD | NO_CONF | NO_SLEEP
+color-cycle:aquatic:G
+desc:A dark green elder of the hippocampi, scaled in kelp and pearl.  Its
+desc: clicks and blooms turn the tarn into an old, hostile sanctuary.
+
+name:abyssal hippocampus
+plural:abyssal hippocampi
+base:seahorse
+color:v
+speed:120
+hit-points:185
+hearing:35
+smell:25
+armor-class:68
+sleepiness:0
+depth:48
+rarity:5
+experience:760
+blow:TOUCH:WATER:3d5
+spell-freq:3
+spells:BO_NETH | DARKNESS | NAUSEA | ALGAE_BLOOM
+flags:ATTR_FLICKER | EVIL | SMART | RAND_25
+flags:IM_WATER | IM_NETHER | NO_CONF | NO_SLEEP | NO_NAUS
+color-cycle:aquatic:v
+desc:A black-violet hippocampus bound to Hades, carrying abyssal rites beneath
+desc: its fragile crown.  The water darkens wherever it turns.
+
 name:giant white mouse
 plural:giant white mice
 base:rodent

@@ -163,6 +163,60 @@ lore-color-base:Orange
 message-vis:{name} spits {type} at you.
 message-invis:You hear a soft sound.
 
+name:WATER_WHIP
+hit:100
+effect:LASH:WATER:5
+lore:whip you with water from a distance
+lore-color-base:Slate
+message-vis:{name} lashes a whip of water at you.
+message-invis:You hear water snap sharply.
+
+name:BLOW_BUBBLES
+hit:80
+effect:LASH:WATER:3
+lore:blow bubbles at you
+lore-color-base:Slate
+message-vis:{name} blows a stream of bubbles at you.
+message-invis:You hear bubbles popping.
+message-miss:{name} blows bubbles, but they drift away.
+
+name:SPLASH_ABOUT
+hit:0
+lore:splash about uselessly
+lore-color-base:Light Blue
+message-invis:You hear pointless splashing.
+message-miss:{name} splashes about!
+
+name:SONIC_CLICK
+hit:100
+effect:TIMED_INC:CONFUSED
+dice:2d3
+effect:TIMED_INC:AFRAID
+dice:2+1d4
+effect:TIMED_INC:NAUSEATED
+dice:2d3
+lore:send out disorienting sonic clicks
+lore-color-base:Yellow
+lore-color-resist:Light Green
+message-vis:{name} fills the water with piercing clicks.
+message-invis:You hear sharp clicks echo through the water.
+message-save:You steady yourself against the piercing echoes.
+
+name:ALGAE_BLOOM
+hit:100
+effect:BALL:WATER:2
+dice:$Dd4
+expr:D:SPELL_POWER:/ 4 + 4
+effect:TIMED_INC:NAUSEATED
+dice:2d3
+lore:produce nauseating blooms of algae
+lore-color-base:Dark Green
+lore-color-resist:Yellow
+lore-color-immune:Light Green
+message-vis:{name} releases a choking bloom of algae.
+message-invis:A wet, rotten smell spreads through the water.
+message-save:You fight down the sickening taste of algae.
+
 name:SHOT
 hit:50
 effect:BOLT:ARROW

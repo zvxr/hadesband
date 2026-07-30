@@ -1332,6 +1332,13 @@ void kill_arena_monster(struct monster *mon)
  */
 void monster_take_terrain_damage(struct monster *mon)
 {
+	if (rf_has(mon->race->flags, RF_WATER_BOUND) &&
+			!square_iswater(cave, mon->grid)) {
+		mon_take_nonplayer_hit(50 + randint1(50), mon, MON_MSG_FLOP_GROUND,
+			MON_MSG_FLOP_DIE);
+		if (!mon->race) return;
+	}
+
 	/* Damage the monster */
 	if (square_isfiery(cave, mon->grid)) {
 		bool fear = false;
@@ -1352,6 +1359,11 @@ void monster_take_terrain_damage(struct monster *mon)
  */
 bool monster_taking_terrain_damage(struct chunk *c, struct monster *mon)
 {
+	if (rf_has(mon->race->flags, RF_WATER_BOUND) &&
+			!square_iswater(c, mon->grid)) {
+		return true;
+	}
+
 	if (square_isdamaging(c, mon->grid) &&
 		!rf_has(mon->race->flags, square_feat(c, mon->grid)->resist_flag)) {
 		return true;

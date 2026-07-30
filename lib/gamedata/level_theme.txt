@@ -16,12 +16,6 @@
 
 # Floor Generation Themes
 
-theme:Flooded Halls
-label:Flooded Halls
-label-color:B
-spawn:3:100:100:100
-seed-room-tag:aquatic:85
-
 theme:Forest
 label:Forest
 label-color:g
@@ -31,11 +25,14 @@ spawn:50:10:100:100
 seed-room-tag:organic:80
 seed-room-tag:aquatic:20
 
-theme:Round Halls
-label:Round Halls
-label-color:u
+theme:Flooded Halls
+label:Flooded Halls
+label-color:B
 spawn:6:100:100:100
-spawn:66:100:100:100
+spawn:12:100:100:100
+spawn:24:100:100:100
+spawn:32:100:100:100
+spawn:38:100:100:100
 seed-room-tag:aquatic:75
 seed-room-tag:round:66
 

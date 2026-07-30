@@ -186,6 +186,11 @@ static bool monster_can_move(struct monster *mon, struct loc grid)
  */
 static bool monster_hates_grid(struct monster *mon, struct loc grid)
 {
+	if (rf_has(mon->race->flags, RF_WATER_BOUND) &&
+			!square_iswater(cave, grid)) {
+		return true;
+	}
+
 	/* Only some creatures can handle damaging terrain */
 	if (square_isdamaging(cave, grid) &&
 		!rf_has(mon->race->flags, square_feat(cave, grid)->resist_flag)) {

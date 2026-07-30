@@ -128,6 +128,34 @@ static void place_forest_marker(struct chunk *c, struct loc grid)
 	}
 }
 
+/**
+ * Predicate function for selecting water-bound monsters.
+ */
+static bool aquatic_room_monster_okay(struct monster_race *race)
+{
+	assert(race);
+	if (rf_has(race->flags, RF_UNIQUE)) return false;
+	return rf_has(race->flags, RF_WATER_BOUND);
+}
+
+/**
+ * Occasionally place an aquatic monster in a deep-water template cell.
+ */
+static void place_aquatic_marker(struct chunk *c, struct loc grid)
+{
+	struct monster_race *race;
+	struct monster_group_info info = { 0, 0 };
+
+	if (!one_in_(5)) return;
+
+	get_mon_num_prep(aquatic_room_monster_okay);
+	race = get_mon_num(c->depth + 1, c->depth);
+	get_mon_num_prep(NULL);
+
+	if (!race) return;
+	place_new_monster(c, grid, race, false, false, info, ORIGIN_DROP);
+}
+
 static void place_wood_nest_organic(struct chunk *c, struct loc grid)
 {
 	int roll;
@@ -1302,7 +1330,10 @@ static bool build_room_template(struct chunk *c, struct loc centre, int ymax,
 			case 'w': square_set_feat(c, grid, FEAT_WOOD); break;
 			case 'm': place_forest_marker(c, grid); break;
 			case 'p': square_set_feat(c, grid, FEAT_POOL); break;
-			case 'T': square_set_feat(c, grid, FEAT_TARN); break;
+			case 'T':
+				square_set_feat(c, grid, FEAT_TARN);
+				place_aquatic_marker(c, grid);
+				break;
 			case '+': place_closed_door(c, grid); break;
 			case '^': if (one_in_(4)) place_trap(c, grid, -1, c->depth); break;
 			case 'x': {

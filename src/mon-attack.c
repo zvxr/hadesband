@@ -187,6 +187,10 @@ static void remove_bad_spells(struct monster *mon, bitflag f[RSF_SIZE])
 	}
 	if (tdist > 3) {
 		rsf_off(f2, RSF_SPIT);
+		rsf_off(f2, RSF_BLOW_BUBBLES);
+	}
+	if (tdist > 5) {
+		rsf_off(f2, RSF_WATER_WHIP);
 	}
 
 	/* Update acquired knowledge */

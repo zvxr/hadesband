@@ -769,6 +769,8 @@ bool square_is_monster_walkable_for(struct chunk *c, struct loc grid,
 
 	assert(square_in_bounds(c, grid));
 	feat = square(c, grid)->feat;
+	if (mon && rf_has(mon->race->flags, RF_WATER_BOUND))
+		return feat_is_water(feat);
 	if (feat_is_monster_walkable(feat)) return true;
 	if (feat_is_water(feat)) return true;
 	return mon && rf_has(mon->race->flags, RF_FLY) && feat_is_fly_passable(feat);

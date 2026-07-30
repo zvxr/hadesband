@@ -135,6 +135,17 @@ lore-color-resist:Yellow
 lore-color-immune:Light Green
 lash-type:ICE
 
+name:WATER
+power:25
+eval:10
+desc:douse
+lore-color-base:Slate
+lore-color-resist:Yellow
+lore-color-immune:Light Green
+effect-type:element
+resist:WATER
+lash-type:WATER
+
 name:BLIND
 power:0
 eval:20
