@@ -719,6 +719,13 @@ on-end:You settle back to the ground.
 on-increase:You rise higher above the ground!
 flag-synonym:FLY:1
 
+name:WATER_BREATHING
+desc:water breathing
+grade:B:10000:WtrBrth:Gills open along your neck!
+on-end:The gills along your neck disappear.
+on-increase:Your gills flutter wider!
+msgt:GENERIC
+
 name:REBIRTH
 desc:rebirth
 grade:R:10000:Rebirth:Phoenix-fire gathers beneath your skin!

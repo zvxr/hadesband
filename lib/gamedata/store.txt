@@ -43,7 +43,6 @@ always:bolt:Bolt
 normal:food:Pint of Fine Wine
 normal:food:Slime Mold
 normal:food:Minoan Wine
-normal:food:Hard Biscuit
 normal:mushroom:Stoneskin
 normal:mushroom:Purging
 buy:light
@@ -251,6 +250,7 @@ slots:0:0
 turnover:9
 always:food:Apple:3d4
 always:food:Honey-cake:2d4
+always:food:Fishcake:2d4
 sometimes:50:food:Moon-cured Pork
 sometimes:50:food:Ambrosia
 sometimes:80:mushroom:Second Sight:2d4

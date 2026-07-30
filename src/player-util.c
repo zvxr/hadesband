@@ -1042,11 +1042,21 @@ bool player_check_water_travel(struct player *p, struct chunk *c,
 		return true;
 	}
 
+	if (p->timed[TMD_WATER_BREATHING] && p->timed[TMD_DROWNING]) {
+		(void)player_clear_timed(p, TMD_DROWNING, true, true);
+	}
+
 	if (!deep && player_can_wade_water(p, feat)) {
 		msg("You wade through the %s.", water_name);
 		if (p->timed[TMD_DROWNING]) {
 			(void)player_clear_timed(p, TMD_DROWNING, true, true);
 		}
+		return true;
+	}
+
+	if (p->timed[TMD_WATER_BREATHING]) {
+		msg("%s through the %s.", swimming ? "You swim" : "You struggle",
+			water_name);
 		return true;
 	}
 
@@ -1088,6 +1098,10 @@ void player_take_drowning_damage(struct player *p)
 	int i;
 
 	if (!p->timed[TMD_DROWNING]) return;
+	if (p->timed[TMD_WATER_BREATHING]) {
+		(void)player_clear_timed(p, TMD_DROWNING, true, true);
+		return;
+	}
 
 	turns = MAX(1, p->timed[TMD_DROWNING] - 1);
 	for (i = 1; i < turns && dam < 400; i++) {

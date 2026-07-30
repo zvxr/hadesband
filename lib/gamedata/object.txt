@@ -235,17 +235,21 @@ desc: damage (which occurs even against creatures resistant to fire).
 
 ### Normal Food ###
 
-name:& Hard Biscuit~
+name:& Fishcake~
 type:food
 graphics:,:U
 level:0
 weight:2
-cost:1
+cost:12
 power:0
+msg:For a moment, your throat opens to the water.
 effect:NOURISH:INC_BY
 dice:10
+effect:TIMED_INC:WATER_BREATHING
+dice:8+1d4
 effect:CRUNCH
-desc:A filling if tooth-breaking biscuit made mostly of rye.
+desc:A dense fishcake pressed flat and dried hard.  It is salty, nourishing,
+desc: and briefly leaves your neck tingling with tiny vanishing gills.
 
 name:& Apple~
 type:food

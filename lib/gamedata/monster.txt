@@ -655,7 +655,7 @@ depth:3
 rarity:3
 experience:5
 blow:BITE:WATER:1d3
-innate-freq:3
+innate-freq:9
 spells:WATER_WHIP
 flags:ATTR_FLICKER | RAND_25
 color-cycle:aquatic:y
@@ -1316,7 +1316,7 @@ experience:5
 blow:CLAW:HURT:1d1
 blow:CLAW:HURT:1d1
 blow:BITE:HURT:1d2
-flags:FEMALE | EVIL | ANIMAL
+flags:FEMALE | EVIL | ANIMAL | FLY
 flags:RAND_50
 desc:A flying, screeching bird with a woman's face.
 
@@ -1892,6 +1892,25 @@ flags:COLD_BLOOD | WEIRD_MIND | MULTIPLY | STUPID
 flags:RAND_25 | RAND_50
 flags:HURT_LIGHT | IM_COLD | NO_FEAR
 desc:It is a large slimy mass of worms.
+
+name:aquatic worm mass
+base:aquatic worm
+color:B
+speed:100
+hit-points:23
+hearing:7
+armor-class:14
+sleepiness:10
+depth:4
+rarity:2
+experience:5
+blow:CRAWL:WATER:1d4
+flags:COLD_BLOOD | WEIRD_MIND | MULTIPLY | STUPID
+flags:ATTR_FLICKER | RAND_25 | RAND_50
+flags:HURT_LIGHT | IM_WATER | NO_FEAR
+color-cycle:aquatic:B
+desc:It is a large slimy mass of pale worms, knotting and unknotting beneath
+desc: the water.
 
 name:large grey snake
 base:snake
@@ -2830,7 +2849,7 @@ experience:19
 blow:CLAW:HURT:1d2
 blow:CLAW:HURT:1d2
 blow:BITE:HURT:1d3
-flags:FEMALE | EVIL | ANIMAL
+flags:FEMALE | EVIL | ANIMAL | FLY
 flags:RAND_25
 desc:A woman's face on the body of a vicious black bird.
 

@@ -487,6 +487,12 @@ pain:1
 flags:ANIMAL
 desc:Worm/Worm Mass
 
+name:aquatic worm
+glyph:w
+pain:1
+flags:ANIMAL | AQUATIC | WATER_BOUND | SWIM
+desc:Aquatic Worm/Worm Mass
+
 # Undead which range from wights to wraiths to the Ringwraiths.  Experience
 # drainers and spellcasters; the Ringwraiths summon each other and are the
 # only monsters which get the Black Breath melee attack.

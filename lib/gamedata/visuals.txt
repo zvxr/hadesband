@@ -614,3 +614,9 @@ cycle-color:B
 cycle-color:b
 cycle-color:v
 cycle-color:b
+
+cycle:aquatic:B
+cycle-color:B
+cycle-color:b
+cycle-color:B
+cycle-color:b
