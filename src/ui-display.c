@@ -76,6 +76,7 @@ static game_event_type player_events[] =
 	EVENT_HP,
 	EVENT_MANA,
 	EVENT_AC,
+	EVENT_STATUS,
 
 	EVENT_MONSTERHEALTH,
 
@@ -357,6 +358,36 @@ static void prt_sp(int row, int col)
 	c_put_str(color, cur_sp, row, col + 3);
 	c_put_str(COLOUR_WHITE, "/", row, col + 7);
 	c_put_str(COLOUR_L_GREEN, max_sp, row, col + 8);
+}
+
+static int player_food_percent(void)
+{
+	if (!z_info->food_value) return 0;
+	return MIN(100, MAX(0, player->timed[TMD_FOOD] / z_info->food_value));
+}
+
+static uint8_t player_food_attr(void)
+{
+	int pct = player_food_percent();
+
+	if (pct <= 5) return COLOUR_RED;
+	if (pct <= 15) return COLOUR_L_RED;
+	if (pct <= 30) return COLOUR_ORANGE;
+	if (pct <= 45) return COLOUR_YELLOW;
+	if (pct < 100) return COLOUR_L_GREEN;
+	return COLOUR_GREEN;
+}
+
+/**
+ * Prints the player's current nourishment percent.
+ */
+static void prt_food(int row, int col)
+{
+	char fed[32];
+
+	put_str("Fed", row, col);
+	strnfmt(fed, sizeof(fed), "%4d%%", player_food_percent());
+	c_put_str(player_food_attr(), fed, row, col + 4);
 }
 
 /**
@@ -746,6 +777,17 @@ static int prt_sp_short(int row, int col)
 	return 5+strlen(cur_sp)+strlen(max_sp);
 }
 
+static int prt_food_short(int row, int col)
+{
+	char fed[32];
+
+	put_str("Fed:", row, col);
+	col += 4;
+	strnfmt(fed, sizeof(fed), "%d%%", player_food_percent());
+	c_put_str(player_food_attr(), fed, row, col);
+	return 5 + strlen(fed);
+}
+
 static int prt_health_short(int row, int col)
 {
 	int len = prt_health_aux(row, col);
@@ -819,6 +861,7 @@ static void update_topbar(game_event_type type, game_event_data *data,
 
 	col += prt_hp_short(row, col);
 	col += prt_sp_short(row, col);
+	col += prt_food_short(row, col);
 	col += prt_health_short(row, col);	
 	col += prt_speed_short(row, col);
 	col += prt_depth_short(row, col);
@@ -851,6 +894,7 @@ static const struct side_handler_t
 	{ prt_ac,       7, EVENT_AC },
 	{ prt_hp,       8, EVENT_HP },
 	{ prt_sp,       9, EVENT_MANA },
+	{ prt_food,     9, EVENT_STATUS },
 	{ NULL,        21, 0 },
 	{ prt_health,  12, EVENT_MONSTERHEALTH },
 	{ NULL,        20, 0 },
@@ -1286,15 +1330,9 @@ static size_t prt_tmd(int row, int col)
 				grade = grade->next;
 			}
 			if (!grade->name) continue;
+			if ((i == TMD_FOOD) && streq(grade->name, "Fed")) continue;
 			c_put_str(grade->color, grade->name, row, col + len);
 			len += strlen(grade->name) + 1;
-
-			/* Food meter */
-			if (i == TMD_FOOD) {
-				char *meter = format("%d %%", player->timed[i] / 100);
-				c_put_str(grade->color, meter, row, col + len);
-				len += strlen(meter) + 1;
-			}
 		}
 	}
 
