@@ -102,7 +102,7 @@ splint:
 
 clean-coverage:
 	rm -f tests/ran-already
-	rm -f $(GCOVS) $(GCOBJS) borg*.c.gcov
+	rm -f $(GCOVS) $(GCOBJS)
 	env CC="$(CC)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" \
 		LDFLAGS="$(LDFLAGS)" LDADD="$(LDADD)" LIBS="$(TEST_LIBS)" \
 		CROSS_COMPILE="$(CROSS_COMPILE)" \

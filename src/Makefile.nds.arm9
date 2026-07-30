@@ -35,8 +35,6 @@ endif
 CFLAGS	+=	$(INCLUDE) -DARM9
 
 # Angband flags
-# NDS hardware is too weak to handle the additional 400KB of RAM for the Borg.
-# If you really want to enable it, you'd add -DALLOW_BORG here.
 CFLAGS	+=	-DNDS -DHAVE_DIRENT_H
 
 CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions
@@ -108,7 +106,6 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@[ -d $@/borg ] || mkdir -p $@/borg
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile.nds.arm9
  
 #---------------------------------------------------------------------------------

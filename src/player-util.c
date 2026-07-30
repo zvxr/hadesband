@@ -238,8 +238,8 @@ void take_hit(struct player *p, int dam, const char *kb_str)
 		} else {
 			/*
 			 * Note cause of death.  Do it here so EVENT_CHEAT_DEATH
-			 * handlers or things looking for the "Die? " prompt
-			 * (the borg, for instance), have access to it.
+			 * handlers or things looking for the "Die? " prompt have
+			 * access to it.
 			 */
 			my_strcpy(p->died_from, kb_str, sizeof(p->died_from));
 

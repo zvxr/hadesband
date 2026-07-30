@@ -150,7 +150,7 @@ Original Keyset Command Summary
 ``,``  Stay still (with pickup)      ``^w`` (special - wizard mode)
 ``<``  Go up staircase (see note)    ``^x`` Save and quit
 ``.``  Run                           ``^y`` (unused)
-``>``  Go down staircase (see note)  ``^z`` Borg commands (if available)
+``>``  Go down staircase (see note)  ``^z`` (unused)
 ``\``  (special - bypass keymap)     ``~``  Check knowledge
  \`    (special - escape)            ``?``  Display help
 ``/``  Identify symbol
@@ -229,7 +229,7 @@ Roguelike Keyset Command Summary
  ``,``  Run                           ``^w`` (special - wizard mode)
  ``<``  Go up staircase (see note)    ``^x`` Save and quit
  ``.``  Stay still (with pickup)      ``^y`` (alter - north west)
- ``>``  Go down staircase (see note)  ``^z`` Borg commands (if available)
+ ``>``  Go down staircase (see note)  ``^z`` (unused)
  ``\``  (special - bypass keymap)     ``~``  Check knowledge
   \`    (special - escape)            ``?``  Display help
  ``/``  Identify symbol

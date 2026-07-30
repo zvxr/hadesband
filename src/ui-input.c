@@ -108,7 +108,7 @@ static ui_event inkey_aux(int scan_cutoff)
  *
  * This special pointer allows a sequence of keys to be "inserted" into
  * the stream of keys returned by "inkey()".  This key sequence cannot be
- * bypassed by the Borg.  We use it to implement keymaps.
+ * bypassed.  We use it to implement keymaps.
  */
 struct keypress *inkey_next = NULL;
 
@@ -116,18 +116,6 @@ struct keypress *inkey_next = NULL;
  * See if more propmts will be skipped while in a keymap.
  */
 static bool keymap_auto_more;
-
-#ifdef ALLOW_BORG
-
-/*
- * Mega-Hack -- special "inkey_hack" hook.  XXX XXX XXX
- *
- * This special function hook allows the "Borg" (see elsewhere) to take
- * control of the "inkey()" function, and substitute in fake keypresses.
- */
-struct keypress(*inkey_hack)(int flush_first) = NULL;
-
-#endif /* ALLOW_BORG */
 
 /**
  * Get a keypress from the user.
@@ -160,9 +148,6 @@ struct keypress(*inkey_hack)(int flush_first) = NULL;
  *
  * Mega-Hack -- This function is used as the entry point for clearing the
  * "signal_count" variable, and of the "character_saved" variable.
- *
- * Mega-Hack -- Note the use of "inkey_hack" to allow the "Borg" to steal
- * control of the keyboard from the user.
  */
 ui_event inkey_ex(void)
 {
@@ -220,24 +205,6 @@ ui_event inkey_ex(void)
 
 	/* Forget pointer */
 	inkey_next = NULL;
-
-#ifdef ALLOW_BORG
-	/* Mega-Hack -- Use the special hook */
-	if (inkey_hack)
-	{
-		ke.key = (*inkey_hack)(inkey_xtra);
-		if (ke.key.type != EVT_NONE)
-		{
-			/* Cancel the various "global parameters" */
-			inkey_flag = false;
-			inkey_scan = 0;
-			ke.type = EVT_KBRD;
-
-			/* Accept result */
-			return (ke);
-		}
-	}
-#endif /* ALLOW_BORG */
 
 	/* Get the cursor state */
 	(void)Term_get_cursor(&cursor_state);
