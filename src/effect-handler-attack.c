@@ -35,6 +35,25 @@
 #include "trap.h"
 
 
+static bool py_attack_real_with_knockback(struct player *p, struct loc grid,
+		int num_blows_x100, bool *fear)
+{
+	int old_knockback = p->timed[TMD_KNOCKBACK];
+	bool result;
+
+	if (old_knockback < 100) {
+		p->timed[TMD_KNOCKBACK] = 100;
+		p->upkeep->update |= PU_BONUS;
+	}
+
+	result = py_attack_real(p, grid, num_blows_x100, fear);
+
+	p->timed[TMD_KNOCKBACK] = old_knockback;
+	p->upkeep->update |= PU_BONUS;
+
+	return result;
+}
+
 static void get_target(struct source origin, int dir, struct loc *grid,
 					   int *flags)
 {
@@ -1226,6 +1245,8 @@ bool effect_handler_DESTRUCTION(effect_handler_context_t *context)
 				/* Deal with artifacts */
 				struct object *obj = square_object(cave, grid);
 				while (obj) {
+					struct object *next = obj->next;
+
 					if (obj->artifact) {
 						if (OPT(player, birth_lose_arts) ||
 							obj_is_known_artifact(obj)) {
@@ -1239,7 +1260,29 @@ bool effect_handler_DESTRUCTION(effect_handler_context_t *context)
 								false);
 						}
 					}
-					obj = obj->next;
+
+					/*
+					 * The pile is about to be deleted.  Reveal mimics first
+					 * so they do not retain a stale pointer to their fake
+					 * object when monsters are pushed in phase 2.
+					 */
+					if (obj->mimicking_m_idx) {
+						int midx = obj->mimicking_m_idx;
+						struct monster *mimic = (midx < cave->mon_max) ?
+							cave_monster(cave, midx) : NULL;
+
+						if (mimic && mimic->mimicked_obj == obj) {
+							become_aware(cave, mimic);
+							if (mimic->mimicked_obj == obj) {
+								mimic->mimicked_obj = NULL;
+								obj->mimicking_m_idx = 0;
+							}
+						} else {
+							obj->mimicking_m_idx = 0;
+						}
+					}
+
+					obj = next;
 				}
 
 				/* Delete objects */
@@ -1946,79 +1989,6 @@ bool effect_handler_JUMP_AND_BITE(effect_handler_context_t *context)
 }
 
 /**
- * Move up to 4 spaces then do melee blows.
- * Could vary the length of the move without much work.
- */
-bool effect_handler_MOVE_ATTACK(effect_handler_context_t *context)
-{
-	int blows = effect_calculate_value(context, false);
-	int moves = 4;
-	int d, i;
-	struct loc target = player->grid;
-	struct loc next_grid, grid_diff;
-	bool fear;
-	struct monster *mon;
-
-	/* Ask for a target */
-	if (context->dir == DIR_TARGET) {
-		target_get(&target);
-	} else {
-		target = loc_sum(player->grid, ddgrid[context->dir]);
-	}
-
-	mon = square_monster(cave, target);
-	if (mon == NULL || !monster_is_obvious(mon)) {
-		msg("This spell must target a monster.");
-		return false;
-	}
-
-	while (distance(player->grid, target) > 1 && moves > 0) {
-		int choice[] = { 0, 1, -1 };
-		bool attack = false;
-		grid_diff = loc_diff(target, player->grid);
-
-		/* Choice of direction simplified by prioritizing diagonals */
-		if (grid_diff.x == 0) {
-			d = (grid_diff.y < 0) ? 0 : 4; /* up : down */
-		} else if (grid_diff.y == 0) {
-			d = (grid_diff.x < 0) ? 6 : 2; /* left : right */
-		} else if (grid_diff.x < 0) {
-			d = (grid_diff.y < 0) ? 7 : 5; /* up-left : down-left */
-		} else {/* grid_diff.x > 0 */
-			d = (grid_diff.y < 0) ? 1 : 3; /* up-right : down-right */
-		}
-
-		/* We'll give up to 3 choices: d, d + 1, d - 1 */
-		for (i = 0; i < 3; i++) {
-			int d_test = (d + choice[i] + 8) % 8;
-			next_grid = loc_sum(player->grid, clockwise_grid[d_test]);
-			if (square_ispassable(cave, next_grid)) {
-				d = d_test;
-				if (square_monster(cave, next_grid)) attack = true;
-				break;
-			} else if (i == 2) {
-				msg("The way is barred.");
-				return moves != 4;
-			}
-		}
-
-		move_player(clockwise_ddd[d], false);
-		moves--;
-		if (attack) return false;
-	}
-
-	/* Reduce blows based on distance traveled, round to nearest blow */
-	blows = (blows * moves + 2) / 4;
-
-	/* Should return some energy if monster dies early */
-	while (blows-- > 0) {
-		if (py_attack_real(player, target, 100, &fear)) break;
-	}
-
-	return true;
-}
-
-/**
  * Enter single combat with an enemy
  */
 bool effect_handler_SINGLE_COMBAT(effect_handler_context_t *context)
@@ -2067,6 +2037,42 @@ bool effect_handler_SINGLE_COMBAT(effect_handler_context_t *context)
 	player->upkeep->arena_level = true;
 	player->old_grid = player->grid;
 	dungeon_change_level(player, player->depth);
+	return true;
+}
+
+
+bool effect_handler_MELEE_KNOCKBACK(effect_handler_context_t *context)
+{
+	int might = effect_calculate_value(context, false);
+	bool fear;
+	int taim;
+	struct loc target = loc(-1, -1);
+	struct loc grid = player->grid;
+	struct monster *mon = NULL;
+
+	/* players only for now */
+	if (context->origin.what != SRC_PLAYER)
+		return false;
+
+	/* Ask for a target if no direction given */
+	if (context->dir == DIR_TARGET && target_okay()) {
+		target_get(&target);
+	} else {
+		target = loc_sum(player->grid, ddgrid[context->dir]);
+	}
+
+	/* Check target validity */
+	taim = distance(grid, target);
+	mon = square_monster(cave, target);
+	if (taim > 1) {
+		msgt(MSG_GENERIC, "Target too far away (%d).", taim);
+		return false;
+	} else if (!mon) {
+		msg("You must attack a monster.");
+		return false;
+	}
+
+	py_attack_real_with_knockback(player, target, 100 * might, &fear);
 	return true;
 }
 

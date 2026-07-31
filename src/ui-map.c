@@ -122,6 +122,9 @@ static void grid_get_attr(struct grid_data *g, int *a)
 			case LIGHTING_DARK: *a = get_color(*a, ATTR_DARK, 2); break;
 			default: break;
 		}
+
+		if (g->lighting == LIGHTING_DARK && g->f_idx == FEAT_TARN)
+			*a = COLOUR_PURPLE;
 	}
 
 	/* Add the attr inversion back for GCU */
