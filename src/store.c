@@ -46,6 +46,9 @@
 
 static void store_maint(struct store *s);
 
+#define STORE_MAX_LEVEL 5
+#define STORE_BASE_MAX_COST 10000
+
 /**
  * ------------------------------------------------------------------------
  * Constants and definitions
@@ -122,6 +125,10 @@ static void cleanup_stores(void)
 			stock_next = stock->next;
 			mem_free(stock);
 		}
+		for (stock = store->unlocks; stock; stock = stock_next) {
+			stock_next = stock->next;
+			mem_free(stock);
+		}
 	}
 	mem_free(stores);
 }
@@ -148,6 +155,7 @@ static enum parser_error parse_store(struct parser *p) {
 	s = &stores[f_info[feat].shopnum - 1];
 	s->feat = feat;
 	s->stock_size = z_info->store_inven_max;
+	s->level = 1;
 	parser_setpriv(p, s);
 	return PARSE_ERROR_NONE;
 }
@@ -278,9 +286,45 @@ static enum parser_error parse_sometimes(struct parser *p) {
 	stock = mem_zalloc(sizeof(*stock));
 	stock->kind = kind;
 	stock->chance = chance;
+	stock->level = 1;
 	stock->quantity = quantity;
 	stock->next = s->sometimes;
 	s->sometimes = stock;
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_unlock(struct parser *p) {
+	struct store *s = parser_priv(p);
+	struct object_stock *stock;
+	unsigned int level = parser_getuint(p, "level");
+	unsigned int chance = parser_getuint(p, "chance");
+	int tval = tval_find_idx(parser_getsym(p, "tval"));
+	int sval = lookup_sval(tval, parser_getsym(p, "sval"));
+	struct object_kind *kind = lookup_kind(tval, sval);
+	random_value quantity = { 0, 0, 0, 0 };
+
+	if (!s)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (level < 2 || level > STORE_MAX_LEVEL)
+		return PARSE_ERROR_INVALID_VALUE;
+	if (chance > 100)
+		return PARSE_ERROR_INVALID_VALUE;
+	if (!kind)
+		return PARSE_ERROR_UNRECOGNISED_SVAL;
+	if (parser_hasval(p, "quantity")) {
+		quantity = parser_getrand(p, "quantity");
+		if (randcalc(quantity, 0, MINIMISE) < 1)
+			return PARSE_ERROR_INVALID_VALUE;
+	}
+
+	stock = mem_zalloc(sizeof(*stock));
+	stock->kind = kind;
+	stock->chance = chance;
+	stock->level = level;
+	stock->quantity = quantity;
+	stock->next = s->unlocks;
+	s->unlocks = stock;
 
 	return PARSE_ERROR_NONE;
 }
@@ -350,6 +394,7 @@ struct parser *init_parse_stores(void) {
 	parser_reg(p, "normal sym tval sym sval", parse_normal);
 	parser_reg(p, "always sym tval ?sym sval ?rand quantity", parse_always);
 	parser_reg(p, "sometimes uint chance sym tval sym sval ?rand quantity", parse_sometimes);
+	parser_reg(p, "unlock uint level uint chance sym tval sym sval ?rand quantity", parse_unlock);
 	parser_reg(p, "buy str base", parse_buy);
 	parser_reg(p, "buy-flag sym flag str base", parse_buy_flag);
 	/*
@@ -478,6 +523,60 @@ static bool store_sale_should_reduce_stock(struct store *store,
 static bool store_uses_black_market_price(const struct store *store)
 {
 	return store->feat == FEAT_STORE_BLACK || store->feat == FEAT_STORE_DUNGEON;
+}
+
+static uint8_t store_level_from_experience(uint32_t experience)
+{
+	if (experience >= 160000) return 5;
+	if (experience >= 80000) return 4;
+	if (experience >= 40000) return 3;
+	if (experience >= 20000) return 2;
+	return 1;
+}
+
+static const char *store_level_name(const struct store *store)
+{
+	return f_info[store->feat].name ? f_info[store->feat].name : "The store";
+}
+
+static bool store_has_level_unlocks(const struct store *store)
+{
+	return store && store->unlocks;
+}
+
+int store_level_max_cost(const struct store *store)
+{
+	uint8_t level = store ? store->level : 1;
+
+	if (level < 1) level = 1;
+	if (level > STORE_MAX_LEVEL) level = STORE_MAX_LEVEL;
+
+	return STORE_BASE_MAX_COST * level;
+}
+
+static void store_add_experience(struct store *store, int amount)
+{
+	uint8_t old_level, new_level;
+
+	if (!store || amount <= 0 || store->feat == FEAT_HOME) return;
+
+	old_level = store->level ? store->level :
+		store_level_from_experience(store->experience);
+	store->experience += amount;
+	new_level = store_level_from_experience(store->experience);
+
+	if (new_level > old_level) {
+		store->level = new_level;
+		msg("%s has been upgraded to level %d.",
+			store_level_name(store), store->level);
+		if (store_has_level_unlocks(store)) {
+			msg("Its new stock will appear after the next restock.");
+		} else {
+			msg("It can now pay more for valuable goods.");
+		}
+	} else {
+		store->level = old_level;
+	}
 }
 
 
@@ -639,13 +738,10 @@ int price_item(struct store *store, const struct object *obj,
 {
 	int adjust = 100;
 	int price;
-	struct owner *proprietor;
 
 	if (!store) {
 		return 0;
 	}
-
-	proprietor = store->owner;
 
 	/* Get the value of the stack of wands, or a single item */
 	if (tval_can_have_charges(obj)) {
@@ -718,8 +814,8 @@ int price_item(struct store *store, const struct object *obj,
 	}
 
 	/* Now limit the price to the purse limit */
-	if (store_buying && (price > proprietor->max_cost * qty)) {
-		price = proprietor->max_cost * qty;
+	if (store_buying && (price > store_level_max_cost(store) * qty)) {
+		price = store_level_max_cost(store) * qty;
 	}
 
 	/* Note -- Never become "free" */
@@ -1207,6 +1303,25 @@ static struct object_kind *store_get_choice(struct store *store)
 	return store->normal_table[randint0(store->normal_num)];
 }
 
+static bool store_level_unlocks_better_stock(const struct store *store)
+{
+	if (store->level < 4) return false;
+
+	return store->feat == FEAT_STORE_GENERAL ||
+		store->feat == FEAT_STORE_ARMOR ||
+		store->feat == FEAT_STORE_WEAPON;
+}
+
+static bool store_level_unlocks_better_magic(const struct store *store)
+{
+	return store->level >= 2 && store->feat == FEAT_STORE_MAGIC;
+}
+
+static bool store_level_unlocks_black_market_quality(const struct store *store)
+{
+	return store->level >= 2 && store->feat == FEAT_STORE_BLACK;
+}
+
 
 /**
  * Creates a random object and gives it to store 'store'
@@ -1221,9 +1336,16 @@ static bool store_create_random(struct store *store)
 	if (store->feat == FEAT_STORE_BLACK) {
 		min_level = player->max_depth + 5;
 		max_level = player->max_depth + 20;
+		if (store_level_unlocks_black_market_quality(store)) {
+			max_level += 5 * (MIN(store->level, 4) - 1);
+		}
 	} else {
 		min_level = 1;
 		max_level = z_info->store_magic_level + MAX(player->max_depth - 20, 0);
+		if (store_level_unlocks_better_stock(store) ||
+				store_level_unlocks_better_magic(store)) {
+			max_level += 5 * (store->level - 1);
+		}
 	}
 
 	if (min_level > 55) min_level = 55;
@@ -1257,7 +1379,12 @@ static bool store_create_random(struct store *store)
 		object_prep(obj, kind, level, RANDOMISE);
 
 		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(obj, level, false, false, false, false, false);
+		apply_magic(obj, level, false,
+			(store_level_unlocks_better_stock(store) && one_in_(3)) ||
+				(store_level_unlocks_black_market_quality(store) && one_in_(4)),
+			(store_level_unlocks_better_stock(store) && one_in_(8)) ||
+				(store_level_unlocks_black_market_quality(store) && one_in_(10)),
+			store_level_unlocks_better_magic(store), false);
 		assert(!obj->artifact);
 
 		/* Reject if item is 'damaged' (negative combat mods, curses) */
@@ -1360,13 +1487,19 @@ static struct object *store_create_item(struct store *store,
 /**
  * Maintain chance-stocked items defined by the store data.
  */
-static void store_maint_sometimes(struct store *s)
+static void store_maint_stock_list(struct store *s, struct object_stock *list,
+		bool check_level)
 {
 	struct object_stock *stock;
 
-	for (stock = s->sometimes; stock; stock = stock->next) {
+	for (stock = list; stock; stock = stock->next) {
 		struct object *obj = store_find_kind(s, stock->kind,
 			store_sale_should_reduce_stock);
+
+		if (check_level && s->level < stock->level) {
+			if (obj) store_delete(s, obj, obj->number);
+			continue;
+		}
 
 		if ((unsigned int) randint0(100) < stock->chance) {
 			if (!obj) store_create_item(s, stock->kind, stock->quantity);
@@ -1374,6 +1507,16 @@ static void store_maint_sometimes(struct store *s)
 			store_delete(s, obj, obj->number);
 		}
 	}
+}
+
+static void store_maint_sometimes(struct store *s)
+{
+	store_maint_stock_list(s, s->sometimes, false);
+}
+
+static void store_maint_unlocks(struct store *s)
+{
+	store_maint_stock_list(s, s->unlocks, true);
 }
 
 /**
@@ -1482,6 +1625,9 @@ static void store_maint(struct store *s)
 
 	if (s->sometimes) {
 		store_maint_sometimes(s);
+	}
+	if (s->unlocks) {
+		store_maint_unlocks(s);
 	}
 
 	if (s->turnover && s->normal_stock_max > 0) {
@@ -2067,6 +2213,7 @@ void do_cmd_sell(struct command *cmd)
 		msg("You had %s (%c).", o_name, label);
 	} else {
 		msg("You sold %s (%c) for %d gold.", o_name, label, price);
+		store_add_experience(store, price);
 
 		/* Analyze the prices (and comment verbally) */
 		purchase_analyze(price, value, dummy);

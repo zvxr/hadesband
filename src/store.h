@@ -35,6 +35,7 @@ struct object_stock {
 	struct object_stock *next;
 	struct object_kind *kind;
 	unsigned int chance;
+	uint8_t level;
 	random_value quantity;
 };
 
@@ -68,6 +69,7 @@ struct store {
 
 	/* Chance to stock these items */
 	struct object_stock *sometimes;
+	struct object_stock *unlocks;
 
 	/* Buy these items */
 	struct object_buy *buy;
@@ -75,6 +77,8 @@ struct store {
 	int turnover;
 	int normal_stock_min;
 	int normal_stock_max;
+	uint8_t level;
+	uint32_t experience;
 };
 
 extern struct store *stores;
@@ -88,6 +92,7 @@ struct object *store_carry(struct store *store, struct object *obj);
 void store_reset(void);
 void store_shuffle(struct store *store);
 void store_update(void);
+int store_level_max_cost(const struct store *store);
 int price_item(struct store *store, const struct object *obj,
 			   bool store_buying, int qty);
 

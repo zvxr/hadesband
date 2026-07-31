@@ -7,8 +7,10 @@
 #                                        from terrain.txt.  Will raise an error
 #                                        if the feature in terrain.txt does not
 #                                        have the SHOP flag.
-# owner: max purse : name              - must be specfied at least once, may
-#                                        appear multiple times
+# owner: old max purse : name          - must be specfied at least once, may
+#                                        appear multiple times.  The purse
+#                                        value is legacy data; store level now
+#                                        controls the max sale price.
 # turnover: turnover                   - how many items the store turns over
 # slots: min : max                     - number of 'normal' slots to keep stocked
 # normal: type name : item name        - for the normal stocking list
@@ -19,6 +21,9 @@
 #                                      - percent chance to stock an exact item;
 #                                        quantity defaults to normal store pile
 #                                        sizing
+# unlock: level : percent : type name : item name : ?quantity
+#                                      - percent chance to stock an exact item
+#                                        once the store reaches that level
 # buy: type name                       - base types the store will buy
 # buy-flag: flag : type name           - types to buy if the flag is present
 
@@ -45,6 +50,14 @@ normal:food:Slime Mold
 normal:food:Minoan Wine
 normal:mushroom:Stoneskin
 normal:mushroom:Purging
+unlock:2:60:light:Lantern
+unlock:2:20:mushroom:Second Sight:1d2
+unlock:2:20:mushroom:Fast Recovery:1d2
+unlock:2:15:mushroom:Clear Mind:1d2
+unlock:2:15:mushroom:Sprinting:1d2
+unlock:4:8:cloak:Fur Cloak
+unlock:4:5:cloak:Elven Cloak
+unlock:4:12:digger:Pick
 buy:light
 buy:food
 buy:mushroom
@@ -81,6 +94,10 @@ normal:gloves:Set of Gauntlets
 normal:shield:Pelte
 normal:shield:Aspis
 normal:shield:Leather Shield
+unlock:4:8:boots:Pair of Steel Shod Boots
+unlock:4:8:helm:Steel Helm
+unlock:4:8:shield:Large Metal Shield
+unlock:4:8:cloak:Fur Cloak
 buy:boots
 buy:gloves
 buy:crown
@@ -127,6 +144,10 @@ normal:bow:Sling
 normal:bow:Short Bow
 normal:bow:Long Bow
 normal:bow:Light Crossbow
+unlock:4:10:hafted:Morning Star
+unlock:4:8:sword:Executioner's Sword
+unlock:4:8:polearm:Halberd
+unlock:4:8:bow:Heavy Crossbow
 buy:shot
 buy:bolt
 buy:arrow
@@ -149,6 +170,10 @@ always:prayer book
 always:magic book
 always:nature book
 always:shadow book
+unlock:4:6:magic book:[Arcane Control]
+unlock:4:6:prayer book:[Healing and Sanctuary]
+unlock:4:6:nature book:[Nature Craft]
+unlock:4:6:shadow book:[Deadly Powers]
 buy:magic book
 buy:prayer book
 buy:nature book
@@ -184,6 +209,14 @@ normal:potion:Restore Life Levels
 normal:potion:Neutralize Poison
 normal:potion:Cure Serious Wounds
 normal:potion:Cure Critical Wounds
+unlock:2:20:potion:Speed:1d2
+unlock:2:15:scroll:Teleportation:1d2
+unlock:2:15:potion:Heroism:1d2
+unlock:2:10:potion:Restore Mana
+unlock:3:4:potion:Intelligence
+unlock:3:4:potion:Wisdom
+unlock:3:4:potion:Intellect
+unlock:3:4:potion:Contemplation
 buy:scroll
 buy:amphora
 buy:potion
@@ -213,6 +246,19 @@ normal:staff:Light
 normal:staff:Mapping
 normal:staff:Detect Invisible
 normal:staff:Detect Evil
+unlock:2:15:wand:Noxious Missile
+unlock:2:15:staff:Nauseous Gas
+unlock:2:12:ring:Resist Poison
+unlock:2:12:amulet:Resist Confusion
+unlock:3:12:wand:Lightning Bolts
+unlock:3:12:wand:Frost Bolts
+unlock:3:12:staff:Teleportation
+unlock:3:10:amulet:Brilliance
+unlock:4:8:wand:Fire Bolts
+unlock:4:8:wand:Acid Bolts
+unlock:4:8:staff:Speed
+unlock:4:5:ring:Damage
+unlock:4:5:ring:Accuracy
 buy:magic book
 buy:amulet
 buy:ring

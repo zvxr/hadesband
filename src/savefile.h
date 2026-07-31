@@ -98,6 +98,7 @@ int rd_player_spells(void);
 int rd_player_spells_2(void);
 int rd_gear(void);
 int rd_stores(void);
+int rd_stores_2(void);
 int rd_dungeon(void);
 int rd_chunks(void);
 int rd_objects(void);

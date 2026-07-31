@@ -777,6 +777,10 @@ void wr_stores(void)
 		/* Save the current owner */
 		wr_byte((store->owner) ? store->owner->oidx : 0);
 
+		/* Save store upgrades */
+		wr_byte(store->level);
+		wr_u32b(store->experience);
+
 		/* Save the stock size */
 		wr_byte(store->stock_num);
 

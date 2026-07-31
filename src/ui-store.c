@@ -387,9 +387,9 @@ static void store_display_frame(struct store_context *ctx)
 		/* Put the owner name */
 		put_str(owner_name, ctx->scr_places_y[LOC_OWNER], 1);
 
-		/* Show the max price in the store (above prices) */
-		strnfmt(buf, sizeof(buf), "%s (%ld)", store_name,
-				(long)proprietor->max_cost);
+		/* Show the max price and store level (above prices) */
+		strnfmt(buf, sizeof(buf), "%s (%d - level %d)", store_name,
+				store_level_max_cost(store), store->level);
 		prt(buf, ctx->scr_places_y[LOC_OWNER],
 			ctx->scr_places_x[LOC_OWNER] - strlen(buf));
 

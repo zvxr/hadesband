@@ -1254,7 +1254,7 @@ int rd_gear(void)
 /**
  * Read store contents
  */
-static int rd_stores_aux(rd_item_t rd_item_version)
+static int rd_stores_aux(rd_item_t rd_item_version, bool has_upgrades)
 {
 	int i;
 	uint16_t tmp16u;
@@ -1269,15 +1269,27 @@ static int rd_stores_aux(rd_item_t rd_item_version)
 	for (i = 0; i < tmp16u; i++) {
 		struct store *store = (i < z_info->store_max) ?
 			 &stores[i] : NULL;
-		uint8_t own, num;
+		uint8_t own, num, level = 1;
+		uint32_t experience = 0;
 
 		/* Read the basic info */
 		rd_byte(&own);
+		if (has_upgrades) {
+			rd_byte(&level);
+			rd_u32b(&experience);
+		}
 		rd_byte(&num);
 
 		/* XXX: refactor into store.c */
 		if (store) {
 			store->owner = store_ownerbyidx(store, own);
+			store->experience = experience;
+			if (level < 1 || level > 5) level = 1;
+			if (experience >= 160000) level = MAX(level, 5);
+			else if (experience >= 80000) level = MAX(level, 4);
+			else if (experience >= 40000) level = MAX(level, 3);
+			else if (experience >= 20000) level = MAX(level, 2);
+			store->level = level;
 		}
 
 		/* Read the items */
@@ -1321,7 +1333,8 @@ static int rd_stores_aux(rd_item_t rd_item_version)
 /**
  * Read the stores - wrapper functions
  */
-int rd_stores(void) { return rd_stores_aux(rd_item); }
+int rd_stores(void) { return rd_stores_aux(rd_item, false); }
+int rd_stores_2(void) { return rd_stores_aux(rd_item, true); }
 
 
 /**
