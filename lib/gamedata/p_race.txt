@@ -347,6 +347,7 @@ age:50:25
 height:65:5
 weight:120:15
 player-flags:SIREN_SONG
+obj-flags:STRONG_SWIM
 
 name:Demigod
 stats:2:2:2:2:2

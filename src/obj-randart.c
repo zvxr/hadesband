@@ -318,6 +318,8 @@ static void store_base_power(struct artifact_set_data *data)
 			data->shield_total++; break;
 		case TV_CLOAK:
 			data->cloak_total++; break;
+		case TV_BELT:
+			data->cloak_total++; break;
 		case TV_HELM:
 		case TV_CROWN:
 			data->headgear_total++; break;
@@ -546,6 +548,9 @@ static void count_nonweapon_abilities(const struct artifact *art,
 			(data->art_probs[ART_IDX_SHIELD_AC]) += bonus;
 		} else if (art->tval == TV_CLOAK) {
 			file_putf(log_file, "Adding %d for AC bonus - cloak\n", bonus);
+			(data->art_probs[ART_IDX_CLOAK_AC]) += bonus;
+		} else if (art->tval == TV_BELT) {
+			file_putf(log_file, "Adding %d for AC bonus - belt\n", bonus);
 			(data->art_probs[ART_IDX_CLOAK_AC]) += bonus;
 		} else if (art->tval == TV_SOFT_ARMOR ||
 				   art->tval == TV_HARD_ARMOR ||
@@ -1487,6 +1492,7 @@ static void artifact_prep(struct artifact *art, const struct object_kind *kind,
 		case TV_CROWN:
 		case TV_SHIELD:
 		case TV_CLOAK:
+		case TV_BELT:
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
@@ -1573,6 +1579,7 @@ static void build_freq_table(struct artifact *art, int *freq,
 	if (art->tval == TV_BOOTS || art->tval == TV_GLOVES ||
 		art->tval == TV_HELM || art->tval == TV_CROWN ||
 		art->tval == TV_SHIELD || art->tval == TV_CLOAK ||
+		art->tval == TV_BELT ||
 		art->tval == TV_SOFT_ARMOR || art->tval == TV_HARD_ARMOR ||
 		art->tval == TV_DRAG_ARMOR) {
 		size_t n = N_ELEMENTS(art_idx_allarmor);
@@ -1610,6 +1617,13 @@ static void build_freq_table(struct artifact *art, int *freq,
 
 	/* Cloak abilities */
 	if (art->tval == TV_CLOAK) {
+		size_t n = N_ELEMENTS(art_idx_cloak);
+		for (j = 0; j < n; j++)
+			f_temp[art_idx_cloak[j]] = data->art_probs[art_idx_cloak[j]];
+	}
+
+	/* Belt abilities */
+	if (art->tval == TV_BELT) {
 		size_t n = N_ELEMENTS(art_idx_cloak);
 		for (j = 0; j < n; j++)
 			f_temp[art_idx_cloak[j]] = data->art_probs[art_idx_cloak[j]];

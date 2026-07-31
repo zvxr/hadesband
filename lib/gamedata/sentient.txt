@@ -26,6 +26,7 @@
 #type:crown
 #type:shield
 #type:cloak
+#type:belt
 #type:soft armor
 #type:hard armor
 #type:dragon armor
@@ -45,6 +46,7 @@ type:gloves
 type:helm
 type:crown
 type:shield
+type:belt
 type:soft armor
 type:hard armor
 type:dragon armor
@@ -60,6 +62,7 @@ type:sword
 type:boots
 type:helm
 type:cloak
+type:belt
 type:soft armor
 type:hard armor
 type:dragon armor
@@ -81,6 +84,7 @@ type:crown
 type:shield
 type:hard armor
 type:dragon armor
+type:belt
 type:ring
 values:CON[3] | STR[-2]
 desc:a will to persist
@@ -94,6 +98,7 @@ type:helm
 type:crown
 type:shield
 type:cloak
+type:belt
 type:soft armor
 type:hard armor
 type:dragon armor
@@ -113,6 +118,7 @@ type:gloves
 type:helm
 type:shield
 type:cloak
+type:belt
 type:soft armor
 type:light
 type:amulet
@@ -132,6 +138,7 @@ type:helm
 type:crown
 type:shield
 type:cloak
+type:belt
 type:soft armor
 type:hard armor
 type:dragon armor

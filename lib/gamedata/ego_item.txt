@@ -986,6 +986,99 @@ flags:SUST_INT | IGNORE_ACID | RAND_POWER
 values:INT[d2] | STEALTH[d3]
 min-values:INT[1] | STEALTH[1]
 
+### Belts ###
+
+name:of Buoyancy
+info:350:5
+alloc:80:4 to 60
+type:belt
+flags:SWIM
+desc:It tugs gently upward, as if eager to keep its wearer above water.
+
+name:of Carrying
+info:700:8
+alloc:50:8 to 80
+type:belt
+values:CARRY[100]
+min-values:CARRY[100]
+desc:It settles burdens more comfortably around the waist.
+
+name:of Strength
+info:1200:12
+alloc:35:10 to 90
+type:belt
+flags:SUST_STR
+values:STR[d3]
+min-values:STR[1]
+
+name:of Endurance
+info:1600:15
+alloc:30:15 to 100
+type:belt
+flags:SUST_CON
+values:CON[d3]
+min-values:CON[1]
+
+name:of Balance
+info:1800:18
+alloc:25:18 to 100
+type:belt
+flags:FREE_ACT
+
+name:of Utility
+info:2500:20
+alloc:20:18 to 90
+type:belt
+flags:SLOW_DIGEST
+values:CARRY[100] | SEARCH[d2]
+min-values:CARRY[100] | SEARCH[0]
+act:TELE_PHASE
+time:40+d40
+desc:It keeps useful tools and quick escapes close at hand.
+
+name:of the Argonaut
+info:4500:22
+alloc:20:22 to 100
+type:belt
+flags:SWIM | HOLD_LIFE
+desc:It feels salted by impossible voyages.
+
+name:of the Wrestler
+info:7000:28
+alloc:15:28 to 100
+type:belt
+flags:FREE_ACT
+values:STR[d3] | CON[d2]
+min-values:STR[1] | CON[1]
+desc:It braces the core and refuses to yield.
+
+name:of Atlas
+info:14000:35
+alloc:8:35 to 127
+type:belt
+values:STR[d3] | CARRY[200] | RES_GRAVITY[1]
+min-values:STR[1] | CARRY[200]
+desc:It bears weight with the stubborn patience of the world.
+
+name:of Orion
+info:9000:35
+alloc:10:35 to 110
+type:belt
+values:SEARCH[d3]
+min-values:SEARCH[1]
+act:MISSILE
+time:12+d12
+desc:Its studs align like a hunter's stars.
+
+name:of Hermes
+info:100000:45
+alloc:5:45 to 127
+type:belt
+flags:FLY
+values:SPEED[d2]
+min-values:SPEED[1]
+desc:It is almost impossible to fasten before it moves again.
+
 ### Gloves ###
 
 name:of Free Action

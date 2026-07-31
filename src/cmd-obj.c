@@ -267,6 +267,45 @@ void do_cmd_takeoff(struct command *cmd)
 /**
  * Wield or wear an item
  */
+static bool choose_piercing_location(struct object *obj)
+{
+	static const char *locations[] = {
+		"left ear",
+		"right ear",
+		"eyebrow",
+		"septum",
+		"other"
+	};
+	char custom[11] = "";
+	const char *location = NULL;
+	int choice;
+
+	choice = get_power_menu("Place the piercing where? ", locations,
+		N_ELEMENTS(locations));
+	if (choice < 0) return false;
+
+	if (choice == 4) {
+		if (!get_string("Pierce where? ", custom, sizeof(custom))) {
+			return false;
+		}
+		if (!custom[0]) {
+			msg("You must choose a place for the piercing.");
+			return false;
+		}
+		location = custom;
+	} else {
+		location = locations[choice];
+	}
+
+	obj->piercing_location = quark_add(location);
+	if (obj->known) {
+		obj->known->piercing_location = obj->piercing_location;
+	}
+
+	return true;
+}
+
+
 void do_cmd_wield(struct command *cmd)
 {
 	struct object *equip_obj;
@@ -296,6 +335,17 @@ void do_cmd_wield(struct command *cmd)
 
 	/* If the slot is open, wield and be done */
 	if (!equip_obj) {
+		if (tval_is_piercing(obj)) {
+			object_desc(o_name, sizeof(o_name), obj,
+				ODESC_PREFIX | ODESC_FULL, player);
+			if (!get_check(format("Piercing yourself with %s is irreversible.  Proceed? ",
+					o_name))) {
+				return;
+			}
+			if (!choose_piercing_location(obj)) {
+				return;
+			}
+		}
 		inven_wield(obj, slot);
 		return;
 	}

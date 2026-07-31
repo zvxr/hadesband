@@ -475,6 +475,9 @@ void wield_all(struct player *p)
 		assert(obj);
 
 		/* Make sure we can wield it */
+		if (tval_is_piercing(obj)) {
+			continue;
+		}
 		slot = wield_slot(obj);
 		if (slot < 0 || slot >= p->body.count)
 			continue;
@@ -611,6 +614,72 @@ static void player_birth_item(struct player *p, const char *tval_name,
 	kind->everseen = true;
 }
 
+
+static const struct artifact *player_birth_artifact(const char *name)
+{
+	return lookup_artifact_name(name);
+}
+
+
+static void player_birth_artifact_item(struct player *p, const char *name)
+{
+	const struct artifact *art = player_birth_artifact(name);
+	struct object_kind *kind;
+	struct object *obj;
+
+	if (!art) return;
+
+	kind = lookup_kind(art->tval, art->sval);
+	if (!kind) return;
+
+	obj = object_new();
+	object_prep(obj, kind, art->alloc_min, RANDOMISE);
+	obj->number = 1;
+	obj->origin = ORIGIN_BIRTH;
+	obj->artifact = art;
+	copy_artifact_data(obj, art);
+
+	obj->known = object_new();
+	object_reveal_relic(p, obj);
+	inven_carry(p, obj, true, false);
+
+	kind->everseen = true;
+	mark_artifact_created(art, true);
+	mark_artifact_seen(art, true);
+	mark_artifact_everseen(art, true);
+}
+
+
+static void player_birth_debug_kit(struct player *p)
+{
+	static const char *belt_artifacts[] = {
+		"Ariadne's Thread",
+		"The Fisherman's Sash",
+		"Girdle of Hippolyta",
+		"The Sash of the Siren"
+	};
+	size_t i;
+
+	player_birth_item(p, "potion", "Experience", 1);
+	player_birth_item(p, "piercing", "Ruby Piercing", 1);
+	player_birth_item(p, "piercing", "Ruby Piercing", 1);
+	player_birth_item(p, "piercing", "Amber Piercing", 1);
+	player_birth_item(p, "piercing", "Amber Piercing", 1);
+	player_birth_item(p, "piercing", "Sapphire Piercing", 1);
+	player_birth_item(p, "piercing", "Sapphire Piercing", 1);
+	player_birth_item(p, "piercing", "Amethyst Piercing", 1);
+	player_birth_item(p, "piercing", "Amethyst Piercing", 1);
+	player_birth_item(p, "scroll", "Identify Rune", 4);
+	player_birth_item(p, "scroll", "Identify Relic", 4);
+
+	for (i = 0; i < N_ELEMENTS(belt_artifacts); i++) {
+		player_birth_artifact_item(p, belt_artifacts[i]);
+	}
+
+	p->au = 50000;
+	p->au_birth = 50000;
+}
+
 static void player_outfit(struct player *p)
 {
 	int i;
@@ -693,6 +762,9 @@ static void player_outfit(struct player *p)
 		player_birth_item(p, "scroll", "Deep Descent", 4);
 		p->au += 20000;
 		p->au_birth += 20000;
+	}
+	if (OPT(p, birth_debug_start)) {
+		player_birth_debug_kit(p);
 	}
 
 	/* Sanity check */

@@ -65,6 +65,8 @@ bool object_has_standard_to_h(const struct object *obj);
 bool object_has_rune(const struct object *obj, int rune_no);
 bool object_runes_known(const struct object *obj);
 bool object_fully_known(const struct object *obj);
+bool object_piercing_is_revealed(const struct object *obj);
+const char *object_piercing_name(const struct object *obj);
 bool object_flag_is_known(const struct player *p, const struct object *obj,
 	int flag);
 bool object_element_is_known(const struct player *p, const struct object *obj,
@@ -95,6 +97,7 @@ void equip_learn_element(struct player *p, int element);
 void equip_learn_after_time(struct player *p);
 
 void object_learn_unknown_rune(struct player *p, struct object *obj);
+void object_reveal_piercing(struct object *obj);
 void object_reveal_relic(struct player *p, struct object *obj);
 void object_learn_on_wield(struct player *p, struct object *obj);
 void shape_learn_on_assume(struct player *p, const char *name);

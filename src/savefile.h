@@ -19,7 +19,7 @@
 #define INCLUDED_SAVEFILE_H
 
 #define FINISHED_CODE 255
-#define ITEM_VERSION	7
+#define ITEM_VERSION	9
 #define EGO_ART_KNOWN 0xffffffff
 
 /**

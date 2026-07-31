@@ -209,7 +209,15 @@ static void wr_item(const struct object *obj)
 	wr_u16b(obj->time.dice);
 	wr_u16b(obj->time.sides);
 
-	/* Save the inscription (if any) */
+	/* Save piercing placement, private name, and inscription, if any. */
+	if (obj->piercing_location)
+		wr_string(quark_str(obj->piercing_location));
+	else
+		wr_string("");
+	if (obj->piercing_name)
+		wr_string(quark_str(obj->piercing_name));
+	else
+		wr_string("");
 	if (obj->note)
 		wr_string(quark_str(obj->note));
 	else

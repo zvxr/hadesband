@@ -75,6 +75,16 @@ static size_t max_len;
 static int ex_width;
 static int ex_offset;
 
+static char equip_label_for_slot(int slot)
+{
+	return (slot == 0) ? '0' : all_letters_nohjkl[slot - 1];
+}
+
+static const char *equipment_labels(void)
+{
+	return "0abcdefgimnoprstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+}
+
 /**
  * ------------------------------------------------------------------------
  * Display of individual objects in lists or for selection
@@ -289,7 +299,8 @@ static void build_obj_list(int last, struct object **list, item_tester tester,
 		/* Acceptable items get a label */
 		if (object_test(tester, obj) ||	(obj && tval_is_money(obj) && gold_ok))
 			strnfmt(items[num_obj].label, sizeof(items[num_obj].label), "%c) ",
-				quiver ? I2D(i) : all_letters_nohjkl[i]);
+				quiver ? I2D(i) : (equip ? equip_label_for_slot(i) :
+				all_letters_nohjkl[i]));
 
 		/* Unacceptable items are still sometimes shown */
 		else if ((!obj && show_empty) || in_term)
@@ -808,7 +819,7 @@ static void menu_header(void)
 		if (e1 <= e2) {
 			/* Build the header */
 			strnfmt(tmp_val, sizeof(tmp_val), " %c-%c,",
-				all_letters_nohjkl[e1], all_letters_nohjkl[e2]);
+				equip_label_for_slot(e1), equip_label_for_slot(e2));
 
 			/* Append */
 			my_strcat(out_val, tmp_val, sizeof(out_val));
@@ -1153,6 +1164,8 @@ static struct object *item_menu(cmd_code cmd, int prompt_size, int mode)
 	menu_setpriv(m, num_obj, items);
 	if (player->upkeep->command_wrk == USE_QUIVER)
 		m->selections = "0123456789";
+	else if (player->upkeep->command_wrk == USE_EQUIP)
+		m->selections = equipment_labels();
 	else
 		m->selections = all_letters_nohjkl;
 	m->switch_keys = "/|-";

@@ -100,6 +100,7 @@ enum game_modes
 	GM_CLASSIC_BOOSTED,
 	GM_RECALL_BOOSTED,
 	GM_NIGHTMARE_BOOSTED,
+	GM_DEBUG,
 	MAX_GAME_MODES
 };
 
@@ -360,6 +361,9 @@ static void game_mode_help(int i, void *db, const region *l)
 		case GM_NIGHTMARE_BOOSTED:
 			text_out_e("Descend only, with no return to town.");
 			boosted = true;
+			break;
+		case GM_DEBUG:
+			text_out_e("Classic mode with extra gold and test items for debugging.");
 			break;
 		case MAX_GAME_MODES: break; // to shut up enum case warning...
 	}
@@ -640,7 +644,8 @@ static void setup_menus(void)
 		"Nightmare",
 		"Classic*",
 		"Recall*",
-		"Nightmare*"
+		"Nightmare*",
+		"Debug"
 	};
 
 	struct birthmenu_data *mdata;
@@ -933,6 +938,7 @@ static enum birth_stage menu_question(enum birth_stage current,
 				OPT(player, birth_connect_stairs) = true;
 				OPT(player, birth_levels_persist) = false;
 				OPT(player, birth_boosted_start) = false;
+				OPT(player, birth_debug_start) = false;
 				player->opts.stair_skip = 2;
 				switch ((enum game_modes)current_menu->cursor) {
 					case GM_CLASSIC:
@@ -961,6 +967,11 @@ static enum birth_stage menu_question(enum birth_stage current,
 						OPT(player, birth_force_descend) = true;
 						OPT(player, birth_no_recall) = true;
 						OPT(player, birth_boosted_start) = true;
+						break;
+					case GM_DEBUG:
+						OPT(player, birth_force_descend) = false;
+						OPT(player, birth_no_recall) = false;
+						OPT(player, birth_debug_start) = true;
 						break;
 					case MAX_GAME_MODES: break; // to shut up enum case warning...
 				}
@@ -1452,14 +1463,14 @@ static enum birth_stage get_name_command(void)
 	 * player.
 	 */
 	if (arg_force_name) {
-		next = BIRTH_HISTORY_CHOICE;
+		next = BIRTH_FINAL_CONFIRM;
 	} else if (get_character_name(name, sizeof(name))
 			&& (savefile[0]
 			|| !savefile_name_already_used(name, true, true)
 			|| get_check("A savefile for that name exists.  Overwrite it? "))) {
 		cmdq_push(CMD_NAME_CHOICE);
 		cmd_set_arg_string(cmdq_peek(), "name", name);
-		next = BIRTH_HISTORY_CHOICE;
+		next = BIRTH_FINAL_CONFIRM;
 	} else {
 		next = BIRTH_BACK;
 	}
@@ -1664,40 +1675,20 @@ static int edit_text(char *buffer, int buflen) {
  * ------------------------------------------------------------------------ */
 static enum birth_stage get_history_command(void)
 {
-	enum birth_stage next = 0;
-	struct keypress ke;
-	char old_history[240];
+	char history[240];
 
-	/* Save the original history */
-	my_strcpy(old_history, player->history, sizeof(old_history));
+	my_strcpy(history, player->history, sizeof(history));
 
-	/* Ask for some history */
-	prt("Accept character history? [y/n]", 0, 0);
-	ke = inkey();
-
-	/* Quit, go back, change history, or accept */
-	if (ke.code == KTRL('X')) {
-		quit(NULL);
-	} else if (ke.code == ESCAPE) {
-		next = BIRTH_BACK;
-	} else if (ke.code == 'N' || ke.code == 'n') {
-		char history[240];
-		my_strcpy(history, player->history, sizeof(history));
-
-		switch (edit_text(history, sizeof(history))) {
-			case -1:
-				next = BIRTH_BACK;
-				break;
-			case 0:
-				cmdq_push(CMD_HISTORY_CHOICE);
-				cmd_set_arg_string(cmdq_peek(), "history", history);
-				next = BIRTH_HISTORY_CHOICE;
-		}
-	} else {
-		next = BIRTH_FINAL_CONFIRM;
+	switch (edit_text(history, sizeof(history))) {
+		case -1:
+			break;
+		case 0:
+			cmdq_push(CMD_HISTORY_CHOICE);
+			cmd_set_arg_string(cmdq_peek(), "history", history);
+			break;
 	}
 
-	return next;
+	return BIRTH_FINAL_CONFIRM;
 }
 
 /**
@@ -1706,7 +1697,7 @@ static enum birth_stage get_history_command(void)
  * ------------------------------------------------------------------------ */
 static enum birth_stage get_confirm_command(void)
 {
-	const char *prompt = "['ESC' to step back, 'S' to start over, or any other key to continue]";
+	const char *prompt = "[ESC back, C history, S restart, any other key begins]";
 	struct keypress ke;
 
 	enum birth_stage next = BIRTH_RESET;
@@ -1722,6 +1713,8 @@ static enum birth_stage get_confirm_command(void)
 		next = BIRTH_RESET;
 	} else if (ke.code == KTRL('X')) {
 		quit(NULL);
+	} else if (ke.code == 'C' || ke.code == 'c') {
+		next = BIRTH_HISTORY_CHOICE;
 	} else if (ke.code == ESCAPE) {
 		next = BIRTH_BACK;
 	} else {
@@ -1898,7 +1891,7 @@ int textui_do_birth(void)
 
 				next = get_confirm_command();
 				if (next == BIRTH_BACK)
-					next = BIRTH_HISTORY_CHOICE;
+					next = BIRTH_NAME_CHOICE;
 
 				if (next == BIRTH_COMPLETE)
 					done = true;

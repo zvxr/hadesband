@@ -52,6 +52,7 @@ typedef enum game_event_type
 	EVENT_EXPLOSION,
 	EVENT_BOLT,
 	EVENT_MISSILE,
+	EVENT_MONSTER_MOVE,
 
 	EVENT_INVENTORY,
 	EVENT_EQUIPMENT,
@@ -169,6 +170,14 @@ typedef union
 
 	struct
 	{
+		int oy;
+		int ox;
+		int y;
+		int x;
+	} monster_move;
+
+	struct
+	{
 		int h, w;
 	} size;
 
@@ -244,6 +253,11 @@ void event_signal_missile(game_event_type type,
 						  bool seen,
 						  int y,
 						  int x);
+void event_signal_monster_move(game_event_type type,
+							   int oy,
+							   int ox,
+							   int y,
+							   int x);
 void event_signal_size(game_event_type type, int h, int w);
 void event_signal_tunnel(game_event_type type, int nstep, int npierce, int ndug,
 	int dstart, int dend, bool early);

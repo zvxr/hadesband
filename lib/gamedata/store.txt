@@ -50,6 +50,10 @@ normal:food:Slime Mold
 normal:food:Minoan Wine
 normal:mushroom:Stoneskin
 normal:mushroom:Purging
+normal:belt:Cloth Belt
+normal:belt:Braided Belt
+normal:belt:Leather Belt
+normal:belt:Chain Belt
 unlock:2:60:light:Lantern
 unlock:2:20:mushroom:Second Sight:1d2
 unlock:2:20:mushroom:Fast Recovery:1d2
@@ -58,12 +62,15 @@ unlock:2:15:mushroom:Sprinting:1d2
 unlock:4:8:cloak:Fur Cloak
 unlock:4:5:cloak:Elven Cloak
 unlock:4:12:digger:Pick
+unlock:4:8:belt:Bronze Girdle
+unlock:4:6:belt:Copper Girdle
 buy:light
 buy:food
 buy:mushroom
 buy:flask
 buy:digger
 buy:cloak
+buy:belt
 buy:shot
 buy:bolt
 buy:arrow

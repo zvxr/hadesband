@@ -2047,12 +2047,13 @@ dice:20+1d30
 desc:Destroys an adjacent section of wall or rubble, unless it is a permanent
 desc: wall.  Deals 20+1d30 damage to monsters vulnerable to rock remover.
 
-spell:Leap into Battle:10:5:30:10
+spell:Heavy Blow:10:5:30:10
 effect:MELEE_KNOCKBACK
 dice:$B
 expr:B:PLAYER_LEVEL:+ 5 / 15
-desc:You make a knockback melee blow at x1 might against an adjacent enemy.
-desc: You gain one additional might at levels 25 and 40.
+desc:You strike an adjacent enemy with a heavy melee blow that can knock it
+desc: backward.  The blow starts at x1 might and gains one additional might
+desc: at levels 25 and 40.
 
 spell:Grim Purpose:13:8:30:12
 effect:SET_VALUE

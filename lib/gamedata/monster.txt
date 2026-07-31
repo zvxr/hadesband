@@ -708,20 +708,20 @@ name:reef shark
 base:fish
 color:s
 speed:120
-hit-points:55
+hit-points:42
 hearing:20
 smell:50
-armor-class:35
+armor-class:26
 sleepiness:5
 depth:12
 rarity:2
-experience:45
-blow:BITE:WATER:2d6
+experience:34
+blow:BITE:WATER:2d5
 innate-freq:4
 spells:WATER_WHIP
 flags:ATTR_FLICKER | RAND_25
 flags:GROUP_AI
-friends:40:1d3:Same
+friends:25:1d2:Same
 color-cycle:aquatic:s
 desc:A lean shark that lashes water ahead of its charge, then follows with a
 desc: quick tearing bite.
@@ -11309,6 +11309,7 @@ blow:CLAW:HURT:3d8
 blow:BITE:EXP_40:4d6
 blow:BITE:EXP_40:4d6
 flags:IM_COLD | IM_POIS | IM_NETHER
+flags:SWIM
 innate-freq:6
 spells:BR_DARK | BR_NETH | BR_POIS
 desc:A sea-green winged temptress whose song draws the living toward ruin,

@@ -84,10 +84,14 @@ static const char *obj_desc_get_basename(const struct object *obj, bool aware,
 		bool terse, uint32_t mode, const struct player *p)
 {
 	bool show_flavor = !terse && obj->kind->flavor;
+	const char *piercing_name;
 
 	if (mode & ODESC_STORE)
 		show_flavor = false;
 	if (aware && p && !OPT(p, show_flavors)) show_flavor = false;
+
+	piercing_name = object_piercing_name(obj);
+	if (piercing_name) return piercing_name;
 
 	/* Artifacts are special */
 	if (obj->artifact && (aware || object_is_known_artifact(obj) || terse ||
@@ -110,6 +114,7 @@ static const char *obj_desc_get_basename(const struct object *obj, bool aware,
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CLOAK:
+		case TV_BELT:
 		case TV_CROWN:
 		case TV_HELM:
 		case TV_SHIELD:
@@ -118,6 +123,7 @@ static const char *obj_desc_get_basename(const struct object *obj, bool aware,
 		case TV_DRAG_ARMOR:
 		case TV_LIGHT:
 		case TV_FOOD:
+		case TV_PIERCING:
 			return obj->kind->name;
 
 		case TV_AMULET:
@@ -460,6 +466,8 @@ static size_t obj_desc_mods(const struct object *obj, char *buf, size_t max,
 
 	/* Run through possible modifiers and store distinct ones */
 	for (i = 0; i < OBJ_MOD_MAX; i++) {
+		if (i == OBJ_MOD_CARRY) continue;
+
 		/* Check for known non-zero mods */
 		if (obj->modifiers[i] != 0) {
 			/* If no mods stored yet, store and move on */
@@ -551,8 +559,11 @@ static size_t obj_desc_inscrip(const struct object *obj, char *buf,
 		u[n++] = "ignore";
 
 	/* Note unknown properties */
-	if (!object_runes_known(obj) && (obj->known->notice & OBJ_NOTICE_ASSESSED))
+	if ((tval_is_piercing(obj) && !object_piercing_is_revealed(obj)) ||
+			(!object_runes_known(obj) &&
+			(obj->known->notice & OBJ_NOTICE_ASSESSED))) {
 		u[n++] = "??";
+	}
 
 	if (n) {
 		int i;
@@ -580,6 +591,8 @@ static size_t obj_desc_aware(const struct object *obj, char *buf, size_t max,
 {
 	if (!object_flavor_is_aware(obj)) {
 		strnfcat(buf, max, &end, " {unseen}");
+	} else if (tval_is_piercing(obj) && !object_piercing_is_revealed(obj)) {
+		strnfcat(buf, max, &end, " {??}");
 	} else if (!object_runes_known(obj)) {
 		strnfcat(buf, max, &end, " {??}");
 	} else if (obj->known->curses) {

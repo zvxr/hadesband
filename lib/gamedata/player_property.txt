@@ -316,8 +316,15 @@ desc:You can fly.
 
 type:object
 code:SWIM
+bindui:swim_ui_compact_0:0:1
 name:Swimming
 desc:You can swim through water.
+
+type:object
+code:STRONG_SWIM
+bindui:swim_ui_compact_0:0:2
+name:Olympian Swimming
+desc:You can swim through water without risk of drowning.
 
 type:object
 code:REGEN

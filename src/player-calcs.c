@@ -1770,6 +1770,19 @@ static int weight_flight_allowance_state(const struct player_state *state)
 }
 
 
+static int weight_carry_allowance_state(const struct player_state *state)
+{
+	return state->carry;
+}
+
+
+static int weight_burden_allowance_state(const struct player_state *state)
+{
+	return weight_flight_allowance_state(state) +
+		weight_carry_allowance_state(state);
+}
+
+
 /**
  * Computes the weight allowance, in tenths of pounds, granted by flight.
  */
@@ -1788,7 +1801,7 @@ int weight_remaining(struct player *p)
 
 	/* Weight limit based only on strength */
 	i = 60 * adj_str_wgt[p->state.stat_ind[STAT_STR]]
-		+ weight_flight_allowance(p)
+		+ weight_burden_allowance_state(&p->state)
 		- p->upkeep->total_weight - 1;
 
 	/* Return the result */
@@ -1813,17 +1826,19 @@ void weight_remaining_description(char *buf, size_t max, struct player *p)
 {
 	int diff = weight_remaining(p);
 	int flight = weight_flight_allowance(p);
+	int carrying = weight_carry_allowance_state(&p->state);
+	int allowance = flight + carrying;
 
-	if (flight && diff >= 0) {
+	if (allowance && diff >= 0) {
 		char base[24];
 
-		format_signed_weight(base, sizeof(base), diff - flight);
+		format_signed_weight(base, sizeof(base), diff - allowance);
 		strnfmt(buf, max, "%s + %d.%d lb remaining", base,
-				flight / 10, flight % 10);
-	} else if (flight) {
-		strnfmt(buf, max, "%d.%d lb overweight, %d.%d lb flight",
+				allowance / 10, allowance % 10);
+	} else if (allowance) {
+		strnfmt(buf, max, "%d.%d lb overweight, %d.%d lb bonus",
 				abs(diff) / 10, abs(diff) % 10,
-				flight / 10, flight % 10);
+				allowance / 10, allowance % 10);
 	} else {
 		strnfmt(buf, max, "%d.%d lb %s", abs(diff) / 10, abs(diff) % 10,
 				(diff < 0 ? "overweight" : "remaining"));
@@ -1899,6 +1914,7 @@ static void calc_shapechange(struct player_state *state, bool vuln[ELEM_MAX],
 	*shots += shape->modifiers[OBJ_MOD_SHOTS];
 	*might += shape->modifiers[OBJ_MOD_MIGHT];
 	*moves += shape->modifiers[OBJ_MOD_MOVES];
+	state->carry += shape->modifiers[OBJ_MOD_CARRY];
 
 	/* Resists and vulnerabilities */
 	for (i = 0; i < ELEM_MAX; i++) {
@@ -2051,6 +2067,8 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 				* p->obj_k->modifiers[OBJ_MOD_MIGHT];
 			extra_moves += obj->modifiers[OBJ_MOD_MOVES]
 				* p->obj_k->modifiers[OBJ_MOD_MOVES];
+			state->carry += obj->modifiers[OBJ_MOD_CARRY]
+				* p->obj_k->modifiers[OBJ_MOD_CARRY];
 
 			/* Apply element info, noting vulnerabilites for later processing */
 			for (j = 0; j < ELEM_MAX; j++) {
@@ -2316,8 +2334,8 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 
 	/* Analyze weight */
 	j = p->upkeep->total_weight;
-	if (weight_flight_allowance_state(state)) {
-		j = MAX(0, j - weight_flight_allowance_state(state));
+	if (weight_burden_allowance_state(state)) {
+		j = MAX(0, j - weight_burden_allowance_state(state));
 	}
 	i = weight_limit(state);
 	if (j > i / 2)
@@ -2510,7 +2528,9 @@ static void update_bonuses(struct player *p)
 	}
 
 	/* Notice changes to the weight limit. */
-	if (weight_limit(&p->state) != weight_limit(&state)) {
+	if ((weight_limit(&p->state) != weight_limit(&state)) ||
+			(weight_burden_allowance_state(&p->state) !=
+			 weight_burden_allowance_state(&state))) {
 		p->upkeep->redraw |= (PR_INVEN);
 	}
 

@@ -86,6 +86,11 @@ bool tval_is_ring(const struct object *obj)
 	return obj->tval == TV_RING;
 }
 
+bool tval_is_piercing(const struct object *obj)
+{
+	return obj->tval == TV_PIERCING;
+}
+
 bool tval_is_chest(const struct object *obj)
 {
 	return obj->tval == TV_CHEST;
@@ -138,6 +143,11 @@ bool tval_is_body_armor(const struct object *obj)
 		default:
 			return false;
 	}
+}
+
+bool tval_is_belt(const struct object *obj)
+{
+	return obj->tval == TV_BELT;
 }
 
 bool tval_is_head_armor(const struct object *obj)
@@ -209,7 +219,8 @@ bool tval_can_have_failure(const struct object *obj)
 
 bool tval_is_jewelry(const struct object *obj)
 {
-	return obj->tval == TV_RING || obj->tval == TV_AMULET;
+	return obj->tval == TV_RING || obj->tval == TV_AMULET ||
+			obj->tval == TV_PIERCING;
 }
 
 bool tval_is_weapon(const struct object *obj)
@@ -237,6 +248,7 @@ bool tval_is_armor(const struct object *obj)
 		case TV_SOFT_ARMOR:
 		case TV_SHIELD:
 		case TV_CLOAK:
+		case TV_BELT:
 		case TV_CROWN:
 		case TV_HELM:
 		case TV_BOOTS:
@@ -277,12 +289,14 @@ bool tval_has_variable_power(const struct object *obj)
 		case TV_CROWN:
 		case TV_SHIELD:
 		case TV_CLOAK:
+		case TV_BELT:
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		case TV_LIGHT:
 		case TV_AMULET:
 		case TV_RING:
+		case TV_PIERCING:
 			return true;
 		default:
 			return false;
@@ -303,12 +317,14 @@ bool tval_is_wearable(const struct object *obj)
 		case TV_CROWN:
 		case TV_SHIELD:
 		case TV_CLOAK:
+		case TV_BELT:
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		case TV_LIGHT:
 		case TV_AMULET:
 		case TV_RING:
+		case TV_PIERCING:
 			return true;
 		default:
 			return false;

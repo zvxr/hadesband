@@ -100,6 +100,11 @@ graphics:light umber
 # max-stack:1
 flags:HATES_ACID | HATES_FIRE
 
+name:belt:Belt~
+graphics:umber
+# max-stack:1
+flags:HATES_ACID | HATES_FIRE
+
 name:soft armor:Soft Armor~
 graphics:slate
 # max-stack:1
@@ -128,6 +133,10 @@ name:ring:Ring~
 graphics:red
 # max-stack:5
 flags:HATES_ELEC
+
+name:piercing:Piercing~
+graphics:violet
+max-stack:1
 
 name:staff:Staff~
 graphics:light umber

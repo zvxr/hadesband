@@ -1929,6 +1929,126 @@ desc:This unearthly, completely transparent body mantle folds and drapes in
 desc: iridescent patterns around you.  It weighs absolutely nothing.
 
 
+### Belts ###
+
+name:& Cloth Belt~
+type:belt
+graphics:`:w
+level:1
+weight:2
+cost:8
+alloc:20:1 to 100
+attack:0d0:0:0
+armor:0:0
+desc:A plain strip of cloth tied securely around the waist.
+
+name:& Braided Belt~
+type:belt
+graphics:`:y
+level:5
+weight:10
+cost:25
+alloc:20:5 to 100
+attack:0d0:0:0
+armor:1:0
+desc:A careful braid of dyed cords and narrow leather straps, sturdy despite
+desc: its lightness.
+
+name:& Leather Belt~
+type:belt
+graphics:`:U
+level:8
+weight:15
+cost:50
+alloc:20:5 to 100
+attack:0d0:0:0
+armor:2:0
+desc:A simple belt of hardened leather with a plain buckle.
+
+name:& Chain Belt~
+type:belt
+graphics:`:s
+level:15
+weight:25
+cost:140
+alloc:20:15 to 100
+attack:0d0:0:0
+armor:3:0
+desc:A belt of interlocked metal links that helps guard the waist.
+
+name:& Bronze Girdle~
+type:belt
+graphics:`:o
+level:25
+weight:30
+cost:350
+alloc:15:25 to 100
+attack:0d0:0:0
+armor:5:0
+desc:A broad bronze girdle hammered to fit over lighter armour.
+
+name:& Copper Girdle~
+type:belt
+graphics:`:o
+level:35
+weight:50
+cost:600
+alloc:10:35 to 100
+attack:0d0:0:0
+armor:6:0
+desc:A heavy copper girdle with broad plates and reinforced fastenings.
+
+
+### Piercings ###
+
+name:& Ruby Piercing~
+type:piercing
+graphics:;:r
+level:10
+weight:1
+cost:0
+attack:0d0:1:1
+armor:0:0
+desc:A simple loop set with a ruby gem.  Ruby is said to represent fire,
+desc: conflict, and passion.
+
+name:& Amber Piercing~
+type:piercing
+graphics:;:o
+level:10
+weight:1
+cost:0
+attack:0d0:0:0
+armor:0:0
+values:SEARCH[1]
+desc:A simple loop set with an amber gem.  Amber is said to preserve memory,
+desc: warmth, and old desire.
+
+name:& Sapphire Piercing~
+type:piercing
+graphics:;:B
+level:10
+weight:1
+cost:0
+attack:0d0:0:0
+armor:0:0
+values:RES_COLD[1]
+desc:A simple loop set with a sapphire gem.  Sapphire is said to represent
+desc: water, clarity, and solemn vows.
+
+name:& Amethyst Piercing~
+type:piercing
+graphics:;:v
+level:10
+weight:1
+cost:0
+attack:0d0:0:0
+armor:0:0
+values:WIS[1]
+desc:A simple loop set with an amethyst gem.  Amethyst is said to represent
+desc: dreams, restraint, and watchful spirits.
+
+
 ### Gloves ###
 
 name:& Set~ of Leather Gloves

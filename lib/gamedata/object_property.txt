@@ -192,6 +192,12 @@ code:MOVES
 power:40
 bindui:movement_speed_ui_compact_0:0
 
+name:carrying capacity
+type:mod
+code:CARRY
+power:0
+mult:0
+
 name:light
 type:mod
 code:LIGHT
@@ -354,7 +360,18 @@ id-type:on effect
 code:SWIM
 power:4
 msg:Your {name} lets you swim.
+bindui:swim_ui_compact_0:0:1
 desc:Swimming
+
+name:olympian swimming
+type:flag
+subtype:misc ability
+id-type:on effect
+code:STRONG_SWIM
+power:8
+msg:Your {name} lets you swim effortlessly.
+bindui:swim_ui_compact_0:0:2
+desc:Olympian Swimming
 
 name:regeneration
 type:flag
@@ -905,6 +922,16 @@ type:resistance
 code:NEXUS
 power:15
 bindui:resist_ui_compact_0<NEXUS>:0
+
+name:water resistance
+type:resistance
+code:WATER
+power:12
+
+name:gravity resistance
+type:resistance
+code:GRAVITY
+power:15
 
 name:nether resistance
 type:resistance

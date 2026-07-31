@@ -24,6 +24,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "game-event.h"
 #include "game-world.h"
 #include "init.h"
 #include "monster.h"
@@ -1749,7 +1750,18 @@ static void monster_turn(struct monster *mon)
 			did_something = monster_turn_try_push(mon, m_name, new);
 		} else {
 			/* Otherwise we can just move */
+			struct loc old = mon->grid;
+			bool animate = monster_is_obvious(mon) &&
+				monster_is_in_view(mon) &&
+				distance(player->grid, old) <= 12;
+
 			monster_swap(mon->grid, new);
+			if (animate && monster_is_obvious(mon) &&
+					monster_is_in_view(mon) &&
+					distance(player->grid, new) <= 12) {
+				event_signal_monster_move(EVENT_MONSTER_MOVE,
+					old.y, old.x, new.y, new.x);
+			}
 			did_something = true;
 		}
 

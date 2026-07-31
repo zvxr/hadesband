@@ -30,6 +30,7 @@
 #include "obj-util.h"
 #include "player-calcs.h"
 #include "player-util.h"
+#include "ui-menu.h"
 
 static const struct slot_info {
 	int index;
@@ -44,6 +45,11 @@ static const struct slot_info {
 	#undef EQUIP
 	{ EQUIP_MAX, false, false, NULL, NULL, NULL }
 };
+
+static char equip_label_for_slot(int slot)
+{
+	return (slot == 0) ? '0' : all_letters_nohjkl[slot - 1];
+}
 
 /**
  * Return the slot number for a given name, or quit game
@@ -301,6 +307,17 @@ int pack_slots_used(const struct player *p)
 const char *equip_mention(struct player *p, int slot)
 {
 	int type = p->body.slots[slot].type;
+	struct object *obj = slot_object(p, slot);
+
+	if (type == EQUIP_PIERCING) {
+		if (obj && obj->piercing_location) {
+			return format(slot_table[type].mention,
+				quark_str(obj->piercing_location));
+		}
+		if (streq(p->body.slots[slot].name, "???")) {
+			return "???";
+		}
+	}
 
 	/* Heavy */
 	if ((type == EQUIP_WEAPON && p->state.heavy_wield) ||
@@ -320,6 +337,17 @@ const char *equip_mention(struct player *p, int slot)
 const char *equip_describe(struct player *p, int slot)
 {
 	int type = p->body.slots[slot].type;
+	struct object *obj = slot_object(p, slot);
+
+	if (type == EQUIP_PIERCING) {
+		if (obj && obj->piercing_location) {
+			return format(slot_table[type].describe,
+				quark_str(obj->piercing_location));
+		}
+		if (streq(p->body.slots[slot].name, "???")) {
+			return "wearing";
+		}
+	}
 
 	/* Heavy */
 	if ((type == EQUIP_WEAPON && p->state.heavy_wield) ||
@@ -346,6 +374,8 @@ int wield_slot(const struct object *obj)
 		case TV_BOW: return slot_by_type(player, EQUIP_BOW, false);
 		case TV_AMULET: return slot_by_type(player, EQUIP_AMULET, false);
 		case TV_CLOAK: return slot_by_type(player, EQUIP_CLOAK, false);
+		case TV_BELT: return slot_by_type(player, EQUIP_BELT, false);
+		case TV_PIERCING: return slot_by_type(player, EQUIP_PIERCING, false);
 		case TV_SHIELD: return slot_by_type(player, EQUIP_SHIELD, false);
 		case TV_GLOVES: return slot_by_type(player, EQUIP_GLOVES, false);
 		case TV_BOOTS: return slot_by_type(player, EQUIP_BOOTS, false);
@@ -442,14 +472,11 @@ bool minus_ac(struct player *p)
  */
 char gear_to_label(struct player *p, struct object *obj)
 {
-	/* Skip rogue-like cardinal direction movement keys. */
-	const char labels[] =
-		 "abcdefgimnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	int i;
 
 	/* Equipment is easy */
 	if (object_is_equipped(p->body, obj)) {
-		return labels[equipped_item_slot(p->body, obj)];
+		return equip_label_for_slot(equipped_item_slot(p->body, obj));
 	}
 
 	/* Check the quiver */
@@ -462,7 +489,7 @@ char gear_to_label(struct player *p, struct object *obj)
 	/* Check the inventory */
 	for (i = 0; i < z_info->pack_size; i++) {
 		if (p->upkeep->inven[i] == obj) {
-			return labels[i];
+			return all_letters_nohjkl[i];
 		}
 	}
 

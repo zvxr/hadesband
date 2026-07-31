@@ -99,6 +99,7 @@ static const grouper group_item[] =
 	{ TV_DRAG_ARMOR,	  NULL },
 
 	{ TV_CLOAK,		"Armour (Misc)" },
+	{ TV_BELT,		  NULL },
 	{ TV_SHIELD,	  NULL },
 	{ TV_HELM,		  NULL },
 	{ TV_CROWN,		  NULL },
@@ -107,6 +108,7 @@ static const grouper group_item[] =
 
 	{ TV_AMULET,	"Amulets" },
 	{ TV_RING,		"Rings" },
+	{ TV_PIERCING,	"Piercings" },
 
 	{ TV_SCROLL,	"Scrolls" },
 	{ TV_POTION,	"Potions" },
@@ -361,6 +363,7 @@ static const grouper group_artifact[] =
 	{ TV_DRAG_ARMOR,    NULL },
 
 	{ TV_CLOAK,         "Cloaks" },
+	{ TV_BELT,          "Belts" },
 	{ TV_SHIELD,        "Shields" },
 	{ TV_HELM,          "Helms/Crowns" },
 	{ TV_CROWN,         NULL },
@@ -370,6 +373,7 @@ static const grouper group_artifact[] =
 	{ TV_LIGHT,         "Light Sources" },
 	{ TV_AMULET,        "Amulets" },
 	{ TV_RING,          "Rings" },
+	{ TV_PIERCING,      "Piercings" },
 
 	{ 0, NULL }
 };

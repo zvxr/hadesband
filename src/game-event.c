@@ -260,6 +260,21 @@ void event_signal_missile(game_event_type type,
 	game_event_dispatch(type, &data);
 }
 
+void event_signal_monster_move(game_event_type type,
+							   int oy,
+							   int ox,
+							   int y,
+							   int x)
+{
+	game_event_data data;
+	data.monster_move.oy = oy;
+	data.monster_move.ox = ox;
+	data.monster_move.y = y;
+	data.monster_move.x = x;
+
+	game_event_dispatch(type, &data);
+}
+
 void event_signal_size(game_event_type type, int h, int w)
 {
 	game_event_data data;

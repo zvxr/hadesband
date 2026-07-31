@@ -502,6 +502,8 @@ struct object {
 	uint8_t origin_depth;		/**< What depth the item was found at */
 	const struct monster_race *origin_race;	/**< Monster race that dropped it */
 
+	quark_t piercing_location;	/**< Chosen permanent placement for piercings */
+	quark_t piercing_name;		/**< Revealed private identity for piercings */
 	quark_t note; 			/**< Inscription index */
 };
 

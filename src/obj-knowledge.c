@@ -70,6 +70,11 @@ static const char *c_rune[] = {
 	"enchantment to damage"
 };
 
+static bool element_has_resist_rune(int element)
+{
+	return lookup_obj_property(OBJ_PROPERTY_RESIST, element) != NULL;
+}
+
 /**
  * Initialise the rune module
  */
@@ -91,8 +96,10 @@ static void init_rune(void)
 	for (i = 0; i < OBJ_MOD_MAX; i++) {
 		count++;
 	}
-	for (i = 0; i < ELEM_HIGH_MAX; i++) {
-		count++;
+	for (i = 0; i < ELEM_MAX; i++) {
+		if (element_has_resist_rune(i)) {
+			count++;
+		}
 	}
 	/* Note brand runes cover all brands with the same name */
 	for (i = 1; i < z_info->brand_max; i++) {
@@ -139,8 +146,11 @@ static void init_rune(void)
 		struct obj_property *prop = lookup_obj_property(OBJ_PROPERTY_MOD, i);
 		rune_list[count++] = (struct rune) { RUNE_VAR_MOD, i, 0, prop->name };
 	}
-	for (i = 0; i < ELEM_HIGH_MAX; i++) {
-		rune_list[count++] = (struct rune) { RUNE_VAR_RESIST, i, 0, projections[i].name };
+	for (i = 0; i < ELEM_MAX; i++) {
+		if (element_has_resist_rune(i)) {
+			rune_list[count++] =
+				(struct rune) { RUNE_VAR_RESIST, i, 0, projections[i].name };
+		}
 	}
 	for (i = 1; i < z_info->brand_max; i++) {
 		bool counted = false;
@@ -760,6 +770,55 @@ bool object_fully_known(const struct object *obj)
 	if (!object_effect_is_known(obj)) return false;
 
 	return true;
+}
+
+
+static const char *object_piercing_default_name(const struct object *obj)
+{
+	if (!obj || !tval_is_piercing(obj) || !obj->kind) return NULL;
+
+	if (strstr(obj->kind->name, "Ruby Piercing")) {
+		return "the Barbell of Ares";
+	} else if (strstr(obj->kind->name, "Amber Piercing")) {
+		return "Apollo's Ring";
+	} else if (strstr(obj->kind->name, "Sapphire Piercing")) {
+		return "the Stud of Zeus";
+	} else if (strstr(obj->kind->name, "Amethyst Piercing")) {
+		return "Hera's Cuff";
+	}
+
+	return NULL;
+}
+
+
+bool object_piercing_is_revealed(const struct object *obj)
+{
+	return obj && tval_is_piercing(obj) && obj->known &&
+		obj->known->piercing_name;
+}
+
+
+const char *object_piercing_name(const struct object *obj)
+{
+	if (!object_piercing_is_revealed(obj)) return NULL;
+	return quark_str(obj->known->piercing_name);
+}
+
+
+void object_reveal_piercing(struct object *obj)
+{
+	const char *name;
+
+	if (!obj || !tval_is_piercing(obj)) return;
+
+	if (!obj->piercing_name) {
+		name = object_piercing_default_name(obj);
+		if (!name) return;
+		obj->piercing_name = quark_add(name);
+	}
+
+	if (!obj->known) obj->known = object_new();
+	obj->known->piercing_name = obj->piercing_name;
 }
 
 
@@ -1606,6 +1665,12 @@ static void mod_message(struct object *obj, int mod)
 		case OBJ_MOD_LIGHT:
 			msg("It glows!");
 			break;
+		case OBJ_MOD_CARRY:
+			if (obj->modifiers[OBJ_MOD_CARRY] > 0)
+				msg("Your burden feels lighter.");
+			else if (obj->modifiers[OBJ_MOD_CARRY] < 0)
+				msg("Your burden feels heavier.");
+			break;
 		default:
 			break;
 	}
@@ -1896,6 +1961,8 @@ void object_reveal_relic(struct player *p, struct object *obj)
 	known->grid = grid;
 	known->notice |= OBJ_NOTICE_ASSESSED;
 
+	object_reveal_piercing(obj);
+
 	if (obj->ego) {
 		obj->ego->everseen = true;
 	}
@@ -1914,6 +1981,7 @@ void object_learn_on_wield(struct player *p, struct object *obj)
 	char o_name[80];
 
 	assert(obj->known);
+	object_reveal_piercing(obj);
 	object_desc(o_name, sizeof(o_name), obj, ODESC_BASE, p);
 
 	/* Check the worn flag */

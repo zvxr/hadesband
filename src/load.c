@@ -265,7 +265,19 @@ static struct object *rd_item(void)
 	rd_u16b(&tmp16u);
 	obj->time.sides = tmp16u;
 
-	/* Save the inscription */
+	/* Read piercing placement */
+	if (ver >= 8) {
+		rd_string(buf, sizeof(buf));
+		if (buf[0]) obj->piercing_location = quark_add(buf);
+	}
+
+	/* Read piercing private name */
+	if (ver >= 9) {
+		rd_string(buf, sizeof(buf));
+		if (buf[0]) obj->piercing_name = quark_add(buf);
+	}
+
+	/* Read the inscription */
 	rd_string(buf, sizeof(buf));
 	if (buf[0]) obj->note = quark_add(buf);
 

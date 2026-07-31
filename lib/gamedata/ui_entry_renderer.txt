@@ -88,6 +88,16 @@
 # known to be on and there is no timed effect, at least one flag is on, and no
 # flags are known to be on but there is at least one timed effect.
 
+# COMPACT_TIERED_FLAG_RENDERER_WITH_COMBINED_AUX renders one or more tiered
+# flags with the label colored by the largest tier.  The auxiliary values are
+# treated as timed effects.  The default combiner is LARGEST.  One of six
+# symbols (unknown, not present, off, tier one, tier two or better, timed on)
+# is used for each flag.  Each of the symbols has a corresponding color (from
+# the first six colors) and alternate color (from the second six colors).  The
+# alternate color is used for every other flag.  A palette of five colors is
+# used for the label.  They are unknown rune, no flags are known to be on and
+# there is no timed effect, tier one, tier two or better, and timed on.
+
 # COMPACT_FLAG_WITH_CANCEL_RENDERER_WITH_COMBINED_AUX renders one or more
 # flags (off (0), on (positive), or cancel (negative)) with the label colored
 # by the combined value.  The auxiliary values are treated as timed effects.
@@ -261,6 +271,12 @@ code:COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX
 colors:wwwwGWWWWG
 labelcolors:swBw
 symbols:?..+!
+
+name:char_screen1_tiered_flag_renderer
+code:COMPACT_TIERED_FLAG_RENDERER_WITH_COMBINED_AUX
+colors:wwwGGWwwwGGW
+labelcolors:swBGG
+symbols:?..+*!
 
 name:char_screen1_flag_with_cancel_renderer
 code:COMPACT_FLAG_WITH_CANCEL_RENDERER_WITH_COMBINED_AUX

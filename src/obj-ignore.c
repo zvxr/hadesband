@@ -72,6 +72,7 @@ static quality_ignore_struct quality_mapping[] =
 	{ ITYPE_BODY_ARMOR,				TV_SOFT_ARMOR,	"" },
 	{ ITYPE_ELVEN_CLOAK,			TV_CLOAK,		"Elven" },
 	{ ITYPE_CLOAK,					TV_CLOAK,		"" },
+	{ ITYPE_BELT,					TV_BELT,		"" },
 	{ ITYPE_SHIELD,					TV_SHIELD,		"" },
 	{ ITYPE_HEADGEAR,				TV_HELM,		"" },
 	{ ITYPE_HEADGEAR,				TV_CROWN,		"" },
@@ -80,6 +81,7 @@ static quality_ignore_struct quality_mapping[] =
 	{ ITYPE_DIGGER,					TV_DIGGING,		"" },
 	{ ITYPE_RING,					TV_RING,		"" },
 	{ ITYPE_AMULET,					TV_AMULET,		"" },
+	{ ITYPE_PIERCING,				TV_PIERCING,	"" },
 	{ ITYPE_LIGHT, 					TV_LIGHT, 		"" },
 };
 

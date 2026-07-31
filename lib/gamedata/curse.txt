@@ -94,6 +94,7 @@
 name:vulnerability
 combat:0:0:-50
 type:cloak
+type:belt
 type:soft armor
 type:hard armor
 type:dragon armor
@@ -170,6 +171,7 @@ type:helm
 type:crown
 type:shield
 type:cloak
+type:belt
 type:soft armor
 type:hard armor
 type:dragon armor
@@ -392,4 +394,3 @@ type:hafted
 type:polearm
 type:sword
 desc:makes it hard to hit anything
-

@@ -1025,6 +1025,7 @@ bool player_check_water_travel(struct player *p, struct chunk *c,
 	const char *water_name;
 	bool deep;
 	bool swimming;
+	bool strong_swimming;
 
 	if (!p || !square_in_bounds(c, grid)) return true;
 	feat = square(c, grid)->feat;
@@ -1032,6 +1033,7 @@ bool player_check_water_travel(struct player *p, struct chunk *c,
 
 	deep = feat_is_deep_water(feat);
 	swimming = player_of_has(p, OF_SWIM);
+	strong_swimming = player_of_has(p, OF_STRONG_SWIM);
 	water_name = deep ? "tarn" : "pool of water";
 
 	if (player_of_has(p, OF_FLY)) {
@@ -1048,6 +1050,14 @@ bool player_check_water_travel(struct player *p, struct chunk *c,
 
 	if (!deep && player_can_wade_water(p, feat)) {
 		msg("You wade through the %s.", water_name);
+		if (p->timed[TMD_DROWNING]) {
+			(void)player_clear_timed(p, TMD_DROWNING, true, true);
+		}
+		return true;
+	}
+
+	if (strong_swimming) {
+		msg("You swim through the %s.", water_name);
 		if (p->timed[TMD_DROWNING]) {
 			(void)player_clear_timed(p, TMD_DROWNING, true, true);
 		}

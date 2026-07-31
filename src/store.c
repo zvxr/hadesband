@@ -685,6 +685,9 @@ static bool store_will_buy(struct store *store, const struct object *obj)
 	/* Home accepts anything */
 	if (store->feat == FEAT_HOME) return true;
 
+	/* Piercings are personal and permanent; stores do not trade in them. */
+	if (tval_is_piercing(obj)) return false;
+
 	/* Ignore apparently worthless items, except no-selling {??} items */
 	if (object_value(obj, 1) <= 0 && !(OPT(player, birth_no_selling) &&
 									   tval_has_variable_power(obj) &&
@@ -891,6 +894,7 @@ static void mass_produce(struct object *obj)
 		case TV_GLOVES:
 		case TV_BOOTS:
 		case TV_CLOAK:
+		case TV_BELT:
 		case TV_HELM:
 		case TV_CROWN:
 		case TV_SWORD:
@@ -1821,6 +1825,7 @@ int find_inven(const struct object *obj)
 			case TV_CROWN:
 			case TV_SHIELD:
 			case TV_CLOAK:
+			case TV_BELT:
 			case TV_SOFT_ARMOR:
 			case TV_HARD_ARMOR:
 			case TV_DRAG_ARMOR:

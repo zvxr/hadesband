@@ -74,6 +74,17 @@ static void renderer_COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX(
 );
 static int valuewidth_COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info);
+static void renderer_COMPACT_TIERED_FLAG_RENDERER_WITH_COMBINED_AUX(
+	const wchar_t *label,
+	int nlabel,
+	const int *vals,
+	const int *auxvals,
+	int n,
+	const struct ui_entry_details *details,
+	const struct renderer_info *info
+);
+static int valuewidth_COMPACT_TIERED_FLAG_RENDERER_WITH_COMBINED_AUX(
+	const struct renderer_info *info);
 static void renderer_COMPACT_FLAG_WITH_CANCEL_RENDERER_WITH_COMBINED_AUX(
 	const wchar_t *label,
 	int nlabel,
@@ -777,6 +788,101 @@ static void renderer_COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX(
 
 
 static int valuewidth_COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX(
+	const struct renderer_info *info)
+{
+	return 1;
+}
+
+static int tiered_flag_palette_index(int val, int auxval)
+{
+	if (val == UI_ENTRY_UNKNOWN_VALUE) {
+		return 0;
+	}
+	if (val == UI_ENTRY_VALUE_NOT_PRESENT) {
+		return 1;
+	}
+	if (val >= 2) {
+		return 4;
+	}
+	if (val > 0) {
+		return 3;
+	}
+	if (auxval >= 2) {
+		return 4;
+	}
+	if (auxval > 0) {
+		return 5;
+	}
+	return 2;
+}
+
+static void renderer_COMPACT_TIERED_FLAG_RENDERER_WITH_COMBINED_AUX(
+	const wchar_t *label,
+	int nlabel,
+	const int *vals,
+	const int *auxvals,
+	int n,
+	const struct ui_entry_details *details,
+	const struct renderer_info *info)
+{
+	struct loc p = details->value_position;
+	int color_offset = (details->alternate_color_first) ? 6 : 0;
+	struct ui_entry_combiner_funcs combiner;
+	int vc, ac;
+	int i;
+
+	assert(info->ncolors >= 12 && info->nlabcolors >= 5 && info->nsym >= 6);
+
+	for (i = 0; i < n; ++i) {
+		int palette_index = tiered_flag_palette_index(vals[i], auxvals[i]);
+
+		Term_putch(p.x, p.y,
+			info->colors[palette_index + color_offset],
+			info->symbols[palette_index]);
+		p = loc_sum(p, details->position_step);
+		color_offset ^= 6;
+	}
+
+	if (nlabel <= 0 && !details->show_combined) {
+		return;
+	}
+
+	if (ui_entry_combiner_get_funcs(info->combiner_index, &combiner)) {
+		assert(0);
+	}
+	(*combiner.vec_func)(n, vals, auxvals, &vc, &ac);
+
+	if (nlabel > 0) {
+		int palette_index = 1;
+
+		if (!details->known_rune) {
+			palette_index = 0;
+		} else if (vc >= 2 || ac >= 2) {
+			palette_index = 4;
+		} else if (vc > 0 || ac > 0) {
+			palette_index = 3;
+		}
+		if (details->vertical_label) {
+			p = details->label_position;
+			for (i = 0; i < nlabel; ++i) {
+				Term_putch(p.x, p.y,
+					info->label_colors[palette_index],
+					label[i]);
+				p.y += 1;
+			}
+		} else {
+			safe_queue_chars(details->label_position.x,
+				details->label_position.y, nlabel,
+				info->label_colors[palette_index], label);
+		}
+	}
+
+	if (details->show_combined) {
+		show_combined_generic(info, details, vc, ac);
+	}
+}
+
+static int valuewidth_COMPACT_TIERED_FLAG_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info)
 {
 	return 1;

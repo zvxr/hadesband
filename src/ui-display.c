@@ -1784,6 +1784,43 @@ static void display_missile(game_event_type type, game_event_data *data,
 }
 
 /**
+ * Draw a monster taking one ordinary movement step.
+ */
+static void display_monster_move(game_event_type type, game_event_data *data,
+								 void *user)
+{
+	int msec = player->opts.delay_factor / 2;
+	int oy = data->monster_move.oy;
+	int ox = data->monster_move.ox;
+	int y = data->monster_move.y;
+	int x = data->monster_move.x;
+	struct grid_data g;
+	int a, ta;
+	wchar_t c, tc;
+
+	if (msec <= 0)
+		return;
+
+	/* Clear the old position with the current map state. */
+	event_signal_point(EVENT_MAP, ox, oy);
+
+	/* Draw the monster at its new position and pause briefly. */
+	map_info(loc(x, y), &g);
+	grid_data_as_text(&g, &a, &c, &ta, &tc);
+	print_rel(c, a, y, x);
+	move_cursor_relative(y, x);
+	Term_fresh();
+	if (player->upkeep->redraw) redraw_stuff(player);
+
+	Term_xtra(TERM_XTRA_DELAY, msec);
+
+	/* Restore the new position to the regular map display. */
+	event_signal_point(EVENT_MAP, x, y);
+	Term_fresh();
+	if (player->upkeep->redraw) redraw_stuff(player);
+}
+
+/**
  * ------------------------------------------------------------------------
  * Subwindow displays
  * ------------------------------------------------------------------------ */
@@ -2827,6 +2864,9 @@ static void ui_enter_world(game_event_type type, game_event_data *data,
 	/* Display a physical missile */
 	event_add_handler(EVENT_MISSILE, display_missile, NULL);
 
+	/* Display ordinary monster movement */
+	event_add_handler(EVENT_MONSTER_MOVE, display_monster_move, NULL);
+
 	/* Check to see if the player has tried to cancel game processing */
 	event_add_handler(EVENT_CHECK_INTERRUPT, check_for_player_interrupt, NULL);
 
@@ -2888,6 +2928,9 @@ static void ui_leave_world(game_event_type type, game_event_data *data,
 
 	/* Display a physical missile */
 	event_remove_handler(EVENT_MISSILE, display_missile, NULL);
+
+	/* Display ordinary monster movement */
+	event_remove_handler(EVENT_MONSTER_MOVE, display_monster_move, NULL);
 
 	/* Check to see if the player has tried to cancel game processing */
 	event_remove_handler(EVENT_CHECK_INTERRUPT, check_for_player_interrupt, NULL);

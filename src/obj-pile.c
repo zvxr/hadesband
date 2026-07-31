@@ -417,6 +417,9 @@ bool object_similar(const struct object *obj1, const struct object *obj2,
 	/* Require identical object kinds */
 	if (obj1->kind != obj2->kind) return false;
 
+	/* Piercings are permanent, individually meaningful wearables. */
+	if (tval_is_piercing(obj1)) return false;
+
 	/* Sentient personalities and rolled values must match. */
 	if (!sentients_are_equal(obj1, obj2)) return false;
 

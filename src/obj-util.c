@@ -835,6 +835,10 @@ bool obj_can_study(const struct object *obj)
 /* Can only take off non-cursed items */
 bool obj_can_takeoff(const struct object *obj)
 {
+	if (tval_is_piercing(obj)) {
+		return false;
+	}
+
 	return !obj_has_flag(obj, OF_STICKY);
 }
 

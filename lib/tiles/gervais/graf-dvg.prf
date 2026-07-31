@@ -1092,6 +1092,19 @@ object:cloak:Fur Cloak:0x80:0x85
 object:cloak:Elven Cloak:0x80:0x84
 object:cloak:Ethereal Cloak:0x80:0x88
 
+### The Belts ###
+
+object:belt:Leather Belt:0x80:0x83
+object:belt:Cloth Belt:0x80:0x83
+object:belt:Braided Belt:0x80:0x83
+object:belt:Chain Belt:0x80:0x83
+object:belt:Bronze Girdle:0x80:0x83
+object:belt:Copper Girdle:0x80:0x83
+object:piercing:Ruby Piercing:0x80:0x83
+object:piercing:Amber Piercing:0x80:0x83
+object:piercing:Sapphire Piercing:0x80:0x83
+object:piercing:Amethyst Piercing:0x80:0x83
+
 
 ### The Gloves ###
 

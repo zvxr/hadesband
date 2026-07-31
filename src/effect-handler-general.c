@@ -248,7 +248,8 @@ static bool uncurse_object(struct object *obj, int strength, char *dice_string)
  */
 static bool item_tester_unknown(const struct object *obj)
 {
-    return object_runes_known(obj) ? false : true;
+	if (tval_is_piercing(obj)) return false;
+	return object_runes_known(obj) ? false : true;
 }
 
 /**
@@ -257,6 +258,7 @@ static bool item_tester_unknown(const struct object *obj)
 static bool item_tester_relic_unknown(const struct object *obj)
 {
 	if (!obj) return false;
+	if (tval_is_piercing(obj)) return !object_piercing_is_revealed(obj);
 	if (!obj->ego && !obj->artifact && !obj->sentient) return false;
 	return object_fully_known(obj) ? false : true;
 }
@@ -2020,7 +2022,8 @@ bool effect_handler_IDENTIFY_RELIC(effect_handler_context_t *context)
 	}
 
 	object_reveal_relic(player, obj);
-	object_desc(o_name, sizeof(o_name), obj, ODESC_BASE, player);
+	object_desc(o_name, sizeof(o_name), obj,
+		ODESC_BASE | (tval_is_piercing(obj) ? ODESC_FULL : 0), player);
 	msg("You now understand %s.", o_name);
 	return true;
 }

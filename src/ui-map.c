@@ -123,7 +123,8 @@ static void grid_get_attr(struct grid_data *g, int *a)
 			default: break;
 		}
 
-		if (g->lighting == LIGHTING_DARK && g->f_idx == FEAT_TARN)
+		if ((g->lighting == LIGHTING_LIT || g->lighting == LIGHTING_DARK) &&
+				g->f_idx == FEAT_TARN)
 			*a = COLOUR_PURPLE;
 	}
 
@@ -940,5 +941,4 @@ void do_cmd_view_map(void)
 	/* Load screen */
 	screen_load();
 }
-
 

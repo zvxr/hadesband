@@ -1870,6 +1870,66 @@ desc:The great cloak of the deep, cool as sea-shadow and bright as foam.  As
 desc: you wrap yourself from head to foot, the wrath of Poseidon guards you.
 
 
+### Belts ###
+
+name:'Ariadne's Thread'
+base-object:belt:Cloth Belt
+level:8
+weight:2
+cost:8000
+alloc:25:8 to 60
+attack:0d0:0:0
+armor:0:6
+values:SEARCH[3] | CARRY[50]
+act:TELE_PHASE
+time:25+d25
+desc:A single pale cord wound into a belt, impossibly long when danger draws
+desc: near.  It tugs gently at the waist, as if it remembers every way out.
+
+name:'The Fisherman's Sash'
+base-object:belt:Braided Belt
+level:12
+weight:8
+cost:11000
+alloc:25:10 to 70
+attack:0d0:0:0
+armor:1:8
+flags:STRONG_SWIM | PROT_NAUS
+slay:FISH_3
+desc:A salt-stiff sash knotted with old hooks, cork floats, and scraps of
+desc: netting.  Its knots seem to know the pull of tides and river mouths.
+
+name:Girdle of Hippolyta
+base-object:belt:Bronze Girdle
+level:28
+weight:30
+cost:24000
+alloc:10:28 to 90
+attack:0d0:0:0
+armor:5:12
+flags:FREE_ACT
+values:DEX[3] | CON[2]
+act:HERO
+time:80+d80
+desc:A bronze war-girdle from the queens of the Amazons, fitted for hard
+desc: marches and sudden violence.  It steadies the body and hardens resolve.
+
+name:'The Sash of the Siren'
+base-object:belt:Cloth Belt
+level:28
+weight:4
+cost:20000
+alloc:8:28 to 90
+attack:0d0:0:0
+armor:0:10
+flags:PROT_CONF | PROT_NAUS
+values:STEALTH[3]
+act:SLEEP_ALL
+time:50+d50
+desc:A pale sash embroidered with silver waves and open mouths.  When it is
+desc: drawn tight, even hostile thoughts seem to drift toward sleep.
+
+
 ### Gloves and Gauntlets ###
 
 name:'Heracles' Grip'

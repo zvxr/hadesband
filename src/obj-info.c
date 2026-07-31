@@ -224,7 +224,13 @@ static bool describe_stats(textblock *tb, const struct object *obj,
 		/* Actual object */
 		if (detail && !suppress_details) {
 			int attr = (val > 0) ? COLOUR_L_GREEN : COLOUR_RED;
-			textblock_append_c(tb, attr, "%+i %s.\n", val, desc);
+			if (i == OBJ_MOD_CARRY) {
+				textblock_append_c(tb, attr, "%c%i.%i lb %s.\n",
+					(val < 0) ? '-' : '+', abs(val) / 10, abs(val) % 10,
+					desc);
+			} else {
+				textblock_append_c(tb, attr, "%+i %s.\n", val, desc);
+			}
 		} else if (known_effect)
 			/* Ego type or jewellery description */
 			textblock_append(tb, "Affects your %s\n", desc);
