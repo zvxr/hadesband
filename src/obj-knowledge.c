@@ -775,19 +775,18 @@ bool object_fully_known(const struct object *obj)
 
 static const char *object_piercing_default_name(const struct object *obj)
 {
+	const struct piercing *piercing;
+	const char *match = NULL;
+
 	if (!obj || !tval_is_piercing(obj) || !obj->kind) return NULL;
 
-	if (strstr(obj->kind->name, "Ruby Piercing")) {
-		return "the Barbell of Ares";
-	} else if (strstr(obj->kind->name, "Amber Piercing")) {
-		return "Apollo's Ring";
-	} else if (strstr(obj->kind->name, "Sapphire Piercing")) {
-		return "the Stud of Zeus";
-	} else if (strstr(obj->kind->name, "Amethyst Piercing")) {
-		return "Hera's Cuff";
+	for (piercing = piercings; piercing; piercing = piercing->next) {
+		if (piercing->kind == obj->kind) {
+			match = piercing->name;
+		}
 	}
 
-	return NULL;
+	return match;
 }
 
 
@@ -802,6 +801,23 @@ const char *object_piercing_name(const struct object *obj)
 {
 	if (!object_piercing_is_revealed(obj)) return NULL;
 	return quark_str(obj->known->piercing_name);
+}
+
+
+const char *object_piercing_desc(const struct object *obj)
+{
+	const char *name = object_piercing_name(obj);
+	const struct piercing *piercing;
+
+	if (!name) return NULL;
+
+	for (piercing = piercings; piercing; piercing = piercing->next) {
+		if (streq(name, piercing->name)) {
+			return piercing->desc;
+		}
+	}
+
+	return NULL;
 }
 
 

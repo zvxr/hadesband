@@ -691,11 +691,11 @@ static void player_birth_debug_kit(struct player *p)
 	size_t i;
 
 	player_birth_item(p, "potion", "Experience", 1);
-	player_birth_piercing_item(p, "Ruby Piercing", "the Barbell of Ares");
+	player_birth_piercing_item(p, "Ruby Piercing", "Barbell of Ares");
 	player_birth_piercing_item(p, "Ruby Piercing", "Hephaestus' Stud");
 	player_birth_piercing_item(p, "Amber Piercing", "Apollo's Ring");
 	player_birth_piercing_item(p, "Amber Piercing", "Demeter's Loop");
-	player_birth_piercing_item(p, "Sapphire Piercing", "the Stud of Zeus");
+	player_birth_piercing_item(p, "Sapphire Piercing", "Stud of Zeus");
 	player_birth_piercing_item(p, "Sapphire Piercing", "Poseidon's Ring");
 	player_birth_piercing_item(p, "Amethyst Piercing", "Hera's Cuff");
 	player_birth_piercing_item(p, "Amethyst Piercing", "Artemis' Hoop");

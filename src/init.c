@@ -4748,6 +4748,7 @@ static struct {
 	{ "sentient personalities", &sentient_parser },
 	{ "player shapes", &shape_parser },
 	{ "objects", &object_parser },
+	{ "piercing identities", &piercing_parser },
 	{ "activations", &act_parser },
 	{ "ego-items", &ego_parser },
 	{ "history charts", &history_parser },

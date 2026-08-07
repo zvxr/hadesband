@@ -2022,7 +2022,7 @@ attack:0d0:0:0
 armor:0:0
 values:SEARCH[1]
 desc:A simple loop set with an amber gem.  Amber is said to preserve memory,
-desc: warmth, and old desire.
+desc: harvest, and motion.
 
 name:& Sapphire Piercing~
 type:piercing
@@ -2033,8 +2033,8 @@ cost:0
 attack:0d0:0:0
 armor:0:0
 values:RES_COLD[1]
-desc:A simple loop set with a sapphire gem.  Sapphire is said to represent
-desc: water, clarity, and solemn vows.
+desc:A simple loop set with a sapphire gem.  Sapphire is said to represent sky,
+desc: sea, and reason.
 
 name:& Amethyst Piercing~
 type:piercing
@@ -2046,7 +2046,7 @@ attack:0d0:0:0
 armor:0:0
 values:WIS[1]
 desc:A simple loop set with an amethyst gem.  Amethyst is said to represent
-desc: dreams, restraint, and watchful spirits.
+desc: rule, moon, and revelry.
 
 
 ### Gloves ###

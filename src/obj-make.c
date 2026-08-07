@@ -815,6 +815,8 @@ static void apply_magic_armour(struct object *obj, int level, int power)
 /**
  * Wipe an object clean and make it a standard object of the specified kind.
  */
+static void assign_piercing_identity(struct object *obj, aspect rand_aspect);
+
 void object_prep(struct object *obj, struct object_kind *k, int lev,
 				 aspect rand_aspect)
 {
@@ -879,6 +881,8 @@ void object_prep(struct object *obj, struct object_kind *k, int lev,
 		obj->el_info[i].flags = k->el_info[i].flags;
 		obj->el_info[i].flags |= k->base->el_info[i].flags;
 	}
+
+	assign_piercing_identity(obj, rand_aspect);
 }
 
 /**
@@ -909,6 +913,38 @@ static int apply_curse(struct object *obj, int lev)
 
 	return new_lev;
 }
+
+
+/**
+ * Assign a hidden private identity to a piercing.  The visible object kind
+ * only shows the jewel family; the divine representation is revealed later by
+ * wearing the piercing or by Identify Relic.
+ */
+static void assign_piercing_identity(struct object *obj, aspect rand_aspect)
+{
+	const struct piercing *piercing;
+	const struct piercing *match = NULL;
+	int count = 0;
+
+	if (!tval_is_piercing(obj) || !obj->kind || obj->piercing_name) return;
+
+	for (piercing = piercings; piercing; piercing = piercing->next) {
+		if (piercing->kind != obj->kind) continue;
+
+		if (rand_aspect == RANDOMISE) {
+			if (randint0(++count) == 0) {
+				match = piercing;
+			}
+		} else {
+			match = piercing;
+		}
+	}
+
+	if (match) {
+		obj->piercing_name = quark_add(match->name);
+	}
+}
+
 
 /**
  * Attempt to apply a sentient personality to an object.

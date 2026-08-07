@@ -186,6 +186,22 @@ static bool describe_sentient(textblock *tb, const struct object *obj)
 
 
 /**
+ * Describe a revealed private piercing identity.
+ */
+static bool describe_piercing(textblock *tb, const struct object *obj)
+{
+	const char *desc = object_piercing_desc(obj);
+
+	if (!desc) return false;
+
+	textblock_append_c(tb, COLOUR_VIOLET, "%s", desc);
+	textblock_append(tb, "\n");
+
+	return true;
+}
+
+
+/**
  * Describe stat modifications.
  */
 static bool describe_stats(textblock *tb, const struct object *obj,
@@ -2392,6 +2408,7 @@ static textblock *object_info_out(const struct object *obj, int mode)
 
 	if (describe_curses(tb, obj, flags)) something = true;
 	if (describe_sentient(tb, obj)) something = true;
+	if (describe_piercing(tb, obj)) something = true;
 	if (describe_stats(tb, obj, mode)) something = true;
 	if (describe_slays(tb, obj)) something = true;
 	if (describe_brands(tb, obj)) something = true;

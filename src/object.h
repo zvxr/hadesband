@@ -337,10 +337,24 @@ struct artifact_upkeep {
 };
 
 /**
+ * Private piercing identity.
+ */
+struct piercing {
+	char *name;
+	char *jewel;
+	char *base_tval;
+	char *base_sval;
+	struct object_kind *kind;
+	char *desc;
+	struct piercing *next;
+};
+
+/**
  * The artifact arrays
  */
 extern struct artifact *a_info;
 extern struct artifact_upkeep *aup_info;
+extern struct piercing *piercings;
 
 
 /**

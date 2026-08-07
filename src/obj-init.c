@@ -1879,6 +1879,122 @@ struct file_parser sentient_parser = {
 
 /**
  * ------------------------------------------------------------------------
+ * Initialize piercing identities
+ * ------------------------------------------------------------------------ */
+
+struct piercing *piercings;
+
+static enum parser_error parse_piercing_name(struct parser *p)
+{
+	struct piercing *h = parser_priv(p);
+	struct piercing *piercing = mem_zalloc(sizeof(*piercing));
+
+	piercing->name = string_make(parser_getstr(p, "name"));
+	piercing->next = h;
+	parser_setpriv(p, piercing);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_piercing_jewel(struct parser *p)
+{
+	struct piercing *piercing = parser_priv(p);
+
+	if (!piercing) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	piercing->jewel = string_make(parser_getsym(p, "jewel"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_piercing_base_object(struct parser *p)
+{
+	struct piercing *piercing = parser_priv(p);
+
+	if (!piercing) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	piercing->base_tval = string_make(parser_getsym(p, "tval"));
+	piercing->base_sval = string_make(parser_getstr(p, "sval"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_piercing_desc(struct parser *p)
+{
+	struct piercing *piercing = parser_priv(p);
+
+	if (!piercing) return PARSE_ERROR_MISSING_RECORD_HEADER;
+	piercing->desc = string_append(piercing->desc, parser_getstr(p, "desc"));
+	return PARSE_ERROR_NONE;
+}
+
+static struct parser *init_parse_piercing(void)
+{
+	struct parser *p = parser_new();
+
+	parser_setpriv(p, NULL);
+	parser_reg(p, "name str name", parse_piercing_name);
+	parser_reg(p, "jewel sym jewel", parse_piercing_jewel);
+	parser_reg(p, "base-object sym tval str sval", parse_piercing_base_object);
+	parser_reg(p, "desc str desc", parse_piercing_desc);
+	return p;
+}
+
+static errr run_parse_piercing(struct parser *p)
+{
+	return parse_file_quit_not_found(p, "piercing");
+}
+
+static errr finish_parse_piercing(struct parser *p)
+{
+	struct piercing *piercing;
+	errr result = PARSE_ERROR_NONE;
+
+	piercings = parser_priv(p);
+	for (piercing = piercings; piercing; piercing = piercing->next) {
+		int tval, sval;
+
+		if (!piercing->base_tval || !piercing->base_sval) {
+			result = PARSE_ERROR_MISSING_FIELD;
+			continue;
+		}
+
+		tval = tval_find_idx(piercing->base_tval);
+		sval = lookup_sval(tval, piercing->base_sval);
+		piercing->kind = lookup_kind(tval, sval);
+		if (!piercing->kind) {
+			result = PARSE_ERROR_UNRECOGNISED_SVAL;
+		}
+	}
+
+	parser_setpriv(p, NULL);
+	parser_destroy(p);
+	return result;
+}
+
+static void cleanup_piercing(void)
+{
+	struct piercing *piercing = piercings;
+
+	while (piercing) {
+		struct piercing *next = piercing->next;
+
+		string_free(piercing->name);
+		string_free(piercing->jewel);
+		string_free(piercing->base_tval);
+		string_free(piercing->base_sval);
+		string_free(piercing->desc);
+		mem_free(piercing);
+		piercing = next;
+	}
+	piercings = NULL;
+}
+
+struct file_parser piercing_parser = {
+	"piercing",
+	init_parse_piercing,
+	run_parse_piercing,
+	finish_parse_piercing,
+	cleanup_piercing
+};
+
+/**
+ * ------------------------------------------------------------------------
  * Initialize activations
  * ------------------------------------------------------------------------ */
 

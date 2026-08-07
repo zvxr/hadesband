@@ -67,6 +67,7 @@ bool object_runes_known(const struct object *obj);
 bool object_fully_known(const struct object *obj);
 bool object_piercing_is_revealed(const struct object *obj);
 const char *object_piercing_name(const struct object *obj);
+const char *object_piercing_desc(const struct object *obj);
 bool object_flag_is_known(const struct player *p, const struct object *obj,
 	int flag);
 bool object_element_is_known(const struct player *p, const struct object *obj,

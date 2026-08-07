@@ -1,0 +1,66 @@
+# File: piercing.txt
+
+# name: private revealed identity
+# jewel: visible jewel family
+# base-object: visible object kind that can hold this identity
+# desc: revealed private description
+
+name:Barbell of Ares
+jewel:Ruby
+base-object:piercing:Ruby Piercing
+desc:It carries the pressure of war and the will to strike first.
+
+name:Hephaestus' Stud
+jewel:Ruby
+base-object:piercing:Ruby Piercing
+desc:It holds a forge-spark that will not cool.
+
+name:Aphrodite's Hoop
+jewel:Ruby
+base-object:piercing:Ruby Piercing
+desc:It warms with impossible desire and dangerous attention.
+
+name:Stud of Zeus
+jewel:Sapphire
+base-object:piercing:Sapphire Piercing
+desc:It answers to command, thunder, and the high air.
+
+name:Poseidon's Ring
+jewel:Sapphire
+base-object:piercing:Sapphire Piercing
+desc:It feels heavy with sea pressure and the patience of deep water.
+
+name:Athena's Hoop
+jewel:Sapphire
+base-object:piercing:Sapphire Piercing
+desc:It sharpens thought into tactics and protection.
+
+name:Apollo's Ring
+jewel:Amber
+base-object:piercing:Amber Piercing
+desc:It glows with sunlit prophecy and clean healing.
+
+name:Demeter's Loop
+jewel:Amber
+base-object:piercing:Amber Piercing
+desc:It smells faintly of grain, endurance, and living earth.
+
+name:Hermes' Barbell
+jewel:Amber
+base-object:piercing:Amber Piercing
+desc:It strains toward roads, speed, and escape.
+
+name:Hera's Cuff
+jewel:Amethyst
+base-object:piercing:Amethyst Piercing
+desc:It rests with sovereign weight and unyielding bonds.
+
+name:Artemis' Hoop
+jewel:Amethyst
+base-object:piercing:Amethyst Piercing
+desc:It watches like moonlight over a distant hunt.
+
+name:Stud of Dionysus
+jewel:Amethyst
+base-object:piercing:Amethyst Piercing
+desc:It hums with revelry, madness, and the edge of surrender.
