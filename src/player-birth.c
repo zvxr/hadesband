@@ -615,6 +615,36 @@ static void player_birth_item(struct player *p, const char *tval_name,
 }
 
 
+static void player_birth_piercing_item(struct player *p, const char *sval_name,
+		const char *private_name)
+{
+	int tval = tval_find_idx("piercing");
+	int sval = lookup_sval(tval, sval_name);
+	struct object_kind *kind = lookup_kind(tval, sval);
+	struct object *obj, *known_obj;
+
+	assert(kind);
+
+	obj = object_new();
+	object_prep(obj, kind, 0, MINIMISE);
+	obj->number = 1;
+	obj->origin = ORIGIN_BIRTH;
+	obj->piercing_name = quark_add(private_name);
+
+	known_obj = object_new();
+	obj->known = known_obj;
+	object_set_base_known(p, obj);
+	object_flavor_aware(p, obj);
+	obj->known->pval = obj->pval;
+	obj->known->effect = obj->effect;
+	obj->known->notice |= OBJ_NOTICE_ASSESSED;
+	obj->known->piercing_name = 0;
+
+	inven_carry(p, obj, true, false);
+	kind->everseen = true;
+}
+
+
 static const struct artifact *player_birth_artifact(const char *name)
 {
 	return lookup_artifact_name(name);
@@ -661,14 +691,14 @@ static void player_birth_debug_kit(struct player *p)
 	size_t i;
 
 	player_birth_item(p, "potion", "Experience", 1);
-	player_birth_item(p, "piercing", "Ruby Piercing", 1);
-	player_birth_item(p, "piercing", "Ruby Piercing", 1);
-	player_birth_item(p, "piercing", "Amber Piercing", 1);
-	player_birth_item(p, "piercing", "Amber Piercing", 1);
-	player_birth_item(p, "piercing", "Sapphire Piercing", 1);
-	player_birth_item(p, "piercing", "Sapphire Piercing", 1);
-	player_birth_item(p, "piercing", "Amethyst Piercing", 1);
-	player_birth_item(p, "piercing", "Amethyst Piercing", 1);
+	player_birth_piercing_item(p, "Ruby Piercing", "the Barbell of Ares");
+	player_birth_piercing_item(p, "Ruby Piercing", "Hephaestus' Stud");
+	player_birth_piercing_item(p, "Amber Piercing", "Apollo's Ring");
+	player_birth_piercing_item(p, "Amber Piercing", "Demeter's Loop");
+	player_birth_piercing_item(p, "Sapphire Piercing", "the Stud of Zeus");
+	player_birth_piercing_item(p, "Sapphire Piercing", "Poseidon's Ring");
+	player_birth_piercing_item(p, "Amethyst Piercing", "Hera's Cuff");
+	player_birth_piercing_item(p, "Amethyst Piercing", "Artemis' Hoop");
 	player_birth_item(p, "scroll", "Identify Rune", 4);
 	player_birth_item(p, "scroll", "Identify Relic", 4);
 
